@@ -1,0 +1,26 @@
+scene,npc_count,method,final_score,state_score,spatial_score,human_score,blocking_total,recovered,recovery_rate,source,config_note
+Home,1,single_round,0.6966,0.6473,0.6758,0.8438,22,0,0.0000,mainline_efe_vs_single_5scenes_400_seed0_v1,400_steps_seed0_stochastic_qwen3.5-9b
+Home,1,Rule,0.7092,0.5921,0.7293,0.9375,4,2,0.5000,efe_goal_policy_v1_home_400,400_steps_seed0_stochastic_qwen3.5-9b_rule_all
+Home,1,Goal Review V0,0.7195,0.6358,0.7026,0.9375,4,2,0.50,user_provided_screenshot_2026-08-07,steps_model_seed_schedule_unknown
+Home,1,Goal Review SA-fix,0.7461,0.6700,0.7346,0.9375,4,4,1.00,user_provided_screenshot_2026-08-07,steps_model_seed_schedule_unknown
+Home,1,EFE Learned,0.7954,0.6234,0.8995,1.0000,0,0,0.0000,mainline_efe_vs_single_5scenes_400_seed0_v1,400_steps_seed0_stochastic_qwen3.5-9b
+Hospital,3,single_round,0.7137,0.6206,0.7380,0.8806,49,49,1.0000,mainline_efe_vs_single_5scenes_400_seed0_v1,400_steps_seed0_stochastic_qwen3.5-9b
+Hospital,3,Rule,0.6941,0.6100,0.6871,0.8955,49,49,1.0000,efe_goal_policy_v1_home_400,400_steps_seed0_stochastic_qwen3.5-9b_rule_all
+Hospital,3,Goal Review V0,0.6776,0.6148,0.5900,0.9722,2,0,0.00,user_provided_screenshot_2026-08-07,steps_model_seed_schedule_unknown
+Hospital,3,Goal Review SA-fix,0.7314,0.6176,0.7400,0.9722,7,1,0.14,user_provided_screenshot_2026-08-07,steps_model_seed_schedule_unknown
+Hospital,3,EFE Learned,0.7106,0.6204,0.7380,0.8657,49,49,1.0000,mainline_efe_vs_single_5scenes_400_seed0_v1,400_steps_seed0_stochastic_qwen3.5-9b
+Supermarket,3,Goal Review V0,0.6557,0.4695,0.8155,0.7949,123,18,0.15,user_provided_screenshot_2026-08-07,steps_model_seed_schedule_unknown
+Supermarket,3,Goal Review SA-fix,0.6799,0.4782,0.8441,0.8462,37,37,1.00,user_provided_screenshot_2026-08-07,steps_model_seed_schedule_unknown
+Supermarket,,Rule,,,,,,,,not_run,rule_all_400_steps_pending
+Supermarket,2,single_round,0.7309,0.6882,0.8225,0.6667,67,18,0.2687,mainline_efe_vs_single_5scenes_400_seed0_v1,400_steps_seed0_stochastic_qwen3.5-9b
+Supermarket,2,EFE Learned,0.7754,0.6467,0.9684,0.7273,157,0,0.0000,mainline_efe_vs_single_5scenes_400_seed0_v1,400_steps_seed0_stochastic_qwen3.5-9b
+Office,3,single_round,0.7340,0.5091,0.9792,0.8108,128,104,0.8125,mainline_efe_vs_single_5scenes_400_seed0_v1,400_steps_seed0_stochastic_qwen3.5-9b
+Office,3,Rule,,,,,,,,not_run,rule_all_400_steps_pending
+Office,3,Goal Review V0,0.5671,0.4885,0.6384,0.6190,178,167,0.94,user_provided_screenshot_2026-08-07,steps_model_seed_schedule_unknown
+Office,3,Goal Review SA-fix,0.7721,0.5785,0.9725,0.8571,60,60,1.00,user_provided_screenshot_2026-08-07,steps_model_seed_schedule_unknown
+Office,3,EFE Learned,0.7343,0.5092,0.9800,0.8108,128,104,0.8125,mainline_efe_vs_single_5scenes_400_seed0_v1,400_steps_seed0_stochastic_qwen3.5-9b
+Factory,3,single_round,0.6538,0.4165,0.9797,0.6176,186,87,0.4677,mainline_efe_vs_single_5scenes_400_seed0_v1,400_steps_seed0_stochastic_qwen3.5-9b
+Factory,3,Rule,,,,,,,,not_run,rule_all_400_steps_pending
+Factory,3,Goal Review V0,0.5825,0.3205,0.9665,0.5000,280,203,0.73,user_provided_screenshot_2026-08-07,steps_model_seed_schedule_unknown
+Factory,3,Goal Review SA-fix,0.6415,0.4129,0.9845,0.5556,267,107,0.40,user_provided_screenshot_2026-08-07,steps_model_seed_schedule_unknown
+Factory,3,EFE Learned,0.6649,0.4408,0.9802,0.6176,183,84,0.4590,mainline_efe_vs_single_5scenes_400_seed0_v1,400_steps_seed0_stochastic_qwen3.5-9b
