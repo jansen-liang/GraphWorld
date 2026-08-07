@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import re
+from collections import deque
 from typing import Any
 
 from backend.core.assets.task_library import relevant_skills_for_nodes
@@ -34,6 +35,9 @@ HOSPITAL_RETURN_SKILLS = {
 }
 HOSPITAL_CLEAN_SKILLS = {"clean_waiting_area", "clean_exam_bed"}
 
+ROOM_EDGE_RELATIONS = {"connected", "connected_to", "next_to", "neighbour"}
+EXPLORE_GOAL_TYPES = {"explore", "patrol"}
+
 
 HOUSE_RULES = (
     "Prefer actions that directly fix bad states or restore objects toward their initial arrangement when known.",
@@ -49,6 +53,160 @@ HOUSE_RULES = (
     "For restore_initial_position, object and target must be real node ids from high_level_options; never invent node ids from semantic_type names.",
     "If the intended initial_parent is not visible, do not place the held object somewhere else; choose a move/open action that expands visibility toward the target room.",
 )
+
+
+def room_graph(scene: dict[str, Any]) -> dict[str, set[str]]:
+    """Build an undirected room graph used by deterministic EFE navigation."""
+    rooms = {
+        str(node.get("id") or "")
+        for node in scene.get("nodes") or []
+        if isinstance(node, dict)
+        and str(node.get("node_type") or "") == "room"
+    }
+    graph: dict[str, set[str]] = {room: set() for room in rooms if room}
+    for edge in scene.get("edges") or []:
+        if not isinstance(edge, dict):
+            continue
+        relation = str(edge.get("relation") or "").lower()
+        source = str(edge.get("source_id") or "")
+        target = str(edge.get("target_id") or "")
+        if (relation not in ROOM_EDGE_RELATIONS
+                or source not in rooms or target not in rooms):
+            continue
+        graph.setdefault(source, set()).add(target)
+        graph.setdefault(target, set()).add(source)
+    return graph
+
+
+def next_room_on_shortest_path(scene: dict[str, Any], current_room: str,
+                               target_room: str) -> str:
+    """Return the first hop on a deterministic BFS room path."""
+    if not current_room or not target_room or current_room == target_room:
+        return ""
+    graph = room_graph(scene)
+    queue: deque[tuple[str, str]] = deque([(current_room, "")])
+    seen = {current_room}
+    while queue:
+        room, first_hop = queue.popleft()
+        for neighbor in sorted(graph.get(room, ())):
+            if neighbor in seen:
+                continue
+            hop = first_hop or neighbor
+            if neighbor == target_room:
+                return hop
+            seen.add(neighbor)
+            queue.append((neighbor, hop))
+    return ""
+
+
+def robot_room(observation: dict[str, Any], baseline: dict[str, Any],
+               agent_id: str) -> str:
+    """Resolve the robot's containing room for navigation policies."""
+    nodes: dict[str, dict[str, Any]] = {}
+    for source in (baseline, observation):
+        for node in source.get("nodes") or []:
+            if isinstance(node, dict) and node.get("id"):
+                nodes[str(node["id"])] = node
+    current = agent_id
+    seen: set[str] = set()
+    while current and current not in seen:
+        seen.add(current)
+        node = nodes.get(current) or {}
+        if str(node.get("node_type") or "") == "room":
+            return current
+        current = str(node.get("parent") or "")
+    visible = (observation.get("world_state") or {}).get("visible_rooms") or []
+    return str(visible[0]) if visible else ""
+
+
+def _explore_target_room(goal: dict[str, Any] | None) -> str:
+    goal = goal or {}
+    if str(goal.get("type") or "") not in EXPLORE_GOAL_TYPES:
+        return ""
+    return str(goal.get("target_room") or goal.get("room")
+               or goal.get("target") or "")
+
+
+def choose_explore_navigation_action(
+    *, baseline: dict[str, Any], observation: dict[str, Any],
+    candidates: list[dict[str, Any]], goal: dict[str, Any] | None,
+    agent_id: str = "robot_01",
+) -> tuple[dict[str, Any] | None, dict[str, Any]]:
+    """Choose one legal BFS navigation action for an EFE explore Goal."""
+    target_room = _explore_target_room(goal)
+    current_room = robot_room(observation, baseline, agent_id)
+    diagnostic: dict[str, Any] = {
+        "variant": "efe_explore_navigation_v1",
+        "applicable": bool(target_room),
+        "current_room": current_room,
+        "target_room": target_room,
+        "next_room": "",
+        "choice_kind": "not_applicable",
+    }
+    if not target_room:
+        return None, diagnostic
+    if current_room == target_room:
+        diagnostic["choice_kind"] = "already_arrived"
+        return None, diagnostic
+    next_room = next_room_on_shortest_path(
+        baseline, current_room, target_room)
+    diagnostic["next_room"] = next_room
+    if not next_room:
+        diagnostic["choice_kind"] = "no_room_path"
+        return None, diagnostic
+
+    def candidate(action_name: str,
+                  targets: set[str]) -> dict[str, Any] | None:
+        matches = [
+            item for item in candidates
+            if str(item.get("action") or "") == action_name
+            and str(item.get("target") or "") in targets
+        ]
+        return (min(matches, key=lambda item: str(item.get("target") or ""))
+                if matches else None)
+
+    selected = candidate("move", {next_room})
+    choice_kind = "move_next_room"
+    visible_nodes = {
+        str(node.get("id") or ""): node
+        for node in observation.get("nodes") or []
+        if isinstance(node, dict) and node.get("id")
+    }
+    connecting_doors = {
+        node_id for node_id, node in visible_nodes.items()
+        if str(node.get("semantic_type") or "") == "door"
+        and {current_room, next_room}.issubset({
+            str(room) for room in node.get("connected_rooms") or []
+            if str(room)
+        })
+    }
+    if not connecting_doors:
+        connecting_doors = {
+            node_id for node_id, node in visible_nodes.items()
+            if str(node.get("semantic_type") or "") == "door"
+            and (node_id == "door_%s" % next_room
+                 or str(node.get("parent") or "") == next_room)
+        }
+    if selected is None and connecting_doors:
+        selected = candidate("open", connecting_doors)
+        choice_kind = "open_connecting_door"
+    if selected is None and connecting_doors:
+        selected = candidate("move", connecting_doors)
+        choice_kind = "move_connecting_door"
+    if selected is None:
+        diagnostic["choice_kind"] = "no_legal_path_action"
+        return None, diagnostic
+    action = copy.deepcopy(selected)
+    action["reason"] = (
+        "efe_explore_navigation_v1: %s -> %s toward %s"
+        % (current_room, next_room, target_room)
+    )
+    diagnostic.update({
+        "choice_kind": choice_kind,
+        "selected_action": str(action.get("action") or ""),
+        "selected_target": str(action.get("target") or ""),
+    })
+    return action, diagnostic
 
 
 def parse_action_index(text: str, fallback: int = 0) -> int:
@@ -246,6 +404,147 @@ def _high_level_options(
         if states.get("folded") is False and semantic in {"clothes", "towel", "blanket"}:
             options.append(f"fold {node_id}")
     return options[:20]
+
+
+def critical_state_deviations(
+    observation: dict[str, Any],
+    initial_scene: dict[str, Any] | None = None,
+    agent_id: str = "robot_01",
+    top_k: int = 3,
+) -> list[dict[str, Any]]:
+    """Identify the most urgent current-state deviations from baseline.
+
+    Urgency = blocking_weight × dimension_weight × time_urgency.
+    NPC-event-blocking deviations get 10× weight over non-blocking ones;
+    state-dimension deviations carry 0.45, spatial 0.35.
+    """
+    if not initial_scene:
+        return []
+
+    current_nodes = _node_index(observation)
+    initial_nodes = _scene_node_index(initial_scene)
+    world_state = observation.get("world_state") or {}
+    blocking_cases = world_state.get("blocking_cases") or []
+    current_step = int(world_state.get("step") or 0)
+
+    # (target_node_id, state_key) → blocking_case
+    blocking_map: dict[tuple[str, str], dict[str, Any]] = {}
+    for case in blocking_cases:
+        if case.get("status") != "open":
+            continue
+        target = str(case.get("target") or "")
+        if not target:
+            continue
+        for state_key in (case.get("states") or {}):
+            blocking_map[(target, state_key)] = case
+        if not (case.get("states") or {}) and case.get("parent"):
+            blocking_map[(target, "parent")] = case
+
+    deviations: list[dict[str, Any]] = []
+
+    for node_id, current in current_nodes.items():
+        if node_id == agent_id or str(current.get("node_type") or "") == "robot":
+            continue
+
+        initial = initial_nodes.get(node_id)
+        current_states = current.get("states") or {}
+        initial_states = initial.get("states") or {} if initial else {}
+        current_parent = str(current.get("parent") or "")
+        initial_parent = str(initial.get("parent") or "") if initial else ""
+
+        for key in BAD_STATE_KEYS:
+            cur_val = current_states.get(key)
+            init_val = initial_states.get(key)
+            if cur_val == init_val:
+                continue
+            if cur_val in (False, None, 0, 0.0, "") and init_val in (False, None, 0, 0.0, ""):
+                continue
+
+            blocking_case = blocking_map.get((node_id, key))
+            is_blocking = blocking_case is not None
+
+            blocking_weight = 10.0 if is_blocking else 1.0
+            dimension_weight = 0.45
+            time_urgency = 1.0
+            if is_blocking:
+                opened_step = int(blocking_case.get("opened_step") or 0)
+                age = max(0, current_step - opened_step)
+                time_urgency = 1.0 + max(0.0, 10.0 - age) * 0.1
+
+            urgency = blocking_weight * dimension_weight * time_urgency
+
+            init_label = init_val if init_val not in (False, None, 0, 0.0, "") else "clean"
+            deviations.append({
+                "node_id": node_id,
+                "semantic_type": str(current.get("semantic_type") or ""),
+                "deviation": f"{key}: {cur_val} (expected {init_label})",
+                "state_key": key,
+                "blocking_event": str(blocking_case.get("description") or blocking_case.get("event_id") or "") if is_blocking else "",
+                "urgency": round(urgency, 3),
+                "dimension": "state",
+            })
+
+        if current_parent and initial_parent and current_parent != initial_parent:
+            blocking_case = blocking_map.get((node_id, "parent"))
+            if blocking_case is None:
+                continue
+
+            opened_step = int(blocking_case.get("opened_step") or 0)
+            age = max(0, current_step - opened_step)
+            time_urgency = 1.0 + max(0.0, 10.0 - age) * 0.1
+            urgency = 10.0 * 0.35 * time_urgency
+
+            deviations.append({
+                "node_id": node_id,
+                "semantic_type": str(current.get("semantic_type") or ""),
+                "deviation": f"location: moved from {initial_parent} to {current_parent}",
+                "state_key": "parent",
+                "blocking_event": str(blocking_case.get("description") or blocking_case.get("event_id") or ""),
+                "urgency": round(urgency, 3),
+                "dimension": "spatial",
+            })
+
+    seen_cases: set[str] = {d["blocking_event"] for d in deviations if d.get("blocking_event")}
+    for case in blocking_cases:
+        if case.get("status") != "open":
+            continue
+        desc = str(case.get("description") or case.get("event_id") or "")
+        if desc in seen_cases:
+            continue
+        target = str(case.get("target") or "")
+        if not target:
+            continue
+        node = current_nodes.get(target)
+        node_type = str(node.get("semantic_type") or "") if node else ""
+        cur_parent = str(node.get("parent") or "") if node else ""
+        expected_parent = str(case.get("parent") or "")
+        opened_step = int(case.get("opened_step") or 0)
+        age = max(0, current_step - opened_step)
+        time_urgency = 1.0 + max(0.0, 10.0 - age) * 0.1
+        kind = str(case.get("kind") or "")
+        if kind == "has_node":
+            deviations.append({
+                "node_id": target,
+                "semantic_type": node_type,
+                "deviation": f"location: currently at {cur_parent}, required at {expected_parent}" if cur_parent else f"location: not found, required at {expected_parent}",
+                "state_key": "parent",
+                "blocking_event": desc,
+                "urgency": round(10.0 * 0.35 * time_urgency, 3),
+                "dimension": "spatial",
+            })
+        else:
+            deviations.append({
+                "node_id": target,
+                "semantic_type": node_type,
+                "deviation": desc,
+                "state_key": "",
+                "blocking_event": desc,
+                "urgency": round(10.0 * 0.45 * time_urgency, 3),
+                "dimension": "state",
+            })
+
+    deviations.sort(key=lambda d: -d["urgency"])
+    return deviations[:top_k]
 
 
 def _initial_context(initial_scene: dict[str, Any] | None, observation: dict[str, Any], agent_id: str) -> dict[str, Any]:
@@ -872,6 +1171,7 @@ def llm_choose_action(
     agent_model: str,
     initial_scene: dict[str, Any] | None = None,
     active_goal: dict[str, Any] | None = None,
+    recent_events: str = "",
     agent_id: str = "robot_01",
 ) -> tuple[dict[str, Any], str]:
     if not candidates:
@@ -879,15 +1179,17 @@ def llm_choose_action(
     nodes = _node_index(observation)
     initial_nodes = _scene_node_index(initial_scene)
     prompt = {
-        "task": "Restore the scene toward the initial good arrangement. Choose one high_level_task from high_level_options or active_goal.task, then one legal low_level action_index that advances it.",
+        "task": "Restore the scene toward the initial good arrangement. Prioritize actions that fix critical_state_deviations, especially NPC-event-blocking ones (urgency > 3.0). Choose one high_level_task from high_level_options or active_goal.task, then one legal low_level action_index that advances it.",
         "robot_state": _robot_state(observation, nodes, agent_id),
         "rules": HOUSE_RULES,
         "active_goal": active_goal or {},
         "skills": relevant_skills_for_nodes(nodes, active_goal),
+        "recent_events": recent_events,
         "initial_context": _initial_context(initial_scene, observation, agent_id),
         "high_level_options": _high_level_options(observation, nodes, initial_nodes, agent_id),
         "visible_nodes": _compact_nodes(nodes, initial_nodes, agent_id),
         "candidates": _compact_candidates(candidates, nodes, initial_nodes, active_goal, agent_id),
+        "critical_state_deviations": critical_state_deviations(observation, initial_scene, agent_id),
         "response_format": {"high_level_task": "exact string from high_level_options or active_goal.task", "action_index": 0},
     }
     answer = llm_query(
@@ -949,18 +1251,6 @@ def llm_choose_reactive_action(
     return candidates[index], answer
 
 
-def ranked_rule_candidates(
-    candidates: list[dict[str, Any]],
-    observation: dict[str, Any],
-    initial_scene: dict[str, Any] | None = None,
-    active_goal: dict[str, Any] | None = None,
-    agent_id: str = "robot_01",
-) -> list[tuple[int, int, dict[str, Any]]]:
-    nodes = _node_index(observation)
-    initial_nodes = _scene_node_index(initial_scene)
-    return _ranked_prompt_candidates(candidates, nodes, initial_nodes, active_goal, agent_id)
-
-
 def fallback_choose_action(candidates: list[dict[str, Any]]) -> dict[str, Any]:
     for action_name in ("brush", "close"):
         for candidate in candidates:
@@ -988,10 +1278,7 @@ def execute(orchestrator: Orchestrator, action: dict[str, Any], agent_id: str = 
 
 
 __all__ = [
-    "decide",
-    "execute",
-    "fallback_choose_action",
-    "llm_choose_action",
-    "parse_action_index",
-    "ranked_rule_candidates",
+    "decide", "execute", "fallback_choose_action", "llm_choose_action",
+    "parse_action_index", "room_graph", "next_room_on_shortest_path",
+    "robot_room", "choose_explore_navigation_action",
 ]

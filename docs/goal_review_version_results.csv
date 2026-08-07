@@ -1,0 +1,11 @@
+scene,npc_count,version,final_score,state_score,spatial_score,human_score,blocking_total,recovered,recovery_rate,source_note
+Home,1,V0,0.7195,0.6358,0.7026,0.9375,4,2,0.50,user_provided_screenshot_2026-08-07
+Home,1,SA-fix,0.7461,0.6700,0.7346,0.9375,4,4,1.00,user_provided_screenshot_2026-08-07
+Hospital,3,V0,0.6776,0.6148,0.5900,0.9722,2,0,0.00,user_provided_screenshot_2026-08-07
+Hospital,3,SA-fix,0.7314,0.6176,0.7400,0.9722,7,1,0.14,user_provided_screenshot_2026-08-07
+Supermarket,3,V0,0.6557,0.4695,0.8155,0.7949,123,18,0.15,user_provided_screenshot_2026-08-07
+Supermarket,3,SA-fix,0.6799,0.4782,0.8441,0.8462,37,37,1.00,user_provided_screenshot_2026-08-07
+Office,3,V0,0.5671,0.4885,0.6384,0.6190,178,167,0.94,user_provided_screenshot_2026-08-07
+Office,3,SA-fix,0.7721,0.5785,0.9725,0.8571,60,60,1.00,user_provided_screenshot_2026-08-07
+Factory,3,V0,0.5825,0.3205,0.9665,0.5000,280,203,0.73,user_provided_screenshot_2026-08-07
+Factory,3,SA-fix,0.6415,0.4129,0.9845,0.5556,267,107,0.40,user_provided_screenshot_2026-08-07
