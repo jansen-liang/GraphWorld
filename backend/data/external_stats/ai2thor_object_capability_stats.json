@@ -1,0 +1,3946 @@
+[
+  {
+    "isInteractable": {
+      "false": 28,
+      "observations": 30,
+      "true": 2
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "alarmclock",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    },
+    "moveable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    },
+    "object_type": "aluminumfoil",
+    "openable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 3,
+      "true": 3
+    },
+    "receptacle": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 28,
+      "observations": 30,
+      "true": 2
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "apple",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 12,
+      "observations": 14,
+      "true": 2
+    },
+    "moveable": {
+      "false": 14,
+      "observations": 14,
+      "true": 0
+    },
+    "object_type": "baseballbat",
+    "openable": {
+      "false": 14,
+      "observations": 14,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 14,
+      "true": 14
+    },
+    "receptacle": {
+      "false": 14,
+      "observations": 14,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 14,
+      "observations": 14,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 11,
+      "observations": 11,
+      "true": 0
+    },
+    "moveable": {
+      "false": 11,
+      "observations": 11,
+      "true": 0
+    },
+    "object_type": "basketball",
+    "openable": {
+      "false": 11,
+      "observations": 11,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 11,
+      "true": 11
+    },
+    "receptacle": {
+      "false": 11,
+      "observations": 11,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 11,
+      "observations": 11,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 15,
+      "observations": 21,
+      "true": 6
+    },
+    "moveable": {
+      "false": 21,
+      "observations": 21,
+      "true": 0
+    },
+    "object_type": "bathtub",
+    "openable": {
+      "false": 21,
+      "observations": 21,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 21,
+      "observations": 21,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 5,
+      "observations": 21,
+      "true": 16
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 21,
+      "observations": 21,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 18,
+      "observations": 19,
+      "true": 1
+    },
+    "moveable": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    },
+    "object_type": "bathtubbasin",
+    "openable": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 19,
+      "true": 19
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 23,
+      "observations": 32,
+      "true": 9
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 32,
+      "true": 32
+    },
+    "object_type": "bed",
+    "openable": {
+      "false": 32,
+      "observations": 32,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 32,
+      "observations": 32,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 32,
+      "true": 32
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 32,
+      "observations": 32,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 47,
+      "observations": 49,
+      "true": 2
+    },
+    "moveable": {
+      "false": 49,
+      "observations": 49,
+      "true": 0
+    },
+    "object_type": "blinds",
+    "openable": {
+      "false": 0,
+      "observations": 49,
+      "true": 49
+    },
+    "pickupable": {
+      "false": 49,
+      "observations": 49,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 49,
+      "observations": 49,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 49,
+      "observations": 49,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 35,
+      "observations": 39,
+      "true": 4
+    },
+    "moveable": {
+      "false": 39,
+      "observations": 39,
+      "true": 0
+    },
+    "object_type": "book",
+    "openable": {
+      "false": 0,
+      "observations": 39,
+      "true": 39
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 39,
+      "true": 39
+    },
+    "receptacle": {
+      "false": 39,
+      "observations": 39,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 39,
+      "observations": 39,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 8,
+      "observations": 8,
+      "true": 0
+    },
+    "moveable": {
+      "false": 8,
+      "observations": 8,
+      "true": 0
+    },
+    "object_type": "boots",
+    "openable": {
+      "false": 8,
+      "observations": 8,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 8,
+      "true": 8
+    },
+    "receptacle": {
+      "false": 8,
+      "observations": 8,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 8,
+      "observations": 8,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 7,
+      "observations": 7,
+      "true": 0
+    },
+    "moveable": {
+      "false": 7,
+      "observations": 7,
+      "true": 0
+    },
+    "object_type": "bottle",
+    "openable": {
+      "false": 7,
+      "observations": 7,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 7,
+      "true": 7
+    },
+    "receptacle": {
+      "false": 7,
+      "observations": 7,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 7,
+      "observations": 7,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 43,
+      "observations": 48,
+      "true": 5
+    },
+    "moveable": {
+      "false": 48,
+      "observations": 48,
+      "true": 0
+    },
+    "object_type": "bowl",
+    "openable": {
+      "false": 48,
+      "observations": 48,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 48,
+      "true": 48
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 48,
+      "true": 48
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 48,
+      "observations": 48,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 35,
+      "observations": 42,
+      "true": 7
+    },
+    "moveable": {
+      "false": 42,
+      "observations": 42,
+      "true": 0
+    },
+    "object_type": "box",
+    "openable": {
+      "false": 0,
+      "observations": 42,
+      "true": 42
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 42,
+      "true": 42
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 42,
+      "true": 42
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 42,
+      "observations": 42,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 25,
+      "observations": 30,
+      "true": 5
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "bread",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 25,
+      "observations": 30,
+      "true": 5
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "butterknife",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 460,
+      "observations": 516,
+      "true": 56
+    },
+    "moveable": {
+      "false": 516,
+      "observations": 516,
+      "true": 0
+    },
+    "object_type": "cabinet",
+    "openable": {
+      "false": 0,
+      "observations": 516,
+      "true": 516
+    },
+    "pickupable": {
+      "false": 516,
+      "observations": 516,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 516,
+      "true": 516
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 516,
+      "observations": 516,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 33,
+      "observations": 35,
+      "true": 2
+    },
+    "moveable": {
+      "false": 35,
+      "observations": 35,
+      "true": 0
+    },
+    "object_type": "candle",
+    "openable": {
+      "false": 35,
+      "observations": 35,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 35,
+      "true": 35
+    },
+    "receptacle": {
+      "false": 35,
+      "observations": 35,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 35,
+      "true": 35
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 32,
+      "observations": 33,
+      "true": 1
+    },
+    "moveable": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    },
+    "object_type": "cd",
+    "openable": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 33,
+      "true": 33
+    },
+    "receptacle": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 39,
+      "observations": 41,
+      "true": 2
+    },
+    "moveable": {
+      "false": 41,
+      "observations": 41,
+      "true": 0
+    },
+    "object_type": "cellphone",
+    "openable": {
+      "false": 41,
+      "observations": 41,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 41,
+      "true": 41
+    },
+    "receptacle": {
+      "false": 41,
+      "observations": 41,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 41,
+      "true": 41
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 155,
+      "observations": 169,
+      "true": 14
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 169,
+      "true": 169
+    },
+    "object_type": "chair",
+    "openable": {
+      "false": 169,
+      "observations": 169,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 169,
+      "observations": 169,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 7,
+      "observations": 169,
+      "true": 162
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 169,
+      "observations": 169,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 37,
+      "observations": 39,
+      "true": 2
+    },
+    "moveable": {
+      "false": 39,
+      "observations": 39,
+      "true": 0
+    },
+    "object_type": "cloth",
+    "openable": {
+      "false": 39,
+      "observations": 39,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 39,
+      "true": 39
+    },
+    "receptacle": {
+      "false": 39,
+      "observations": 39,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 39,
+      "observations": 39,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 20,
+      "observations": 29,
+      "true": 9
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 29,
+      "true": 29
+    },
+    "object_type": "coffee_table",
+    "openable": {
+      "false": 29,
+      "observations": 29,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 29,
+      "observations": 29,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 29,
+      "true": 29
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 29,
+      "observations": 29,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 26,
+      "observations": 30,
+      "true": 4
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "object_type": "coffeemachine",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 60,
+      "observations": 101,
+      "true": 41
+    },
+    "moveable": {
+      "false": 101,
+      "observations": 101,
+      "true": 0
+    },
+    "object_type": "counter",
+    "openable": {
+      "false": 101,
+      "observations": 101,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 101,
+      "observations": 101,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 101,
+      "true": 101
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 101,
+      "observations": 101,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 61,
+      "observations": 63,
+      "true": 2
+    },
+    "moveable": {
+      "false": 63,
+      "observations": 63,
+      "true": 0
+    },
+    "object_type": "creditcard",
+    "openable": {
+      "false": 63,
+      "observations": 63,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 63,
+      "true": 63
+    },
+    "receptacle": {
+      "false": 63,
+      "observations": 63,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 63,
+      "observations": 63,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 27,
+      "observations": 30,
+      "true": 3
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "cup",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 18,
+      "observations": 19,
+      "true": 1
+    },
+    "moveable": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    },
+    "object_type": "curtains",
+    "openable": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 21,
+      "observations": 30,
+      "true": 9
+    },
+    "moveable": {
+      "false": 3,
+      "observations": 30,
+      "true": 27
+    },
+    "object_type": "desk",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 50,
+      "observations": 51,
+      "true": 1
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 51,
+      "true": 51
+    },
+    "object_type": "desklamp",
+    "openable": {
+      "false": 51,
+      "observations": 51,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 51,
+      "observations": 51,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 51,
+      "observations": 51,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 51,
+      "true": 51
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 2,
+      "observations": 2,
+      "true": 0
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 2,
+      "true": 2
+    },
+    "object_type": "desktop",
+    "openable": {
+      "false": 2,
+      "observations": 2,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 2,
+      "observations": 2,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 2,
+      "observations": 2,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 2,
+      "true": 2
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 36,
+      "observations": 36,
+      "true": 0
+    },
+    "moveable": {
+      "false": 36,
+      "observations": 36,
+      "true": 0
+    },
+    "object_type": "dishsponge",
+    "openable": {
+      "false": 36,
+      "observations": 36,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 36,
+      "true": 36
+    },
+    "receptacle": {
+      "false": 36,
+      "observations": 36,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 36,
+      "observations": 36,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 3,
+      "true": 3
+    },
+    "object_type": "dogbed",
+    "openable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 3,
+      "true": 3
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 519,
+      "observations": 561,
+      "true": 42
+    },
+    "moveable": {
+      "false": 561,
+      "observations": 561,
+      "true": 0
+    },
+    "object_type": "drawer",
+    "openable": {
+      "false": 0,
+      "observations": 561,
+      "true": 561
+    },
+    "pickupable": {
+      "false": 561,
+      "observations": 561,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 561,
+      "true": 561
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 561,
+      "observations": 561,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 24,
+      "observations": 26,
+      "true": 2
+    },
+    "moveable": {
+      "false": 1,
+      "observations": 26,
+      "true": 25
+    },
+    "object_type": "dresser",
+    "openable": {
+      "false": 26,
+      "observations": 26,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 26,
+      "observations": 26,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 26,
+      "true": 26
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 26,
+      "observations": 26,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 5,
+      "observations": 5,
+      "true": 0
+    },
+    "moveable": {
+      "false": 5,
+      "observations": 5,
+      "true": 0
+    },
+    "object_type": "dumbbell",
+    "openable": {
+      "false": 5,
+      "observations": 5,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 5,
+      "true": 5
+    },
+    "receptacle": {
+      "false": 5,
+      "observations": 5,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 5,
+      "observations": 5,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 29,
+      "observations": 30,
+      "true": 1
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "egg",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 87,
+      "observations": 91,
+      "true": 4
+    },
+    "moveable": {
+      "false": 91,
+      "observations": 91,
+      "true": 0
+    },
+    "object_type": "faucet",
+    "openable": {
+      "false": 91,
+      "observations": 91,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 91,
+      "observations": 91,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 91,
+      "observations": 91,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 91,
+      "true": 91
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 43,
+      "observations": 120,
+      "true": 77
+    },
+    "moveable": {
+      "false": 120,
+      "observations": 120,
+      "true": 0
+    },
+    "object_type": "floor",
+    "openable": {
+      "false": 120,
+      "observations": 120,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 120,
+      "observations": 120,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 120,
+      "true": 120
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 120,
+      "observations": 120,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 31,
+      "observations": 31,
+      "true": 0
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 31,
+      "true": 31
+    },
+    "object_type": "floorlamp",
+    "openable": {
+      "false": 31,
+      "observations": 31,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 31,
+      "observations": 31,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 31,
+      "observations": 31,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 31,
+      "true": 31
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    },
+    "moveable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    },
+    "object_type": "footstool",
+    "openable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 3,
+      "true": 3
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 3,
+      "true": 3
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 3,
+      "observations": 3,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 25,
+      "observations": 30,
+      "true": 5
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "fork",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 6,
+      "observations": 6,
+      "true": 0
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 6,
+      "true": 6
+    },
+    "object_type": "garbagebag",
+    "openable": {
+      "false": 6,
+      "observations": 6,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 6,
+      "observations": 6,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 6,
+      "observations": 6,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 6,
+      "observations": 6,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 114,
+      "observations": 120,
+      "true": 6
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 120,
+      "true": 120
+    },
+    "object_type": "garbagecan",
+    "openable": {
+      "false": 120,
+      "observations": 120,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 120,
+      "observations": 120,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 120,
+      "true": 120
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 120,
+      "observations": 120,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 28,
+      "observations": 30,
+      "true": 2
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "handtowel",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 43,
+      "observations": 45,
+      "true": 2
+    },
+    "moveable": {
+      "false": 45,
+      "observations": 45,
+      "true": 0
+    },
+    "object_type": "handtowelholder",
+    "openable": {
+      "false": 45,
+      "observations": 45,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 45,
+      "observations": 45,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 45,
+      "true": 45
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 45,
+      "observations": 45,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 47,
+      "observations": 51,
+      "true": 4
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 51,
+      "true": 51
+    },
+    "object_type": "houseplant",
+    "openable": {
+      "false": 51,
+      "observations": 51,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 51,
+      "observations": 51,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 51,
+      "observations": 51,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 51,
+      "observations": 51,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 12,
+      "observations": 15,
+      "true": 3
+    },
+    "moveable": {
+      "false": 15,
+      "observations": 15,
+      "true": 0
+    },
+    "object_type": "kettle",
+    "openable": {
+      "false": 0,
+      "observations": 15,
+      "true": 15
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 15,
+      "true": 15
+    },
+    "receptacle": {
+      "false": 15,
+      "observations": 15,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 15,
+      "observations": 15,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 57,
+      "observations": 60,
+      "true": 3
+    },
+    "moveable": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    },
+    "object_type": "keychain",
+    "openable": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 60,
+      "true": 60
+    },
+    "receptacle": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 26,
+      "observations": 30,
+      "true": 4
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "knife",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 11,
+      "observations": 11,
+      "true": 0
+    },
+    "moveable": {
+      "false": 11,
+      "observations": 11,
+      "true": 0
+    },
+    "object_type": "ladle",
+    "openable": {
+      "false": 11,
+      "observations": 11,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 11,
+      "true": 11
+    },
+    "receptacle": {
+      "false": 11,
+      "observations": 11,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 11,
+      "observations": 11,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 57,
+      "observations": 60,
+      "true": 3
+    },
+    "moveable": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    },
+    "object_type": "laptop",
+    "openable": {
+      "false": 0,
+      "observations": 60,
+      "true": 60
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 60,
+      "true": 60
+    },
+    "receptacle": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 60,
+      "true": 60
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 8,
+      "observations": 8,
+      "true": 0
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 8,
+      "true": 8
+    },
+    "object_type": "laundryhamper",
+    "openable": {
+      "false": 0,
+      "observations": 8,
+      "true": 8
+    },
+    "pickupable": {
+      "false": 8,
+      "observations": 8,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 8,
+      "true": 8
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 8,
+      "observations": 8,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 29,
+      "observations": 30,
+      "true": 1
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "lettuce",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 114,
+      "observations": 120,
+      "true": 6
+    },
+    "moveable": {
+      "false": 120,
+      "observations": 120,
+      "true": 0
+    },
+    "object_type": "lightswitch",
+    "openable": {
+      "false": 120,
+      "observations": 120,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 120,
+      "observations": 120,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 120,
+      "observations": 120,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 120,
+      "true": 120
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 25,
+      "observations": 30,
+      "true": 5
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "object_type": "microwave",
+    "openable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "pickupable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 61,
+      "observations": 67,
+      "true": 6
+    },
+    "moveable": {
+      "false": 67,
+      "observations": 67,
+      "true": 0
+    },
+    "object_type": "mirror",
+    "openable": {
+      "false": 67,
+      "observations": 67,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 67,
+      "observations": 67,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 67,
+      "observations": 67,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 67,
+      "observations": 67,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 43,
+      "observations": 46,
+      "true": 3
+    },
+    "moveable": {
+      "false": 46,
+      "observations": 46,
+      "true": 0
+    },
+    "object_type": "mug",
+    "openable": {
+      "false": 46,
+      "observations": 46,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 46,
+      "true": 46
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 46,
+      "true": 46
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 46,
+      "observations": 46,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 18,
+      "observations": 18,
+      "true": 0
+    },
+    "moveable": {
+      "false": 18,
+      "observations": 18,
+      "true": 0
+    },
+    "object_type": "newspaper",
+    "openable": {
+      "false": 18,
+      "observations": 18,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 18,
+      "true": 18
+    },
+    "receptacle": {
+      "false": 18,
+      "observations": 18,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 18,
+      "observations": 18,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 4,
+      "observations": 4,
+      "true": 0
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 4,
+      "true": 4
+    },
+    "object_type": "ottoman",
+    "openable": {
+      "false": 4,
+      "observations": 4,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 4,
+      "observations": 4,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 4,
+      "true": 4
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 4,
+      "observations": 4,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 72,
+      "observations": 75,
+      "true": 3
+    },
+    "moveable": {
+      "false": 75,
+      "observations": 75,
+      "true": 0
+    },
+    "object_type": "painting",
+    "openable": {
+      "false": 75,
+      "observations": 75,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 75,
+      "observations": 75,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 75,
+      "observations": 75,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 75,
+      "observations": 75,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 25,
+      "observations": 30,
+      "true": 5
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "pan",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 13,
+      "observations": 14,
+      "true": 1
+    },
+    "moveable": {
+      "false": 14,
+      "observations": 14,
+      "true": 0
+    },
+    "object_type": "papertowelroll",
+    "openable": {
+      "false": 14,
+      "observations": 14,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 14,
+      "true": 14
+    },
+    "receptacle": {
+      "false": 14,
+      "observations": 14,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 14,
+      "observations": 14,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 34,
+      "observations": 37,
+      "true": 3
+    },
+    "moveable": {
+      "false": 37,
+      "observations": 37,
+      "true": 0
+    },
+    "object_type": "pen",
+    "openable": {
+      "false": 37,
+      "observations": 37,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 37,
+      "true": 37
+    },
+    "receptacle": {
+      "false": 37,
+      "observations": 37,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 37,
+      "observations": 37,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 35,
+      "observations": 36,
+      "true": 1
+    },
+    "moveable": {
+      "false": 36,
+      "observations": 36,
+      "true": 0
+    },
+    "object_type": "pencil",
+    "openable": {
+      "false": 36,
+      "observations": 36,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 36,
+      "true": 36
+    },
+    "receptacle": {
+      "false": 36,
+      "observations": 36,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 36,
+      "observations": 36,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 27,
+      "observations": 30,
+      "true": 3
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "peppershaker",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 69,
+      "observations": 72,
+      "true": 3
+    },
+    "moveable": {
+      "false": 72,
+      "observations": 72,
+      "true": 0
+    },
+    "object_type": "pillow",
+    "openable": {
+      "false": 72,
+      "observations": 72,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 72,
+      "true": 72
+    },
+    "receptacle": {
+      "false": 72,
+      "observations": 72,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 72,
+      "observations": 72,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 37,
+      "observations": 40,
+      "true": 3
+    },
+    "moveable": {
+      "false": 40,
+      "observations": 40,
+      "true": 0
+    },
+    "object_type": "plate",
+    "openable": {
+      "false": 40,
+      "observations": 40,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 40,
+      "true": 40
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 40,
+      "true": 40
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 40,
+      "observations": 40,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 28,
+      "observations": 30,
+      "true": 2
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "plunger",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "moveable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "object_type": "poster",
+    "openable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 26,
+      "observations": 30,
+      "true": 4
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "pot",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 27,
+      "observations": 30,
+      "true": 3
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "potato",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 24,
+      "observations": 30,
+      "true": 6
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "refrigerator",
+    "openable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "pickupable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    },
+    "moveable": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    },
+    "object_type": "remotecontrol",
+    "openable": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 33,
+      "true": 33
+    },
+    "receptacle": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 9,
+      "observations": 9,
+      "true": 0
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 9,
+      "true": 9
+    },
+    "object_type": "roomdecor",
+    "openable": {
+      "false": 9,
+      "observations": 9,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 9,
+      "observations": 9,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 9,
+      "observations": 9,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 9,
+      "observations": 9,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 8,
+      "observations": 8,
+      "true": 0
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 8,
+      "true": 8
+    },
+    "object_type": "safe",
+    "openable": {
+      "false": 0,
+      "observations": 8,
+      "true": 8
+    },
+    "pickupable": {
+      "false": 8,
+      "observations": 8,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 8,
+      "true": 8
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 8,
+      "observations": 8,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 24,
+      "observations": 30,
+      "true": 6
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "saltshaker",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 27,
+      "observations": 30,
+      "true": 3
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "scrubbrush",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 256,
+      "observations": 261,
+      "true": 5
+    },
+    "moveable": {
+      "false": 261,
+      "observations": 261,
+      "true": 0
+    },
+    "object_type": "shelf",
+    "openable": {
+      "false": 261,
+      "observations": 261,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 261,
+      "observations": 261,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 261,
+      "true": 261
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 261,
+      "observations": 261,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 18,
+      "observations": 19,
+      "true": 1
+    },
+    "moveable": {
+      "false": 1,
+      "observations": 19,
+      "true": 18
+    },
+    "object_type": "shelvingunit",
+    "openable": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 18,
+      "observations": 19,
+      "true": 1
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 19,
+      "observations": 19,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 12,
+      "observations": 13,
+      "true": 1
+    },
+    "moveable": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    },
+    "object_type": "showercurtain",
+    "openable": {
+      "false": 0,
+      "observations": 13,
+      "true": 13
+    },
+    "pickupable": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 9,
+      "observations": 17,
+      "true": 8
+    },
+    "moveable": {
+      "false": 17,
+      "observations": 17,
+      "true": 0
+    },
+    "object_type": "showerdoor",
+    "openable": {
+      "false": 0,
+      "observations": 17,
+      "true": 17
+    },
+    "pickupable": {
+      "false": 17,
+      "observations": 17,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 17,
+      "observations": 17,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 17,
+      "observations": 17,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 6,
+      "observations": 13,
+      "true": 7
+    },
+    "moveable": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    },
+    "object_type": "showerglass",
+    "openable": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 25,
+      "observations": 25,
+      "true": 0
+    },
+    "moveable": {
+      "false": 25,
+      "observations": 25,
+      "true": 0
+    },
+    "object_type": "showerhead",
+    "openable": {
+      "false": 25,
+      "observations": 25,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 25,
+      "observations": 25,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 25,
+      "observations": 25,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 25,
+      "true": 25
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 88,
+      "observations": 94,
+      "true": 6
+    },
+    "moveable": {
+      "false": 2,
+      "observations": 94,
+      "true": 92
+    },
+    "object_type": "sidetable",
+    "openable": {
+      "false": 94,
+      "observations": 94,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 94,
+      "observations": 94,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 94,
+      "true": 94
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 94,
+      "observations": 94,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 125,
+      "observations": 149,
+      "true": 24
+    },
+    "moveable": {
+      "false": 149,
+      "observations": 149,
+      "true": 0
+    },
+    "object_type": "sink",
+    "openable": {
+      "false": 149,
+      "observations": 149,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 149,
+      "observations": 149,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 54,
+      "observations": 149,
+      "true": 95
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 149,
+      "observations": 149,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 27,
+      "observations": 30,
+      "true": 3
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "soapbar",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 56,
+      "observations": 60,
+      "true": 4
+    },
+    "moveable": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    },
+    "object_type": "soapbottle",
+    "openable": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 60,
+      "true": 60
+    },
+    "receptacle": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 25,
+      "observations": 37,
+      "true": 12
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 37,
+      "true": 37
+    },
+    "object_type": "sofa",
+    "openable": {
+      "false": 37,
+      "observations": 37,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 37,
+      "observations": 37,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 37,
+      "true": 37
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 37,
+      "observations": 37,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 26,
+      "observations": 30,
+      "true": 4
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "spatula",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 27,
+      "observations": 30,
+      "true": 3
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "spoon",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 31,
+      "observations": 32,
+      "true": 1
+    },
+    "moveable": {
+      "false": 32,
+      "observations": 32,
+      "true": 0
+    },
+    "object_type": "spraybottle",
+    "openable": {
+      "false": 32,
+      "observations": 32,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 32,
+      "true": 32
+    },
+    "receptacle": {
+      "false": 32,
+      "observations": 32,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 32,
+      "observations": 32,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 60,
+      "observations": 63,
+      "true": 3
+    },
+    "moveable": {
+      "false": 63,
+      "observations": 63,
+      "true": 0
+    },
+    "object_type": "statue",
+    "openable": {
+      "false": 63,
+      "observations": 63,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 63,
+      "true": 63
+    },
+    "receptacle": {
+      "false": 63,
+      "observations": 63,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 63,
+      "observations": 63,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 21,
+      "observations": 23,
+      "true": 2
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 23,
+      "true": 23
+    },
+    "object_type": "stool",
+    "openable": {
+      "false": 23,
+      "observations": 23,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 23,
+      "observations": 23,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 23,
+      "true": 23
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 23,
+      "observations": 23,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 101,
+      "observations": 123,
+      "true": 22
+    },
+    "moveable": {
+      "false": 123,
+      "observations": 123,
+      "true": 0
+    },
+    "object_type": "stoveburner",
+    "openable": {
+      "false": 123,
+      "observations": 123,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 123,
+      "observations": 123,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 123,
+      "true": 123
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 123,
+      "observations": 123,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 108,
+      "observations": 123,
+      "true": 15
+    },
+    "moveable": {
+      "false": 123,
+      "observations": 123,
+      "true": 0
+    },
+    "object_type": "stoveknob",
+    "openable": {
+      "false": 123,
+      "observations": 123,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 123,
+      "observations": 123,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 123,
+      "observations": 123,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 123,
+      "true": 123
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 28,
+      "observations": 37,
+      "true": 9
+    },
+    "moveable": {
+      "false": 4,
+      "observations": 37,
+      "true": 33
+    },
+    "object_type": "table",
+    "openable": {
+      "false": 37,
+      "observations": 37,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 37,
+      "observations": 37,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 37,
+      "true": 37
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 37,
+      "observations": 37,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 1,
+      "observations": 1,
+      "true": 0
+    },
+    "moveable": {
+      "false": 1,
+      "observations": 1,
+      "true": 0
+    },
+    "object_type": "tabletopdecor",
+    "openable": {
+      "false": 1,
+      "observations": 1,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 1,
+      "true": 1
+    },
+    "receptacle": {
+      "false": 1,
+      "observations": 1,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 1,
+      "observations": 1,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "moveable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "object_type": "teddybear",
+    "openable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 10,
+      "true": 10
+    },
+    "receptacle": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 32,
+      "observations": 33,
+      "true": 1
+    },
+    "moveable": {
+      "false": 8,
+      "observations": 33,
+      "true": 25
+    },
+    "object_type": "television",
+    "openable": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 33,
+      "observations": 33,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 33,
+      "true": 33
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "moveable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "object_type": "tennisracket",
+    "openable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 10,
+      "true": 10
+    },
+    "receptacle": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 21,
+      "observations": 22,
+      "true": 1
+    },
+    "moveable": {
+      "false": 22,
+      "observations": 22,
+      "true": 0
+    },
+    "object_type": "tissuebox",
+    "openable": {
+      "false": 22,
+      "observations": 22,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 22,
+      "true": 22
+    },
+    "receptacle": {
+      "false": 22,
+      "observations": 22,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 22,
+      "observations": 22,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 25,
+      "observations": 30,
+      "true": 5
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "object_type": "toaster",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 23,
+      "observations": 30,
+      "true": 7
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "toilet",
+    "openable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "pickupable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 56,
+      "observations": 60,
+      "true": 4
+    },
+    "moveable": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    },
+    "object_type": "toiletpaper",
+    "openable": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 60,
+      "true": 60
+    },
+    "receptacle": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 60,
+      "observations": 60,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 24,
+      "observations": 30,
+      "true": 6
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "toiletpaperhanger",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 29,
+      "observations": 30,
+      "true": 1
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "tomato",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 24,
+      "observations": 30,
+      "true": 6
+    },
+    "moveable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "object_type": "towel",
+    "openable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 30,
+      "true": 30
+    },
+    "receptacle": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 30,
+      "observations": 30,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 32,
+      "observations": 38,
+      "true": 6
+    },
+    "moveable": {
+      "false": 38,
+      "observations": 38,
+      "true": 0
+    },
+    "object_type": "towelholder",
+    "openable": {
+      "false": 38,
+      "observations": 38,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 38,
+      "observations": 38,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 38,
+      "true": 38
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 38,
+      "observations": 38,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 13,
+      "observations": 14,
+      "true": 1
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 14,
+      "true": 14
+    },
+    "object_type": "tvstand",
+    "openable": {
+      "false": 14,
+      "observations": 14,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 14,
+      "observations": 14,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 0,
+      "observations": 14,
+      "true": 14
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 14,
+      "observations": 14,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 1,
+      "observations": 1,
+      "true": 0
+    },
+    "moveable": {
+      "false": 0,
+      "observations": 1,
+      "true": 1
+    },
+    "object_type": "vacuumcleaner",
+    "openable": {
+      "false": 1,
+      "observations": 1,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 1,
+      "observations": 1,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 1,
+      "observations": 1,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 1,
+      "observations": 1,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 67,
+      "observations": 67,
+      "true": 0
+    },
+    "moveable": {
+      "false": 67,
+      "observations": 67,
+      "true": 0
+    },
+    "object_type": "vase",
+    "openable": {
+      "false": 67,
+      "observations": 67,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 67,
+      "true": 67
+    },
+    "receptacle": {
+      "false": 67,
+      "observations": 67,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 67,
+      "observations": 67,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 18,
+      "observations": 18,
+      "true": 0
+    },
+    "moveable": {
+      "false": 18,
+      "observations": 18,
+      "true": 0
+    },
+    "object_type": "watch",
+    "openable": {
+      "false": 18,
+      "observations": 18,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 18,
+      "true": 18
+    },
+    "receptacle": {
+      "false": 18,
+      "observations": 18,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 18,
+      "observations": 18,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    },
+    "moveable": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    },
+    "object_type": "wateringcan",
+    "openable": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 13,
+      "true": 13
+    },
+    "receptacle": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 13,
+      "observations": 13,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 178,
+      "observations": 182,
+      "true": 4
+    },
+    "moveable": {
+      "false": 182,
+      "observations": 182,
+      "true": 0
+    },
+    "object_type": "window",
+    "openable": {
+      "false": 182,
+      "observations": 182,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 182,
+      "observations": 182,
+      "true": 0
+    },
+    "receptacle": {
+      "false": 182,
+      "observations": 182,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 182,
+      "observations": 182,
+      "true": 0
+    }
+  },
+  {
+    "isInteractable": {
+      "false": 9,
+      "observations": 10,
+      "true": 1
+    },
+    "moveable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "object_type": "winebottle",
+    "openable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "pickupable": {
+      "false": 0,
+      "observations": 10,
+      "true": 10
+    },
+    "receptacle": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    },
+    "source": "AI2-THOR metadata",
+    "toggleable": {
+      "false": 10,
+      "observations": 10,
+      "true": 0
+    }
+  }
+]

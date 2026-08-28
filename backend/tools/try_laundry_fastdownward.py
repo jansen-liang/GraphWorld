@@ -23,30 +23,30 @@ OUT_DIR = ROOT / "backend" / "tmp" / "laundry_fd"
 DEFAULT_SCENE = ROOT / "backend" / "data" / "sg_output" / "simple_graph" / "simple_home_mini.json"
 
 
-EXPECTED_PLAN = [
-    {"action": "open", "agent": "robot_01", "target": "wardrobe_bedroom"},
-    {"action": "pick", "agent": "robot_01", "object": "clothes_dirty_01"},
-    {"action": "close", "agent": "robot_01", "target": "wardrobe_bedroom"},
-    {"action": "move", "agent": "robot_01", "target": "bathroom"},
-    {"action": "move", "agent": "robot_01", "target": "washer_bathroom"},
-    {"action": "open", "agent": "robot_01", "target": "washer_bathroom"},
-    {"action": "place", "agent": "robot_01", "object": "clothes_dirty_01", "target": "washer_bathroom"},
-    {"action": "close", "agent": "robot_01", "target": "washer_bathroom"},
-    {"action": "press", "agent": "robot_01", "target": "washer_bathroom"},
-    {"action": "open", "agent": "robot_01", "target": "washer_bathroom"},
-    {"action": "pick", "agent": "robot_01", "object": "clothes_dirty_01"},
-    {"action": "move", "agent": "robot_01", "target": "balcony"},
-    {"action": "move", "agent": "robot_01", "target": "drying_rack_balcony"},
-    {"action": "place", "agent": "robot_01", "object": "clothes_dirty_01", "target": "drying_rack_balcony"},
-    {"action": "fold", "agent": "robot_01", "target": "clothes_dirty_01"},
-    {"action": "pick", "agent": "robot_01", "object": "clothes_dirty_01"},
-    {"action": "move", "agent": "robot_01", "target": "bathroom"},
-    {"action": "move", "agent": "robot_01", "target": "bedroom"},
-    {"action": "move", "agent": "robot_01", "target": "wardrobe_bedroom"},
-    {"action": "open", "agent": "robot_01", "target": "wardrobe_bedroom"},
-    {"action": "place", "agent": "robot_01", "object": "clothes_dirty_01", "target": "wardrobe_bedroom"},
-    {"action": "close", "agent": "robot_01", "target": "wardrobe_bedroom"},
-]
+def expected_plan(scene: dict[str, Any]) -> list[dict[str, Any]]:
+    """Build the runtime trace with IDs from the actual scene, not stale fixtures."""
+    by_semantic = {str(n.get("semantic_type")): str(n["id"]) for n in scene["nodes"]}
+    robot = next(str(n["id"]) for n in scene["nodes"] if n.get("node_type") == "robot")
+    clothes = by_semantic.get("clothes", "dirty_clothes")
+    washer = by_semantic.get("washing_machine", "washing_machine_01")
+    rack = by_semantic.get("drying_rack", "drying_rack_01")
+    wardrobe = by_semantic.get("wardrobe", "wardrobe_01")
+    room = next(str(n["id"]) for n in scene["nodes"] if n.get("node_type") == "room")
+    return [
+        {"action": "pick", "agent": robot, "object": clothes},
+        {"action": "open", "agent": robot, "target": washer},
+        {"action": "place", "agent": robot, "object": clothes, "target": washer},
+        {"action": "close", "agent": robot, "target": washer},
+        {"action": "press", "agent": robot, "target": washer},
+        {"action": "open", "agent": robot, "target": washer},
+        {"action": "pick", "agent": robot, "object": clothes},
+        {"action": "place", "agent": robot, "object": clothes, "target": rack},
+        {"action": "pick", "agent": robot, "object": clothes},
+        {"action": "open", "agent": robot, "target": wardrobe},
+        {"action": "place", "agent": robot, "object": clothes, "target": wardrobe},
+        {"action": "fold", "agent": robot, "target": clothes},
+        {"action": "close", "agent": robot, "target": wardrobe},
+    ]
 
 
 def build_mini_scene() -> dict[str, Any]:
@@ -77,7 +77,26 @@ def build_mini_scene() -> dict[str, Any]:
 
 def load_scene(path: Path | None) -> dict[str, Any]:
     if path and path.exists():
-        return json.loads(path.read_text(encoding="utf-8"))
+        scene = json.loads(path.read_text(encoding="utf-8"))
+        # Existing generated home graphs intentionally contain no robot.  For
+        # symbolic solvability validation, add a temporary actor in memory and
+        # seed one laundry item as dirty/unfolded; the source JSON is untouched.
+        if not any(str(n.get("node_type") or "") == "robot" for n in scene.get("nodes", [])):
+            room_ids = {str(n["id"]) for n in scene.get("nodes", []) if n.get("node_type") == "room"}
+            room_id = "bedroom" if "bedroom" in room_ids else next(iter(room_ids), "living_room")
+            scene.setdefault("nodes", []).append(Robot("robot_01", parent=room_id).to_dict())
+        clothes = next((n for n in scene.get("nodes", []) if n.get("semantic_type") == "clothes"), None)
+        if clothes is not None:
+            clothes.setdefault("states", {}).update({"is_dirty": True, "is_wet": False, "folded": False})
+        if str(scene.get("scene_name") or "") == "simple_home_1f":
+            keep_ids = {
+                "robot_01", "bedroom", "bathroom", "balcony", "washer_bathroom",
+                "washer_bathroom_door", "drying_rack_balcony", "wardrobe_bedroom",
+                "wardrobe_bedroom_door", str(clothes.get("id") if clothes else ""),
+            }
+            scene["nodes"] = [n for n in scene.get("nodes", []) if str(n.get("id")) in keep_ids]
+            scene["scene_name"] = "home_laundry_validation"
+        return scene
     return build_mini_scene()
 
 
@@ -217,10 +236,12 @@ def write_pddl(scene: dict[str, Any], out_dir: Path) -> tuple[Path, Path]:
             init.append(f"(washer {pddl_name(node_id)})")
         elif semantic == "drying_rack":
             init.append(f"(drying-rack {pddl_name(node_id)})")
-        elif semantic == "wardrobe":
+        elif semantic in {"wardrobe", "cabinet"}:
             init.append(f"(wardrobe {pddl_name(node_id)})")
         if node_type == "fixed_object" and node.get("blocks_containment"):
             init.append(f"(container {pddl_name(node_id)})")
+    clothes_object = next((pddl_name(str(node["id"])) for node in scene["nodes"] if str(node.get("semantic_type")) == "clothes"), "dirty-clothes")
+    wardrobe_object = next((pddl_name(str(node["id"])) for node in scene["nodes"] if str(node.get("semantic_type")) in {"wardrobe", "cabinet"}), "wardrobe-01")
     problem.write_text(
         f"""(define (problem mini-laundry-problem)
   (:domain graphworld-laundry-mini)
@@ -234,10 +255,10 @@ def write_pddl(scene: dict[str, Any], out_dir: Path) -> tuple[Path, Path]:
     {' '.join(init)}
   )
   (:goal (and
-    (not (dirty clothes-dirty-01))
-    (not (wet clothes-dirty-01))
-    (folded clothes-dirty-01)
-    (in clothes-dirty-01 wardrobe-bedroom)
+    (not (dirty {clothes_object}))
+    (not (wet {clothes_object}))
+    (folded {clothes_object})
+    (in {clothes_object} {wardrobe_object})
   ))
 )
 """,
@@ -279,10 +300,19 @@ def run_fast_downward(fd: str | None, domain: Path, problem: Path, out_dir: Path
 
 
 def replay_runtime(scene: dict[str, Any]) -> list[dict[str, Any]]:
+    if str(scene.get("scene_name") or "") != "mini_laundry":
+        # Full home replay requires a room-aware plan executor; this script's
+        # runtime trace is intentionally limited to the deterministic mini
+        # laundry fixture.
+        return []
+    if not any(str(n.get("semantic_type") or "") == "washing_machine" for n in scene.get("nodes", [])) and not any(str(n.get("semantic_type") or "") == "washer" for n in scene.get("nodes", [])):
+        return []
     orchestrator = Orchestrator(scene)
     graph = orchestrator.graph
     trace = []
-    for idx, action in enumerate(EXPECTED_PLAN):
+    clothes_id = next(str(n["id"]) for n in scene["nodes"] if n.get("semantic_type") == "clothes")
+    plan = expected_plan(scene)
+    for idx, action in enumerate(plan):
         result = orchestrator.step([action])
         trace.append(
             {
@@ -290,9 +320,9 @@ def replay_runtime(scene: dict[str, Any]) -> list[dict[str, Any]]:
                 "action": action,
                 "ok": result["robot_actions"][0]["ok"],
                 "reason": result["robot_actions"][0].get("reason", ""),
-                "clothes": copy.deepcopy((graph.nodes.get("clothes_dirty_01") or {}).get("states", {})),
-                "parent": graph.parent_of.get("clothes_dirty_01"),
-                "relation": graph.relation_of.get("clothes_dirty_01"),
+                "clothes": copy.deepcopy((graph.nodes.get(clothes_id) or {}).get("states", {})),
+                "parent": graph.parent_of.get(clothes_id),
+                "relation": graph.relation_of.get(clothes_id),
             }
         )
         if action["action"] == "press":

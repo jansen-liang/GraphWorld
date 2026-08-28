@@ -32,13 +32,32 @@ class SceneGraph:
     def __init__(self, scene: dict[str, Any]):
         self.scene_name = str(scene.get("scene_name") or "scene")
         self.nodes = {str(node["id"]): node for node in _scene_nodes(scene) if node.get("id")}
+        self._migrate_dynamic_state_fields()
         self._validate_node_states()
         self.edges = _scene_edges(scene)
         self.world_state = copy.deepcopy(scene.get("world_state") or {})
         self.world_state.setdefault("step", 0)
         self.world_state.setdefault("event_log", [])
         self.world_state.setdefault("blocking_cases", [])
+        self.world_state.setdefault("temperature", "comfortable")
+        self.world_state.setdefault("weather", "sunny")
+        self.world_state.setdefault("day_phase", "day")
+        self.world_state.setdefault("room_temperature", {})
+        self.world_state.setdefault("natural_change_counters", {})
+        self.world_state.setdefault("natural_dirt_enabled", True)
+        self.world_state.setdefault("processes", [])
         self.refresh_indices()
+
+    def _migrate_dynamic_state_fields(self) -> None:
+        """Normalize legacy scenes without changing non-sink container semantics."""
+        for item in self.nodes.values():
+            if str(item.get("semantic_type") or "") != "sink":
+                continue
+            states = item.setdefault("states", {})
+            if "has_water" not in states:
+                states["has_water"] = bool(float(states.get("fill_level") or 0.0) > 0.0)
+            states.pop("fill_level", None)
+            states.pop("is_full", None)
 
     def _validate_node_states(self) -> None:
         allowed = set(DISCRETE_STATE_SPACE)
@@ -98,6 +117,7 @@ class SceneGraph:
             "room_of": self.room_of,
             "control_edges": self.control_edges,
             "room_edges": self.room_edges,
+            "processes": self.world_state.setdefault("processes", []),
         }
 
     def node(self, node_id: str) -> dict[str, Any]:
@@ -207,6 +227,7 @@ class SceneGraph:
             "world_state": copy.deepcopy(self.world_state),
             "nodes": [copy.deepcopy(node) for node in self.nodes.values()],
             "edges": copy.deepcopy(self.edges),
+            "processes": copy.deepcopy(self.world_state.get("processes", [])),
         }
 
 

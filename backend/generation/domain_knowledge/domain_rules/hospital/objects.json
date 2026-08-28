@@ -1,0 +1,1 @@
+{"room_objects":{"waiting_area":{"required":["chair"]},"treatment_room":{"required":["bed","medical_cart"]},"pharmacy":{"required":["medicine_box","prescription_sheet","medicine_fridge"]}}}

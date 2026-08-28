@@ -1,0 +1,1 @@
+{"required_adjacency":[["entrance","warehouse"],["warehouse","assembly_line"],["assembly_line","control_room"],["assembly_line","workshop"]],"optional_adjacency":[["control_room","break_room"],["warehouse","receiving_dock"]]}

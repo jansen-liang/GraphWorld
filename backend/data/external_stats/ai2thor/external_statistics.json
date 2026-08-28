@@ -1,0 +1,2798 @@
+{
+  "files": [
+    {
+      "path": "/home/swzz/anaconda3/gra/lib/python3.10/site-packages/procthor/databases/ai2thor-object-metadata.json",
+      "sha256": "5bb9020b50b0f398e5460519d61347dfe115119dfcc3b136b02d1116bb13416a"
+    }
+  ],
+  "license": "AI2-THOR is distributed under its upstream license; verify terms before redistribution. This output contains derived aggregate statistics, not copied assets.",
+  "object_capability_stats": {
+    "AlarmClock": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "AlarmClock",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "AluminumFoil": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 3,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 3,
+      "raw_label": "AluminumFoil",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Apple": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Apple",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "BaseballBat": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 14,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 14,
+      "raw_label": "BaseballBat",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "BasketBall": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 11,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 11,
+      "raw_label": "BasketBall",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Bathtub": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 21,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Bathtub",
+      "receptacle": 16,
+      "toggleable": 0
+    },
+    "BathtubBasin": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 19,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "BathtubBasin",
+      "receptacle": 19,
+      "toggleable": 0
+    },
+    "Blinds": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 49,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 49,
+      "pickupable": 0,
+      "raw_label": "Blinds",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Boots": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 8,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 8,
+      "raw_label": "Boots",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Bottle": {
+      "canFillWithLiquid": 7,
+      "dirtyable": 0,
+      "instances": 7,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 7,
+      "raw_label": "Bottle",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Bread": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Bread",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "ButterKnife": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "ButterKnife",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "CD": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 33,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 33,
+      "raw_label": "CD",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Candle": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 35,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 35,
+      "raw_label": "Candle",
+      "receptacle": 0,
+      "toggleable": 35
+    },
+    "CellPhone": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 41,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 41,
+      "raw_label": "CellPhone",
+      "receptacle": 0,
+      "toggleable": 41
+    },
+    "Cloth": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 39,
+      "instances": 39,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 39,
+      "raw_label": "Cloth",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "CoffeeMachine": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 30,
+      "moveable": 30,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "CoffeeMachine",
+      "receptacle": 30,
+      "toggleable": 30
+    },
+    "CreditCard": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 63,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 63,
+      "raw_label": "CreditCard",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Curtains": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 19,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Curtains",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "DeskLamp": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 51,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 51,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "DeskLamp",
+      "receptacle": 0,
+      "toggleable": 51
+    },
+    "Desktop": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 2,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 2,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Desktop",
+      "receptacle": 0,
+      "toggleable": 2
+    },
+    "DishSponge": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 36,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 36,
+      "raw_label": "DishSponge",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "DogBed": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 3,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 3,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "DogBed",
+      "receptacle": 3,
+      "toggleable": 0
+    },
+    "Dresser": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 26,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 25,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Dresser",
+      "receptacle": 26,
+      "toggleable": 0
+    },
+    "Dumbbell": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 5,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 5,
+      "raw_label": "Dumbbell",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Egg": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Egg",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Floor": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 120,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Floor",
+      "receptacle": 120,
+      "toggleable": 0
+    },
+    "FloorLamp": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 31,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 31,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "FloorLamp",
+      "receptacle": 0,
+      "toggleable": 31
+    },
+    "Footstool": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 3,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 3,
+      "raw_label": "Footstool",
+      "receptacle": 3,
+      "toggleable": 0
+    },
+    "Fork": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Fork",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "GarbageBag": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 6,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 6,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "GarbageBag",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "GarbageCan": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 120,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 120,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "GarbageCan",
+      "receptacle": 120,
+      "toggleable": 0
+    },
+    "HandTowel": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "HandTowel",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "HandTowelHolder": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 45,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "HandTowelHolder",
+      "receptacle": 45,
+      "toggleable": 0
+    },
+    "HousePlant": {
+      "canFillWithLiquid": 51,
+      "dirtyable": 0,
+      "instances": 51,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 51,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "HousePlant",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Kettle": {
+      "canFillWithLiquid": 15,
+      "dirtyable": 0,
+      "instances": 15,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 15,
+      "pickupable": 15,
+      "raw_label": "Kettle",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "KeyChain": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 60,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 60,
+      "raw_label": "KeyChain",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Knife": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Knife",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Ladle": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 11,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 11,
+      "raw_label": "Ladle",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Laptop": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 60,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 60,
+      "pickupable": 60,
+      "raw_label": "Laptop",
+      "receptacle": 0,
+      "toggleable": 60
+    },
+    "LaundryHamper": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 8,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 8,
+      "openable": 8,
+      "pickupable": 0,
+      "raw_label": "LaundryHamper",
+      "receptacle": 8,
+      "toggleable": 0
+    },
+    "Lettuce": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Lettuce",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "LightSwitch": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 120,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "LightSwitch",
+      "receptacle": 0,
+      "toggleable": 120
+    },
+    "Mirror": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 67,
+      "instances": 67,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Mirror",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Newspaper": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 18,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 18,
+      "raw_label": "Newspaper",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Ottoman": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 4,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 4,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Ottoman",
+      "receptacle": 4,
+      "toggleable": 0
+    },
+    "Painting": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 75,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Painting",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Pan": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 30,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Pan",
+      "receptacle": 30,
+      "toggleable": 0
+    },
+    "PaperTowelRoll": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 14,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 14,
+      "raw_label": "PaperTowelRoll",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Pen": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 37,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 37,
+      "raw_label": "Pen",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Pencil": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 36,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 36,
+      "raw_label": "Pencil",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "PepperShaker": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "PepperShaker",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Pillow": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 72,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 72,
+      "raw_label": "Pillow",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Plunger": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Plunger",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Poster": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 10,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Poster",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Pot": {
+      "canFillWithLiquid": 30,
+      "dirtyable": 30,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Pot",
+      "receptacle": 30,
+      "toggleable": 0
+    },
+    "Potato": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Potato",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "RemoteControl": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 33,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 33,
+      "raw_label": "RemoteControl",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "RoomDecor": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 9,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 9,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "RoomDecor",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Safe": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 8,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 8,
+      "openable": 8,
+      "pickupable": 0,
+      "raw_label": "Safe",
+      "receptacle": 8,
+      "toggleable": 0
+    },
+    "SaltShaker": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "SaltShaker",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "ScrubBrush": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "ScrubBrush",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "ShelvingUnit": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 19,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 18,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "ShelvingUnit",
+      "receptacle": 1,
+      "toggleable": 0
+    },
+    "ShowerCurtain": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 13,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 13,
+      "pickupable": 0,
+      "raw_label": "ShowerCurtain",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "ShowerDoor": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 17,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 17,
+      "pickupable": 0,
+      "raw_label": "ShowerDoor",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "ShowerGlass": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 13,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "ShowerGlass",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "ShowerHead": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 25,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "ShowerHead",
+      "receptacle": 0,
+      "toggleable": 25
+    },
+    "SideTable": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 94,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 92,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "SideTable",
+      "receptacle": 94,
+      "toggleable": 0
+    },
+    "SoapBar": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "SoapBar",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "SoapBottle": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 60,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 60,
+      "raw_label": "SoapBottle",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Spatula": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Spatula",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Spoon": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Spoon",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "SprayBottle": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 32,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 32,
+      "raw_label": "SprayBottle",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Statue": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 63,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 63,
+      "raw_label": "Statue",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Stool": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 23,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 23,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Stool",
+      "receptacle": 23,
+      "toggleable": 0
+    },
+    "StoveBurner": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 123,
+      "isColdSource": 0,
+      "isHeatSource": 123,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "StoveBurner",
+      "receptacle": 123,
+      "toggleable": 0
+    },
+    "StoveKnob": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 123,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "StoveKnob",
+      "receptacle": 0,
+      "toggleable": 123
+    },
+    "TVStand": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 14,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 14,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "TVStand",
+      "receptacle": 14,
+      "toggleable": 0
+    },
+    "TableTopDecor": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 1,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 1,
+      "raw_label": "TableTopDecor",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "TeddyBear": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 10,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 10,
+      "raw_label": "TeddyBear",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "TennisRacket": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 10,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 10,
+      "raw_label": "TennisRacket",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "TissueBox": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 22,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 22,
+      "raw_label": "TissueBox",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Toaster": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 30,
+      "moveable": 30,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Toaster",
+      "receptacle": 30,
+      "toggleable": 30
+    },
+    "ToiletPaper": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 60,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 60,
+      "raw_label": "ToiletPaper",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "ToiletPaperHanger": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "ToiletPaperHanger",
+      "receptacle": 30,
+      "toggleable": 0
+    },
+    "Tomato": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Tomato",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Towel": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Towel",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "TowelHolder": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 38,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "TowelHolder",
+      "receptacle": 38,
+      "toggleable": 0
+    },
+    "VacuumCleaner": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 1,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 1,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "VacuumCleaner",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Vase": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 67,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 67,
+      "raw_label": "Vase",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Watch": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 18,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 18,
+      "raw_label": "Watch",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "WateringCan": {
+      "canFillWithLiquid": 13,
+      "dirtyable": 0,
+      "instances": 13,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 13,
+      "raw_label": "WateringCan",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "Window": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 182,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Window",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "WineBottle": {
+      "canFillWithLiquid": 10,
+      "dirtyable": 0,
+      "instances": 10,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 10,
+      "raw_label": "WineBottle",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "bed": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 32,
+      "instances": 32,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 32,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Bed",
+      "receptacle": 32,
+      "toggleable": 0
+    },
+    "book": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 39,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 39,
+      "pickupable": 39,
+      "raw_label": "Book",
+      "receptacle": 0,
+      "toggleable": 0
+    },
+    "bowl": {
+      "canFillWithLiquid": 48,
+      "dirtyable": 48,
+      "instances": 48,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 48,
+      "raw_label": "Bowl",
+      "receptacle": 48,
+      "toggleable": 0
+    },
+    "box": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 42,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 42,
+      "pickupable": 42,
+      "raw_label": "Box",
+      "receptacle": 42,
+      "toggleable": 0
+    },
+    "cabinet": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 516,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 516,
+      "pickupable": 0,
+      "raw_label": "Cabinet",
+      "receptacle": 516,
+      "toggleable": 0
+    },
+    "chair": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 169,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 169,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Chair",
+      "receptacle": 162,
+      "toggleable": 0
+    },
+    "coffee_table": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 29,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 29,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "CoffeeTable",
+      "receptacle": 29,
+      "toggleable": 0
+    },
+    "counter": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 101,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "CounterTop",
+      "receptacle": 101,
+      "toggleable": 0
+    },
+    "cup": {
+      "canFillWithLiquid": 30,
+      "dirtyable": 30,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 30,
+      "raw_label": "Cup",
+      "receptacle": 30,
+      "toggleable": 0
+    },
+    "desk": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 27,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Desk",
+      "receptacle": 30,
+      "toggleable": 0
+    },
+    "drawer": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 561,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 561,
+      "pickupable": 0,
+      "raw_label": "Drawer",
+      "receptacle": 561,
+      "toggleable": 0
+    },
+    "faucet": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 91,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Faucet",
+      "receptacle": 0,
+      "toggleable": 91
+    },
+    "microwave": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 30,
+      "moveable": 30,
+      "openable": 30,
+      "pickupable": 0,
+      "raw_label": "Microwave",
+      "receptacle": 30,
+      "toggleable": 30
+    },
+    "mug": {
+      "canFillWithLiquid": 46,
+      "dirtyable": 46,
+      "instances": 46,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 46,
+      "raw_label": "Mug",
+      "receptacle": 46,
+      "toggleable": 0
+    },
+    "plate": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 40,
+      "instances": 40,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 40,
+      "raw_label": "Plate",
+      "receptacle": 40,
+      "toggleable": 0
+    },
+    "refrigerator": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 29,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 30,
+      "pickupable": 0,
+      "raw_label": "Fridge",
+      "receptacle": 30,
+      "toggleable": 0
+    },
+    "shelf": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 261,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Shelf",
+      "receptacle": 261,
+      "toggleable": 0
+    },
+    "sink": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 149,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Sink",
+      "receptacle": 95,
+      "toggleable": 0
+    },
+    "sofa": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 37,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 37,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Sofa",
+      "receptacle": 37,
+      "toggleable": 0
+    },
+    "table": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 37,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 33,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "DiningTable",
+      "receptacle": 37,
+      "toggleable": 0
+    },
+    "television": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 33,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 25,
+      "openable": 0,
+      "pickupable": 0,
+      "raw_label": "Television",
+      "receptacle": 0,
+      "toggleable": 33
+    },
+    "toilet": {
+      "canFillWithLiquid": 0,
+      "dirtyable": 0,
+      "instances": 30,
+      "isColdSource": 0,
+      "isHeatSource": 0,
+      "moveable": 0,
+      "openable": 30,
+      "pickupable": 0,
+      "raw_label": "Toilet",
+      "receptacle": 30,
+      "toggleable": 0
+    }
+  },
+  "object_parent_counts": {
+    "AlarmClock": {
+      "parents": {
+        "desk": 1,
+        "shelf": 4
+      },
+      "unmapped_parents": {
+        "Dresser": 3,
+        "SideTable": 21
+      }
+    },
+    "AluminumFoil": {
+      "parents": {
+        "shelf": 3
+      },
+      "unmapped_parents": {}
+    },
+    "Apple": {
+      "parents": {
+        "counter": 16,
+        "refrigerator": 5,
+        "sink": 3,
+        "table": 6
+      },
+      "unmapped_parents": {}
+    },
+    "BaseballBat": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 14
+      }
+    },
+    "BasketBall": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 11
+      }
+    },
+    "Bathtub": {
+      "parents": {
+        "counter": 1
+      },
+      "unmapped_parents": {
+        "Floor": 7
+      }
+    },
+    "BathtubBasin": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 1
+      }
+    },
+    "Boots": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 8
+      }
+    },
+    "Bottle": {
+      "parents": {
+        "counter": 3,
+        "shelf": 2,
+        "table": 2
+      },
+      "unmapped_parents": {}
+    },
+    "Bread": {
+      "parents": {
+        "counter": 21,
+        "table": 9
+      },
+      "unmapped_parents": {}
+    },
+    "ButterKnife": {
+      "parents": {
+        "counter": 25,
+        "drawer": 2,
+        "sink": 1,
+        "table": 1
+      },
+      "unmapped_parents": {}
+    },
+    "CD": {
+      "parents": {
+        "desk": 16,
+        "drawer": 2,
+        "shelf": 4
+      },
+      "unmapped_parents": {
+        "Dresser": 4,
+        "SideTable": 6
+      }
+    },
+    "Candle": {
+      "parents": {
+        "cabinet": 2,
+        "coffee_table": 1,
+        "counter": 12,
+        "shelf": 3,
+        "table": 1,
+        "toilet": 3
+      },
+      "unmapped_parents": {
+        "Bathtub": 6,
+        "Dresser": 1,
+        "Floor": 4,
+        "GarbageCan": 1,
+        "SideTable": 4
+      }
+    },
+    "CellPhone": {
+      "parents": {
+        "bed": 2,
+        "chair": 1,
+        "coffee_table": 2,
+        "counter": 2,
+        "desk": 14,
+        "shelf": 3,
+        "table": 3
+      },
+      "unmapped_parents": {
+        "Dresser": 10,
+        "Floor": 1,
+        "SideTable": 6
+      }
+    },
+    "Cloth": {
+      "parents": {
+        "cabinet": 1,
+        "counter": 10,
+        "shelf": 2,
+        "toilet": 7
+      },
+      "unmapped_parents": {
+        "Bathtub": 8,
+        "Floor": 7,
+        "SideTable": 2
+      }
+    },
+    "CoffeeMachine": {
+      "parents": {
+        "counter": 27,
+        "table": 2
+      },
+      "unmapped_parents": {}
+    },
+    "CreditCard": {
+      "parents": {
+        "bowl": 1,
+        "chair": 1,
+        "coffee_table": 13,
+        "counter": 3,
+        "desk": 19,
+        "shelf": 3,
+        "table": 4
+      },
+      "unmapped_parents": {
+        "Dresser": 6,
+        "Floor": 5,
+        "SideTable": 9,
+        "TVStand": 4
+      }
+    },
+    "Curtains": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 12
+      }
+    },
+    "DeskLamp": {
+      "parents": {
+        "desk": 16,
+        "shelf": 4
+      },
+      "unmapped_parents": {
+        "Dresser": 4,
+        "SideTable": 29
+      }
+    },
+    "Desktop": {
+      "parents": {
+        "desk": 2
+      },
+      "unmapped_parents": {}
+    },
+    "DishSponge": {
+      "parents": {
+        "cabinet": 1,
+        "counter": 16,
+        "sink": 14,
+        "toilet": 2
+      },
+      "unmapped_parents": {
+        "Bathtub": 1,
+        "Floor": 1,
+        "SideTable": 2
+      }
+    },
+    "DogBed": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 3
+      }
+    },
+    "Dresser": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 26
+      }
+    },
+    "Dumbbell": {
+      "parents": {
+        "desk": 1
+      },
+      "unmapped_parents": {
+        "Floor": 4
+      }
+    },
+    "Egg": {
+      "parents": {
+        "counter": 6,
+        "refrigerator": 17,
+        "sink": 7
+      },
+      "unmapped_parents": {
+        "Floor": 1
+      }
+    },
+    "Floor": {
+      "parents": {
+        "cabinet": 4
+      },
+      "unmapped_parents": {
+        "GarbageCan": 1
+      }
+    },
+    "FloorLamp": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 31
+      }
+    },
+    "Footstool": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 3
+      }
+    },
+    "Fork": {
+      "parents": {
+        "counter": 18,
+        "drawer": 5,
+        "sink": 5,
+        "table": 2
+      },
+      "unmapped_parents": {}
+    },
+    "GarbageBag": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 6
+      }
+    },
+    "GarbageCan": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 120
+      }
+    },
+    "HandTowel": {
+      "parents": {
+        "counter": 1
+      },
+      "unmapped_parents": {
+        "HandTowelHolder": 30
+      }
+    },
+    "HousePlant": {
+      "parents": {
+        "coffee_table": 4,
+        "counter": 9,
+        "desk": 1,
+        "shelf": 3,
+        "table": 3
+      },
+      "unmapped_parents": {
+        "Dresser": 2,
+        "Floor": 3,
+        "ShelvingUnit": 1,
+        "SideTable": 14,
+        "Stool": 2,
+        "TVStand": 1
+      }
+    },
+    "Kettle": {
+      "parents": {
+        "cabinet": 1,
+        "counter": 10,
+        "table": 1
+      },
+      "unmapped_parents": {
+        "StoveBurner": 3
+      }
+    },
+    "KeyChain": {
+      "parents": {
+        "chair": 4,
+        "coffee_table": 9,
+        "desk": 17,
+        "shelf": 4,
+        "table": 2
+      },
+      "unmapped_parents": {
+        "Dresser": 3,
+        "Floor": 6,
+        "SideTable": 18,
+        "TVStand": 3
+      }
+    },
+    "Knife": {
+      "parents": {
+        "counter": 18,
+        "drawer": 5,
+        "sink": 4,
+        "table": 3
+      },
+      "unmapped_parents": {}
+    },
+    "Ladle": {
+      "parents": {
+        "counter": 9,
+        "drawer": 1,
+        "table": 1
+      },
+      "unmapped_parents": {}
+    },
+    "Laptop": {
+      "parents": {
+        "bed": 4,
+        "chair": 4,
+        "coffee_table": 10,
+        "desk": 23,
+        "sofa": 4,
+        "table": 6
+      },
+      "unmapped_parents": {
+        "Dresser": 8,
+        "Floor": 2,
+        "SideTable": 1,
+        "TVStand": 2
+      }
+    },
+    "LaundryHamper": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 8
+      }
+    },
+    "Lettuce": {
+      "parents": {
+        "counter": 10,
+        "refrigerator": 8,
+        "sink": 8,
+        "table": 4
+      },
+      "unmapped_parents": {
+        "Floor": 1
+      }
+    },
+    "Mirror": {
+      "parents": {
+        "counter": 4,
+        "sink": 2
+      },
+      "unmapped_parents": {
+        "Dresser": 1,
+        "Floor": 1
+      }
+    },
+    "Newspaper": {
+      "parents": {
+        "chair": 2,
+        "shelf": 3,
+        "sofa": 6,
+        "table": 4
+      },
+      "unmapped_parents": {
+        "Floor": 5,
+        "Ottoman": 1,
+        "SideTable": 3
+      }
+    },
+    "Ottoman": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 4
+      }
+    },
+    "Painting": {
+      "parents": {
+        "chair": 1
+      },
+      "unmapped_parents": {
+        "Floor": 1
+      }
+    },
+    "Pan": {
+      "parents": {
+        "cabinet": 4,
+        "counter": 13,
+        "table": 2
+      },
+      "unmapped_parents": {
+        "StoveBurner": 17
+      }
+    },
+    "PaperTowelRoll": {
+      "parents": {
+        "cabinet": 1,
+        "counter": 11,
+        "toilet": 1
+      },
+      "unmapped_parents": {
+        "SideTable": 1
+      }
+    },
+    "Pen": {
+      "parents": {
+        "chair": 1,
+        "counter": 1,
+        "desk": 22,
+        "shelf": 1,
+        "table": 2
+      },
+      "unmapped_parents": {
+        "Dresser": 6,
+        "Floor": 2,
+        "SideTable": 3
+      }
+    },
+    "Pencil": {
+      "parents": {
+        "chair": 1,
+        "counter": 1,
+        "desk": 22,
+        "shelf": 1,
+        "table": 3
+      },
+      "unmapped_parents": {
+        "Dresser": 7,
+        "SideTable": 2
+      }
+    },
+    "PepperShaker": {
+      "parents": {
+        "counter": 27,
+        "table": 2
+      },
+      "unmapped_parents": {
+        "SideTable": 1
+      }
+    },
+    "Pillow": {
+      "parents": {
+        "bed": 42,
+        "chair": 6,
+        "sofa": 24
+      },
+      "unmapped_parents": {
+        "Floor": 8
+      }
+    },
+    "Plunger": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 29
+      }
+    },
+    "Poster": {
+      "parents": {
+        "shelf": 1
+      },
+      "unmapped_parents": {}
+    },
+    "Pot": {
+      "parents": {
+        "cabinet": 3,
+        "counter": 13,
+        "sink": 1,
+        "table": 4
+      },
+      "unmapped_parents": {
+        "StoveBurner": 10
+      }
+    },
+    "Potato": {
+      "parents": {
+        "counter": 18,
+        "refrigerator": 2,
+        "sink": 2,
+        "table": 8
+      },
+      "unmapped_parents": {}
+    },
+    "RemoteControl": {
+      "parents": {
+        "chair": 2,
+        "coffee_table": 11,
+        "desk": 2,
+        "sofa": 5
+      },
+      "unmapped_parents": {
+        "Dresser": 3,
+        "Floor": 6,
+        "Ottoman": 1,
+        "SideTable": 5,
+        "TVStand": 4
+      }
+    },
+    "RoomDecor": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 9
+      }
+    },
+    "Safe": {
+      "parents": {
+        "cabinet": 1
+      },
+      "unmapped_parents": {
+        "Dresser": 1,
+        "Floor": 7
+      }
+    },
+    "SaltShaker": {
+      "parents": {
+        "counter": 27,
+        "table": 2
+      },
+      "unmapped_parents": {
+        "SideTable": 1
+      }
+    },
+    "ScrubBrush": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 29
+      }
+    },
+    "ShelvingUnit": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 19
+      }
+    },
+    "ShowerCurtain": {
+      "parents": {},
+      "unmapped_parents": {
+        "Bathtub": 15,
+        "Floor": 5,
+        "TowelHolder": 1
+      }
+    },
+    "ShowerDoor": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 15
+      }
+    },
+    "ShowerGlass": {
+      "parents": {
+        "counter": 1,
+        "shelf": 1
+      },
+      "unmapped_parents": {
+        "Floor": 8
+      }
+    },
+    "ShowerHead": {
+      "parents": {
+        "shelf": 1
+      },
+      "unmapped_parents": {
+        "Bathtub": 1,
+        "Floor": 4
+      }
+    },
+    "SideTable": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 92
+      }
+    },
+    "SoapBar": {
+      "parents": {
+        "cabinet": 1,
+        "counter": 16,
+        "shelf": 4,
+        "toilet": 1
+      },
+      "unmapped_parents": {
+        "Bathtub": 8,
+        "Dresser": 1
+      }
+    },
+    "SoapBottle": {
+      "parents": {
+        "cabinet": 1,
+        "counter": 51,
+        "shelf": 1,
+        "sink": 2,
+        "toilet": 1
+      },
+      "unmapped_parents": {
+        "Bathtub": 1,
+        "SideTable": 3
+      }
+    },
+    "Spatula": {
+      "parents": {
+        "counter": 27,
+        "drawer": 1,
+        "sink": 1
+      },
+      "unmapped_parents": {
+        "Pot": 1,
+        "StoveBurner": 1
+      }
+    },
+    "Spoon": {
+      "parents": {
+        "counter": 18,
+        "drawer": 5,
+        "sink": 5,
+        "table": 2
+      },
+      "unmapped_parents": {}
+    },
+    "SprayBottle": {
+      "parents": {
+        "cabinet": 11,
+        "counter": 9,
+        "shelf": 2,
+        "toilet": 6
+      },
+      "unmapped_parents": {
+        "Dresser": 1,
+        "Floor": 2,
+        "SideTable": 3
+      }
+    },
+    "Statue": {
+      "parents": {
+        "coffee_table": 7,
+        "counter": 1,
+        "shelf": 31,
+        "table": 5
+      },
+      "unmapped_parents": {
+        "Dresser": 3,
+        "Floor": 9,
+        "SideTable": 12,
+        "TVStand": 1
+      }
+    },
+    "Stool": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 23
+      }
+    },
+    "TVStand": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 13
+      }
+    },
+    "TableTopDecor": {
+      "parents": {
+        "desk": 1
+      },
+      "unmapped_parents": {}
+    },
+    "TeddyBear": {
+      "parents": {
+        "bed": 8
+      },
+      "unmapped_parents": {
+        "Floor": 2
+      }
+    },
+    "TennisRacket": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 10
+      }
+    },
+    "TissueBox": {
+      "parents": {
+        "cabinet": 1,
+        "coffee_table": 3,
+        "counter": 4,
+        "desk": 2,
+        "shelf": 5
+      },
+      "unmapped_parents": {
+        "Dresser": 1,
+        "Floor": 2,
+        "SideTable": 6,
+        "TVStand": 1
+      }
+    },
+    "Toaster": {
+      "parents": {
+        "counter": 27,
+        "table": 3
+      },
+      "unmapped_parents": {}
+    },
+    "ToiletPaper": {
+      "parents": {
+        "cabinet": 7,
+        "counter": 13,
+        "drawer": 1,
+        "shelf": 4,
+        "toilet": 22
+      },
+      "unmapped_parents": {
+        "Bathtub": 1,
+        "Floor": 8,
+        "GarbageCan": 7,
+        "ToiletPaperHanger": 3
+      }
+    },
+    "Tomato": {
+      "parents": {
+        "counter": 13,
+        "plate": 1,
+        "refrigerator": 6,
+        "sink": 5,
+        "table": 6
+      },
+      "unmapped_parents": {}
+    },
+    "Towel": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 1,
+        "TowelHolder": 30
+      }
+    },
+    "VacuumCleaner": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 1
+      }
+    },
+    "Vase": {
+      "parents": {
+        "coffee_table": 1,
+        "counter": 3,
+        "shelf": 50,
+        "table": 6
+      },
+      "unmapped_parents": {
+        "Dresser": 3,
+        "Floor": 10,
+        "SideTable": 1
+      }
+    },
+    "Watch": {
+      "parents": {
+        "coffee_table": 6,
+        "desk": 1,
+        "shelf": 2
+      },
+      "unmapped_parents": {
+        "Dresser": 1,
+        "SideTable": 5,
+        "TVStand": 3
+      }
+    },
+    "WateringCan": {
+      "parents": {
+        "shelf": 3
+      },
+      "unmapped_parents": {
+        "Floor": 12
+      }
+    },
+    "Window": {
+      "parents": {
+        "counter": 2,
+        "table": 1
+      },
+      "unmapped_parents": {
+        "Floor": 3,
+        "SideTable": 1
+      }
+    },
+    "WineBottle": {
+      "parents": {
+        "cabinet": 1,
+        "counter": 5,
+        "refrigerator": 1,
+        "table": 3
+      },
+      "unmapped_parents": {}
+    },
+    "bed": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 32
+      }
+    },
+    "book": {
+      "parents": {
+        "bed": 2,
+        "chair": 4,
+        "coffee_table": 1,
+        "counter": 2,
+        "desk": 19,
+        "shelf": 1,
+        "table": 2
+      },
+      "unmapped_parents": {
+        "Dresser": 7,
+        "SideTable": 3,
+        "TVStand": 1
+      }
+    },
+    "bowl": {
+      "parents": {
+        "cabinet": 3,
+        "chair": 1,
+        "coffee_table": 4,
+        "counter": 19,
+        "desk": 6,
+        "shelf": 6,
+        "table": 10
+      },
+      "unmapped_parents": {
+        "Dresser": 1,
+        "SideTable": 1
+      }
+    },
+    "box": {
+      "parents": {
+        "coffee_table": 9,
+        "desk": 1,
+        "shelf": 4,
+        "table": 3
+      },
+      "unmapped_parents": {
+        "Floor": 24,
+        "ShelvingUnit": 1,
+        "SideTable": 2,
+        "TVStand": 1
+      }
+    },
+    "cabinet": {
+      "parents": {
+        "cabinet": 6,
+        "counter": 1
+      },
+      "unmapped_parents": {
+        "Floor": 58
+      }
+    },
+    "chair": {
+      "parents": {
+        "desk": 1,
+        "table": 1
+      },
+      "unmapped_parents": {
+        "Floor": 169
+      }
+    },
+    "coffee_table": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 29
+      }
+    },
+    "counter": {
+      "parents": {
+        "cup": 1,
+        "plate": 1,
+        "sink": 8
+      },
+      "unmapped_parents": {
+        "Footstool": 1,
+        "Pan": 1
+      }
+    },
+    "cup": {
+      "parents": {
+        "cabinet": 6,
+        "counter": 16,
+        "sink": 3,
+        "table": 5
+      },
+      "unmapped_parents": {}
+    },
+    "desk": {
+      "parents": {
+        "chair": 5,
+        "desk": 1
+      },
+      "unmapped_parents": {
+        "Floor": 29
+      }
+    },
+    "drawer": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 153
+      }
+    },
+    "faucet": {
+      "parents": {
+        "counter": 27,
+        "sink": 27
+      },
+      "unmapped_parents": {
+        "Bathtub": 9,
+        "Floor": 3
+      }
+    },
+    "microwave": {
+      "parents": {
+        "counter": 17,
+        "table": 1
+      },
+      "unmapped_parents": {}
+    },
+    "mug": {
+      "parents": {
+        "cabinet": 3,
+        "counter": 13,
+        "desk": 9,
+        "sink": 7,
+        "table": 7
+      },
+      "unmapped_parents": {
+        "CoffeeMachine": 4,
+        "Dresser": 1,
+        "SideTable": 6
+      }
+    },
+    "plate": {
+      "parents": {
+        "cabinet": 5,
+        "chair": 2,
+        "coffee_table": 1,
+        "counter": 15,
+        "sink": 3,
+        "table": 16
+      },
+      "unmapped_parents": {}
+    },
+    "refrigerator": {
+      "parents": {
+        "cabinet": 2,
+        "counter": 1,
+        "drawer": 1
+      },
+      "unmapped_parents": {
+        "Floor": 27
+      }
+    },
+    "shelf": {
+      "parents": {
+        "desk": 2,
+        "shelf": 1
+      },
+      "unmapped_parents": {
+        "Floor": 73
+      }
+    },
+    "sink": {
+      "parents": {
+        "counter": 16
+      },
+      "unmapped_parents": {
+        "Floor": 7
+      }
+    },
+    "sofa": {
+      "parents": {
+        "chair": 1
+      },
+      "unmapped_parents": {
+        "Floor": 37,
+        "SideTable": 1
+      }
+    },
+    "table": {
+      "parents": {
+        "chair": 36,
+        "plate": 1
+      },
+      "unmapped_parents": {
+        "Floor": 34
+      }
+    },
+    "television": {
+      "parents": {
+        "coffee_table": 3,
+        "shelf": 1
+      },
+      "unmapped_parents": {
+        "Dresser": 8,
+        "Floor": 1,
+        "SideTable": 1,
+        "TVStand": 11
+      }
+    },
+    "toilet": {
+      "parents": {},
+      "unmapped_parents": {
+        "Floor": 30,
+        "ToiletPaperHanger": 1
+      }
+    }
+  },
+  "room_graph": {
+    "adjacency_counts": {},
+    "available": false,
+    "cooccurrence_counts": {},
+    "house_file_count": 0,
+    "note": "AI2-THOR object metadata按房间类别提供对象样本，不包含多房间 house 图。"
+  },
+  "rooms": {
+    "bathroom": {
+      "instance_total": 1083,
+      "objects": {
+        "cabinet": 64,
+        "counter": 29,
+        "drawer": 68,
+        "faucet": 59,
+        "shelf": 14,
+        "sink": 89,
+        "toilet": 30
+      },
+      "scene_count": 30,
+      "unmapped_objects": {
+        "Bathtub": 21,
+        "BathtubBasin": 19,
+        "Candle": 30,
+        "Cloth": 30,
+        "DishSponge": 6,
+        "Dresser": 2,
+        "Floor": 30,
+        "Footstool": 1,
+        "GarbageCan": 30,
+        "HandTowel": 30,
+        "HandTowelHolder": 45,
+        "HousePlant": 1,
+        "LightSwitch": 30,
+        "Mirror": 32,
+        "Painting": 1,
+        "PaperTowelRoll": 4,
+        "Plunger": 30,
+        "ScrubBrush": 30,
+        "ShowerCurtain": 13,
+        "ShowerDoor": 17,
+        "ShowerGlass": 13,
+        "ShowerHead": 25,
+        "SideTable": 7,
+        "SoapBar": 30,
+        "SoapBottle": 30,
+        "SprayBottle": 30,
+        "TissueBox": 9,
+        "ToiletPaper": 60,
+        "ToiletPaperHanger": 30,
+        "Towel": 30,
+        "TowelHolder": 38,
+        "Window": 26
+      }
+    },
+    "bedroom": {
+      "instance_total": 1228,
+      "objects": {
+        "bed": 32,
+        "book": 30,
+        "bowl": 13,
+        "box": 12,
+        "cabinet": 15,
+        "chair": 38,
+        "coffee_table": 1,
+        "counter": 1,
+        "desk": 28,
+        "drawer": 201,
+        "mug": 16,
+        "shelf": 116,
+        "sofa": 1,
+        "television": 3
+      },
+      "scene_count": 30,
+      "unmapped_objects": {
+        "AlarmClock": 30,
+        "BaseballBat": 14,
+        "BasketBall": 11,
+        "Blinds": 41,
+        "Boots": 3,
+        "CD": 33,
+        "CellPhone": 30,
+        "Cloth": 9,
+        "CreditCard": 30,
+        "Curtains": 3,
+        "DeskLamp": 35,
+        "Desktop": 2,
+        "DogBed": 1,
+        "Dresser": 13,
+        "Dumbbell": 5,
+        "Floor": 30,
+        "Footstool": 2,
+        "GarbageBag": 3,
+        "GarbageCan": 30,
+        "HousePlant": 7,
+        "KeyChain": 30,
+        "Laptop": 30,
+        "LaundryHamper": 8,
+        "LightSwitch": 30,
+        "Mirror": 30,
+        "Painting": 21,
+        "Pen": 30,
+        "Pencil": 30,
+        "Pillow": 42,
+        "Poster": 10,
+        "RemoteControl": 3,
+        "Safe": 5,
+        "ShelvingUnit": 7,
+        "SideTable": 30,
+        "Statue": 4,
+        "Stool": 1,
+        "TableTopDecor": 1,
+        "TeddyBear": 10,
+        "TennisRacket": 10,
+        "TissueBox": 4,
+        "VacuumCleaner": 1,
+        "Vase": 5,
+        "Watch": 2,
+        "Window": 45
+      }
+    },
+    "kitchen": {
+      "instance_total": 2088,
+      "objects": {
+        "book": 2,
+        "bowl": 30,
+        "cabinet": 418,
+        "chair": 20,
+        "counter": 71,
+        "cup": 30,
+        "drawer": 174,
+        "faucet": 32,
+        "microwave": 30,
+        "mug": 30,
+        "plate": 30,
+        "refrigerator": 30,
+        "shelf": 27,
+        "sink": 60,
+        "table": 21
+      },
+      "scene_count": 30,
+      "unmapped_objects": {
+        "AluminumFoil": 3,
+        "Apple": 30,
+        "Blinds": 5,
+        "Bottle": 7,
+        "Bread": 30,
+        "ButterKnife": 30,
+        "CellPhone": 4,
+        "CoffeeMachine": 30,
+        "CreditCard": 3,
+        "Curtains": 2,
+        "DishSponge": 30,
+        "Egg": 30,
+        "Floor": 30,
+        "Fork": 30,
+        "GarbageBag": 3,
+        "GarbageCan": 30,
+        "HousePlant": 11,
+        "Kettle": 15,
+        "Knife": 30,
+        "Ladle": 11,
+        "Lettuce": 30,
+        "LightSwitch": 30,
+        "Mirror": 2,
+        "Pan": 30,
+        "PaperTowelRoll": 10,
+        "Pen": 2,
+        "Pencil": 2,
+        "PepperShaker": 30,
+        "Pot": 30,
+        "Potato": 30,
+        "Safe": 1,
+        "SaltShaker": 30,
+        "ShelvingUnit": 5,
+        "SideTable": 3,
+        "SoapBottle": 30,
+        "Spatula": 30,
+        "Spoon": 30,
+        "SprayBottle": 2,
+        "Statue": 5,
+        "Stool": 19,
+        "StoveBurner": 123,
+        "StoveKnob": 123,
+        "Toaster": 30,
+        "Tomato": 30,
+        "Vase": 16,
+        "Window": 36,
+        "WineBottle": 10
+      }
+    },
+    "living_room": {
+      "instance_total": 1271,
+      "objects": {
+        "book": 7,
+        "bowl": 5,
+        "box": 30,
+        "cabinet": 19,
+        "chair": 111,
+        "coffee_table": 28,
+        "desk": 2,
+        "drawer": 118,
+        "plate": 10,
+        "shelf": 104,
+        "sofa": 36,
+        "table": 16,
+        "television": 30
+      },
+      "scene_count": 30,
+      "unmapped_objects": {
+        "Blinds": 3,
+        "Boots": 5,
+        "Candle": 5,
+        "CellPhone": 7,
+        "CreditCard": 30,
+        "Curtains": 14,
+        "DeskLamp": 16,
+        "DogBed": 2,
+        "Dresser": 11,
+        "Floor": 30,
+        "FloorLamp": 31,
+        "GarbageCan": 30,
+        "HousePlant": 32,
+        "KeyChain": 30,
+        "Laptop": 30,
+        "LightSwitch": 30,
+        "Mirror": 3,
+        "Newspaper": 18,
+        "Ottoman": 4,
+        "Painting": 53,
+        "Pen": 5,
+        "Pencil": 4,
+        "Pillow": 30,
+        "RemoteControl": 30,
+        "RoomDecor": 9,
+        "Safe": 2,
+        "ShelvingUnit": 7,
+        "SideTable": 54,
+        "Statue": 54,
+        "Stool": 3,
+        "TVStand": 14,
+        "TissueBox": 9,
+        "Vase": 46,
+        "Watch": 16,
+        "WateringCan": 13,
+        "Window": 75
+      }
+    }
+  },
+  "schema_version": "0.1",
+  "source": "ai2thor",
+  "source_root": "/home/swzz/anaconda3/gra/lib/python3.10/site-packages/procthor/databases",
+  "source_version": "5.0.0"
+}

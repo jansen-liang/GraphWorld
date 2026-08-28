@@ -34,8 +34,7 @@
         "staff_room"
       ],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ],
       "floor_number": 1
     },
@@ -61,8 +60,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -84,8 +82,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -110,8 +107,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -137,8 +133,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -166,8 +161,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -192,8 +186,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -220,8 +213,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -244,8 +236,7 @@
       "parent": "entrance",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -268,8 +259,7 @@
       "parent": "entrance",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -300,8 +290,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -327,8 +316,7 @@
       "parent": "shelf_produce",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -354,8 +342,7 @@
       "parent": "shelf_produce",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -381,8 +368,7 @@
       "parent": "shelf_produce",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -408,8 +394,7 @@
       "parent": "shelf_produce",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -432,8 +417,7 @@
       "parent": "produce_area",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -462,8 +446,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -489,8 +472,7 @@
       "parent": "shelf_dry_goods",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -516,8 +498,7 @@
       "parent": "shelf_dry_goods",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -543,8 +524,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -570,8 +550,7 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -598,7 +577,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -623,8 +601,7 @@
       "parent": "checkout_area",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -651,7 +628,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -679,8 +655,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -704,8 +679,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ],
       "max_capacity": 3
     },
@@ -742,8 +716,7 @@
         "move",
         "place",
         "open",
-        "close",
-        "scan"
+        "close"
       ]
     },
     {
@@ -769,8 +742,7 @@
       "parent": "fridge_cold_storage",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -796,8 +768,7 @@
       "parent": "fridge_cold_storage",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -823,8 +794,7 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -850,8 +820,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -875,8 +844,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -904,11 +872,8 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "open",
-        "close",
-        "pull",
-        "push"
+        "close"
       ]
     },
     {
@@ -932,8 +897,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ],
       "max_capacity": 5
     }

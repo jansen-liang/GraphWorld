@@ -1,0 +1,15 @@
+来源,任务类别,论文/基准中的任务或示例,主要技能,代表性原子动作,证据类型
+ALFRED,清洁,Clean & Place,导航/抓取放置/容器操作,Move Pickup Put Open Close,明确任务类型
+ALFRED,制作,Heat & Place、Cool & Place、Slice 等复合目标,抓取/切割/设备操作,Slice Toggle Pickup Put,明确任务类型或原子动作
+ALFRED,位置迁移与收纳,Pick & Place、Pick Two & Place、Stack & Place,导航/抓取/放置/堆叠,Move Pickup Put,明确任务类型
+BEHAVIOR-1K,清洁,cleaning、个人护理、家务活动,工具使用/状态谓词推理/恢复,Wipe Wash Pickup Put,活动域归纳
+BEHAVIOR-1K,制作,cooking、food preparation,切割/搅拌/倾倒/加热,Cut Mix Pour Heat,活动域归纳
+BEHAVIOR-1K,位置迁移与收纳,物品取用、移动、整理、放回,抓取/容器关系推理,Pickup Place Open Close,活动域归纳
+SayCan,位置迁移与收纳,取物、移动/放置、递送,affordance grounding/技能选择,Find Pick Place Bring Handover,论文示例归纳
+SayCan,清洁,清理溢出物,短程规划/闭环执行,Wipe Clean,论文示例归纳
+SayPlan,位置迁移与收纳,寻找物体并放到目标位置、整理类房间任务,场景图检索/子目标分解,Navigate Search Pick Place Verify,论文演示归纳
+VirtualHome,制作,做饭、吃饭,程序执行/状态更新,Grab Put Cut Pour Eat,程序动作库明确
+VirtualHome,清洁,清洁、洗衣、个人护理,程序执行/前置条件,WASH WIPE PUT OPEN,程序动作库明确
+VirtualHome,位置迁移与收纳,物体搬运与整理,程序执行/前置条件,GRAB PUT OPEN,程序动作库明确
+MiniGrid/GridWorld,操作,DoorKey/Unlock,离散导航/钥匙-门依赖,Forward Turn Pickup Toggle Unlock,范式归纳
+MiniGrid/GridWorld,位置迁移与收纳,Pickup、PutNext、箱子推移、物体交付,离散导航/空间关系,Forward Pickup Drop Push,范式归纳

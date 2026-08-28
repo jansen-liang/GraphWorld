@@ -1,0 +1,28 @@
+任务类别,原子动作,动作角色,典型参数,典型前置条件,典型效果
+清洁与卫生,observe,支撑,target/属性,目标可观测,获得目标状态
+清洁与卫生,navigate,支撑,目标位置,路径连通,agent 到达目标附近
+清洁与卫生,pickup,状态变换,工具,工具可达且可抓取,tool held_by agent
+清洁与卫生,wash/wipe/scrub,状态变换,目标+工具,目标可清洁且工具可用,dirty -> clean
+清洁与卫生,rinse/dry/dispose,状态变换,工具/废弃物,水源或垃圾桶可用,工具清洁或废弃物移除
+制作与烹饪,cut/slice/peel,状态变换,食材+刀具,刀具可用,食材形状改变
+制作与烹饪,mix/stir/add,状态变换,食材+容器,容器可用,形成混合物或配方进度增加
+制作与烹饪,pour/place-in,状态变换,源物+目标容器,目标容器可接受,物体 inside 容器
+加热冷却,toggle-on/off,状态变换,设备,设备可操作,设备 powered 状态改变
+加热冷却,set-temperature,状态变换,设备+温度,设备支持设定,目标温度改变
+加热冷却,wait,支撑,持续时间,设备运行中,温度/烹饪进度随时间变化
+取放运输,pickup,状态变换,物体,物体可达可抓取,物体 held_by agent
+取放运输,carry/move,支撑,目标位置,agent 持有物体,agent 位置改变
+取放运输,place/drop,状态变换,物体+位置/容器,目标可放置,at/on/inside 关系改变
+取放运输,give/handover,状态变换,物体+主体,双方在交互范围,holder 改变
+收纳整理,open/close,状态变换,柜/抽屉/容器,目标可操作,容器开闭状态改变
+收纳整理,place-in/stack/align,状态变换,物体+容器/位置,空间容量和关系满足,布局/堆叠关系改变
+设备操作,unlock/lock,状态变换,门/锁+钥匙,钥匙匹配,locked 状态改变
+设备操作,press/turn/set-mode,状态变换,按钮/旋钮/设备,目标可操作,设备模式或数值改变
+装配工具,insert/attach/connect,状态变换,部件+接口,接口兼容且可达,connected/attached 建立
+装配工具,"use(tool,target)",状态变换,工具+目标,工具 affordance 满足,目标属性改变
+搜索导航,look/search/explore,支撑,目标/区域,可观察或可进入,目标发现或地图更新
+搜索导航,unlock/open,状态变换,门+钥匙,钥匙或权限满足,通路开放
+社交协作,ask/tell,状态变换,主体+消息,主体可交互,对话/承诺状态更新
+社交协作,follow/coordinate,状态变换,主体/角色,协作关系成立,跟随或协作关系建立
+反馈恢复,verify,支撑,目标谓词,状态可观测,成功/失败判定
+反馈恢复,replan/retry,支撑,失败原因,存在替代动作或计划,生成新计划或重试

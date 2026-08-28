@@ -1,0 +1,6 @@
+{
+  "schema_version": "common_world_rules.v1",
+  "scope": "all_domains",
+  "systems": ["time", "weather", "temperature", "day_night", "water", "electricity", "space"],
+  "defaults": {"minutes_per_step": 1, "day_phase": "day", "weather": "sunny", "room_temperature": "room", "water_available": true, "electricity_available": true}
+}

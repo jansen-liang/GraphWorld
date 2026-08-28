@@ -799,3 +799,85 @@ move, pick, place, press, open, close, brush, fold, dump
 4. `goal_review` 对模型主干更敏感。DeepSeek-R1-14B 在 goal-review 上最高，Llama-3.1-8B 次之，Qwen3.5-9B 相对更低，说明目标复审需要更强的上下文判断。
 5. 人类阻塞恢复率提供了比总分更直接的流程级诊断：reactive 几乎不能恢复 blocking case，而 single_round 和 goal_review 能明显恢复人类活动前置条件。
 6. 当前仍未解决的是稳定全局调度：agent 会被局部可见问题吸引，会中途切换长链任务，也会错过人类事件的恢复窗口。
+
+## Web 前后端本地启动
+
+Web 版需要同时启动 PostgreSQL、Redis、后端 API、后台 worker 和前端 Vite。下面命令默认在仓库根目录运行：
+
+```bash
+cd /home/swzz/data/GraphWorld
+```
+
+第一次启动前，先安装后端和前端依赖：
+
+```bash
+pip install -r requirements-web.txt
+
+cd frontend
+npm install
+cd ..
+```
+
+如果本机还没有 PostgreSQL 和 Redis 的本地服务二进制，先安装到仓库的 `.gw-services` 目录：
+
+```bash
+conda create -y -p .gw-services postgresql redis
+```
+
+启动数据库和 Redis：
+
+```bash
+scripts/web_services.sh start
+```
+
+这个脚本会使用默认连接地址：
+
+```bash
+export GRAPHWORLD_DATABASE_URL='postgresql+psycopg://graphworld:graphworld@127.0.0.1:55432/graphworld'
+export GRAPHWORLD_REDIS_URL='redis://127.0.0.1:56379/0'
+```
+
+然后初始化/更新数据库表，并写入默认用户和场景：
+
+```bash
+export GRAPHWORLD_DATABASE_URL='postgresql+psycopg://graphworld:graphworld@127.0.0.1:55432/graphworld'
+export GRAPHWORLD_REDIS_URL='redis://127.0.0.1:56379/0'
+
+alembic upgrade head
+python scripts/web_seed_users.py
+python scripts/web_seed_scenes.py --force
+```
+
+启动后端 API：
+
+```bash
+scripts/web_api.sh
+```
+
+后端默认监听：
+
+```text
+http://127.0.0.1:8010
+```
+
+需要异步运行实验任务时，另开一个终端启动 worker：
+
+```bash
+cd /home/swzz/data/GraphWorld
+scripts/web_worker.sh
+```
+
+最后启动前端：
+
+```bash
+cd /home/swzz/data/GraphWorld/frontend
+npm run dev
+```
+
+前端默认访问地址：
+
+```text
+http://127.0.0.1:5173
+```
+
+Vite 已经把 `/api` 代理到 `http://127.0.0.1:8010`，所以正常本地开发不需要额外配置前端 API 地址。默认管理员账号是 `admin`，密码是 `admin123`。

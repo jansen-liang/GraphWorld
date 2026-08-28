@@ -1,0 +1,2515 @@
+[
+  {
+    "count": 62,
+    "object_type": "alarmclock",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 9,
+    "object_type": "alarmclock",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "alarmclock",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "alarmclock",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "alarmclock",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "alarmclock",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "alarmclock",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "alarmclock",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "alarmclock",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "alarmclock",
+    "parent_type": "sofa",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 23,
+    "object_type": "apple",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 20,
+    "object_type": "apple",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 16,
+    "object_type": "apple",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 12,
+    "object_type": "apple",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "apple",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "apple",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "apple",
+    "parent_type": "refrigerator",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "apple",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "apple",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "apple",
+    "parent_type": "sofa",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "apple",
+    "parent_type": "plate",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "apple",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "apple",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "baseballbat",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "baseballbat",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "baseballbat",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "baseballbat",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "baseballbat",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "baseballbat",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "baseballbat",
+    "parent_type": "sofa",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "basketball",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "basketball",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "basketball",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "basketball",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "basketball",
+    "parent_type": "box",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "basketball",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "basketball",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "basketball",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "basketball",
+    "parent_type": "sofa",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 36,
+    "object_type": "book",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 24,
+    "object_type": "book",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 21,
+    "object_type": "book",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 21,
+    "object_type": "book",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 19,
+    "object_type": "book",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 15,
+    "object_type": "book",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 15,
+    "object_type": "book",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "book",
+    "parent_type": "sofa",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "book",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "book",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "book",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 30,
+    "object_type": "bottle",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 14,
+    "object_type": "bottle",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 12,
+    "object_type": "bottle",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 9,
+    "object_type": "bottle",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "bottle",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "bottle",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "bottle",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "bottle",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 30,
+    "object_type": "bowl",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 19,
+    "object_type": "bowl",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 19,
+    "object_type": "bowl",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 18,
+    "object_type": "bowl",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 14,
+    "object_type": "bowl",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "bowl",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "bowl",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "bowl",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "bowl",
+    "parent_type": "plate",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 17,
+    "object_type": "box",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 16,
+    "object_type": "box",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "box",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "box",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "box",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "box",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "box",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "box",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 21,
+    "object_type": "bread",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 9,
+    "object_type": "bread",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 25,
+    "object_type": "butterknife",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "butterknife",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "butterknife",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "butterknife",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 12,
+    "object_type": "candle",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 10,
+    "object_type": "candle",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "candle",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "candle",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "candle",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "candle",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "candle",
+    "parent_type": "toilet",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "candle",
+    "parent_type": "garbagecan",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 16,
+    "object_type": "cd",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "cd",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "cd",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "cd",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "cd",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "cd",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 18,
+    "object_type": "cellphone",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 14,
+    "object_type": "cellphone",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 10,
+    "object_type": "cellphone",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 10,
+    "object_type": "cellphone",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "cellphone",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "cellphone",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "cellphone",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "cellphone",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "cellphone",
+    "parent_type": "sofa",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "cellphone",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 10,
+    "object_type": "cloth",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "cloth",
+    "parent_type": "toilet",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "cloth",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 27,
+    "object_type": "coffeemachine",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "coffeemachine",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 19,
+    "object_type": "creditcard",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "creditcard",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 9,
+    "object_type": "creditcard",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "creditcard",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "creditcard",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "creditcard",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "creditcard",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "creditcard",
+    "parent_type": "bowl",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "creditcard",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 20,
+    "object_type": "cup",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 16,
+    "object_type": "cup",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 12,
+    "object_type": "cup",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "cup",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "cup",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "cup",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "cup",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "cup",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "cup",
+    "parent_type": "box",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 57,
+    "object_type": "desklamp",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 22,
+    "object_type": "desklamp",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 11,
+    "object_type": "desklamp",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 11,
+    "object_type": "desklamp",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 11,
+    "object_type": "desklamp",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "desklamp",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "desklamp",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "desktop",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 16,
+    "object_type": "dishsponge",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 14,
+    "object_type": "dishsponge",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "dishsponge",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "dishsponge",
+    "parent_type": "toilet",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "dumbbell",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 17,
+    "object_type": "egg",
+    "parent_type": "refrigerator",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "egg",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "egg",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 27,
+    "object_type": "faucet",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 27,
+    "object_type": "faucet",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 18,
+    "object_type": "fork",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 10,
+    "object_type": "fork",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "fork",
+    "parent_type": "plate",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "fork",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "fork",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "fork",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 30,
+    "object_type": "handtowel",
+    "parent_type": "handtowelholder",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "handtowel",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 40,
+    "object_type": "houseplant",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 17,
+    "object_type": "houseplant",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 15,
+    "object_type": "houseplant",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 10,
+    "object_type": "houseplant",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 9,
+    "object_type": "houseplant",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "houseplant",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "houseplant",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "houseplant",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "houseplant",
+    "parent_type": "stool",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 10,
+    "object_type": "kettle",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "kettle",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 18,
+    "object_type": "keychain",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 17,
+    "object_type": "keychain",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 9,
+    "object_type": "keychain",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "keychain",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "keychain",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "keychain",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "keychain",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 18,
+    "object_type": "knife",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "knife",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "knife",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 9,
+    "object_type": "ladle",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "ladle",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 33,
+    "object_type": "laptop",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 20,
+    "object_type": "laptop",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 19,
+    "object_type": "laptop",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 18,
+    "object_type": "laptop",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 15,
+    "object_type": "laptop",
+    "parent_type": "sofa",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "laptop",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "laptop",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "laptop",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "laptop",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 10,
+    "object_type": "lettuce",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "lettuce",
+    "parent_type": "refrigerator",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "lettuce",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "lettuce",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 17,
+    "object_type": "microwave",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "microwave",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 33,
+    "object_type": "mug",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 20,
+    "object_type": "mug",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 19,
+    "object_type": "mug",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "mug",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "mug",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "mug",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "mug",
+    "parent_type": "coffeemachine",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "mug",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "mug",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "mug",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "newspaper",
+    "parent_type": "sofa",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "newspaper",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "newspaper",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "newspaper",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "newspaper",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "newspaper",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "newspaper",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "newspaper",
+    "parent_type": "ottoman",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "newspaper",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "newspaper",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "painting",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "pan",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "pan",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 11,
+    "object_type": "papertowelroll",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "papertowelroll",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "papertowelroll",
+    "parent_type": "toilet",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 24,
+    "object_type": "pen",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 10,
+    "object_type": "pen",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "pen",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "pen",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "pen",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pen",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pen",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 26,
+    "object_type": "pencil",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 12,
+    "object_type": "pencil",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "pencil",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "pencil",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "pencil",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "pencil",
+    "parent_type": "box",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pencil",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pencil",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pencil",
+    "parent_type": "sofa",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pencil",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 27,
+    "object_type": "peppershaker",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "peppershaker",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "peppershaker",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "peppershaker",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 82,
+    "object_type": "pillow",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 49,
+    "object_type": "pillow",
+    "parent_type": "sofa",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 23,
+    "object_type": "pillow",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pillow",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 33,
+    "object_type": "plate",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 15,
+    "object_type": "plate",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 11,
+    "object_type": "plate",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 9,
+    "object_type": "plate",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "plate",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "plate",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "plate",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "plate",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "plate",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "pot",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 11,
+    "object_type": "pot",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "pot",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "pot",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "pot",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "pot",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pot",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pot",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pot",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 18,
+    "object_type": "potato",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "potato",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "potato",
+    "parent_type": "refrigerator",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "potato",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 22,
+    "object_type": "remotecontrol",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 17,
+    "object_type": "remotecontrol",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 15,
+    "object_type": "remotecontrol",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "remotecontrol",
+    "parent_type": "sofa",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "remotecontrol",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "remotecontrol",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "remotecontrol",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "remotecontrol",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "remotecontrol",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "remotecontrol",
+    "parent_type": "ottoman",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "safe",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 27,
+    "object_type": "saltshaker",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "saltshaker",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "saltshaker",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "saltshaker",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "showercurtain",
+    "parent_type": "towelholder",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 16,
+    "object_type": "soapbar",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "soapbar",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "soapbar",
+    "parent_type": "toilet",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 51,
+    "object_type": "soapbottle",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "soapbottle",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "soapbottle",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "soapbottle",
+    "parent_type": "toilet",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 27,
+    "object_type": "spatula",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "spatula",
+    "parent_type": "pot",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "spatula",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 18,
+    "object_type": "spoon",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "spoon",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "spoon",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "spraybottle",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 9,
+    "object_type": "spraybottle",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "spraybottle",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "spraybottle",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "spraybottle",
+    "parent_type": "toilet",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "spraybottle",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "spraybottle",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "spraybottle",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 20,
+    "object_type": "statue",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 17,
+    "object_type": "statue",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "statue",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 8,
+    "object_type": "statue",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "statue",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "statue",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "statue",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "statue",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "tabletopdecor",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 10,
+    "object_type": "teddybear",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "teddybear",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "teddybear",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "teddybear",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "tennisracket",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "tennisracket",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "tennisracket",
+    "parent_type": "bed",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "tennisracket",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "tissuebox",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "tissuebox",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "tissuebox",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "tissuebox",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "tissuebox",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "tissuebox",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 27,
+    "object_type": "toaster",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "toaster",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 22,
+    "object_type": "toiletpaper",
+    "parent_type": "toilet",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "toiletpaper",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 7,
+    "object_type": "toiletpaper",
+    "parent_type": "garbagecan",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "toiletpaper",
+    "parent_type": "toiletpaperhanger",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "tomato",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "tomato",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "tomato",
+    "parent_type": "refrigerator",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "tomato",
+    "parent_type": "sink",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "tomato",
+    "parent_type": "plate",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 30,
+    "object_type": "towel",
+    "parent_type": "towelholder",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 25,
+    "object_type": "vase",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 17,
+    "object_type": "vase",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 13,
+    "object_type": "vase",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 11,
+    "object_type": "vase",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "vase",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "vase",
+    "parent_type": "shelvingunit",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 4,
+    "object_type": "vase",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "vase",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "vase",
+    "parent_type": "plate",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "watch",
+    "parent_type": "coffee_table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 6,
+    "object_type": "watch",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "watch",
+    "parent_type": "desk",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "watch",
+    "parent_type": "tvstand",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "watch",
+    "parent_type": "chair",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "watch",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "watch",
+    "parent_type": "dresser",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 2,
+    "object_type": "window",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "window",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "window",
+    "parent_type": "sidetable",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 5,
+    "object_type": "winebottle",
+    "parent_type": "counter",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 3,
+    "object_type": "winebottle",
+    "parent_type": "table",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  },
+  {
+    "count": 1,
+    "object_type": "winebottle",
+    "parent_type": "refrigerator",
+    "relation": "inside_or_on",
+    "source": "ProcTHOR receptacles.json"
+  }
+]

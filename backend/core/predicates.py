@@ -101,7 +101,7 @@ def container_access_failure(state: dict[str, Any], container_id: str) -> str | 
 
 def capacity_place_failures(state: dict[str, Any], target_id: str) -> list[str]:
     target = node(state, target_id)
-    capacity_value = target.get("max_capacity") or states(target).get("max_capacity")
+    capacity_value = target.get("max_capacity") or states(target).get("max_capacity") or states(target).get("capacity")
     if capacity_value in (None, ""):
         return []
     try:
@@ -111,6 +111,18 @@ def capacity_place_failures(state: dict[str, Any], target_id: str) -> list[str]:
     if len(children_of(state, target_id)) >= capacity:
         return [f"target capacity exceeded: {target_id}"]
     return []
+
+
+def carrying_type_failures(state: dict[str, Any], held_id: str, target_id: str) -> list[str]:
+    target = node(state, target_id)
+    accepted = tuple(target.get("accepted_families") or ())
+    if not accepted:
+        return []
+    held = node(state, held_id)
+    held_family = str(held.get("family") or "")
+    is_food = held_family == "food" or semantic(held) in {"food", "fruit", "vegetable", "drink", "juice", "milk", "egg", "bread"}
+    wanted = "food" if is_food else "non_food"
+    return [] if wanted in accepted else [f"{semantic(target)} only accepts {', '.join(accepted)} items"]
 
 
 def controlled_targets(state: dict[str, Any], control_id: str) -> list[str]:
@@ -215,6 +227,7 @@ __all__ = [
     "MOVABLE_NODE_TYPES",
     "adjacent_room_failure",
     "capacity_place_failures",
+    "carrying_type_failures",
     "children_of",
     "container_access_failure",
     "controlled_targets",

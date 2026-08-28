@@ -1,0 +1,1082 @@
+[
+  {
+    "asset_count": 31,
+    "moveable": null,
+    "object_type": "alarmclock",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "aluminumfoil",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 31,
+    "moveable": null,
+    "object_type": "apple",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 5,
+    "moveable": null,
+    "object_type": "baseballbat",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "basketball",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 38,
+    "moveable": null,
+    "object_type": "bed",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "blinds",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 35,
+    "moveable": null,
+    "object_type": "book",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "boots",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "bottle",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 31,
+    "moveable": null,
+    "object_type": "bowl",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 34,
+    "moveable": null,
+    "object_type": "box",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "bread",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "butterknife",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 9,
+    "moveable": null,
+    "object_type": "candle",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "cart",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "cd",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 9,
+    "moveable": null,
+    "object_type": "cellphone",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 56,
+    "moveable": null,
+    "object_type": "chair",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 12,
+    "moveable": null,
+    "object_type": "cloth",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "clothesdryer",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 32,
+    "moveable": null,
+    "object_type": "coffee_table",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "coffeemachine",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 33,
+    "moveable": null,
+    "object_type": "counter",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 4,
+    "moveable": null,
+    "object_type": "creditcard",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 31,
+    "moveable": null,
+    "object_type": "cup",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 35,
+    "moveable": null,
+    "object_type": "desk",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 15,
+    "moveable": null,
+    "object_type": "desklamp",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "desktop",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "dishsponge",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 3,
+    "moveable": null,
+    "object_type": "dogbed",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 20,
+    "moveable": null,
+    "object_type": "doorframe",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 20,
+    "moveable": null,
+    "object_type": "doorway",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 28,
+    "moveable": null,
+    "object_type": "dresser",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "dumbbell",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "egg",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 37,
+    "moveable": null,
+    "object_type": "faucet",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 32,
+    "moveable": null,
+    "object_type": "floorlamp",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 7,
+    "moveable": null,
+    "object_type": "footstool",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "fork",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "garbagebag",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 31,
+    "moveable": null,
+    "object_type": "garbagecan",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "handtowel",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "handtowelholder",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 31,
+    "moveable": null,
+    "object_type": "houseplant",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "kettle",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 3,
+    "moveable": null,
+    "object_type": "keychain",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 7,
+    "moveable": null,
+    "object_type": "knife",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 3,
+    "moveable": null,
+    "object_type": "ladle",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 31,
+    "moveable": null,
+    "object_type": "laptop",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 4,
+    "moveable": null,
+    "object_type": "laundryhamper",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "lettuce",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "lightswitch",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "microwave",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 5,
+    "moveable": null,
+    "object_type": "mug",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 5,
+    "moveable": null,
+    "object_type": "newspaper",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 4,
+    "moveable": null,
+    "object_type": "ottoman",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 26,
+    "moveable": null,
+    "object_type": "painting",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "pan",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "papertowelroll",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 5,
+    "moveable": null,
+    "object_type": "pen",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 8,
+    "moveable": null,
+    "object_type": "pencil",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 3,
+    "moveable": null,
+    "object_type": "peppershaker",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 32,
+    "moveable": null,
+    "object_type": "pillow",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 31,
+    "moveable": null,
+    "object_type": "plate",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 3,
+    "moveable": null,
+    "object_type": "plunger",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "pot",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "potato",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "refrigerator",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 4,
+    "moveable": null,
+    "object_type": "remotecontrol",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "roomdecor",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "safe",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 3,
+    "moveable": null,
+    "object_type": "saltshaker",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "scrubbrush",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 14,
+    "moveable": null,
+    "object_type": "shelvingunit",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "showercurtain",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "showerhead",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 74,
+    "moveable": null,
+    "object_type": "sidetable",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "sink",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "soapbar",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "soapbottle",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 37,
+    "moveable": null,
+    "object_type": "sofa",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "spatula",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "spoon",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 9,
+    "moveable": null,
+    "object_type": "spraybottle",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 20,
+    "moveable": null,
+    "object_type": "statue",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 10,
+    "moveable": null,
+    "object_type": "stool",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "table",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "tabletopdecor",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "teddybear",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 32,
+    "moveable": null,
+    "object_type": "television",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 6,
+    "moveable": null,
+    "object_type": "tennisracket",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "tissuebox",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "toaster",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "toilet",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "toiletpaper",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "toiletpaperhanger",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 30,
+    "moveable": null,
+    "object_type": "tomato",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 3,
+    "moveable": null,
+    "object_type": "towel",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "towelholder",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 11,
+    "moveable": null,
+    "object_type": "tvstand",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": true,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "vacuumcleaner",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 20,
+    "moveable": null,
+    "object_type": "vase",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "washer",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 2,
+    "moveable": null,
+    "object_type": "watch",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "wateringcan",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 21,
+    "moveable": null,
+    "object_type": "window",
+    "openable": null,
+    "pickupable": false,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  },
+  {
+    "asset_count": 1,
+    "moveable": null,
+    "object_type": "winebottle",
+    "openable": null,
+    "pickupable": true,
+    "receptacle": false,
+    "source": "procthor.placement-annotations",
+    "toggleable": null
+  }
+]

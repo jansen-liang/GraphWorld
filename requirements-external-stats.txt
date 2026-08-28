@@ -1,0 +1,3 @@
+ai2thor==5.0.0
+procthor==0.0.1.dev2
+prior==1.0.3

@@ -14,6 +14,7 @@ class ActionType(str, Enum):
     BRUSH = "brush"
     FOLD = "fold"
     DUMP = "dump"
+    REFILL = "refill"
 
 @dataclass(frozen=True)
 class ActionSpec:
@@ -106,6 +107,15 @@ ACTION_SPECS: dict[ActionType, ActionSpec] = {
         mutates_edges=True,
         mutates_states=True,
         effect_summary=("require agent holds dumpable container", "apply container-specific dump rule"),
+    ),
+    ActionType.REFILL: ActionSpec(
+        action_type=ActionType.REFILL,
+        category="resource",
+        params=("agent", "target", "object"),
+        description="Restore a finite resource to its declared refill capacity.",
+        mutates_edges=False,
+        mutates_states=True,
+        effect_summary=("reset uses_left/count/amount to capacity", "consume compatible supply object"),
     ),
 }
 

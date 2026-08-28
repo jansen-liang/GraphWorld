@@ -2,22 +2,27 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
+from typing import Any, Iterable
 
 
 class DiscreteState(str, Enum):
-    """The discrete state space used by the static core and matrix evaluator."""
-
     CYCLE_REMAINING = "cycle_remaining"
     FILL_LEVEL = "fill_level"
     FOLDED = "folded"
     IS_BLOCKED = "is_blocked"
     IS_BROKEN = "is_broken"
+    IS_BOILING = "is_boiling"
     IS_BURNT = "is_burnt"
     IS_COOKED = "is_cooked"
     IS_DIRTY = "is_dirty"
     IS_FROZEN = "is_frozen"
     IS_FULL = "is_full"
+    HAS_WATER = "has_water"
+    IS_RUNNING = "is_running"
+    USES_LEFT = "uses_left"
+    COUNT = "count"
+    AMOUNT = "amount"
+    CAPACITY = "capacity"
     IS_ON = "is_on"
     IS_OPEN = "is_open"
     IS_PRESSED = "is_pressed"
@@ -28,17 +33,63 @@ class DiscreteState(str, Enum):
     VITALITY = "vitality"
 
 
+class StateCategory(str, Enum):
+    CONTROL = "control"
+    CONDITION = "condition"
+    QUANTITY = "quantity"
+    THERMAL = "thermal"
+    MATERIAL = "material"
+    LIFE = "life"
+
+
+class StateValueType(str, Enum):
+    BOOLEAN = "boolean"
+    NUMBER = "number"
+    ENUM = "enum"
+    NUMBER_OR_ENUM = "number_or_enum"
+
+
 DISCRETE_STATE_SPACE: tuple[str, ...] = tuple(state.value for state in DiscreteState)
-
-
 TEMPERATURE_VALUES = frozenset({"cold", "room", "warm", "hot"})
-NUMERIC_STATES = frozenset(
-    {
-        DiscreteState.CYCLE_REMAINING.value,
-        DiscreteState.FILL_LEVEL.value,
-        DiscreteState.VITALITY.value,
-    }
-)
+THERMAL_PHASES = frozenset({"frozen", "cold", "room", "warm", "hot", "boiling", "burning"})
+TEMPERATURE_NUMERIC_RANGE = (-50.0, 300.0)
+NUMERIC_STATES = frozenset({"cycle_remaining", "fill_level", "vitality", "uses_left", "count", "amount", "capacity"})
+
+
+@dataclass(frozen=True)
+class StateDefinition:
+    name: str
+    category: StateCategory
+    value_type: StateValueType
+    domain: tuple[object, ...] = ()
+    applies_to: tuple[str, ...] = ()
+    requires_capabilities: tuple[str, ...] = ()
+    derived_from: tuple[str, ...] = ()
+    description: str = ""
+
+    def accepts(self, *, semantic_type: str = "", capabilities: set[str] | None = None) -> bool:
+        capabilities = capabilities or set()
+        if semantic_type in self.applies_to:
+            return True
+        # Capability-only extension is reserved for generic condition states
+        # such as dirt/wetness. Domain/material states remain type-gated: a
+        # cookable pan may have temperature, but it does not become "cooked"
+        # food merely because it can hold heat.
+        if self.category in {StateCategory.CONDITION, StateCategory.QUANTITY} and self.requires_capabilities:
+            return bool(set(self.requires_capabilities) & capabilities)
+        return not self.applies_to and (not self.requires_capabilities or bool(set(self.requires_capabilities) & capabilities))
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "name": self.name,
+            "category": self.category.value,
+            "value_type": self.value_type.value,
+            "domain": list(self.domain),
+            "applies_to": list(self.applies_to),
+            "requires_capabilities": list(self.requires_capabilities),
+            "derived_from": list(self.derived_from),
+            "description": self.description,
+        }
 
 
 @dataclass(frozen=True)
@@ -51,221 +102,79 @@ class StateSpec:
     improved_by: tuple[str, ...]
     downstream_effects: tuple[str, ...]
     score_weight: float = 1.0
+    category: StateCategory = StateCategory.CONDITION
+    value_kind: StateValueType = StateValueType.BOOLEAN
+    requires_capabilities: tuple[str, ...] = ()
+    derived_from: tuple[str, ...] = ()
 
 
 def is_discrete_state(name: str) -> bool:
     return str(name or "") in DISCRETE_STATE_SPACE
 
 
-def normalize_discrete_value(name: str, value: object) -> int | str | None:
+def normalize_discrete_value(name: str, value: object) -> int | float | str | None:
     if name == DiscreteState.TEMPERATURE.value:
         if value is None:
             return None
-        normalized = str(value).strip().lower()
-        return normalized if normalized in TEMPERATURE_VALUES else normalized
-    if name in NUMERIC_STATES:
-        if value is None:
-            return None
-        try:
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
             return round(float(value), 4)
+        return str(value).strip().lower()
+    if name in NUMERIC_STATES:
+        try:
+            return round(float(value), 4) if value is not None else None
         except (TypeError, ValueError):
             return None
     if value is None:
         return None
-    return 1 if bool(value) else 0
+    return bool(value)
+
+
+def _spec(name: str, category: StateCategory, value_kind: StateValueType, applies: tuple[str, ...], positive: object, worse: tuple[str, ...], better: tuple[str, ...], effects: tuple[str, ...], caps: tuple[str, ...] = ()) -> StateSpec:
+    return StateSpec(name, value_kind.value, applies, positive, worse, better, effects, category=category, value_kind=value_kind, requires_capabilities=caps)
 
 
 STATE_SPECS: dict[str, StateSpec] = {
-    DiscreteState.IS_OPEN.value: StateSpec(
-        name=DiscreteState.IS_OPEN.value,
-        value_type="bool",
-        applies_to=("door", "cabinet", "fridge", "drawer", "washer", "microwave"),
-        positive_value=False,
-        worsened_by=("left_open",),
-        improved_by=("close",),
-        downstream_effects=("enables containment access when true", "blocks device start when device door is open"),
-        score_weight=0.6,
-    ),
-    DiscreteState.IS_ON.value: StateSpec(
-        name=DiscreteState.IS_ON.value,
-        value_type="bool",
-        applies_to=("stove", "faucet", "washer", "dishwasher", "light", "tv", "microwave"),
-        positive_value=False,
-        worsened_by=("left_running",),
-        improved_by=("press", "cycle_completion"),
-        downstream_effects=("starts timed appliance transitions", "can create risk if left on"),
-        score_weight=0.8,
-    ),
-    DiscreteState.IS_PRESSED.value: StateSpec(
-        name=DiscreteState.IS_PRESSED.value,
-        value_type="bool",
-        applies_to=("button", "switch", "knob"),
-        positive_value=False,
-        worsened_by=("press",),
-        improved_by=("cycle_completion",),
-        downstream_effects=("propagates state to controlled devices"),
-        score_weight=0.2,
-    ),
-    DiscreteState.CYCLE_REMAINING.value: StateSpec(
-        name=DiscreteState.CYCLE_REMAINING.value,
-        value_type="number",
-        applies_to=("washer", "dishwasher", "microwave"),
-        positive_value=0,
-        worsened_by=("press_start",),
-        improved_by=("timed_transition",),
-        downstream_effects=("cycle completion mutates contents"),
-        score_weight=0.2,
-    ),
-    DiscreteState.IS_DIRTY.value: StateSpec(
-        name=DiscreteState.IS_DIRTY.value,
-        value_type="bool",
-        applies_to=("plate", "cup", "table", "clothes", "floor", "toilet", "sink"),
-        positive_value=False,
-        worsened_by=("use", "eat", "spill", "wear"),
-        improved_by=("brush", "cycle_completion"),
-        downstream_effects=("blocks clean-clothes human events", "lowers environment state score"),
-        score_weight=1.0,
-    ),
-    DiscreteState.IS_ROTTEN.value: StateSpec(
-        name=DiscreteState.IS_ROTTEN.value,
-        value_type="bool",
-        applies_to=("food", "trash", "organic_item"),
-        positive_value=False,
-        worsened_by=("time_decay",),
-        improved_by=(),
-        downstream_effects=("should be moved to trash or removed from living space"),
-        score_weight=1.0,
-    ),
-    DiscreteState.IS_FULL.value: StateSpec(
-        name=DiscreteState.IS_FULL.value,
-        value_type="bool",
-        applies_to=("trash_bin", "basket", "cup", "container"),
-        positive_value=False,
-        worsened_by=("place", "human_event"),
-        improved_by=(),
-        downstream_effects=("blocks disposal or filling when true"),
-        score_weight=0.7,
-    ),
-    DiscreteState.FILL_LEVEL.value: StateSpec(
-        name=DiscreteState.FILL_LEVEL.value,
-        value_type="number",
-        applies_to=("trash_bin", "cup", "container"),
-        positive_value=0,
-        worsened_by=("place", "human_event"),
-        improved_by=(),
-        downstream_effects=("sets is_full when threshold reached"),
-        score_weight=0.5,
-    ),
-    DiscreteState.IS_WET.value: StateSpec(
-        name=DiscreteState.IS_WET.value,
-        value_type="bool",
-        applies_to=("clothes", "towel", "floor", "cup", "sink_area"),
-        positive_value=False,
-        worsened_by=("human_event", "cycle_completion"),
-        improved_by=("timed_transition",),
-        downstream_effects=("blocks folding and wearing for clothes"),
-        score_weight=0.8,
-    ),
-    DiscreteState.TEMPERATURE.value: StateSpec(
-        name=DiscreteState.TEMPERATURE.value,
-        value_type="enum",
-        applies_to=("food",),
-        positive_value="room",
-        worsened_by=("timed_transition",),
-        improved_by=("timed_transition",),
-        downstream_effects=("enables cooked/frozen/burnt transitions"),
-        score_weight=0.4,
-    ),
-    DiscreteState.IS_COOKED.value: StateSpec(
-        name=DiscreteState.IS_COOKED.value,
-        value_type="bool",
-        applies_to=("food",),
-        positive_value=True,
-        worsened_by=("raw_food",),
-        improved_by=("cycle_completion",),
-        downstream_effects=("enables eating events"),
-        score_weight=0.6,
-    ),
-    DiscreteState.IS_BURNT.value: StateSpec(
-        name=DiscreteState.IS_BURNT.value,
-        value_type="bool",
-        applies_to=("food",),
-        positive_value=False,
-        worsened_by=("overcook",),
-        improved_by=(),
-        downstream_effects=("food should be disposed"),
-        score_weight=1.0,
-    ),
-    DiscreteState.IS_FROZEN.value: StateSpec(
-        name=DiscreteState.IS_FROZEN.value,
-        value_type="bool",
-        applies_to=("food",),
-        positive_value=False,
-        worsened_by=("freeze_when_not_desired",),
-        improved_by=("timed_transition",),
-        downstream_effects=("blocks immediate eating/cooking"),
-        score_weight=0.5,
-    ),
-    DiscreteState.IS_BROKEN.value: StateSpec(
-        name=DiscreteState.IS_BROKEN.value,
-        value_type="bool",
-        applies_to=("cup", "plate", "laptop", "device"),
-        positive_value=False,
-        worsened_by=("break",),
-        improved_by=(),
-        downstream_effects=("blocks normal use"),
-        score_weight=1.0,
-    ),
-    DiscreteState.IS_BLOCKED.value: StateSpec(
-        name=DiscreteState.IS_BLOCKED.value,
-        value_type="bool",
-        applies_to=("door", "path", "container"),
-        positive_value=False,
-        worsened_by=("obstruct",),
-        improved_by=(),
-        downstream_effects=("blocks navigation or containment access"),
-        score_weight=1.0,
-    ),
-    DiscreteState.FOLDED.value: StateSpec(
-        name=DiscreteState.FOLDED.value,
-        value_type="bool",
-        applies_to=("clothes", "towel", "blanket"),
-        positive_value=True,
-        worsened_by=("human_event", "cycle_completion"),
-        improved_by=("fold"),
-        downstream_effects=("improves storage/order relation score"),
-        score_weight=0.6,
-    ),
-    DiscreteState.IS_WILTED.value: StateSpec(
-        name=DiscreteState.IS_WILTED.value,
-        value_type="bool",
-        applies_to=("plant",),
-        positive_value=False,
-        worsened_by=("time_without_water",),
-        improved_by=(),
-        downstream_effects=("lowers plant vitality"),
-        score_weight=0.6,
-    ),
-    DiscreteState.VITALITY.value: StateSpec(
-        name=DiscreteState.VITALITY.value,
-        value_type="number",
-        applies_to=("plant",),
-        positive_value=1,
-        worsened_by=("time_without_water",),
-        improved_by=(),
-        downstream_effects=("sets is_wilted when too low"),
-        score_weight=0.4,
-    ),
+    "is_open": _spec("is_open", StateCategory.CONTROL, StateValueType.BOOLEAN, ("door", "cabinet", "fridge", "drawer", "washer", "microwave"), False, ("left_open",), ("close",), ("controls access",), ("openable",)),
+    "is_on": _spec("is_on", StateCategory.CONTROL, StateValueType.BOOLEAN, ("stove", "faucet", "washer", "dishwasher", "light", "tv", "microwave"), False, ("left_running",), ("press",), ("starts cycles",), ("switchable",)),
+    "is_pressed": _spec("is_pressed", StateCategory.CONTROL, StateValueType.BOOLEAN, ("button", "switch", "knob"), False, ("press",), ("cycle_completion",), ("propagates control",), ("switchable",)),
+    "cycle_remaining": _spec("cycle_remaining", StateCategory.QUANTITY, StateValueType.NUMBER, ("washer", "dishwasher", "microwave"), 0, ("press_start",), ("timed_transition",), ("tracks cycle completion",)),
+    "is_dirty": _spec("is_dirty", StateCategory.CONDITION, StateValueType.BOOLEAN, ("plate", "cup", "table", "clothes", "floor", "toilet", "sink"), False, ("use", "spill"), ("brush",), ("surface needs cleaning",), ("cleanable",)),
+    "is_rotten": _spec("is_rotten", StateCategory.MATERIAL, StateValueType.BOOLEAN, ("food", "milk", "juice", "vegetable", "fruit", "organic_item"), False, ("time_decay",), (), ("dispose or remove",), ("perishable",)),
+    "is_full": _spec("is_full", StateCategory.QUANTITY, StateValueType.BOOLEAN, ("trash_bin", "basket", "cup", "container"), False, ("place",), (), ("blocks filling",), ("fillable",)),
+    "fill_level": _spec("fill_level", StateCategory.QUANTITY, StateValueType.NUMBER, ("trash_bin", "cup", "container"), 0, ("place",), (), ("drives is_full",), ("fillable",)),
+    "has_water": _spec("has_water", StateCategory.QUANTITY, StateValueType.BOOLEAN, ("sink", "vase", "cup", "mug", "bowl", "wateringcan", "spraybottle"), False, ("empty", "consume", "evaporate"), ("open_faucet", "fill", "refill"), ("controls watering and wetting effects",), ("water_container",)),
+    "is_running": _spec("is_running", StateCategory.CONTROL, StateValueType.BOOLEAN, ("washer", "washing_machine", "dryer", "clothesdryer", "microwave", "printer", "coffeemachine", "coffee_machine"), False, ("start",), ("finish",), ("tracks active process",), ("timed_device",)),
+    "uses_left": _spec("uses_left", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("consume",), ("refill",), ("finite resource availability",), ("finite_resource",)),
+    "count": _spec("count", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("consume",), ("refill",), ("resource inventory",), ("finite_resource",)),
+    "amount": _spec("amount", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("consume",), ("refill",), ("material quantity",), ("finite_resource",)),
+    "capacity": _spec("capacity", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("place",), (), ("limits contained item count",), ("capacity_holder",)),
+    "is_wet": _spec("is_wet", StateCategory.CONDITION, StateValueType.BOOLEAN, ("clothes", "towel", "floor", "cup", "sink_area"), False, ("water",), ("drying",), ("blocks folding",)),
+    "temperature": _spec("temperature", StateCategory.THERMAL, StateValueType.NUMBER_OR_ENUM, ("food", "drink", "milk", "juice", "vegetable", "fruit", "egg", "bread", "water"), "room", ("cooling",), ("heating",), ("drives thermal phases and cooking",), ("temperature_sensitive", "cookable")),
+    "is_cooked": _spec("is_cooked", StateCategory.MATERIAL, StateValueType.BOOLEAN, ("food", "egg", "bread"), False, ("raw_food",), ("cooking",), ("enables eating",), ("cookable",)),
+    "is_burnt": _spec("is_burnt", StateCategory.MATERIAL, StateValueType.BOOLEAN, ("food", "egg", "bread"), False, ("overcook",), (), ("food disposal",), ("cookable",)),
+    "is_frozen": _spec("is_frozen", StateCategory.MATERIAL, StateValueType.BOOLEAN, ("food", "drink", "milk", "juice", "vegetable", "fruit"), False, ("freeze",), ("thaw",), ("blocks immediate use",), ("temperature_sensitive",)),
+    "is_broken": _spec("is_broken", StateCategory.CONDITION, StateValueType.BOOLEAN, ("cup", "plate", "computer", "device"), False, ("break",), (), ("blocks normal use",)),
+    "is_blocked": _spec("is_blocked", StateCategory.CONDITION, StateValueType.BOOLEAN, ("door", "path", "container"), False, ("obstruct",), (), ("blocks navigation or access",)),
+    "folded": _spec("folded", StateCategory.CONDITION, StateValueType.BOOLEAN, ("clothes", "towel", "blanket"), True, ("unfold",), ("fold",), ("improves storage",), ("foldable",)),
+    "is_wilted": _spec("is_wilted", StateCategory.LIFE, StateValueType.BOOLEAN, ("plant",), False, ("time_without_water",), (), ("lowers vitality",), ("plant_life",)),
+    "vitality": _spec("vitality", StateCategory.LIFE, StateValueType.NUMBER, ("plant",), 1, ("time_without_water",), ("water",), ("drives wilted",), ("plant_life",)),
 }
 
 
-__all__ = [
-    "DISCRETE_STATE_SPACE",
-    "DiscreteState",
-    "NUMERIC_STATES",
-    "STATE_SPECS",
-    "StateSpec",
-    "TEMPERATURE_VALUES",
-    "is_discrete_state",
-    "normalize_discrete_value",
-]
+STATE_DEFINITIONS: dict[str, StateDefinition] = {
+    name: StateDefinition(name, spec.category, spec.value_kind, applies_to=spec.applies_to, requires_capabilities=spec.requires_capabilities, derived_from=spec.derived_from, description=spec.downstream_effects[0] if spec.downstream_effects else "")
+    for name, spec in STATE_SPECS.items()
+}
+STATE_DEFINITIONS["is_boiling"] = StateDefinition("is_boiling", StateCategory.THERMAL, StateValueType.BOOLEAN, applies_to=("water", "drink", "liquid"), requires_capabilities=("liquid", "cookable"), derived_from=("temperature",), description="Derived when liquid temperature reaches its boiling point.")
+
+
+def state_definition(name: str) -> StateDefinition:
+    return STATE_DEFINITIONS[str(name)]
+
+
+def state_table_for_object(semantic_type: str, capabilities: Iterable[str] = ()) -> dict[str, StateDefinition]:
+    capability_set = set(capabilities)
+    return {name: definition for name, definition in STATE_DEFINITIONS.items() if definition.accepts(semantic_type=semantic_type, capabilities=capability_set)}
+
+
+__all__ = ["DISCRETE_STATE_SPACE", "DiscreteState", "NUMERIC_STATES", "STATE_SPECS", "STATE_DEFINITIONS", "StateCategory", "StateDefinition", "StateSpec", "StateValueType", "TEMPERATURE_VALUES", "THERMAL_PHASES", "TEMPERATURE_NUMERIC_RANGE", "is_discrete_state", "normalize_discrete_value", "state_definition", "state_table_for_object"]

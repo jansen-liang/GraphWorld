@@ -1,0 +1,417 @@
+[
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": true,
+    "external_count": 561,
+    "object_type": "drawer",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": true,
+    "external_count": 516,
+    "object_type": "cabinet",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": true,
+    "external_count": 261,
+    "object_type": "shelf",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 182,
+    "object_type": "window",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": true,
+    "external_count": 178,
+    "object_type": "chair",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "kitchen"
+    ],
+    "core_template_exists": true,
+    "external_count": 149,
+    "object_type": "sink",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 128,
+    "object_type": "garbagecan",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 128,
+    "object_type": "lightswitch",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "kitchen"
+    ],
+    "core_template_exists": false,
+    "external_count": 123,
+    "object_type": "stoveburner",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "kitchen"
+    ],
+    "core_template_exists": false,
+    "external_count": 123,
+    "object_type": "stoveknob",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom",
+      "kitchen"
+    ],
+    "core_template_exists": true,
+    "external_count": 103,
+    "object_type": "counter",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 100,
+    "object_type": "sidetable",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "kitchen"
+    ],
+    "core_template_exists": true,
+    "external_count": 95,
+    "object_type": "faucet",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 76,
+    "object_type": "pillow",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 75,
+    "object_type": "painting",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 72,
+    "object_type": "vase",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 68,
+    "object_type": "creditcard",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 67,
+    "object_type": "mirror",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 67,
+    "object_type": "statue",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "kitchen"
+    ],
+    "core_template_exists": false,
+    "external_count": 64,
+    "object_type": "soapbottle",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 64,
+    "object_type": "laptop",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 64,
+    "object_type": "keychain",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom"
+    ],
+    "core_template_exists": false,
+    "external_count": 62,
+    "object_type": "toiletpaper",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 55,
+    "object_type": "houseplant",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 55,
+    "object_type": "desklamp",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 53,
+    "object_type": "blinds",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": true,
+    "external_count": 53,
+    "object_type": "bowl",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "kitchen"
+    ],
+    "core_template_exists": true,
+    "external_count": 49,
+    "object_type": "mug",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom"
+    ],
+    "core_template_exists": false,
+    "external_count": 47,
+    "object_type": "handtowelholder",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "living_room"
+    ],
+    "core_template_exists": true,
+    "external_count": 46,
+    "object_type": "box",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 45,
+    "object_type": "cellphone",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": true,
+    "external_count": 43,
+    "object_type": "book",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": true,
+    "external_count": 43,
+    "object_type": "plate",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "bedroom"
+    ],
+    "core_template_exists": false,
+    "external_count": 42,
+    "object_type": "cloth",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 41,
+    "object_type": "pen",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom"
+    ],
+    "core_template_exists": false,
+    "external_count": 40,
+    "object_type": "towelholder",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "kitchen",
+      "living_room"
+    ],
+    "core_template_exists": false,
+    "external_count": 40,
+    "object_type": "pencil",
+    "status": "requires_ontology_or_template"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bedroom",
+      "living_room"
+    ],
+    "core_template_exists": true,
+    "external_count": 40,
+    "object_type": "sofa",
+    "status": "candidate_for_merge"
+  },
+  {
+    "allowed_rooms_observed": [
+      "bathroom",
+      "kitchen"
+    ],
+    "core_template_exists": false,
+    "external_count": 39,
+    "object_type": "dishsponge",
+    "status": "requires_ontology_or_template"
+  }
+]

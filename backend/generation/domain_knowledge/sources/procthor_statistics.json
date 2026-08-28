@@ -1,0 +1,1 @@
+{"schema_version": "source_statistics.v1", "source": "ProcTHOR", "status": "import_pending", "artifacts": ["placement annotations", "receptacles", "object groups", "room/object frequencies"]}

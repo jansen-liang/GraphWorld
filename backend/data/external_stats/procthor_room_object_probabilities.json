@@ -1,0 +1,1346 @@
+[
+  {
+    "count": 2,
+    "object_type": "candle",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "cloth",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "faucet",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "garbagecan",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "handtowel",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "handtowelholder",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "lightswitch",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "plunger",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "scrubbrush",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "showercurtain",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "showerhead",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "soapbar",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "soapbottle",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "spraybottle",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "toilet",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "toiletpaper",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "toiletpaperhanger",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "towel",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "towelholder",
+    "probability": 0.04166667,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "clothesdryer",
+    "probability": 0.02083333,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "dishsponge",
+    "probability": 0.02083333,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "dresser",
+    "probability": 0.02083333,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "footstool",
+    "probability": 0.02083333,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "houseplant",
+    "probability": 0.02083333,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "laundryhamper",
+    "probability": 0.02083333,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "papertowelroll",
+    "probability": 0.02083333,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "sidetable",
+    "probability": 0.02083333,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "tissuebox",
+    "probability": 0.02083333,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "washer",
+    "probability": 0.02083333,
+    "room_object_presence_records": 1,
+    "room_type": "bathroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 3,
+    "object_type": "chair",
+    "probability": 0.04347826,
+    "room_object_presence_records": 2,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "alarmclock",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "baseballbat",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "bed",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "blinds",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "book",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "bowl",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "box",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "cd",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "cellphone",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "creditcard",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "desk",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "desklamp",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "dresser",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "garbagecan",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "keychain",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "laptop",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "lightswitch",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "pen",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "pencil",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "pillow",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "sidetable",
+    "probability": 0.02898551,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "basketball",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "boots",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "cloth",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "coffee_table",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "desktop",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "dogbed",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "dumbbell",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "footstool",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "houseplant",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "laundryhamper",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "mug",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "remotecontrol",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "safe",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "shelvingunit",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "sofa",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "statue",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "stool",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "tabletopdecor",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "teddybear",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "tennisracket",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "tissuebox",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "vacuumcleaner",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "vase",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "watch",
+    "probability": 0.01449275,
+    "room_object_presence_records": 1,
+    "room_type": "bedroom",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "apple",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "bowl",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "bread",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "butterknife",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "chair",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "coffeemachine",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "counter",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "cup",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "dishsponge",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "egg",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "faucet",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "fork",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "refrigerator",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "garbagecan",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "kettle",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "knife",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "ladle",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "lettuce",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "lightswitch",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "microwave",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "mug",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "pan",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "peppershaker",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "plate",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "pot",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "potato",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "saltshaker",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "shelvingunit",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "soapbottle",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "spatula",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "spoon",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "stool",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "toaster",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "tomato",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "vase",
+    "probability": 0.02298851,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "aluminumfoil",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "blinds",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "book",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "bottle",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "cellphone",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "creditcard",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "table",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "garbagebag",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "houseplant",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "papertowelroll",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pen",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pencil",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "safe",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "sidetable",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "spraybottle",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "statue",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "winebottle",
+    "probability": 0.01149425,
+    "room_object_presence_records": 1,
+    "room_type": "kitchen",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 4,
+    "object_type": "chair",
+    "probability": 0.0625,
+    "room_object_presence_records": 2,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "box",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "creditcard",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "desklamp",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "dresser",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "floorlamp",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "garbagecan",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "keychain",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "laptop",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "lightswitch",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "newspaper",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "pillow",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "remotecontrol",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "shelvingunit",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "sidetable",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "sofa",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "statue",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "tvstand",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "vase",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "watch",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 2,
+    "object_type": "wateringcan",
+    "probability": 0.03125,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "blinds",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "book",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "boots",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "bowl",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "candle",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "cart",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "cellphone",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "coffee_table",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "desk",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "table",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "dogbed",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "houseplant",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "ottoman",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pen",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "pencil",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "plate",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "roomdecor",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "safe",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "stool",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  },
+  {
+    "count": 1,
+    "object_type": "tissuebox",
+    "probability": 0.015625,
+    "room_object_presence_records": 1,
+    "room_type": "living_room",
+    "source": "ProcTHOR placement-annotations.json"
+  }
+]

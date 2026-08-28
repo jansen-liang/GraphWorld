@@ -1,0 +1,8 @@
+{
+  "schema_version": "common_connectivity_rules.v1",
+  "hard_rules": [
+    {"id": "connected_rooms_require_edge", "description": "Adjacent rooms must have a connected relation."},
+    {"id": "structural_door_blocks_when_closed", "description": "A closed structural door blocks traversal between connected rooms."},
+    {"id": "all_rooms_reachable", "description": "Every generated room must be reachable from the entrance or outside node."}
+  ]
+}

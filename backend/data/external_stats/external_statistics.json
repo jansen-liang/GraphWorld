@@ -1,0 +1,1417 @@
+{
+  "files": [
+    {
+      "path": "/home/swzz/anaconda3/gra/lib/python3.10/site-packages/procthor/databases/placement-annotations.json",
+      "sha256": "928d6908140abbbae0cede1052c10a0062e3750d08b8cc1cda36ebcbab320a6d"
+    },
+    {
+      "path": "/home/swzz/anaconda3/gra/lib/python3.10/site-packages/procthor/databases/receptacles.json",
+      "sha256": "1dc97d377d7c324ded155443d00d4a938018178959dfa4437d1aa78dfdcd34ac"
+    },
+    {
+      "path": "/home/swzz/anaconda3/gra/lib/python3.10/site-packages/procthor/databases/ai2thor-object-metadata.json",
+      "sha256": "5bb9020b50b0f398e5460519d61347dfe115119dfcc3b136b02d1116bb13416a"
+    }
+  ],
+  "license": "ProcTHOR and AI2-THOR are distributed under their respective upstream licenses; verify terms before redistribution. This output contains derived aggregate statistics, not copied assets.",
+  "object_capability_stats": {
+    "bed": {
+      "instances": 38,
+      "kinematic": true,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Bed",
+      "structure": false
+    },
+    "book": {
+      "instances": 35,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Book",
+      "structure": false
+    },
+    "bowl": {
+      "instances": 31,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Bowl",
+      "structure": false
+    },
+    "box": {
+      "instances": 34,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Box",
+      "structure": false
+    },
+    "cart": {
+      "instances": 1,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Cart",
+      "structure": false
+    },
+    "chair": {
+      "instances": 56,
+      "kinematic": true,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Chair",
+      "structure": false
+    },
+    "coffee_table": {
+      "instances": 32,
+      "kinematic": true,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "CoffeeTable",
+      "structure": false
+    },
+    "counter": {
+      "instances": 33,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "CounterTop",
+      "structure": false
+    },
+    "cup": {
+      "instances": 31,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Cup",
+      "structure": false
+    },
+    "desk": {
+      "instances": 35,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Desk",
+      "structure": false
+    },
+    "faucet": {
+      "instances": 37,
+      "kinematic": true,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Faucet",
+      "structure": false
+    },
+    "microwave": {
+      "instances": 30,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Microwave",
+      "structure": false
+    },
+    "mug": {
+      "instances": 5,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Mug",
+      "structure": false
+    },
+    "plate": {
+      "instances": 31,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Plate",
+      "structure": false
+    },
+    "refrigerator": {
+      "instances": 30,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Fridge",
+      "structure": false
+    },
+    "sink": {
+      "instances": 30,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Sink",
+      "structure": false
+    },
+    "sofa": {
+      "instances": 37,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Sofa",
+      "structure": false
+    },
+    "table": {
+      "instances": 30,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "DiningTable",
+      "structure": false
+    },
+    "television": {
+      "instances": 32,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Television",
+      "structure": false
+    },
+    "toilet": {
+      "instances": 2,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Toilet",
+      "structure": false
+    },
+    "unmapped::AlarmClock": {
+      "instances": 31,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "AlarmClock",
+      "structure": false
+    },
+    "unmapped::AluminumFoil": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "AluminumFoil",
+      "structure": false
+    },
+    "unmapped::Apple": {
+      "instances": 31,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Apple",
+      "structure": false
+    },
+    "unmapped::BaseballBat": {
+      "instances": 5,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "BaseballBat",
+      "structure": false
+    },
+    "unmapped::BasketBall": {
+      "instances": 2,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "BasketBall",
+      "structure": false
+    },
+    "unmapped::Blinds": {
+      "instances": 1,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": true,
+      "pickupable": false,
+      "raw_label": "Blinds",
+      "structure": false
+    },
+    "unmapped::Boots": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Boots",
+      "structure": false
+    },
+    "unmapped::Bottle": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Bottle",
+      "structure": false
+    },
+    "unmapped::Bread": {
+      "instances": 30,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Bread",
+      "structure": false
+    },
+    "unmapped::ButterKnife": {
+      "instances": 2,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "ButterKnife",
+      "structure": false
+    },
+    "unmapped::CD": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "CD",
+      "structure": false
+    },
+    "unmapped::Candle": {
+      "instances": 9,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Candle",
+      "structure": false
+    },
+    "unmapped::CellPhone": {
+      "instances": 9,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "CellPhone",
+      "structure": false
+    },
+    "unmapped::Cloth": {
+      "instances": 12,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Cloth",
+      "structure": false
+    },
+    "unmapped::ClothesDryer": {
+      "instances": 2,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "ClothesDryer",
+      "structure": false
+    },
+    "unmapped::CoffeeMachine": {
+      "instances": 30,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "CoffeeMachine",
+      "structure": false
+    },
+    "unmapped::CreditCard": {
+      "instances": 4,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "CreditCard",
+      "structure": false
+    },
+    "unmapped::DeskLamp": {
+      "instances": 15,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "DeskLamp",
+      "structure": false
+    },
+    "unmapped::Desktop": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Desktop",
+      "structure": false
+    },
+    "unmapped::DishSponge": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "DishSponge",
+      "structure": false
+    },
+    "unmapped::DogBed": {
+      "instances": 3,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "DogBed",
+      "structure": false
+    },
+    "unmapped::Doorframe": {
+      "instances": 20,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": true,
+      "pickupable": false,
+      "raw_label": "Doorframe",
+      "structure": true
+    },
+    "unmapped::Doorway": {
+      "instances": 20,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": true,
+      "pickupable": false,
+      "raw_label": "Doorway",
+      "structure": true
+    },
+    "unmapped::Dresser": {
+      "instances": 28,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Dresser",
+      "structure": false
+    },
+    "unmapped::Dumbbell": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Dumbbell",
+      "structure": false
+    },
+    "unmapped::Egg": {
+      "instances": 30,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Egg",
+      "structure": false
+    },
+    "unmapped::FloorLamp": {
+      "instances": 32,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "FloorLamp",
+      "structure": false
+    },
+    "unmapped::Footstool": {
+      "instances": 7,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Footstool",
+      "structure": false
+    },
+    "unmapped::Fork": {
+      "instances": 2,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Fork",
+      "structure": false
+    },
+    "unmapped::GarbageBag": {
+      "instances": 2,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "GarbageBag",
+      "structure": false
+    },
+    "unmapped::GarbageCan": {
+      "instances": 31,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "GarbageCan",
+      "structure": false
+    },
+    "unmapped::HandTowel": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "HandTowel",
+      "structure": false
+    },
+    "unmapped::HandTowelHolder": {
+      "instances": 1,
+      "kinematic": true,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": true,
+      "pickupable": false,
+      "raw_label": "HandTowelHolder",
+      "structure": false
+    },
+    "unmapped::HousePlant": {
+      "instances": 31,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "HousePlant",
+      "structure": false
+    },
+    "unmapped::Kettle": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Kettle",
+      "structure": false
+    },
+    "unmapped::KeyChain": {
+      "instances": 3,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "KeyChain",
+      "structure": false
+    },
+    "unmapped::Knife": {
+      "instances": 7,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Knife",
+      "structure": false
+    },
+    "unmapped::Ladle": {
+      "instances": 3,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Ladle",
+      "structure": false
+    },
+    "unmapped::Laptop": {
+      "instances": 31,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Laptop",
+      "structure": false
+    },
+    "unmapped::LaundryHamper": {
+      "instances": 4,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "LaundryHamper",
+      "structure": false
+    },
+    "unmapped::Lettuce": {
+      "instances": 30,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Lettuce",
+      "structure": false
+    },
+    "unmapped::LightSwitch": {
+      "instances": 30,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": true,
+      "pickupable": false,
+      "raw_label": "LightSwitch",
+      "structure": false
+    },
+    "unmapped::Newspaper": {
+      "instances": 5,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Newspaper",
+      "structure": false
+    },
+    "unmapped::Ottoman": {
+      "instances": 4,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Ottoman",
+      "structure": false
+    },
+    "unmapped::Painting": {
+      "instances": 26,
+      "kinematic": true,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": true,
+      "pickupable": false,
+      "raw_label": "Painting",
+      "structure": false
+    },
+    "unmapped::Pan": {
+      "instances": 30,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Pan",
+      "structure": false
+    },
+    "unmapped::PaperTowelRoll": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "PaperTowelRoll",
+      "structure": false
+    },
+    "unmapped::Pen": {
+      "instances": 5,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Pen",
+      "structure": false
+    },
+    "unmapped::Pencil": {
+      "instances": 8,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Pencil",
+      "structure": false
+    },
+    "unmapped::PepperShaker": {
+      "instances": 3,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "PepperShaker",
+      "structure": false
+    },
+    "unmapped::Pillow": {
+      "instances": 32,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Pillow",
+      "structure": false
+    },
+    "unmapped::Plunger": {
+      "instances": 3,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Plunger",
+      "structure": false
+    },
+    "unmapped::Pot": {
+      "instances": 30,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Pot",
+      "structure": false
+    },
+    "unmapped::Potato": {
+      "instances": 30,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Potato",
+      "structure": false
+    },
+    "unmapped::RemoteControl": {
+      "instances": 4,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "RemoteControl",
+      "structure": false
+    },
+    "unmapped::RoomDecor": {
+      "instances": 2,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "RoomDecor",
+      "structure": false
+    },
+    "unmapped::Safe": {
+      "instances": 2,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Safe",
+      "structure": false
+    },
+    "unmapped::SaltShaker": {
+      "instances": 3,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "SaltShaker",
+      "structure": false
+    },
+    "unmapped::ScrubBrush": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "ScrubBrush",
+      "structure": false
+    },
+    "unmapped::ShelvingUnit": {
+      "instances": 14,
+      "kinematic": true,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "ShelvingUnit",
+      "structure": false
+    },
+    "unmapped::ShowerCurtain": {
+      "instances": 2,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "ShowerCurtain",
+      "structure": false
+    },
+    "unmapped::ShowerHead": {
+      "instances": 2,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "ShowerHead",
+      "structure": false
+    },
+    "unmapped::SideTable": {
+      "instances": 74,
+      "kinematic": true,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "SideTable",
+      "structure": false
+    },
+    "unmapped::SoapBar": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "SoapBar",
+      "structure": false
+    },
+    "unmapped::SoapBottle": {
+      "instances": 30,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "SoapBottle",
+      "structure": false
+    },
+    "unmapped::Spatula": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Spatula",
+      "structure": false
+    },
+    "unmapped::Spoon": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Spoon",
+      "structure": false
+    },
+    "unmapped::SprayBottle": {
+      "instances": 9,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "SprayBottle",
+      "structure": false
+    },
+    "unmapped::Statue": {
+      "instances": 20,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Statue",
+      "structure": false
+    },
+    "unmapped::Stool": {
+      "instances": 10,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Stool",
+      "structure": false
+    },
+    "unmapped::TVStand": {
+      "instances": 11,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "TVStand",
+      "structure": false
+    },
+    "unmapped::TableTopDecor": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "TableTopDecor",
+      "structure": false
+    },
+    "unmapped::TeddyBear": {
+      "instances": 2,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "TeddyBear",
+      "structure": false
+    },
+    "unmapped::TennisRacket": {
+      "instances": 6,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "TennisRacket",
+      "structure": false
+    },
+    "unmapped::TissueBox": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "TissueBox",
+      "structure": false
+    },
+    "unmapped::Toaster": {
+      "instances": 30,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "Toaster",
+      "structure": false
+    },
+    "unmapped::ToiletPaper": {
+      "instances": 2,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "ToiletPaper",
+      "structure": false
+    },
+    "unmapped::ToiletPaperHanger": {
+      "instances": 30,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": true,
+      "pickupable": false,
+      "raw_label": "ToiletPaperHanger",
+      "structure": false
+    },
+    "unmapped::Tomato": {
+      "instances": 30,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Tomato",
+      "structure": false
+    },
+    "unmapped::Towel": {
+      "instances": 3,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Towel",
+      "structure": false
+    },
+    "unmapped::TowelHolder": {
+      "instances": 1,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": true,
+      "pickupable": false,
+      "raw_label": "TowelHolder",
+      "structure": false
+    },
+    "unmapped::VacuumCleaner": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "VacuumCleaner",
+      "structure": false
+    },
+    "unmapped::Vase": {
+      "instances": 20,
+      "kinematic": false,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Vase",
+      "structure": false
+    },
+    "unmapped::Watch": {
+      "instances": 2,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "Watch",
+      "structure": false
+    },
+    "unmapped::WateringCan": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "WateringCan",
+      "structure": false
+    },
+    "unmapped::Window": {
+      "instances": 21,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": false,
+      "on_wall": true,
+      "pickupable": false,
+      "raw_label": "Window",
+      "structure": true
+    },
+    "unmapped::WineBottle": {
+      "instances": 1,
+      "kinematic": false,
+      "multiple_per_room": true,
+      "on_floor": false,
+      "on_wall": false,
+      "pickupable": true,
+      "raw_label": "WineBottle",
+      "structure": false
+    },
+    "washer": {
+      "instances": 2,
+      "kinematic": true,
+      "multiple_per_room": false,
+      "on_floor": true,
+      "on_wall": false,
+      "pickupable": false,
+      "raw_label": "WashingMachine",
+      "structure": false
+    }
+  },
+  "object_parent_counts": {
+    "book": {
+      "parents": {
+        "bed": 15,
+        "chair": 21,
+        "coffee_table": 24,
+        "counter": 2,
+        "desk": 36,
+        "sofa": 6,
+        "table": 15
+      },
+      "unmapped_parents": {
+        "Dresser": 19,
+        "ShelvingUnit": 2,
+        "SideTable": 21,
+        "TVStand": 1
+      }
+    },
+    "bowl": {
+      "parents": {
+        "chair": 5,
+        "coffee_table": 19,
+        "counter": 19,
+        "desk": 14,
+        "plate": 1,
+        "table": 30
+      },
+      "unmapped_parents": {
+        "Dresser": 4,
+        "SideTable": 18,
+        "TVStand": 3
+      }
+    },
+    "box": {
+      "parents": {
+        "bed": 1,
+        "chair": 3,
+        "coffee_table": 17,
+        "desk": 1,
+        "table": 5
+      },
+      "unmapped_parents": {
+        "ShelvingUnit": 3,
+        "SideTable": 16,
+        "TVStand": 4
+      }
+    },
+    "cup": {
+      "parents": {
+        "box": 1,
+        "coffee_table": 8,
+        "counter": 16,
+        "desk": 6,
+        "sink": 3,
+        "table": 12
+      },
+      "unmapped_parents": {
+        "Dresser": 5,
+        "SideTable": 20,
+        "TVStand": 2
+      }
+    },
+    "faucet": {
+      "parents": {
+        "counter": 27,
+        "sink": 27
+      },
+      "unmapped_parents": {}
+    },
+    "microwave": {
+      "parents": {
+        "counter": 17,
+        "table": 1
+      },
+      "unmapped_parents": {}
+    },
+    "mug": {
+      "parents": {
+        "chair": 1,
+        "coffee_table": 13,
+        "counter": 13,
+        "desk": 19,
+        "sink": 7,
+        "table": 20
+      },
+      "unmapped_parents": {
+        "CoffeeMachine": 4,
+        "Dresser": 4,
+        "SideTable": 33,
+        "TVStand": 2
+      }
+    },
+    "plate": {
+      "parents": {
+        "chair": 2,
+        "coffee_table": 11,
+        "counter": 15,
+        "desk": 6,
+        "sink": 3,
+        "table": 33
+      },
+      "unmapped_parents": {
+        "Dresser": 1,
+        "SideTable": 9,
+        "TVStand": 1
+      }
+    }
+  },
+  "room_graph": {
+    "adjacency_counts": {},
+    "available": false,
+    "cooccurrence_counts": {},
+    "house_file_count": 0,
+    "note": "未发现 house JSON，ProcTHOR 包内数据库无法提供房间共现/邻接统计"
+  },
+  "rooms": {
+    "bathroom": {
+      "instance_total": 48,
+      "objects": {
+        "faucet": 2,
+        "toilet": 2,
+        "washer": 1
+      },
+      "unmapped_objects": {
+        "Candle": 2,
+        "Cloth": 2,
+        "ClothesDryer": 1,
+        "DishSponge": 1,
+        "Dresser": 1,
+        "Footstool": 1,
+        "GarbageCan": 2,
+        "HandTowel": 2,
+        "HandTowelHolder": 2,
+        "HousePlant": 1,
+        "LaundryHamper": 1,
+        "LightSwitch": 2,
+        "PaperTowelRoll": 1,
+        "Plunger": 2,
+        "ScrubBrush": 2,
+        "ShowerCurtain": 2,
+        "ShowerHead": 2,
+        "SideTable": 1,
+        "SoapBar": 2,
+        "SoapBottle": 2,
+        "SprayBottle": 2,
+        "TissueBox": 1,
+        "ToiletPaper": 2,
+        "ToiletPaperHanger": 2,
+        "Towel": 2,
+        "TowelHolder": 2
+      }
+    },
+    "bedroom": {
+      "instance_total": 69,
+      "objects": {
+        "bed": 2,
+        "book": 2,
+        "bowl": 2,
+        "box": 2,
+        "chair": 3,
+        "coffee_table": 1,
+        "desk": 2,
+        "mug": 1,
+        "sofa": 1
+      },
+      "unmapped_objects": {
+        "AlarmClock": 2,
+        "BaseballBat": 2,
+        "BasketBall": 1,
+        "Blinds": 2,
+        "Boots": 1,
+        "CD": 2,
+        "CellPhone": 2,
+        "Cloth": 1,
+        "CreditCard": 2,
+        "DeskLamp": 2,
+        "Desktop": 1,
+        "DogBed": 1,
+        "Dresser": 2,
+        "Dumbbell": 1,
+        "Footstool": 1,
+        "GarbageCan": 2,
+        "HousePlant": 1,
+        "KeyChain": 2,
+        "Laptop": 2,
+        "LaundryHamper": 1,
+        "LightSwitch": 2,
+        "Pen": 2,
+        "Pencil": 2,
+        "Pillow": 2,
+        "RemoteControl": 1,
+        "Safe": 1,
+        "ShelvingUnit": 1,
+        "SideTable": 2,
+        "Statue": 1,
+        "Stool": 1,
+        "TableTopDecor": 1,
+        "TeddyBear": 1,
+        "TennisRacket": 1,
+        "TissueBox": 1,
+        "VacuumCleaner": 1,
+        "Vase": 1,
+        "Watch": 1
+      }
+    },
+    "kitchen": {
+      "instance_total": 87,
+      "objects": {
+        "book": 1,
+        "bowl": 2,
+        "chair": 2,
+        "counter": 2,
+        "cup": 2,
+        "faucet": 2,
+        "microwave": 2,
+        "mug": 2,
+        "plate": 2,
+        "refrigerator": 2,
+        "table": 1
+      },
+      "unmapped_objects": {
+        "AluminumFoil": 1,
+        "Apple": 2,
+        "Blinds": 1,
+        "Bottle": 1,
+        "Bread": 2,
+        "ButterKnife": 2,
+        "CellPhone": 1,
+        "CoffeeMachine": 2,
+        "CreditCard": 1,
+        "DishSponge": 2,
+        "Egg": 2,
+        "Fork": 2,
+        "GarbageBag": 1,
+        "GarbageCan": 2,
+        "HousePlant": 1,
+        "Kettle": 2,
+        "Knife": 2,
+        "Ladle": 2,
+        "Lettuce": 2,
+        "LightSwitch": 2,
+        "Pan": 2,
+        "PaperTowelRoll": 1,
+        "Pen": 1,
+        "Pencil": 1,
+        "PepperShaker": 2,
+        "Pot": 2,
+        "Potato": 2,
+        "Safe": 1,
+        "SaltShaker": 2,
+        "ShelvingUnit": 2,
+        "SideTable": 1,
+        "SoapBottle": 2,
+        "Spatula": 2,
+        "Spoon": 2,
+        "SprayBottle": 1,
+        "Statue": 1,
+        "Stool": 2,
+        "Toaster": 2,
+        "Tomato": 2,
+        "Vase": 2,
+        "WineBottle": 1
+      }
+    },
+    "living_room": {
+      "instance_total": 64,
+      "objects": {
+        "book": 1,
+        "bowl": 1,
+        "box": 2,
+        "cart": 1,
+        "chair": 4,
+        "coffee_table": 1,
+        "desk": 1,
+        "plate": 1,
+        "sofa": 2,
+        "table": 1
+      },
+      "unmapped_objects": {
+        "Blinds": 1,
+        "Boots": 1,
+        "Candle": 1,
+        "CellPhone": 1,
+        "CreditCard": 2,
+        "DeskLamp": 2,
+        "DogBed": 1,
+        "Dresser": 2,
+        "FloorLamp": 2,
+        "GarbageCan": 2,
+        "HousePlant": 1,
+        "KeyChain": 2,
+        "Laptop": 2,
+        "LightSwitch": 2,
+        "Newspaper": 2,
+        "Ottoman": 1,
+        "Pen": 1,
+        "Pencil": 1,
+        "Pillow": 2,
+        "RemoteControl": 2,
+        "RoomDecor": 1,
+        "Safe": 1,
+        "ShelvingUnit": 2,
+        "SideTable": 2,
+        "Statue": 2,
+        "Stool": 1,
+        "TVStand": 2,
+        "TissueBox": 1,
+        "Vase": 2,
+        "Watch": 2,
+        "WateringCan": 2
+      }
+    }
+  },
+  "schema_version": "0.1",
+  "source": "procthor",
+  "source_root": "/home/swzz/anaconda3/gra/lib/python3.10/site-packages/procthor/databases",
+  "source_version": "0.0.1.dev2",
+  "unmapped_room_labels": {}
+}

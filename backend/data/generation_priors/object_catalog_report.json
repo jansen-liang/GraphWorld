@@ -1,0 +1,2299 @@
+{
+  "schema_version": "object-catalog-1",
+  "canonical_template_count": 115,
+  "external_candidate_count": 113,
+  "disposition_counts": {
+    "alias": 3,
+    "deferred": 18,
+    "new_template_candidate": 14,
+    "template": 78
+  },
+  "rows": [
+    {
+      "raw_label": "alarmclock",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "闹钟需要周期计时和 NPC 联动",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "shelf",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "aluminumfoil",
+      "disposition": "template",
+      "canonical_type": "aluminumfoil",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "shelf"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "baseballbat",
+      "disposition": "template",
+      "canonical_type": "baseballbat",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "bed",
+        "coffee_table",
+        "desk",
+        "floor",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "basketball",
+      "disposition": "template",
+      "canonical_type": "basketball",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "bed",
+        "box",
+        "chair",
+        "coffee_table",
+        "dresser",
+        "floor",
+        "shelf",
+        "sofa",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "bathtub",
+      "disposition": "template",
+      "canonical_type": "bathtub",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "counter",
+        "floor"
+      ],
+      "functional_class": [
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "bathtubbasin",
+      "disposition": "template",
+      "canonical_type": "bathtubbasin",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "bed",
+      "disposition": "template",
+      "canonical_type": "bed",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "blinds",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "百叶窗需要透光/遮挡或环境交换语义",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [],
+      "functional_class": [
+        "openable"
+      ]
+    },
+    {
+      "raw_label": "book",
+      "disposition": "template",
+      "canonical_type": "book",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "shelf",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "openable",
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "bottle",
+      "disposition": "template",
+      "canonical_type": "bottle",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "bowl",
+      "disposition": "template",
+      "canonical_type": "bowl",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "plate",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "box",
+      "disposition": "template",
+      "canonical_type": "box",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "desk",
+        "floor",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "openable",
+        "pickupable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "bread",
+      "disposition": "template",
+      "canonical_type": "bread",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "butterknife",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "黄油刀需要切割效果",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "drawer",
+        "sink",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "button",
+      "disposition": "template",
+      "canonical_type": "button",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [],
+      "functional_class": [
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "cabinet",
+      "disposition": "template",
+      "canonical_type": "cabinet",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "floor"
+      ],
+      "functional_class": [
+        "openable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "candle",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "蜡烛需要点火、燃烧计时和光照效果",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "bathtub",
+        "cabinet",
+        "coffee_table",
+        "counter",
+        "dresser",
+        "floor",
+        "shelf",
+        "table",
+        "toilet",
+        "trash_bin",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable",
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "cart",
+      "disposition": "template",
+      "canonical_type": "cart",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "allowed_parents": [],
+      "functional_class": []
+    },
+    {
+      "raw_label": "cd",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "CD 需要播放器和播放状态",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "chair",
+        "coffee_table",
+        "desk",
+        "drawer",
+        "dresser",
+        "shelf",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "cellphone",
+      "disposition": "template",
+      "canonical_type": "cellphone",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable",
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "chair",
+      "disposition": "template",
+      "canonical_type": "chair",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "desk",
+        "floor",
+        "table"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "clothes",
+      "disposition": "template",
+      "canonical_type": "clothes",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "bathtub",
+        "bathtubbasin",
+        "cabinet",
+        "counter",
+        "floor",
+        "shelf",
+        "sink",
+        "table",
+        "toilet"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "clothesdryer",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "needs explicit states, capabilities, and placement policy",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [],
+      "functional_class": []
+    },
+    {
+      "raw_label": "coffee_table",
+      "disposition": "template",
+      "canonical_type": "coffee_table",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "coffeemachine",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "咖啡机需要制作饮品和资源消耗",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle",
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "computer",
+      "disposition": "template",
+      "canonical_type": "computer",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "floor",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "moveable",
+        "openable",
+        "pickupable",
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "counter",
+      "disposition": "template",
+      "canonical_type": "counter",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "cup",
+        "footstool",
+        "pan",
+        "plate",
+        "sink"
+      ],
+      "functional_class": [
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "creditcard",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "信用卡需要刷卡机和支付系统",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "bowl",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "cup",
+      "disposition": "template",
+      "canonical_type": "cup",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "box",
+        "cabinet",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "sink",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "curtains",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "needs explicit states, capabilities, and placement policy",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": []
+    },
+    {
+      "raw_label": "desk",
+      "disposition": "template",
+      "canonical_type": "desk",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "chair",
+        "desk",
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "desklamp",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "台灯需要光照传播或可见性效果",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "coffee_table",
+        "desk",
+        "dresser",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "moveable",
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "dishsponge",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "海绵需要湿度和工具化清洁效果",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "bathtub",
+        "cabinet",
+        "counter",
+        "floor",
+        "sink",
+        "table",
+        "toilet"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "dogbed",
+      "disposition": "template",
+      "canonical_type": "dogbed",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "drawer",
+      "disposition": "template",
+      "canonical_type": "drawer",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "openable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "dresser",
+      "disposition": "template",
+      "canonical_type": "dresser",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "dumbbell",
+      "disposition": "template",
+      "canonical_type": "dumbbell",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "desk",
+        "floor"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "egg",
+      "disposition": "template",
+      "canonical_type": "egg",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "floor",
+        "refrigerator",
+        "sink"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "faucet",
+      "disposition": "template",
+      "canonical_type": "faucet",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "bathtub",
+        "bathtubbasin",
+        "counter",
+        "floor",
+        "sink"
+      ],
+      "functional_class": [
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "floor",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "not yet assigned a canonical runtime meaning",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "trash_bin"
+      ],
+      "functional_class": [
+        "isInteractable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "floorlamp",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "落地灯需要光照传播或可见性效果",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "footstool",
+      "disposition": "template",
+      "canonical_type": "footstool",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "fork",
+      "disposition": "template",
+      "canonical_type": "fork",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "desk",
+        "drawer",
+        "plate",
+        "sink",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "fruit",
+      "disposition": "template",
+      "canonical_type": "fruit",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "plate",
+        "refrigerator",
+        "shelf",
+        "sink",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "garbagebag",
+      "disposition": "template",
+      "canonical_type": "garbagebag",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable"
+      ]
+    },
+    {
+      "raw_label": "handtowel",
+      "disposition": "alias",
+      "canonical_type": "towel",
+      "reason": "same holder/towel semantics",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "counter",
+        "handtowelholder"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "handtowelholder",
+      "disposition": "alias",
+      "canonical_type": "towel_holder",
+      "reason": "same holder/towel semantics",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [],
+      "functional_class": [
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "kettle",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "needs explicit states, capabilities, and placement policy",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "stoveburner",
+        "table"
+      ],
+      "functional_class": [
+        "openable",
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "keychain",
+      "disposition": "template",
+      "canonical_type": "keychain",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "knife",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "刀具需要切割工具使用规则",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "drawer",
+        "sink",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "knob",
+      "disposition": "template",
+      "canonical_type": "knob",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [],
+      "functional_class": [
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "ladle",
+      "disposition": "template",
+      "canonical_type": "ladle",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "drawer",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "laundryhamper",
+      "disposition": "template",
+      "canonical_type": "laundryhamper",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "openable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "microwave",
+      "disposition": "template",
+      "canonical_type": "microwave",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "functional_class": [
+        "moveable",
+        "openable",
+        "receptacle",
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "mirror",
+      "disposition": "template",
+      "canonical_type": "mirror",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "counter",
+        "dresser",
+        "floor",
+        "sink"
+      ],
+      "functional_class": []
+    },
+    {
+      "raw_label": "mug",
+      "disposition": "template",
+      "canonical_type": "mug",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "chair",
+        "coffee_table",
+        "coffeemachine",
+        "counter",
+        "desk",
+        "dresser",
+        "sink",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "newspaper",
+      "disposition": "template",
+      "canonical_type": "newspaper",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "allowed_parents": [
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "floor",
+        "ottoman",
+        "shelf",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "ottoman",
+      "disposition": "template",
+      "canonical_type": "ottoman",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "painting",
+      "disposition": "template",
+      "canonical_type": "painting",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "chair",
+        "floor"
+      ],
+      "functional_class": []
+    },
+    {
+      "raw_label": "pan",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "锅具需要加热、容量和烹饪状态",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "stoveburner",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "papertowelroll",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "needs explicit states, capabilities, and placement policy",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "table",
+        "toilet"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "peppershaker",
+      "disposition": "template",
+      "canonical_type": "peppershaker",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "coffee_table",
+        "counter",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "pillow",
+      "disposition": "template",
+      "canonical_type": "pillow",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "floor",
+        "sofa",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "plant",
+      "disposition": "template",
+      "canonical_type": "plant",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "seat",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "moveable"
+      ]
+    },
+    {
+      "raw_label": "plate",
+      "disposition": "template",
+      "canonical_type": "plate",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "sink",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "plunger",
+      "disposition": "template",
+      "canonical_type": "plunger",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "poster",
+      "disposition": "template",
+      "canonical_type": "poster",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "shelf"
+      ],
+      "functional_class": []
+    },
+    {
+      "raw_label": "pot",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "锅具需要加热、容量和烹饪状态",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "shelf",
+        "sink",
+        "stoveburner",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "refrigerator",
+      "disposition": "template",
+      "canonical_type": "refrigerator",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "drawer",
+        "floor"
+      ],
+      "functional_class": [
+        "openable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "remote",
+      "disposition": "template",
+      "canonical_type": "remote",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "floor",
+        "ottoman",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "roomdecor",
+      "disposition": "template",
+      "canonical_type": "roomdecor",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable"
+      ]
+    },
+    {
+      "raw_label": "safe",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "needs explicit states, capabilities, and placement policy",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "dresser",
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "openable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "saltshaker",
+      "disposition": "template",
+      "canonical_type": "saltshaker",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "coffee_table",
+        "counter",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "scrubbrush",
+      "disposition": "template",
+      "canonical_type": "scrubbrush",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "seat",
+      "disposition": "template",
+      "canonical_type": "seat",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "shelf",
+      "disposition": "template",
+      "canonical_type": "shelf",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "desk",
+        "floor",
+        "shelf"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "shoes",
+      "disposition": "template",
+      "canonical_type": "shoes",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "showercurtain",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "needs explicit states, capabilities, and placement policy",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "bathtub",
+        "bathtubbasin",
+        "floor",
+        "sink",
+        "towelholder"
+      ],
+      "functional_class": [
+        "openable"
+      ]
+    },
+    {
+      "raw_label": "showerdoor",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "needs explicit states, capabilities, and placement policy",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "openable"
+      ]
+    },
+    {
+      "raw_label": "showerglass",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "needs explicit states, capabilities, and placement policy",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "counter",
+        "floor",
+        "shelf"
+      ],
+      "functional_class": [
+        "isInteractable"
+      ]
+    },
+    {
+      "raw_label": "showerhead",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "not yet assigned a canonical runtime meaning",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "bathtub",
+        "floor",
+        "shelf"
+      ],
+      "functional_class": [
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "sink",
+      "disposition": "template",
+      "canonical_type": "sink",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "floor"
+      ],
+      "functional_class": [
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "soapbar",
+      "disposition": "template",
+      "canonical_type": "soapbar",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "bathtub",
+        "cabinet",
+        "counter",
+        "dresser",
+        "shelf",
+        "toilet"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "soapbottle",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "肥皂瓶需要分配和消耗语义",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "bathtub",
+        "cabinet",
+        "counter",
+        "shelf",
+        "sink",
+        "table",
+        "toilet"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "sofa",
+      "disposition": "template",
+      "canonical_type": "sofa",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "chair",
+        "floor",
+        "table"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "spatula",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "needs explicit states, capabilities, and placement policy",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "drawer",
+        "pot",
+        "sink",
+        "stoveburner"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "spoon",
+      "disposition": "template",
+      "canonical_type": "spoon",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "drawer",
+        "sink",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "spraybottle",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "喷雾需要液体、按压和目标状态效果",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "table",
+        "toilet"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "stationery",
+      "disposition": "template",
+      "canonical_type": "stationery",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "box",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "statue",
+      "disposition": "template",
+      "canonical_type": "statue",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "stoveburner",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "炉灶组件需要 heat source 和烹饪闭环",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [],
+      "functional_class": [
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "table",
+      "disposition": "template",
+      "canonical_type": "table",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "chair",
+        "floor",
+        "plate"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "tabletopdecor",
+      "disposition": "template",
+      "canonical_type": "tabletopdecor",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "desk"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "teddybear",
+      "disposition": "template",
+      "canonical_type": "teddybear",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "desk",
+        "floor",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "television",
+      "disposition": "template",
+      "canonical_type": "television",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "coffee_table",
+        "dresser",
+        "floor",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "moveable",
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "tennisracket",
+      "disposition": "template",
+      "canonical_type": "tennisracket",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "bed",
+        "coffee_table",
+        "floor",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "tissuebox",
+      "disposition": "template",
+      "canonical_type": "tissuebox",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "toaster",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "needs explicit states, capabilities, and placement policy",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle",
+        "toggleable"
+      ]
+    },
+    {
+      "raw_label": "toilet",
+      "disposition": "template",
+      "canonical_type": "toilet",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "floor",
+        "toiletpaperhanger"
+      ],
+      "functional_class": [
+        "openable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "toiletpaper",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "卫生纸需要使用和消耗语义",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "bathtub",
+        "cabinet",
+        "counter",
+        "drawer",
+        "floor",
+        "shelf",
+        "toilet",
+        "toiletpaperhanger",
+        "trash_bin"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "toiletpaperhanger",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "not yet assigned a canonical runtime meaning",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [],
+      "functional_class": [
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "towel",
+      "disposition": "template",
+      "canonical_type": "towel",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [
+        "floor",
+        "towelholder"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "towelholder",
+      "disposition": "alias",
+      "canonical_type": "towel_holder",
+      "reason": "same holder/towel semantics",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [],
+      "functional_class": [
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "trash_bin",
+      "disposition": "template",
+      "canonical_type": "trash_bin",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "tvstand",
+      "disposition": "template",
+      "canonical_type": "tvstand",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ]
+    },
+    {
+      "raw_label": "vacuumcleaner",
+      "disposition": "template",
+      "canonical_type": "vacuumcleaner",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "allowed_parents": [
+        "floor"
+      ],
+      "functional_class": [
+        "moveable"
+      ]
+    },
+    {
+      "raw_label": "vase",
+      "disposition": "template",
+      "canonical_type": "vase",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "plate",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "vegetable",
+      "disposition": "template",
+      "canonical_type": "vegetable",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "counter",
+        "floor",
+        "plate",
+        "refrigerator",
+        "sink",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "washer",
+      "disposition": "template",
+      "canonical_type": "washer",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "allowed_parents": [],
+      "functional_class": []
+    },
+    {
+      "raw_label": "watch",
+      "disposition": "template",
+      "canonical_type": "watch",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "shelf",
+        "table",
+        "tvstand"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "wateringcan",
+      "disposition": "new_template_candidate",
+      "canonical_type": null,
+      "reason": "needs explicit states, capabilities, and placement policy",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "allowed_parents": [
+        "floor",
+        "shelf"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    },
+    {
+      "raw_label": "window",
+      "disposition": "deferred",
+      "canonical_type": null,
+      "reason": "开窗需要温度、湿度、天气和通风转移",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "allowed_parents": [
+        "counter",
+        "floor",
+        "table"
+      ],
+      "functional_class": []
+    },
+    {
+      "raw_label": "winebottle",
+      "disposition": "template",
+      "canonical_type": "winebottle",
+      "reason": "already present in canonical library",
+      "evidence_count": 0,
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "refrigerator",
+        "table"
+      ],
+      "functional_class": [
+        "pickupable"
+      ]
+    }
+  ],
+  "policy": {
+    "template": "已有正式 ObjectTemplate。",
+    "alias": "外部名称合并到已有 canonical template。",
+    "new_template_candidate": "当前语义可继续设计，但需要明确状态、能力和放置规则。",
+    "deferred": "依赖尚未实现的领域系统，暂不进入生成运行时。",
+    "unsupported": "不是当前运行时交互对象。"
+  }
+}

@@ -28,8 +28,7 @@
         "outside_home"
       ],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ],
       "floor_number": 1
     },
@@ -55,8 +54,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -83,8 +81,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -111,8 +108,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -138,8 +134,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -166,8 +161,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -194,8 +188,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -220,8 +213,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -250,11 +242,8 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "open",
-        "close",
-        "pull",
-        "push"
+        "close"
       ]
     },
     {
@@ -275,8 +264,7 @@
       "parent": "entrance",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -303,7 +291,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -325,8 +312,7 @@
       "parent": "workshop",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -347,8 +333,7 @@
       "parent": "workshop",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -373,8 +358,7 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -395,8 +379,7 @@
       "parent": "assembly_line",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -417,8 +400,7 @@
       "parent": "assembly_line",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -443,8 +425,7 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -469,8 +450,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "press",
-        "scan"
+        "press"
       ]
     },
     {
@@ -498,8 +478,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -524,8 +503,7 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -550,8 +528,7 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -572,8 +549,7 @@
       "parent": "warehouse",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -596,8 +572,7 @@
       "parent": "control_room",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -620,8 +595,7 @@
       "parent": "control_room",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -651,11 +625,8 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "open",
-        "close",
-        "pull",
-        "push"
+        "close"
       ]
     },
     {
@@ -680,8 +651,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "press",
-        "scan"
+        "press"
       ]
     },
     {
@@ -708,7 +678,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -734,7 +703,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -758,8 +726,7 @@
       "parent": "break_room",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -788,7 +755,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "open",
         "close"
       ]
@@ -817,7 +783,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -844,7 +809,6 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "scan",
         "brush"
       ]
     },
@@ -867,8 +831,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -890,8 +853,7 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -913,8 +875,7 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -936,8 +897,7 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -959,8 +919,7 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "place",
-        "scan"
+        "place"
       ]
     }
   ],

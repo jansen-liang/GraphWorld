@@ -1,0 +1,10 @@
+{
+  "schema_version": "domain_sources.v1",
+  "sources": [
+    {"id": "procthor", "name": "ProcTHOR", "role": ["room_object_prior", "receptacle_prior", "validation_reference"]},
+    {"id": "ai2thor", "name": "AI2-THOR", "role": ["household_room_object_statistics"]},
+    {"id": "d3d_gen", "name": "D3D-GEN", "role": ["domain_rule_database_schema", "constraint_grounding"]},
+    {"id": "embodiedgen_v2", "name": "EmbodiedGen V2", "role": ["task_driven_scene_graph", "solver_enforced_generation"]},
+    {"id": "graphworld_local", "name": "GraphWorld local scenes and runtime", "role": ["domain_rules", "state_transitions", "npc_events"]}
+  ]
+}

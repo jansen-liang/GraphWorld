@@ -1,0 +1,4 @@
+{
+  "schema_version": "dataset_statistics.v1",
+  "inputs": ["reference_table_graphworld_related_work.xlsx", "reference_table_graphworld_related_work.csv", "task_planning_task_taxonomy.csv", "backend/data/generation_priors"]
+}

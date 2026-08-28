@@ -1,0 +1,1 @@
+{"required_adjacency":[["entrance","lobby"],["lobby","registration"],["lobby","waiting_area"],["waiting_area","outpatient_clinic"],["outpatient_clinic","treatment_room"],["lobby","pharmacy"]],"optional_adjacency":[["lobby","staff_room"]]}

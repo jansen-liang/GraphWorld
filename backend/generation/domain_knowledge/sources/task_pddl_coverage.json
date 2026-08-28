@@ -1,0 +1,19 @@
+{
+  "schema_version": "task_pddl_coverage.v1",
+  "taxonomy_source": "docs/related_works/task_planning_task_taxonomy.md",
+  "top_level_task_types": ["clean", "make", "relocate", "operate", "interact", "navigate"],
+  "core_skill_count": 12,
+  "core_skills_source": "backend/core/assets/task_library.py",
+  "pddl_verified": [
+    {
+      "task_family": "laundry",
+      "task_id": "laundry_clothes",
+      "status": "verified",
+      "planner": "Fast Downward",
+      "evidence": "backend/tools/try_laundry_fastdownward.py",
+      "known_plan_length": 17
+    }
+  ],
+  "not_yet_indexed": "All other task skills need individual task schemas, PDDL problem compilation, planner execution, and stored plan evidence.",
+  "counting_rule": "verified_task_count counts only task instances with successful PDDL plans."
+}

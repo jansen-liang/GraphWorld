@@ -1,0 +1,1 @@
+{"required_adjacency":[["entrance","checkout_area"],["checkout_area","produce_area"],["checkout_area","shelf_area"],["shelf_area","cold_storage"]],"optional_adjacency":[["shelf_area","warehouse"]]}

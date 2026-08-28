@@ -1,0 +1,1767 @@
+{
+  "decisions": [
+    {
+      "allowed_parents": [
+        "counter",
+        "floor",
+        "table",
+        "sidetable"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 182,
+      "functional_class": [],
+      "object_type": null,
+      "raw_labels": [
+        "window"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 123,
+      "functional_class": [
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "stoveburner"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "sofa",
+        "chair",
+        "floor",
+        "sidetable"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 76,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "pillow"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 75,
+      "functional_class": [],
+      "object_type": null,
+      "raw_labels": [
+        "painting"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "shelf",
+        "sidetable",
+        "table",
+        "coffee_table",
+        "dresser",
+        "floor",
+        "desk",
+        "counter",
+        "shelvingunit",
+        "tvstand",
+        "plate"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 72,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "vase"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "coffee_table",
+        "sidetable",
+        "dresser",
+        "table",
+        "tvstand",
+        "counter",
+        "floor",
+        "shelf",
+        "bowl",
+        "chair"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 68,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "creditcard"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sink",
+        "dresser",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 67,
+      "functional_class": [],
+      "object_type": null,
+      "raw_labels": [
+        "mirror"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "shelf",
+        "coffee_table",
+        "table",
+        "dresser",
+        "floor",
+        "desk",
+        "tvstand",
+        "shelvingunit",
+        "counter"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 67,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "statue"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "desk",
+        "coffee_table",
+        "chair",
+        "dresser",
+        "tvstand",
+        "floor",
+        "table",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 64,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "keychain"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sidetable",
+        "sink",
+        "toilet",
+        "shelf",
+        "bathtub",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 64,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "soapbottle"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "toilet",
+        "counter",
+        "garbagecan",
+        "floor",
+        "cabinet",
+        "toiletpaperhanger",
+        "shelf",
+        "drawer",
+        "bathtub"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 62,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "toiletpaper"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "desk",
+        "dresser",
+        "coffee_table",
+        "table",
+        "shelf",
+        "tvstand",
+        "shelvingunit"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 55,
+      "functional_class": [
+        "moveable",
+        "toggleable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "desklamp"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 53,
+      "functional_class": [
+        "openable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "blinds"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 47,
+      "functional_class": [
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "handtowelholder"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "sidetable",
+        "dresser",
+        "coffee_table",
+        "bed",
+        "table",
+        "chair",
+        "counter",
+        "shelf",
+        "sofa",
+        "tvstand",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 45,
+      "functional_class": [
+        "pickupable",
+        "toggleable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "cellphone"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 40,
+      "functional_class": [
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "towelholder"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sink",
+        "sidetable",
+        "toilet",
+        "cabinet",
+        "bathtub",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 39,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "dishsponge"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sidetable",
+        "dresser",
+        "coffee_table",
+        "table",
+        "toilet",
+        "bathtub",
+        "tvstand",
+        "floor",
+        "shelf",
+        "garbagecan",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 38,
+      "functional_class": [
+        "pickupable",
+        "toggleable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "candle"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "sidetable",
+        "dresser",
+        "shelf",
+        "chair",
+        "coffee_table",
+        "drawer",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 35,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "cd"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sidetable",
+        "toilet",
+        "cabinet",
+        "dresser",
+        "coffee_table",
+        "desk",
+        "table",
+        "shelvingunit",
+        "floor",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 35,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "spraybottle"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 33,
+      "functional_class": [
+        "moveable",
+        "toggleable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "floorlamp"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "dresser",
+        "desk",
+        "coffee_table",
+        "tvstand",
+        "shelf",
+        "chair",
+        "shelvingunit",
+        "bed",
+        "table",
+        "sofa"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "alarmclock"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "bread"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "sidetable",
+        "sink",
+        "drawer"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "butterknife"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "moveable",
+        "receptacle",
+        "toggleable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "coffeemachine"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "refrigerator",
+        "sink",
+        "counter",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "egg"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "sink",
+        "plate",
+        "drawer",
+        "sidetable",
+        "desk"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "fork"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "handtowelholder",
+        "counter"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "handtowel"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sink",
+        "table",
+        "drawer"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "knife"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "stoveburner",
+        "table",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "pan"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "coffee_table",
+        "sidetable"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "peppershaker"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "plunger"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "sidetable",
+        "stoveburner",
+        "coffee_table",
+        "desk",
+        "cabinet",
+        "shelvingunit",
+        "sink",
+        "dresser",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "pot"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "coffee_table",
+        "sidetable"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "saltshaker"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "scrubbrush"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "bathtub",
+        "shelf",
+        "dresser",
+        "toilet",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "soapbar"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "pot",
+        "sink",
+        "stoveburner",
+        "drawer"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "spatula"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sink",
+        "drawer",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "spoon"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "moveable",
+        "receptacle",
+        "toggleable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "toaster"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "toiletpaperhanger"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "towelholder",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "towel"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 31,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "dresser"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "bathtub",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 27,
+      "functional_class": [
+        "toggleable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "showerhead"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "counter",
+        "coffee_table",
+        "shelf",
+        "desk",
+        "dresser",
+        "tvstand",
+        "floor",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 25,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "tissuebox"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "counter"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 21,
+      "functional_class": [
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "bathtub"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "coffee_table",
+        "sidetable",
+        "tvstand",
+        "desk",
+        "dresser",
+        "shelf",
+        "chair",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 21,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "watch"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "sofa",
+        "table",
+        "sidetable",
+        "chair",
+        "floor",
+        "coffee_table",
+        "dresser",
+        "shelf",
+        "desk",
+        "ottoman",
+        "shelvingunit",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 20,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "newspaper"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 19,
+      "functional_class": [
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "bathtubbasin"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 19,
+      "functional_class": [],
+      "object_type": null,
+      "raw_labels": [
+        "curtains"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "stoveburner",
+        "table",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 17,
+      "functional_class": [
+        "openable",
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "kettle"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 17,
+      "functional_class": [
+        "openable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "showerdoor"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "coffee_table",
+        "desk",
+        "bed",
+        "tvstand",
+        "table",
+        "sidetable",
+        "sofa"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 16,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "baseballbat"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sidetable",
+        "toilet",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 16,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "papertowelroll"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 16,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "tvstand"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "bathtub",
+        "floor",
+        "towelholder",
+        "bathtubbasin",
+        "sink"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 15,
+      "functional_class": [
+        "openable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "showercurtain"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 15,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "wateringcan"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "drawer"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 13,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "ladle"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "counter",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 13,
+      "functional_class": [],
+      "object_type": null,
+      "raw_labels": [
+        "showerglass"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "chair",
+        "sidetable",
+        "coffee_table",
+        "bed",
+        "box",
+        "dresser",
+        "shelvingunit",
+        "table",
+        "sofa"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 12,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "basketball"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "dresser",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 11,
+      "functional_class": [
+        "moveable",
+        "openable",
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "safe"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "sidetable",
+        "floor",
+        "chair",
+        "desk"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 11,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "teddybear"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "coffee_table",
+        "sidetable",
+        "bed",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 11,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "tennisracket"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "refrigerator",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 11,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "winebottle"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 10,
+      "functional_class": [
+        "moveable",
+        "openable",
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "laundryhamper"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 10,
+      "functional_class": [],
+      "object_type": null,
+      "raw_labels": [
+        "poster"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 10,
+      "functional_class": [
+        "moveable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "roomdecor"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "table",
+        "desk",
+        "coffee_table",
+        "tvstand",
+        "counter",
+        "chair",
+        "shelf",
+        "dresser"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 8,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "bottle"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 7,
+      "functional_class": [
+        "moveable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "garbagebag"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "desk"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 6,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "dumbbell"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 5,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "dogbed"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 5,
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "footstool"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 5,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "ottoman"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 4,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "aluminumfoil"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "desk"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 2,
+      "functional_class": [
+        "pickupable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "tabletopdecor"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 2,
+      "functional_class": [
+        "moveable"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "vacuumcleaner"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 1,
+      "functional_class": [],
+      "object_type": null,
+      "raw_labels": [
+        "clothesdryer"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 0,
+      "functional_class": [],
+      "object_type": null,
+      "raw_labels": [
+        "doorframe"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [],
+      "decision_needed": "选择已有模板映射、批准新增 ObjectTemplate，或标记 deferred/unsupported。",
+      "evidence_count": 0,
+      "functional_class": [],
+      "object_type": null,
+      "raw_labels": [
+        "doorway"
+      ],
+      "status": "needs_mapping",
+      "task_reference_names": []
+    }
+  ],
+  "purpose": "Objects that cannot be safely mapped to an existing core template without human semantic approval.",
+  "schema_version": "0.1"
+}

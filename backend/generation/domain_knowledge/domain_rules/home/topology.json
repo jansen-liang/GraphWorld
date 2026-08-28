@@ -1,0 +1,1 @@
+{"required_adjacency":[["entrance","living_room"],["living_room","bedroom"],["living_room","bathroom"],["living_room","kitchen"]],"optional_adjacency":[["living_room","balcony"]]}

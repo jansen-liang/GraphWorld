@@ -4,12 +4,13 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 from .actions import ActionType
-from .domain_rules import CLOTH_SEMANTICS
+from .domain_rules import CLOTH_SEMANTICS, DRYING_RACK_STEPS
 from .effects import (
     brush_target,
     close_target,
     dump_held_container,
     fold_target,
+    _apply_sink_entry_effect,
     move_node,
     open_target,
     place_relation_for_target,
@@ -19,6 +20,7 @@ from .predicates import (
     MOVABLE_NODE_TYPES,
     adjacent_room_failure,
     capacity_place_failures,
+    carrying_type_failures,
     container_access_failure,
     controlled_targets,
     device_door_failures,
@@ -38,6 +40,8 @@ from .predicates import (
     supports_action,
     trash_place_failures,
 )
+from .resource_rules import refill_rule
+from .processes import process_ready
 
 
 Precondition = Callable[["ActionContext"], str | None]
@@ -111,9 +115,10 @@ def bind_action(state: dict[str, Any], action: dict[str, Any], *, step: int = 0)
         ActionType.PLACE,
         ActionType.FOLD,
         ActionType.DUMP,
+        ActionType.REFILL,
     } and (not target_id or not node(state, target_id)):
         failures.append(f"unknown target: {target_id}")
-    if action_type == ActionType.PICK and (not object_id or not node(state, object_id)):
+    if action_type in {ActionType.PICK, ActionType.REFILL} and (not object_id or not node(state, object_id)):
         failures.append(f"unknown object: {object_id}")
     if failures:
         return None, tuple(failures)
@@ -179,6 +184,12 @@ def require_place_capacity(ctx: ActionContext) -> str | None:
     return "; ".join(failures) if failures else None
 
 
+def require_carrying_type(ctx: ActionContext) -> str | None:
+    placed_id = ctx.object_id or holding(ctx.state, ctx.actor_id)
+    failures = carrying_type_failures(ctx.state, placed_id, ctx.target_id)
+    return "; ".join(failures) if failures else None
+
+
 def require_trash_placement(ctx: ActionContext) -> str | None:
     placed_id = ctx.object_id or holding(ctx.state, ctx.actor_id)
     failures = trash_place_failures(ctx.state, placed_id, ctx.target_id)
@@ -190,10 +201,14 @@ def require_target_supports_action(ctx: ActionContext) -> str | None:
 
 
 def require_open_not_redundant(ctx: ActionContext) -> str | None:
+    if semantic(ctx.target) == "faucet":
+        return f"target is already on: {ctx.target_id}" if bool(states(ctx.target).get("is_on", False)) else None
     return f"target is already open: {ctx.target_id}" if is_open(ctx.target) else None
 
 
 def require_close_not_redundant(ctx: ActionContext) -> str | None:
+    if semantic(ctx.target) == "faucet":
+        return None if bool(states(ctx.target).get("is_on", False)) else f"target is already off: {ctx.target_id}"
     return None if is_open(ctx.target) else f"target is already closed: {ctx.target_id}"
 
 
@@ -206,8 +221,15 @@ def require_brushable(ctx: ActionContext) -> str | None:
 
 
 def require_press_ready(ctx: ActionContext) -> str | None:
+    capabilities = {str(cap).lower() for cap in (ctx.target.get("capabilities") or [])}
+    if "finite_resource" in capabilities:
+        resource_values = [states(ctx.target).get(key) for key in ("uses_left", "count", "amount") if key in states(ctx.target)]
+        if resource_values and max(float(value or 0) for value in resource_values) <= 0:
+            return f"resource exhausted: {ctx.target_id}"
     if requires_closed_to_start(ctx.target) and is_open(ctx.target):
         return f"device door must be closed before start: {ctx.target_id}"
+    if semantic(ctx.target) in {"printer", "coffeemachine", "coffee_machine"} and not process_ready(ctx.state, ctx.target_id):
+        return f"process inputs unavailable: {ctx.target_id}"
     failures = device_door_failures(ctx.state, [ctx.target_id, *controlled_targets(ctx.state, ctx.target_id)])
     return "; ".join(failures) if failures else None
 
@@ -238,6 +260,12 @@ def effect_place(ctx: ActionContext) -> None:
     placed_id = ctx.object_id or holding(ctx.state, ctx.actor_id)
     relation = place_relation_for_target(ctx.target)
     move_node(ctx.state, placed_id, ctx.target_id, relation)
+    _apply_sink_entry_effect(ctx.state, placed_id, ctx.target_id)
+    if semantic(ctx.target) == "drying_rack":
+        placed_states = node(ctx.state, placed_id).setdefault("states", {})
+        if bool(placed_states.get("is_wet", False)):
+            weather = str(ctx.state.get("world_state", {}).get("weather") or "sunny").lower()
+            placed_states["cycle_remaining"] = {"sunny": 6, "cloudy": 8, "rainy": 12}.get(weather, DRYING_RACK_STEPS)
     if semantic(ctx.target) == "trash_bin":
         ctx.target.setdefault("states", {})["is_dirty"] = True
 
@@ -266,6 +294,22 @@ def effect_dump(ctx: ActionContext) -> None:
     dump_held_container(ctx.state, ctx.actor_id, ctx.target_id)
 
 
+def effect_refill(ctx: ActionContext) -> None:
+    target_states = ctx.target.setdefault("states", {})
+    capacities = ctx.target.get("resource_capacity") or {}
+    for key in ("uses_left", "count", "amount"):
+        if key in target_states:
+            target_states[key] = capacities.get(key, target_states[key])
+    state_nodes = ctx.state.get("nodes", {})
+    state_nodes.pop(ctx.object_id, None)
+    ctx.state.get("parent_of", {}).pop(ctx.object_id, None)
+    ctx.state.get("relation_of", {}).pop(ctx.object_id, None)
+
+
+def require_refill_supply(ctx: ActionContext) -> str | None:
+    return None if refill_rule(ctx.state, ctx.target_id, ctx.object_id) else f"incompatible refill supply: {ctx.object_id} -> {ctx.target_id}"
+
+
 ACTION_SCHEMAS: dict[ActionType, ActionSchema] = {
     ActionType.MOVE: ActionSchema(
         action=ActionType.MOVE,
@@ -290,6 +334,7 @@ ACTION_SCHEMAS: dict[ActionType, ActionSchema] = {
             require_target_same_room,
             require_place_target_accessible,
             require_place_capacity,
+            require_carrying_type,
             require_trash_placement,
         ),
         effects=(effect_place,),
@@ -336,6 +381,13 @@ ACTION_SCHEMAS: dict[ActionType, ActionSchema] = {
         preconditions=(require_target_same_room, require_target_supports_action, require_dumpable),
         effects=(effect_dump,),
         description="Dump a held container into a compatible target.",
+    ),
+    ActionType.REFILL: ActionSchema(
+        action=ActionType.REFILL,
+        parameters=("actor", "target", "object"),
+        preconditions=(require_target_same_room, require_target_supports_action, require_refill_supply, require_object_same_room),
+        effects=(effect_refill,),
+        description="Refill a finite resource to its declared capacity.",
     ),
 }
 

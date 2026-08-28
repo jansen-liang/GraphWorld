@@ -1,0 +1,6 @@
+{
+  "schema_version": "common_resource_rules.v1",
+  "finite_resources": ["uses_left", "count", "amount"],
+  "actions": ["consume", "refill"],
+  "rule": "resource value cannot be negative and refill cannot exceed declared capacity"
+}

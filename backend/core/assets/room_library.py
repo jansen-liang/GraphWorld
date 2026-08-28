@@ -184,6 +184,26 @@ ROOM_LIBRARY: Dict[str, RoomTypeSpec] = {
 
 HOME_ROOM_TYPE_REGISTRY = ROOM_LIBRARY
 
+# Room types are scoped by scene domain. The home registry above remains the
+# default compatibility set; domain registries drive procedural generation.
+SCENE_DOMAIN_ROOM_TYPES: Dict[str, Tuple[str, ...]] = {
+    "home": tuple(ROOM_LIBRARY),
+    "office": ("open_office", "meeting_room", "manager_office", "pantry", "restroom", "corridor_main"),
+    "hospital": ("lobby", "registration", "waiting_area", "outpatient_clinic", "treatment_room", "pharmacy", "staff_room", "corridor_main"),
+    "supermarket": ("produce_area", "shelf_area", "checkout_area", "cold_storage", "warehouse", "corridor_main"),
+    "factory": ("assembly_line", "workshop", "warehouse", "control_room", "break_room", "receiving_dock"),
+}
+
+SCENE_DOMAINS = tuple(SCENE_DOMAIN_ROOM_TYPES)
+
+
+def room_types_for_scene(scene_domain: str) -> Tuple[str, ...]:
+    """Return the canonical room vocabulary for a scene domain."""
+    key = str(scene_domain or "").strip().lower()
+    if key not in SCENE_DOMAIN_ROOM_TYPES:
+        raise KeyError(f"Unknown scene domain: {scene_domain}")
+    return SCENE_DOMAIN_ROOM_TYPES[key]
+
 FLOORPLAN_LIBRARY: Dict[str, FloorplanTemplate] = {
     "hub_home": FloorplanTemplate(
         template_id="hub_home",

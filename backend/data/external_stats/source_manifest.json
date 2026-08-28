@@ -1,0 +1,19 @@
+{
+  "extractor": "backend.tools.extract_external_stats",
+  "extractor_version": "0.1",
+  "generated_at_utc": "2026-08-22T08:31:06.297802+00:00",
+  "license": "Upstream ProcTHOR/AI2-THOR/PRIOR licenses apply; derived aggregate statistics only.",
+  "ontology_version": "0.1",
+  "room_graph_available": false,
+  "room_graph_note": "No source supplied in this run contains multi-room adjacency edges.",
+  "sources": {
+    "ai2thor_metadata": {
+      "path": "/home/swzz/anaconda3/gra/lib/python3.10/site-packages/procthor/databases/ai2thor-object-metadata.json",
+      "sha256": "5bb9020b50b0f398e5460519d61347dfe115119dfcc3b136b02d1116bb13416a"
+    },
+    "procthor": {
+      "revision": null,
+      "root": "/home/swzz/anaconda3/gra/lib/python3.10/site-packages/procthor/databases"
+    }
+  }
+}

@@ -1,0 +1,1666 @@
+[
+  {
+    "count": 89,
+    "frequency_per_scene": 2.966667,
+    "object_type": "sink",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 68,
+    "frequency_per_scene": 2.266667,
+    "object_type": "drawer",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 64,
+    "frequency_per_scene": 2.133333,
+    "object_type": "cabinet",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 60,
+    "frequency_per_scene": 2.0,
+    "object_type": "toiletpaper",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 59,
+    "frequency_per_scene": 1.966667,
+    "object_type": "faucet",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 45,
+    "frequency_per_scene": 1.5,
+    "object_type": "handtowelholder",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 38,
+    "frequency_per_scene": 1.266667,
+    "object_type": "towelholder",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 32,
+    "frequency_per_scene": 1.066667,
+    "object_type": "mirror",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "floor",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "towel",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "handtowel",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "plunger",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "toiletpaperhanger",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "soapbar",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "soapbottle",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "garbagecan",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "cloth",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "candle",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "spraybottle",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "scrubbrush",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "toilet",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "lightswitch",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 29,
+    "frequency_per_scene": 0.966667,
+    "object_type": "counter",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 26,
+    "frequency_per_scene": 0.866667,
+    "object_type": "window",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 25,
+    "frequency_per_scene": 0.833333,
+    "object_type": "showerhead",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 21,
+    "frequency_per_scene": 0.7,
+    "object_type": "bathtub",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 19,
+    "frequency_per_scene": 0.633333,
+    "object_type": "bathtubbasin",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 17,
+    "frequency_per_scene": 0.566667,
+    "object_type": "showerdoor",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 14,
+    "frequency_per_scene": 0.466667,
+    "object_type": "shelf",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 13,
+    "frequency_per_scene": 0.433333,
+    "object_type": "showercurtain",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 13,
+    "frequency_per_scene": 0.433333,
+    "object_type": "showerglass",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 9,
+    "frequency_per_scene": 0.3,
+    "object_type": "tissuebox",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 7,
+    "frequency_per_scene": 0.233333,
+    "object_type": "sidetable",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 6,
+    "frequency_per_scene": 0.2,
+    "object_type": "dishsponge",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 4,
+    "frequency_per_scene": 0.133333,
+    "object_type": "papertowelroll",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "dresser",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 1,
+    "frequency_per_scene": 0.033333,
+    "object_type": "houseplant",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 1,
+    "frequency_per_scene": 0.033333,
+    "object_type": "painting",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 1,
+    "frequency_per_scene": 0.033333,
+    "object_type": "footstool",
+    "room_type": "bathroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 201,
+    "frequency_per_scene": 6.7,
+    "object_type": "drawer",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 116,
+    "frequency_per_scene": 3.866667,
+    "object_type": "shelf",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 45,
+    "frequency_per_scene": 1.5,
+    "object_type": "window",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 42,
+    "frequency_per_scene": 1.4,
+    "object_type": "pillow",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 41,
+    "frequency_per_scene": 1.366667,
+    "object_type": "blinds",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 38,
+    "frequency_per_scene": 1.266667,
+    "object_type": "chair",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 35,
+    "frequency_per_scene": 1.166667,
+    "object_type": "desklamp",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 33,
+    "frequency_per_scene": 1.1,
+    "object_type": "cd",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 32,
+    "frequency_per_scene": 1.066667,
+    "object_type": "bed",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "floor",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "book",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "laptop",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "cellphone",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "creditcard",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "garbagecan",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "alarmclock",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "pencil",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "keychain",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "mirror",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "pen",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "lightswitch",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "sidetable",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 28,
+    "frequency_per_scene": 0.933333,
+    "object_type": "desk",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 21,
+    "frequency_per_scene": 0.7,
+    "object_type": "painting",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 16,
+    "frequency_per_scene": 0.533333,
+    "object_type": "mug",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 15,
+    "frequency_per_scene": 0.5,
+    "object_type": "cabinet",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 14,
+    "frequency_per_scene": 0.466667,
+    "object_type": "baseballbat",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 13,
+    "frequency_per_scene": 0.433333,
+    "object_type": "bowl",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 13,
+    "frequency_per_scene": 0.433333,
+    "object_type": "dresser",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 12,
+    "frequency_per_scene": 0.4,
+    "object_type": "box",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 11,
+    "frequency_per_scene": 0.366667,
+    "object_type": "basketball",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 10,
+    "frequency_per_scene": 0.333333,
+    "object_type": "tennisracket",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 10,
+    "frequency_per_scene": 0.333333,
+    "object_type": "teddybear",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 10,
+    "frequency_per_scene": 0.333333,
+    "object_type": "poster",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 9,
+    "frequency_per_scene": 0.3,
+    "object_type": "cloth",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 8,
+    "frequency_per_scene": 0.266667,
+    "object_type": "laundryhamper",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 7,
+    "frequency_per_scene": 0.233333,
+    "object_type": "houseplant",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 7,
+    "frequency_per_scene": 0.233333,
+    "object_type": "shelvingunit",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 5,
+    "frequency_per_scene": 0.166667,
+    "object_type": "safe",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 5,
+    "frequency_per_scene": 0.166667,
+    "object_type": "vase",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 5,
+    "frequency_per_scene": 0.166667,
+    "object_type": "dumbbell",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 4,
+    "frequency_per_scene": 0.133333,
+    "object_type": "tissuebox",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 4,
+    "frequency_per_scene": 0.133333,
+    "object_type": "statue",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "boots",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "garbagebag",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "television",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "remotecontrol",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "curtains",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "watch",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "desktop",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "footstool",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 1,
+    "frequency_per_scene": 0.033333,
+    "object_type": "dogbed",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 1,
+    "frequency_per_scene": 0.033333,
+    "object_type": "counter",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 1,
+    "frequency_per_scene": 0.033333,
+    "object_type": "coffee_table",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 1,
+    "frequency_per_scene": 0.033333,
+    "object_type": "tabletopdecor",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 1,
+    "frequency_per_scene": 0.033333,
+    "object_type": "stool",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 1,
+    "frequency_per_scene": 0.033333,
+    "object_type": "sofa",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 1,
+    "frequency_per_scene": 0.033333,
+    "object_type": "vacuumcleaner",
+    "room_type": "bedroom",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 418,
+    "frequency_per_scene": 13.933333,
+    "object_type": "cabinet",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 174,
+    "frequency_per_scene": 5.8,
+    "object_type": "drawer",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 123,
+    "frequency_per_scene": 4.1,
+    "object_type": "stoveburner",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 123,
+    "frequency_per_scene": 4.1,
+    "object_type": "stoveknob",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 71,
+    "frequency_per_scene": 2.366667,
+    "object_type": "counter",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 60,
+    "frequency_per_scene": 2.0,
+    "object_type": "sink",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 36,
+    "frequency_per_scene": 1.2,
+    "object_type": "window",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 32,
+    "frequency_per_scene": 1.066667,
+    "object_type": "faucet",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "floor",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "knife",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "microwave",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "bread",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "fork",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "potato",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "toaster",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "soapbottle",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "pan",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "plate",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "tomato",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "garbagecan",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "egg",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "pot",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "spatula",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "cup",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "refrigerator",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "coffeemachine",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "bowl",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "saltshaker",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "peppershaker",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "lettuce",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "butterknife",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "apple",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "dishsponge",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "spoon",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "lightswitch",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "mug",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 27,
+    "frequency_per_scene": 0.9,
+    "object_type": "shelf",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 21,
+    "frequency_per_scene": 0.7,
+    "object_type": "table",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 20,
+    "frequency_per_scene": 0.666667,
+    "object_type": "chair",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 19,
+    "frequency_per_scene": 0.633333,
+    "object_type": "stool",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 16,
+    "frequency_per_scene": 0.533333,
+    "object_type": "vase",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 15,
+    "frequency_per_scene": 0.5,
+    "object_type": "kettle",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 11,
+    "frequency_per_scene": 0.366667,
+    "object_type": "houseplant",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 11,
+    "frequency_per_scene": 0.366667,
+    "object_type": "ladle",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 10,
+    "frequency_per_scene": 0.333333,
+    "object_type": "winebottle",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 10,
+    "frequency_per_scene": 0.333333,
+    "object_type": "papertowelroll",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 7,
+    "frequency_per_scene": 0.233333,
+    "object_type": "bottle",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 5,
+    "frequency_per_scene": 0.166667,
+    "object_type": "shelvingunit",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 5,
+    "frequency_per_scene": 0.166667,
+    "object_type": "statue",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 5,
+    "frequency_per_scene": 0.166667,
+    "object_type": "blinds",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 4,
+    "frequency_per_scene": 0.133333,
+    "object_type": "cellphone",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "creditcard",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "sidetable",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "garbagebag",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "aluminumfoil",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "book",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "pen",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "spraybottle",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "curtains",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "pencil",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "mirror",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 1,
+    "frequency_per_scene": 0.033333,
+    "object_type": "safe",
+    "room_type": "kitchen",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 118,
+    "frequency_per_scene": 3.933333,
+    "object_type": "drawer",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 111,
+    "frequency_per_scene": 3.7,
+    "object_type": "chair",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 104,
+    "frequency_per_scene": 3.466667,
+    "object_type": "shelf",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 75,
+    "frequency_per_scene": 2.5,
+    "object_type": "window",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 54,
+    "frequency_per_scene": 1.8,
+    "object_type": "statue",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 54,
+    "frequency_per_scene": 1.8,
+    "object_type": "sidetable",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 53,
+    "frequency_per_scene": 1.766667,
+    "object_type": "painting",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 46,
+    "frequency_per_scene": 1.533333,
+    "object_type": "vase",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 36,
+    "frequency_per_scene": 1.2,
+    "object_type": "sofa",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 32,
+    "frequency_per_scene": 1.066667,
+    "object_type": "houseplant",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 31,
+    "frequency_per_scene": 1.033333,
+    "object_type": "floorlamp",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "floor",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "box",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "laptop",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "television",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "creditcard",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "keychain",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "garbagecan",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "pillow",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "remotecontrol",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 30,
+    "frequency_per_scene": 1.0,
+    "object_type": "lightswitch",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 28,
+    "frequency_per_scene": 0.933333,
+    "object_type": "coffee_table",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 19,
+    "frequency_per_scene": 0.633333,
+    "object_type": "cabinet",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 18,
+    "frequency_per_scene": 0.6,
+    "object_type": "newspaper",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 16,
+    "frequency_per_scene": 0.533333,
+    "object_type": "desklamp",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 16,
+    "frequency_per_scene": 0.533333,
+    "object_type": "watch",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 16,
+    "frequency_per_scene": 0.533333,
+    "object_type": "table",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 14,
+    "frequency_per_scene": 0.466667,
+    "object_type": "curtains",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 14,
+    "frequency_per_scene": 0.466667,
+    "object_type": "tvstand",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 13,
+    "frequency_per_scene": 0.433333,
+    "object_type": "wateringcan",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 11,
+    "frequency_per_scene": 0.366667,
+    "object_type": "dresser",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 10,
+    "frequency_per_scene": 0.333333,
+    "object_type": "plate",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 9,
+    "frequency_per_scene": 0.3,
+    "object_type": "tissuebox",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 9,
+    "frequency_per_scene": 0.3,
+    "object_type": "roomdecor",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 7,
+    "frequency_per_scene": 0.233333,
+    "object_type": "book",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 7,
+    "frequency_per_scene": 0.233333,
+    "object_type": "cellphone",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 7,
+    "frequency_per_scene": 0.233333,
+    "object_type": "shelvingunit",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 5,
+    "frequency_per_scene": 0.166667,
+    "object_type": "bowl",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 5,
+    "frequency_per_scene": 0.166667,
+    "object_type": "pen",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 5,
+    "frequency_per_scene": 0.166667,
+    "object_type": "boots",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 5,
+    "frequency_per_scene": 0.166667,
+    "object_type": "candle",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 4,
+    "frequency_per_scene": 0.133333,
+    "object_type": "pencil",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 4,
+    "frequency_per_scene": 0.133333,
+    "object_type": "ottoman",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "mirror",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "stool",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 3,
+    "frequency_per_scene": 0.1,
+    "object_type": "blinds",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "desk",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "safe",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  },
+  {
+    "count": 2,
+    "frequency_per_scene": 0.066667,
+    "object_type": "dogbed",
+    "room_type": "living_room",
+    "scene_count": 30,
+    "source": "AI2-THOR metadata via ProcTHOR database"
+  }
+]

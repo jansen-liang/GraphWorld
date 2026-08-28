@@ -1,0 +1,3171 @@
+{
+  "core_mutated": false,
+  "merge_policy": "Only candidates with a reviewed ontology mapping and a core ObjectTemplate may be merged automatically.",
+  "objects": [
+    {
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "shelf",
+        "shelvingunit",
+        "sidetable",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "alarmclock",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "aluminumfoil",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "plate",
+        "refrigerator",
+        "shelvingunit",
+        "sidetable",
+        "sink",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "apple",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "coffee_table",
+        "desk",
+        "floor",
+        "sidetable",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "baseballbat",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "box",
+        "chair",
+        "coffee_table",
+        "dresser",
+        "floor",
+        "shelvingunit",
+        "sidetable",
+        "sofa",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "basketball",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "receptacle"
+      ],
+      "object_type": "bathtub",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "receptacle"
+      ],
+      "object_type": "bathtubbasin",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "bed",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "openable"
+      ],
+      "object_type": "blinds",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "shelf",
+        "shelvingunit",
+        "sidetable",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "openable",
+        "pickupable"
+      ],
+      "object_type": "book",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "boots",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "shelf",
+        "sidetable",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "bottle",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "plate",
+        "shelf",
+        "sidetable",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "pickupable",
+        "receptacle"
+      ],
+      "object_type": "bowl",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "desk",
+        "floor",
+        "shelf",
+        "shelvingunit",
+        "sidetable",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "openable",
+        "pickupable",
+        "receptacle"
+      ],
+      "object_type": "box",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "bread",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "drawer",
+        "sidetable",
+        "sink",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "butterknife",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "openable",
+        "receptacle"
+      ],
+      "object_type": "cabinet",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "bathtub",
+        "cabinet",
+        "coffee_table",
+        "counter",
+        "dresser",
+        "floor",
+        "garbagecan",
+        "shelf",
+        "sidetable",
+        "table",
+        "toilet",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable",
+        "toggleable"
+      ],
+      "object_type": "candle",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [],
+      "object_type": "cart",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "coffee_table",
+        "desk",
+        "drawer",
+        "dresser",
+        "shelf",
+        "sidetable",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "cd",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "sidetable",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable",
+        "toggleable"
+      ],
+      "object_type": "cellphone",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "floor",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "chair",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "bathtub",
+        "bathtubbasin",
+        "cabinet",
+        "counter",
+        "floor",
+        "shelf",
+        "sidetable",
+        "sink",
+        "toilet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "cloth",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [],
+      "object_type": "clothesdryer",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "coffee_table",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle",
+        "toggleable"
+      ],
+      "object_type": "coffeemachine",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cup",
+        "footstool",
+        "pan",
+        "plate",
+        "sink"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "receptacle"
+      ],
+      "object_type": "counter",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "bowl",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "sidetable",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "creditcard",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "box",
+        "cabinet",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "sidetable",
+        "sink",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "pickupable",
+        "receptacle"
+      ],
+      "object_type": "cup",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [],
+      "object_type": "curtains",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "desk",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "desk",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "coffee_table",
+        "desk",
+        "dresser",
+        "shelf",
+        "shelvingunit",
+        "sidetable",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "toggleable"
+      ],
+      "object_type": "desklamp",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "desk"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "toggleable"
+      ],
+      "object_type": "desktop",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bathtub",
+        "cabinet",
+        "counter",
+        "floor",
+        "sidetable",
+        "sink",
+        "toilet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "dishsponge",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "dogbed",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "openable",
+        "receptacle"
+      ],
+      "object_type": "drawer",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "dresser",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "dumbbell",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "floor",
+        "refrigerator",
+        "sink"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "egg",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bathtub",
+        "bathtubbasin",
+        "counter",
+        "floor",
+        "sink"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "toggleable"
+      ],
+      "object_type": "faucet",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "garbagecan"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "isInteractable",
+        "receptacle"
+      ],
+      "object_type": "floor",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "toggleable"
+      ],
+      "object_type": "floorlamp",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable",
+        "receptacle"
+      ],
+      "object_type": "footstool",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "desk",
+        "drawer",
+        "plate",
+        "sidetable",
+        "sink",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "fork",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable"
+      ],
+      "object_type": "garbagebag",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "garbagecan",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "handtowelholder"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "handtowel",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "receptacle"
+      ],
+      "object_type": "handtowelholder",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "shelvingunit",
+        "sidetable",
+        "stool",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable"
+      ],
+      "object_type": "houseplant",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "stoveburner",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "openable",
+        "pickupable"
+      ],
+      "object_type": "kettle",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "sidetable",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "keychain",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "drawer",
+        "sink",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "knife",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "drawer",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "ladle",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "floor",
+        "sidetable",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "openable",
+        "pickupable",
+        "toggleable"
+      ],
+      "object_type": "laptop",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "openable",
+        "receptacle"
+      ],
+      "object_type": "laundryhamper",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "floor",
+        "refrigerator",
+        "sink",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "lettuce",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "toggleable"
+      ],
+      "object_type": "lightswitch",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "moveable",
+        "openable",
+        "receptacle",
+        "toggleable"
+      ],
+      "object_type": "microwave",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "dresser",
+        "floor",
+        "sink"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [],
+      "object_type": "mirror",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "chair",
+        "coffee_table",
+        "coffeemachine",
+        "counter",
+        "desk",
+        "dresser",
+        "sidetable",
+        "sink",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "pickupable",
+        "receptacle"
+      ],
+      "object_type": "mug",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "floor",
+        "ottoman",
+        "shelf",
+        "shelvingunit",
+        "sidetable",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "newspaper",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "ottoman",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [],
+      "object_type": "painting",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "stoveburner",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable",
+        "receptacle"
+      ],
+      "object_type": "pan",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "sidetable",
+        "toilet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "papertowelroll",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "sidetable",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "pen",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "box",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "shelf",
+        "sidetable",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "pencil",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "coffee_table",
+        "counter",
+        "sidetable",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "peppershaker",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "floor",
+        "sidetable",
+        "sofa"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "pillow",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "chair",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "sidetable",
+        "sink",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "pickupable",
+        "receptacle"
+      ],
+      "object_type": "plate",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "plunger",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [],
+      "object_type": "poster",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "shelvingunit",
+        "sidetable",
+        "sink",
+        "stoveburner",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable",
+        "receptacle"
+      ],
+      "object_type": "pot",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "refrigerator",
+        "sink",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "potato",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "drawer",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "openable",
+        "receptacle"
+      ],
+      "object_type": "refrigerator",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "floor",
+        "ottoman",
+        "sidetable",
+        "sofa",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "remotecontrol",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable"
+      ],
+      "object_type": "roomdecor",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "dresser",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "openable",
+        "receptacle"
+      ],
+      "object_type": "safe",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "coffee_table",
+        "counter",
+        "sidetable",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "saltshaker",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "scrubbrush",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "floor",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "receptacle"
+      ],
+      "object_type": "shelf",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "shelvingunit",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bathtub",
+        "bathtubbasin",
+        "floor",
+        "sink",
+        "towelholder"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "openable"
+      ],
+      "object_type": "showercurtain",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "openable"
+      ],
+      "object_type": "showerdoor",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "floor",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "isInteractable"
+      ],
+      "object_type": "showerglass",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bathtub",
+        "floor",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "toggleable"
+      ],
+      "object_type": "showerhead",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "sidetable",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "receptacle"
+      ],
+      "object_type": "sink",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "bathtub",
+        "cabinet",
+        "counter",
+        "dresser",
+        "shelf",
+        "toilet"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "soapbar",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bathtub",
+        "cabinet",
+        "counter",
+        "shelf",
+        "sidetable",
+        "sink",
+        "toilet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "soapbottle",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "floor",
+        "sidetable"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "sofa",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "drawer",
+        "pot",
+        "sink",
+        "stoveburner"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "spatula",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "drawer",
+        "sink",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "spoon",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "shelvingunit",
+        "sidetable",
+        "table",
+        "toilet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "spraybottle",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "shelvingunit",
+        "sidetable",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "statue",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "stool",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "receptacle"
+      ],
+      "object_type": "stoveburner",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "toggleable"
+      ],
+      "object_type": "stoveknob",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "floor",
+        "plate"
+      ],
+      "allowed_rooms": [
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "table",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "desk"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "tabletopdecor",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "chair",
+        "desk",
+        "floor",
+        "sidetable"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "teddybear",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "coffee_table",
+        "dresser",
+        "floor",
+        "shelf",
+        "sidetable",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "moveable",
+        "toggleable"
+      ],
+      "object_type": "television",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "coffee_table",
+        "floor",
+        "sidetable",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "tennisracket",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "shelf",
+        "sidetable",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "tissuebox",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle",
+        "toggleable"
+      ],
+      "object_type": "toaster",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "toiletpaperhanger"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [
+        "openable",
+        "receptacle"
+      ],
+      "object_type": "toilet",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "bathtub",
+        "cabinet",
+        "counter",
+        "drawer",
+        "floor",
+        "garbagecan",
+        "shelf",
+        "toilet",
+        "toiletpaperhanger"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "toiletpaper",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "receptacle"
+      ],
+      "object_type": "toiletpaperhanger",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "plate",
+        "refrigerator",
+        "sink",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "tomato",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "towelholder"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "towel",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "receptacle"
+      ],
+      "object_type": "towelholder",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable",
+        "receptacle"
+      ],
+      "object_type": "tvstand",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "moveable"
+      ],
+      "object_type": "vacuumcleaner",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "coffee_table",
+        "counter",
+        "desk",
+        "dresser",
+        "floor",
+        "plate",
+        "shelf",
+        "shelvingunit",
+        "sidetable",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "vase",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_template_exists": true,
+      "functional_class_candidates": [],
+      "object_type": "washer",
+      "status": "ready_for_core_merge"
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "coffee_table",
+        "desk",
+        "dresser",
+        "shelf",
+        "sidetable",
+        "table",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "watch",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "wateringcan",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "floor",
+        "sidetable",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [],
+      "object_type": "window",
+      "status": "requires_object_template"
+    },
+    {
+      "allowed_parents": [
+        "cabinet",
+        "counter",
+        "refrigerator",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_template_exists": false,
+      "functional_class_candidates": [
+        "pickupable"
+      ],
+      "object_type": "winebottle",
+      "status": "requires_object_template"
+    }
+  ],
+  "rooms": [
+    {
+      "core_template_exists": true,
+      "existing_default_fixture_templates": [
+        "door",
+        "button",
+        "room_light",
+        "washing_machine"
+      ],
+      "existing_default_movable_templates": [
+        "clothes",
+        "plant"
+      ],
+      "observed_objects": {},
+      "room_type": "balcony",
+      "source": [
+        "ai2thor"
+      ]
+    },
+    {
+      "core_template_exists": true,
+      "existing_default_fixture_templates": [
+        "door",
+        "button",
+        "room_light",
+        "sink",
+        "toilet",
+        "shower"
+      ],
+      "existing_default_movable_templates": [],
+      "observed_objects": {
+        "bathtub": {
+          "count": 21,
+          "frequency_per_scene": 0.7
+        },
+        "bathtubbasin": {
+          "count": 19,
+          "frequency_per_scene": 0.633333
+        },
+        "cabinet": {
+          "count": 64,
+          "frequency_per_scene": 2.133333
+        },
+        "candle": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "cloth": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "counter": {
+          "count": 29,
+          "frequency_per_scene": 0.966667
+        },
+        "dishsponge": {
+          "count": 6,
+          "frequency_per_scene": 0.2
+        },
+        "drawer": {
+          "count": 68,
+          "frequency_per_scene": 2.266667
+        },
+        "dresser": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "faucet": {
+          "count": 59,
+          "frequency_per_scene": 1.966667
+        },
+        "floor": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "footstool": {
+          "count": 1,
+          "frequency_per_scene": 0.033333
+        },
+        "garbagecan": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "handtowel": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "handtowelholder": {
+          "count": 45,
+          "frequency_per_scene": 1.5
+        },
+        "houseplant": {
+          "count": 1,
+          "frequency_per_scene": 0.033333
+        },
+        "lightswitch": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "mirror": {
+          "count": 32,
+          "frequency_per_scene": 1.066667
+        },
+        "painting": {
+          "count": 1,
+          "frequency_per_scene": 0.033333
+        },
+        "papertowelroll": {
+          "count": 4,
+          "frequency_per_scene": 0.133333
+        },
+        "plunger": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "scrubbrush": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "shelf": {
+          "count": 14,
+          "frequency_per_scene": 0.466667
+        },
+        "showercurtain": {
+          "count": 13,
+          "frequency_per_scene": 0.433333
+        },
+        "showerdoor": {
+          "count": 17,
+          "frequency_per_scene": 0.566667
+        },
+        "showerglass": {
+          "count": 13,
+          "frequency_per_scene": 0.433333
+        },
+        "showerhead": {
+          "count": 25,
+          "frequency_per_scene": 0.833333
+        },
+        "sidetable": {
+          "count": 7,
+          "frequency_per_scene": 0.233333
+        },
+        "sink": {
+          "count": 89,
+          "frequency_per_scene": 2.966667
+        },
+        "soapbar": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "soapbottle": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "spraybottle": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "tissuebox": {
+          "count": 9,
+          "frequency_per_scene": 0.3
+        },
+        "toilet": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "toiletpaper": {
+          "count": 60,
+          "frequency_per_scene": 2.0
+        },
+        "toiletpaperhanger": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "towel": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "towelholder": {
+          "count": 38,
+          "frequency_per_scene": 1.266667
+        },
+        "window": {
+          "count": 26,
+          "frequency_per_scene": 0.866667
+        }
+      },
+      "room_type": "bathroom",
+      "source": [
+        "ai2thor",
+        "procthor"
+      ]
+    },
+    {
+      "core_template_exists": true,
+      "existing_default_fixture_templates": [
+        "door",
+        "button",
+        "room_light",
+        "air_conditioner",
+        "bed",
+        "wardrobe"
+      ],
+      "existing_default_movable_templates": [
+        "book",
+        "clothes"
+      ],
+      "observed_objects": {
+        "alarmclock": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "baseballbat": {
+          "count": 14,
+          "frequency_per_scene": 0.466667
+        },
+        "basketball": {
+          "count": 11,
+          "frequency_per_scene": 0.366667
+        },
+        "bed": {
+          "count": 32,
+          "frequency_per_scene": 1.066667
+        },
+        "blinds": {
+          "count": 41,
+          "frequency_per_scene": 1.366667
+        },
+        "book": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "boots": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "bowl": {
+          "count": 13,
+          "frequency_per_scene": 0.433333
+        },
+        "box": {
+          "count": 12,
+          "frequency_per_scene": 0.4
+        },
+        "cabinet": {
+          "count": 15,
+          "frequency_per_scene": 0.5
+        },
+        "cd": {
+          "count": 33,
+          "frequency_per_scene": 1.1
+        },
+        "cellphone": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "chair": {
+          "count": 38,
+          "frequency_per_scene": 1.266667
+        },
+        "cloth": {
+          "count": 9,
+          "frequency_per_scene": 0.3
+        },
+        "coffee_table": {
+          "count": 1,
+          "frequency_per_scene": 0.033333
+        },
+        "counter": {
+          "count": 1,
+          "frequency_per_scene": 0.033333
+        },
+        "creditcard": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "curtains": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "desk": {
+          "count": 28,
+          "frequency_per_scene": 0.933333
+        },
+        "desklamp": {
+          "count": 35,
+          "frequency_per_scene": 1.166667
+        },
+        "desktop": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "dogbed": {
+          "count": 1,
+          "frequency_per_scene": 0.033333
+        },
+        "drawer": {
+          "count": 201,
+          "frequency_per_scene": 6.7
+        },
+        "dresser": {
+          "count": 13,
+          "frequency_per_scene": 0.433333
+        },
+        "dumbbell": {
+          "count": 5,
+          "frequency_per_scene": 0.166667
+        },
+        "floor": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "footstool": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "garbagebag": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "garbagecan": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "houseplant": {
+          "count": 7,
+          "frequency_per_scene": 0.233333
+        },
+        "keychain": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "laptop": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "laundryhamper": {
+          "count": 8,
+          "frequency_per_scene": 0.266667
+        },
+        "lightswitch": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "mirror": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "mug": {
+          "count": 16,
+          "frequency_per_scene": 0.533333
+        },
+        "painting": {
+          "count": 21,
+          "frequency_per_scene": 0.7
+        },
+        "pen": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "pencil": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "pillow": {
+          "count": 42,
+          "frequency_per_scene": 1.4
+        },
+        "poster": {
+          "count": 10,
+          "frequency_per_scene": 0.333333
+        },
+        "remotecontrol": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "safe": {
+          "count": 5,
+          "frequency_per_scene": 0.166667
+        },
+        "shelf": {
+          "count": 116,
+          "frequency_per_scene": 3.866667
+        },
+        "shelvingunit": {
+          "count": 7,
+          "frequency_per_scene": 0.233333
+        },
+        "sidetable": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "sofa": {
+          "count": 1,
+          "frequency_per_scene": 0.033333
+        },
+        "statue": {
+          "count": 4,
+          "frequency_per_scene": 0.133333
+        },
+        "stool": {
+          "count": 1,
+          "frequency_per_scene": 0.033333
+        },
+        "tabletopdecor": {
+          "count": 1,
+          "frequency_per_scene": 0.033333
+        },
+        "teddybear": {
+          "count": 10,
+          "frequency_per_scene": 0.333333
+        },
+        "television": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "tennisracket": {
+          "count": 10,
+          "frequency_per_scene": 0.333333
+        },
+        "tissuebox": {
+          "count": 4,
+          "frequency_per_scene": 0.133333
+        },
+        "vacuumcleaner": {
+          "count": 1,
+          "frequency_per_scene": 0.033333
+        },
+        "vase": {
+          "count": 5,
+          "frequency_per_scene": 0.166667
+        },
+        "watch": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "window": {
+          "count": 45,
+          "frequency_per_scene": 1.5
+        }
+      },
+      "room_type": "bedroom",
+      "source": [
+        "ai2thor",
+        "procthor"
+      ]
+    },
+    {
+      "core_template_exists": true,
+      "existing_default_fixture_templates": [
+        "door",
+        "button",
+        "room_light",
+        "rack",
+        "seat"
+      ],
+      "existing_default_movable_templates": [
+        "shoes",
+        "shoes",
+        "shoes"
+      ],
+      "observed_objects": {},
+      "room_type": "entrance",
+      "source": [
+        "ai2thor"
+      ]
+    },
+    {
+      "core_template_exists": true,
+      "existing_default_fixture_templates": [
+        "door",
+        "button",
+        "room_light",
+        "sink",
+        "refrigerator",
+        "microwave",
+        "stove",
+        "table"
+      ],
+      "existing_default_movable_templates": [
+        "mug",
+        "plate"
+      ],
+      "observed_objects": {
+        "aluminumfoil": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "apple": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "blinds": {
+          "count": 5,
+          "frequency_per_scene": 0.166667
+        },
+        "book": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "bottle": {
+          "count": 7,
+          "frequency_per_scene": 0.233333
+        },
+        "bowl": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "bread": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "butterknife": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "cabinet": {
+          "count": 418,
+          "frequency_per_scene": 13.933333
+        },
+        "cellphone": {
+          "count": 4,
+          "frequency_per_scene": 0.133333
+        },
+        "chair": {
+          "count": 20,
+          "frequency_per_scene": 0.666667
+        },
+        "coffeemachine": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "counter": {
+          "count": 71,
+          "frequency_per_scene": 2.366667
+        },
+        "creditcard": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "cup": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "curtains": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "dishsponge": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "drawer": {
+          "count": 174,
+          "frequency_per_scene": 5.8
+        },
+        "egg": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "faucet": {
+          "count": 32,
+          "frequency_per_scene": 1.066667
+        },
+        "floor": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "fork": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "garbagebag": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "garbagecan": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "houseplant": {
+          "count": 11,
+          "frequency_per_scene": 0.366667
+        },
+        "kettle": {
+          "count": 15,
+          "frequency_per_scene": 0.5
+        },
+        "knife": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "ladle": {
+          "count": 11,
+          "frequency_per_scene": 0.366667
+        },
+        "lettuce": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "lightswitch": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "microwave": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "mirror": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "mug": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "pan": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "papertowelroll": {
+          "count": 10,
+          "frequency_per_scene": 0.333333
+        },
+        "pen": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "pencil": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "peppershaker": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "plate": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "pot": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "potato": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "refrigerator": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "safe": {
+          "count": 1,
+          "frequency_per_scene": 0.033333
+        },
+        "saltshaker": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "shelf": {
+          "count": 27,
+          "frequency_per_scene": 0.9
+        },
+        "shelvingunit": {
+          "count": 5,
+          "frequency_per_scene": 0.166667
+        },
+        "sidetable": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "sink": {
+          "count": 60,
+          "frequency_per_scene": 2.0
+        },
+        "soapbottle": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "spatula": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "spoon": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "spraybottle": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "statue": {
+          "count": 5,
+          "frequency_per_scene": 0.166667
+        },
+        "stool": {
+          "count": 19,
+          "frequency_per_scene": 0.633333
+        },
+        "stoveburner": {
+          "count": 123,
+          "frequency_per_scene": 4.1
+        },
+        "stoveknob": {
+          "count": 123,
+          "frequency_per_scene": 4.1
+        },
+        "table": {
+          "count": 21,
+          "frequency_per_scene": 0.7
+        },
+        "toaster": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "tomato": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "vase": {
+          "count": 16,
+          "frequency_per_scene": 0.533333
+        },
+        "window": {
+          "count": 36,
+          "frequency_per_scene": 1.2
+        },
+        "winebottle": {
+          "count": 10,
+          "frequency_per_scene": 0.333333
+        }
+      },
+      "room_type": "kitchen",
+      "source": [
+        "ai2thor",
+        "procthor"
+      ]
+    },
+    {
+      "core_template_exists": true,
+      "existing_default_fixture_templates": [
+        "door",
+        "button",
+        "room_light",
+        "air_conditioner",
+        "seat",
+        "table",
+        "television"
+      ],
+      "existing_default_movable_templates": [
+        "remote",
+        "book",
+        "mug",
+        "plant"
+      ],
+      "observed_objects": {
+        "blinds": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "book": {
+          "count": 7,
+          "frequency_per_scene": 0.233333
+        },
+        "boots": {
+          "count": 5,
+          "frequency_per_scene": 0.166667
+        },
+        "bowl": {
+          "count": 5,
+          "frequency_per_scene": 0.166667
+        },
+        "box": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "cabinet": {
+          "count": 19,
+          "frequency_per_scene": 0.633333
+        },
+        "candle": {
+          "count": 5,
+          "frequency_per_scene": 0.166667
+        },
+        "cellphone": {
+          "count": 7,
+          "frequency_per_scene": 0.233333
+        },
+        "chair": {
+          "count": 111,
+          "frequency_per_scene": 3.7
+        },
+        "coffee_table": {
+          "count": 28,
+          "frequency_per_scene": 0.933333
+        },
+        "creditcard": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "curtains": {
+          "count": 14,
+          "frequency_per_scene": 0.466667
+        },
+        "desk": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "desklamp": {
+          "count": 16,
+          "frequency_per_scene": 0.533333
+        },
+        "dogbed": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "drawer": {
+          "count": 118,
+          "frequency_per_scene": 3.933333
+        },
+        "dresser": {
+          "count": 11,
+          "frequency_per_scene": 0.366667
+        },
+        "floor": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "floorlamp": {
+          "count": 31,
+          "frequency_per_scene": 1.033333
+        },
+        "garbagecan": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "houseplant": {
+          "count": 32,
+          "frequency_per_scene": 1.066667
+        },
+        "keychain": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "laptop": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "lightswitch": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "mirror": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "newspaper": {
+          "count": 18,
+          "frequency_per_scene": 0.6
+        },
+        "ottoman": {
+          "count": 4,
+          "frequency_per_scene": 0.133333
+        },
+        "painting": {
+          "count": 53,
+          "frequency_per_scene": 1.766667
+        },
+        "pen": {
+          "count": 5,
+          "frequency_per_scene": 0.166667
+        },
+        "pencil": {
+          "count": 4,
+          "frequency_per_scene": 0.133333
+        },
+        "pillow": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "plate": {
+          "count": 10,
+          "frequency_per_scene": 0.333333
+        },
+        "remotecontrol": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "roomdecor": {
+          "count": 9,
+          "frequency_per_scene": 0.3
+        },
+        "safe": {
+          "count": 2,
+          "frequency_per_scene": 0.066667
+        },
+        "shelf": {
+          "count": 104,
+          "frequency_per_scene": 3.466667
+        },
+        "shelvingunit": {
+          "count": 7,
+          "frequency_per_scene": 0.233333
+        },
+        "sidetable": {
+          "count": 54,
+          "frequency_per_scene": 1.8
+        },
+        "sofa": {
+          "count": 36,
+          "frequency_per_scene": 1.2
+        },
+        "statue": {
+          "count": 54,
+          "frequency_per_scene": 1.8
+        },
+        "stool": {
+          "count": 3,
+          "frequency_per_scene": 0.1
+        },
+        "table": {
+          "count": 16,
+          "frequency_per_scene": 0.533333
+        },
+        "television": {
+          "count": 30,
+          "frequency_per_scene": 1.0
+        },
+        "tissuebox": {
+          "count": 9,
+          "frequency_per_scene": 0.3
+        },
+        "tvstand": {
+          "count": 14,
+          "frequency_per_scene": 0.466667
+        },
+        "vase": {
+          "count": 46,
+          "frequency_per_scene": 1.533333
+        },
+        "watch": {
+          "count": 16,
+          "frequency_per_scene": 0.533333
+        },
+        "wateringcan": {
+          "count": 13,
+          "frequency_per_scene": 0.433333
+        },
+        "window": {
+          "count": 75,
+          "frequency_per_scene": 2.5
+        }
+      },
+      "room_type": "living_room",
+      "source": [
+        "ai2thor",
+        "procthor"
+      ]
+    }
+  ],
+  "schema_version": "0.1",
+  "status": "candidate_only",
+  "thresholds": {
+    "min_probability": 0.02
+  }
+}

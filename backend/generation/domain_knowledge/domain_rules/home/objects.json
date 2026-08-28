@@ -1,0 +1,1 @@
+{"room_objects":{"kitchen":{"required":["sink","refrigerator","stove"],"common":["plate","bowl","mug","food"]},"bedroom":{"required":["bed","wardrobe"],"common":["clothes"]},"bathroom":{"required":["sink","toilet","shower"]},"balcony":{"common":["drying_rack","plant"]}}}

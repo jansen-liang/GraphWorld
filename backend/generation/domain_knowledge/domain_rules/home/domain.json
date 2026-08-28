@@ -1,0 +1,1 @@
+{"domain":"home","version":"home_rules.v1","extends":"../../common_rules","rooms_file":"rooms.json","topology_file":"topology.json","objects_file":"objects.json","tasks_file":"tasks.json","npc_events_file":"npc_events.json"}

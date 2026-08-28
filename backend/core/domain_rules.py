@@ -10,9 +10,14 @@ APPLIANCE_CYCLE_STEPS: dict[str, int] = {
     "microwave": 2,
     "coffee_machine": 2,
     "coffee_maker": 2,
+    "coffeemachine": 2,
+    "clothesdryer": 4,
+    "dryer": 4,
+    "printer": 2,
+    "toaster": 2,
 }
 
-DRYING_RACK_STEPS = 5
+DRYING_RACK_STEPS = 6
 
 CLOTH_SEMANTICS = frozenset({"clothes", "towel", "blanket"})
 TRASHABLE_SEMANTICS = frozenset({"food", "milk", "juice", "vegetable", "fruit", "raw_food", "cooked_food"})

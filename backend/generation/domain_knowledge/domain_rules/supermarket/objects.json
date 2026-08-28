@@ -1,0 +1,1 @@
+{"room_objects":{"produce_area":{"required":["shelf","fruit","vegetable"]},"shelf_area":{"required":["shelf"],"common":["box","cart"]},"checkout_area":{"required":["counter"],"common":["receipt"]},"cold_storage":{"required":["refrigerator"],"common":["milk","juice"]}}}

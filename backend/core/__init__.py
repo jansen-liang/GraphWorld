@@ -43,8 +43,30 @@ from .assets.object_library import (
     list_available_objects,
     list_object_types,
 )
+from .assets.object_model import (
+    ObjectFamily,
+    ObjectFamilySpec,
+    PlacementSpec,
+    SystemDependency,
+    SystemSpec,
+    SystemLayer,
+    SystemStatus,
+    SYSTEM_REGISTRY,
+    system_spec,
+)
+from .assets.object_priors import ObjectPrior, get_object_prior, load_object_priors
+from .assets.object_catalog import CatalogDisposition, CatalogResolution, resolve_catalog_label
 from .scenegraph import SceneGraph
-from .states import DISCRETE_STATE_SPACE, DiscreteState
+from .states import (
+    DISCRETE_STATE_SPACE,
+    DiscreteState,
+    StateCategory,
+    StateDefinition,
+    StateValueType,
+    STATE_DEFINITIONS,
+    state_definition,
+    state_table_for_object,
+)
 from .timed_transitions import apply_timed_transitions
 
 __all__ = [
@@ -62,6 +84,12 @@ __all__ = [
     "DISCRETE_STATE_SPACE",
     "DRYING_RACK_STEPS",
     "DiscreteState",
+    "StateCategory",
+    "StateDefinition",
+    "StateValueType",
+    "STATE_DEFINITIONS",
+    "state_definition",
+    "state_table_for_object",
     "DUMP_RULES",
     "EdgeCategory",
     "EdgeType",
@@ -79,10 +107,22 @@ __all__ = [
     "NodeType",
     "OBJECT_LIBRARY",
     "ObjectTemplate",
+    "ObjectFamily",
+    "ObjectFamilySpec",
+    "ObjectPrior",
+    "CatalogDisposition",
+    "CatalogResolution",
+    "PlacementSpec",
     "ROLE_SCHEDULES",
     "SceneGraph",
     "ScheduleEntry",
     "SpatialRelation",
+    "SystemDependency",
+    "SystemSpec",
+    "SystemLayer",
+    "SystemStatus",
+    "SYSTEM_REGISTRY",
+    "system_spec",
     "TRASHABLE_SEMANTICS",
     "action_spec",
     "apply_action_schema",
@@ -91,10 +131,13 @@ __all__ = [
     "get_default_npcs",
     "get_event_spec",
     "get_object_spec",
+    "get_object_prior",
     "get_object_template",
     "get_objects_for_room",
     "list_available_objects",
     "list_object_types",
+    "load_object_priors",
+    "resolve_catalog_label",
     "node_type_from_legacy",
     "planned_activity",
     "schedule_for_role",

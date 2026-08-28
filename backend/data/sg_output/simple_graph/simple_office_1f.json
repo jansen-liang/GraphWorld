@@ -28,8 +28,7 @@
         "outside_home"
       ],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ],
       "floor_number": 1
     },
@@ -55,8 +54,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -82,8 +80,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -109,8 +106,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -137,8 +133,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -164,8 +159,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -190,8 +184,7 @@
       ],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -212,8 +205,7 @@
       "parent": "entrance",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -237,8 +229,7 @@
       "parent": "entrance",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -268,7 +259,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -292,8 +282,7 @@
       "parent": "desk_open_office_1",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -317,8 +306,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -348,7 +336,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -372,8 +359,7 @@
       "parent": "desk_open_office_2",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -397,8 +383,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -421,8 +406,7 @@
       "parent": "open_office",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -451,7 +435,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -473,8 +456,7 @@
       "parent": "table_meeting_room",
       "child": [],
       "interactive_actions": [
-        "pick",
-        "scan"
+        "pick"
       ]
     },
     {
@@ -499,7 +481,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -523,8 +504,7 @@
       "parent": "meeting_room",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -552,7 +532,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -578,7 +557,6 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "scan",
         "brush"
       ]
     },
@@ -606,8 +584,7 @@
       "parent": "pantry",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -636,7 +613,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "open",
         "close"
       ]
@@ -661,8 +637,7 @@
       "parent": "pantry",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -692,7 +667,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -716,8 +690,7 @@
       "parent": "desk_manager_office",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -741,8 +714,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -771,11 +743,8 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "open",
-        "close",
-        "pull",
-        "push"
+        "close"
       ]
     },
     {
@@ -799,8 +768,7 @@
       "parent": "manager_office",
       "child": [],
       "interactive_actions": [
-        "move",
-        "scan"
+        "move"
       ]
     },
     {
@@ -827,7 +795,6 @@
       "interactive_actions": [
         "move",
         "place",
-        "scan",
         "brush"
       ]
     },
@@ -854,7 +821,6 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "scan",
         "brush"
       ]
     },
@@ -877,8 +843,7 @@
       "child": [],
       "interactive_actions": [
         "move",
-        "place",
-        "scan"
+        "place"
       ]
     },
     {
@@ -900,8 +865,7 @@
       "child": [],
       "interactive_actions": [
         "pick",
-        "place",
-        "scan"
+        "place"
       ]
     }
   ],

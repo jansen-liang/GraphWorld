@@ -6,16 +6,20 @@ import time
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from tensorboard.compat.proto import event_pb2, summary_pb2, tensor_pb2, tensor_shape_pb2, types_pb2
-from tensorboard.summary.writer.event_file_writer import EventFileWriter
+try:
+    from tensorboard.compat.proto import event_pb2, summary_pb2, tensor_pb2, tensor_shape_pb2, types_pb2
+    from tensorboard.summary.writer.event_file_writer import EventFileWriter
+except ModuleNotFoundError:  # TensorBoard is optional for core simulation runs.
+    event_pb2 = summary_pb2 = tensor_pb2 = tensor_shape_pb2 = types_pb2 = None
+    EventFileWriter = None
 from tqdm import tqdm
 
 class TensorBoardWriter:
     def __init__(self, log_dir: Path | str) -> None:
         self._log_dir = Path(log_dir)
         self._log_dir.mkdir(parents=True, exist_ok=True)
-        self._writer = EventFileWriter(str(self._log_dir))
-        self._disabled = False
+        self._writer = EventFileWriter(str(self._log_dir)) if EventFileWriter else None
+        self._disabled = self._writer is None
         self._warned = False
 
     def _disable(self, exc: Exception) -> None:
@@ -38,12 +42,16 @@ class TensorBoardWriter:
             self._disable(exc)
 
     def add_scalar(self, tag: str, value: float, step: int) -> None:
+        if self._disabled:
+            return
         summary = summary_pb2.Summary(
             value=[summary_pb2.Summary.Value(tag=tag, simple_value=float(value))]
         )
         self._add_event(event_pb2.Event(wall_time=time.time(), step=int(step), summary=summary))
 
     def add_text(self, tag: str, text: str, step: int = 0) -> None:
+        if self._disabled:
+            return
         metadata = summary_pb2.SummaryMetadata(
             plugin_data=summary_pb2.SummaryMetadata.PluginData(plugin_name="text")
         )
@@ -58,6 +66,8 @@ class TensorBoardWriter:
         self._add_event(event_pb2.Event(wall_time=time.time(), step=int(step), summary=summary))
 
     def add_figure(self, tag: str, fig: plt.Figure, step: int = 0) -> None:
+        if self._disabled:
+            return
         buffer = io.BytesIO()
         fig.savefig(buffer, format="png", dpi=140)
         image = summary_pb2.Summary.Image(

@@ -1,0 +1,1 @@
+{"required_adjacency":[["entrance","open_office"],["open_office","meeting_room"],["open_office","pantry"],["open_office","restroom"]],"optional_adjacency":[["open_office","manager_office"]]}

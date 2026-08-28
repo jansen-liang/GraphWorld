@@ -5,7 +5,8 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Optional
 
 from ..nodes import ControlObject, FixedObject, MovableObject, NodeType
-from ..states import DISCRETE_STATE_SPACE, DiscreteState
+from ..states import DISCRETE_STATE_SPACE, DiscreteState, state_table_for_object
+from .object_model import ObjectFamily, ObjectFamilySpec, PlacementSpec, SystemDependency, infer_family
 
 
 ALLOWED_STATE_NAMES = frozenset(DISCRETE_STATE_SPACE)
@@ -32,8 +33,21 @@ def _merge_actions(*groups: Iterable[str]) -> List[str]:
 
 
 MOVEABLE = Capability("moveable", actions=("move",))
+REACHABLE = Capability("reachable", actions=("move",))
 PICKABLE = Capability("pickable", actions=("pick", "place"))
 PLACE_TARGET = Capability("place_target", actions=("place",))
+CARRYING = Capability(
+    "capacity_holder",
+    states={DiscreteState.CAPACITY.value: 1},
+    actions=("place",),
+    properties={"max_capacity": 1, "accepted_families": ("food",)},
+)
+NON_FOOD_CARRYING = Capability(
+    "capacity_holder",
+    states={DiscreteState.CAPACITY.value: 5},
+    actions=("place",),
+    properties={"max_capacity": 5, "accepted_families": ("non_food",)},
+)
 CLEANABLE = Capability("cleanable", states={DiscreteState.IS_DIRTY.value: False}, actions=("brush",))
 SWITCHABLE = Capability("switchable", states={DiscreteState.IS_ON.value: False}, actions=("press",))
 OPENABLE = Capability("openable", states={DiscreteState.IS_OPEN.value: False}, actions=("open", "close"))
@@ -44,6 +58,19 @@ FILLABLE = Capability(
         DiscreteState.FILL_LEVEL.value: 0.0,
         DiscreteState.IS_FULL.value: False,
     },
+)
+WATER_SOURCE_CONTROL = Capability("water_source_control", actions=("open", "close"))
+FINITE_RESOURCE = Capability("finite_resource", actions=("press", "refill"), properties={"resource_based": True})
+TIMED_DEVICE = Capability(
+    "timed_device",
+    states={"is_running": False, "cycle_remaining": 0},
+    actions=("press",),
+    properties={"timed_device": True},
+)
+WORKBENCH = Capability(
+    "workbench",
+    actions=("press", "place"),
+    properties={"workbench": True},
 )
 PERISHABLE = Capability("perishable", states={DiscreteState.IS_ROTTEN.value: False})
 PLANT_LIFE = Capability(
@@ -72,52 +99,166 @@ START_REQUIRES_CLOSED = Capability(
     "start_requires_closed",
     properties={"requires_closed_to_start": True},
 )
+DUMPABLE = Capability("dumpable", actions=("dump",))
 
 
-@dataclass(frozen=True)
+ACTION_CAPABILITIES = {
+    "move": REACHABLE,
+    "pick": PICKABLE,
+    "place": PLACE_TARGET,
+    "brush": CLEANABLE,
+    "press": SWITCHABLE,
+    "open": OPENABLE,
+    "close": OPENABLE,
+    "dump": DUMPABLE,
+}
+
+
+@dataclass(frozen=True, init=False)
 class ObjectTemplate:
+    """Runtime object definition; placement evidence lives in ObjectPrior.
+
+    The old positional declaration form is accepted only while the catalog is
+    being migrated.  It is immediately normalized into the v2 fields below.
+    """
+
     semantic_type: str
     name: str
     name_cn: str
     node_type: NodeType
-    default_states: Dict[str, Any] = field(default_factory=dict)
-    interactive_actions: List[str] = field(default_factory=list)
-    placement: str = "room"
-    capabilities: tuple[Capability, ...] = ()
-    door_kind: Optional[str] = None
-    blocks_visibility: bool = False
-    blocks_navigation: bool = False
-    blocks_containment: bool = False
-    requires_closed_to_start: bool = False
-    parent_device_type: Optional[str] = None
+    family: ObjectFamily
+    capabilities: tuple[Capability, ...]
+    default_states: Dict[str, Any]
+    placement_spec: PlacementSpec
+    family_spec: ObjectFamilySpec
+    required_systems: tuple[SystemDependency, ...]
+    variant_of: str | None
+    parent_device_type: Optional[str]
+    resource_capacity: Dict[str, float | int]
 
-    def __post_init__(self) -> None:
+    def __init__(
+        self,
+        semantic_type: str,
+        name: str,
+        name_cn: str,
+        node_type: NodeType,
+        default_states: Dict[str, Any] | None = None,
+        interactive_actions: Iterable[str] | None = None,
+        placement: str | PlacementSpec = "room",
+        capabilities: tuple[Capability, ...] = (),
+        *,
+        family: ObjectFamily | str | None = None,
+        placement_spec: PlacementSpec | None = None,
+        required_systems: Iterable[SystemDependency | str] = (),
+        variant_of: str | None = None,
+        parent_device_type: Optional[str] = None,
+        resource_capacity: Optional[Dict[str, float | int]] = None,
+    ) -> None:
+        explicit_actions = tuple(interactive_actions or ())
+        effective_capabilities = list(capabilities)
+        capability_names = {item.name for item in effective_capabilities}
+        for action in explicit_actions:
+            capability = ACTION_CAPABILITIES.get(str(action))
+            if capability is not None and capability.name not in capability_names:
+                effective_capabilities.append(capability)
+                capability_names.add(capability.name)
         states: Dict[str, Any] = {}
         actions: List[str] = []
         properties: Dict[str, Any] = {}
-        for capability in self.capabilities:
+        for capability in effective_capabilities:
             states.update(deepcopy(capability.states))
             actions = _merge_actions(actions, capability.actions)
             properties.update(deepcopy(capability.properties))
-        states.update(deepcopy(self.default_states))
-        actions = _merge_actions(actions, self.interactive_actions)
+        states.update(deepcopy(default_states or {}))
+        actions = _merge_actions(actions, explicit_actions)
         invalid_states = sorted(set(states) - ALLOWED_STATE_NAMES)
         if invalid_states:
             raise ValueError(f"{self.semantic_type} uses states outside DiscreteState: {invalid_states}")
 
+        normalized_family = ObjectFamily(family) if family is not None else infer_family(semantic_type, node_type, {item.name for item in effective_capabilities})
+        mode_spec = placement_spec or (placement if isinstance(placement, PlacementSpec) else PlacementSpec(mode=str(placement)))
+        normalized_systems = tuple(SystemDependency(item) for item in required_systems)
+        if parent_device_type is None:
+            parent_device_type = properties.get("parent_device_type")
+        object.__setattr__(self, "semantic_type", semantic_type)
+        object.__setattr__(self, "name", name)
+        object.__setattr__(self, "name_cn", name_cn)
+        object.__setattr__(self, "node_type", node_type)
+        object.__setattr__(self, "family", normalized_family)
+        object.__setattr__(self, "capabilities", tuple(effective_capabilities))
         object.__setattr__(self, "default_states", states)
-        object.__setattr__(self, "interactive_actions", actions)
+        object.__setattr__(self, "placement_spec", mode_spec)
+        object.__setattr__(self, "family_spec", ObjectFamilySpec(normalized_family, normalized_systems))
+        object.__setattr__(self, "required_systems", normalized_systems)
+        object.__setattr__(self, "variant_of", variant_of)
+        object.__setattr__(self, "parent_device_type", parent_device_type)
+        object.__setattr__(self, "resource_capacity", dict(resource_capacity or {}))
 
-        for key, default_value in (
-            ("door_kind", None),
-            ("blocks_visibility", False),
-            ("blocks_navigation", False),
-            ("blocks_containment", False),
-            ("requires_closed_to_start", False),
-            ("parent_device_type", None),
-        ):
-            if getattr(self, key) == default_value and key in properties:
-                object.__setattr__(self, key, properties[key])
+    @property
+    def interactive_actions(self) -> list[str]:
+        return _merge_actions(*(capability.actions for capability in self.capabilities))
+
+    @property
+    def placement(self) -> str:
+        return self.placement_spec.mode
+
+    @property
+    def allowed_rooms(self) -> tuple[str, ...]:
+        return self.placement_spec.allowed_rooms
+
+    @property
+    def allowed_parents(self) -> tuple[str, ...]:
+        return self.placement_spec.allowed_parents
+
+    @property
+    def functional_class(self) -> tuple[str, ...]:
+        return (self.family.value,)
+
+    @property
+    def state_schema(self) -> dict[str, dict[str, Any]]:
+        """States this object may own; unrelated global states are excluded."""
+        return {
+            name: definition.to_dict()
+            for name, definition in state_table_for_object(
+                self.semantic_type,
+                {capability.name for capability in self.capabilities},
+            ).items()
+        }
+
+    def _property(self, name: str, default: Any = None) -> Any:
+        for capability in self.capabilities:
+            if name in capability.properties:
+                return capability.properties[name]
+        return default
+
+    @property
+    def door_kind(self) -> Optional[str]:
+        return self._property("door_kind")
+
+    @property
+    def blocks_visibility(self) -> bool:
+        return bool(self._property("blocks_visibility", False))
+
+    @property
+    def blocks_navigation(self) -> bool:
+        return bool(self._property("blocks_navigation", False))
+
+    @property
+    def blocks_containment(self) -> bool:
+        return bool(self._property("blocks_containment", False))
+
+    @property
+    def requires_closed_to_start(self) -> bool:
+        return bool(self._property("requires_closed_to_start", False))
+
+    @property
+    def max_capacity(self) -> int | None:
+        value = self._property("max_capacity")
+        return int(value) if value is not None else None
+
+    @property
+    def accepted_families(self) -> tuple[str, ...]:
+        return tuple(self._property("accepted_families", ()))
 
     def to_spec(self) -> Dict[str, Any]:
         return {
@@ -125,16 +266,25 @@ class ObjectTemplate:
             "name": self.name,
             "name_cn": self.name_cn,
             "node_type": self.node_type.value,
+            "family": self.family.value,
             "default_states": deepcopy(self.default_states),
+            "state_schema": deepcopy(self.state_schema),
             "interactive_actions": list(self.interactive_actions),
             "placement": self.placement,
             "capabilities": [capability.name for capability in self.capabilities],
+            "family_spec": self.family_spec.to_dict(),
+            "placement_spec": self.placement_spec.to_dict(),
+            "required_systems": [item.value for item in self.required_systems],
+            "variant_of": self.variant_of,
             "door_kind": self.door_kind,
             "blocks_visibility": self.blocks_visibility,
             "blocks_navigation": self.blocks_navigation,
             "blocks_containment": self.blocks_containment,
             "requires_closed_to_start": self.requires_closed_to_start,
             "parent_device_type": self.parent_device_type,
+            "resource_capacity": deepcopy(self.resource_capacity),
+            "max_capacity": self.max_capacity,
+            "accepted_families": list(self.accepted_families),
         }
 
     def instantiate(self, node_id: str, *, parent: Optional[str] = None, overrides: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -173,6 +323,14 @@ class ObjectTemplate:
                 node[key] = value
         if self.capabilities:
             node["capabilities"] = [capability.name for capability in self.capabilities]
+        if self.max_capacity is not None:
+            node["max_capacity"] = self.max_capacity
+            node["accepted_families"] = list(self.accepted_families)
+        if any(capability.name == "finite_resource" for capability in self.capabilities):
+            capacities = self.resource_capacity or {key: value for key, value in self.default_states.items() if key in {"uses_left", "count", "amount"}}
+            if capacities:
+                node["resource_capacity"] = capacities
+        node["state_schema"] = deepcopy(self.state_schema)
         if overrides:
             for key, value in overrides.items():
                 if key == "states" and isinstance(value, dict):
@@ -218,7 +376,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         "air conditioner",
         "空调",
         NodeType.FIXED_OBJECT,
-        {},
+        {"is_on": False},
         ["move"],
         "wall",
         capabilities=(SWITCHABLE, CLEANABLE),
@@ -356,20 +514,20 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         "sink",
         "水槽",
         NodeType.FIXED_OBJECT,
-        {},
+        {"has_water": False},
         ["move", "dump"],
-        "wall",
-        capabilities=(CLEANABLE, FILLABLE, PLACE_TARGET),
+        PlacementSpec(mode="wall", capacity=1),
+        capabilities=(CLEANABLE, PLACE_TARGET),
     ),
     "faucet": ObjectTemplate(
         "faucet",
         "faucet",
         "水龙头",
         NodeType.FIXED_OBJECT,
-        {},
-        ["move"],
+        {"is_on": False},
+        [],
         "wall",
-        capabilities=(SWITCHABLE,),
+        capabilities=(SWITCHABLE, WATER_SOURCE_CONTROL),
     ),
     "toilet": ObjectTemplate(
         "toilet",
@@ -407,7 +565,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         ["move"],
         "counter",
-        capabilities=(SWITCHABLE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED),
     ),
     "stove": ObjectTemplate(
         "stove",
@@ -426,7 +584,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         ["move"],
         "wall",
-        capabilities=(SWITCHABLE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED),
     ),
     "washer": ObjectTemplate(
         "washer",
@@ -436,7 +594,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         ["move"],
         "wall",
-        capabilities=(SWITCHABLE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED),
     ),
     "drying_rack": ObjectTemplate(
         "drying_rack",
@@ -504,6 +662,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False},
         ["pick", "place", "brush"],
         "surface",
+        capabilities=(CARRYING,),
     ),
     "bowl": ObjectTemplate(
         "bowl",
@@ -513,7 +672,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {DiscreteState.IS_WET.value: False},
         [],
         "surface",
-        capabilities=(PICKABLE, CLEANABLE),
+        capabilities=(PICKABLE, CLEANABLE, CARRYING),
     ),
     "book": ObjectTemplate(
         "book",
@@ -529,8 +688,8 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         "remote",
         "遥控器",
         NodeType.MOVABLE_OBJECT,
-        {"is_dirty": False},
-        ["pick", "place"],
+        {"is_dirty": False, "is_pressed": False},
+        ["pick", "place", "press"],
         "surface",
     ),
     "clothes": ObjectTemplate(
@@ -560,6 +719,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False},
         ["pick", "place"],
         "surface",
+        capabilities=(NON_FOOD_CARRYING,),
     ),
     "cart": ObjectTemplate(
         "cart",
@@ -569,6 +729,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False},
         ["move", "pick", "place"],
         "room",
+        capabilities=(NON_FOOD_CARRYING,),
     ),
     "computer": ObjectTemplate(
         "computer",
@@ -745,9 +906,11 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         "printer",
         "打印机",
         NodeType.FIXED_OBJECT,
-        {"is_on": False, "is_dirty": False},
+        {"is_on": False, "is_running": False, "cycle_remaining": 0, "is_dirty": False, "count": 0, "amount": 0},
         ["move", "press", "brush"],
         "table",
+        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, FINITE_RESOURCE),
+        resource_capacity={"count": 100, "amount": 20},
     ),
     "receipt": ObjectTemplate(
         "receipt",
@@ -827,9 +990,11 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         "toothpaste",
         "牙膏",
         NodeType.MOVABLE_OBJECT,
-        {"is_dirty": False},
+        {"is_dirty": False, "uses_left": 20},
         ["pick", "place"],
         "surface",
+        capabilities=(PICKABLE, FINITE_RESOURCE),
+        resource_capacity={"uses_left": 20},
     ),
     "trash_bin": ObjectTemplate(
         "trash_bin",
@@ -870,7 +1035,213 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         ["move", "pick", "place"],
         "room",
     ),
+    "pillow": ObjectTemplate(
+        "pillow",
+        "pillow",
+        "枕头",
+        NodeType.MOVABLE_OBJECT,
+        {"is_dirty": False, "is_wet": False},
+        [],
+        PlacementSpec(mode="surface", allowed_parents=("bed", "sofa", "chair")),
+        capabilities=(PICKABLE, CLEANABLE),
+        family=ObjectFamily.FURNITURE_ACCESSORY,
+    ),
+    "painting": ObjectTemplate(
+        "painting",
+        "painting",
+        "画",
+        NodeType.FIXED_OBJECT,
+        {"is_dirty": False},
+        [],
+        PlacementSpec(mode="wall"),
+        capabilities=(CLEANABLE,),
+        family=ObjectFamily.DECORATION,
+    ),
+    "vase": ObjectTemplate(
+        "vase",
+        "vase",
+        "花瓶",
+        NodeType.MOVABLE_OBJECT,
+        {"is_dirty": False, "has_water": False},
+        [],
+        PlacementSpec(mode="surface", capacity=3),
+        capabilities=(PICKABLE, PLACE_TARGET, CLEANABLE),
+        family=ObjectFamily.CONTAINER,
+    ),
+    "mirror": ObjectTemplate(
+        "mirror",
+        "mirror",
+        "镜子",
+        NodeType.FIXED_OBJECT,
+        {"is_dirty": False},
+        [],
+        PlacementSpec(mode="wall"),
+        capabilities=(CLEANABLE,),
+        family=ObjectFamily.DECORATION,
+    ),
+    "towel_holder": ObjectTemplate(
+        "towel_holder",
+        "towel holder",
+        "毛巾架",
+        NodeType.FIXED_OBJECT,
+        {},
+        [],
+        PlacementSpec(mode="wall"),
+        capabilities=(PLACE_TARGET,),
+        family=ObjectFamily.FURNITURE_ACCESSORY,
+    ),
+    "towel": ObjectTemplate(
+        "towel",
+        "towel",
+        "毛巾",
+        NodeType.MOVABLE_OBJECT,
+        {"is_dirty": False, "is_wet": False},
+        [],
+        PlacementSpec(mode="surface", allowed_parents=("towel_holder", "counter", "floor")),
+        capabilities=(PICKABLE, CLEANABLE, FOLDABLE),
+        family=ObjectFamily.CLEANING_TOOL,
+    ),
 }
+
+def _candidate_template(
+    semantic_type: str,
+    name_cn: str,
+    *,
+    family: ObjectFamily,
+    rooms: tuple[str, ...],
+    parents: tuple[str, ...] = (),
+    node_type: NodeType = NodeType.MOVABLE_OBJECT,
+    capabilities: tuple[Capability, ...] = (PICKABLE,),
+    states: Dict[str, Any] | None = None,
+    mode: str = "surface",
+    resource_capacity: Dict[str, float | int] | None = None,
+) -> ObjectTemplate:
+    """Build a current-action-compatible candidate catalog entry."""
+    return ObjectTemplate(
+        semantic_type,
+        semantic_type.replace("_", " "),
+        name_cn,
+        node_type,
+        states or {},
+        [],
+        PlacementSpec(mode=mode, allowed_rooms=rooms, allowed_parents=parents),
+        capabilities=capabilities,
+        family=family,
+        resource_capacity=resource_capacity,
+    )
+
+
+# First release of dataset candidates whose semantics fit the current action
+# and state space. Objects requiring domain systems remain deferred.
+OBJECT_LIBRARY.update({
+    "statue": _candidate_template("statue", "雕像", family=ObjectFamily.DECORATION,
+        rooms=("bedroom", "kitchen", "living_room"), capabilities=(PICKABLE, CLEANABLE)),
+    "keychain": _candidate_template("keychain", "钥匙链", family=ObjectFamily.PERSONAL_ITEM,
+        rooms=("bedroom", "living_room"), capabilities=(PICKABLE,)),
+    "cellphone": _candidate_template("cellphone", "手机", family=ObjectFamily.PERSONAL_ITEM,
+        rooms=("bedroom", "kitchen", "living_room"), capabilities=(PICKABLE, CLEANABLE)),
+    "bread": _candidate_template("bread", "面包", family=ObjectFamily.FOOD,
+        rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, PERISHABLE), states={"is_dirty": False}),
+    "egg": _candidate_template("egg", "鸡蛋", family=ObjectFamily.FOOD,
+        rooms=("kitchen",), parents=("counter", "refrigerator", "sink"), capabilities=(PICKABLE, PERISHABLE)),
+    "fork": _candidate_template("fork", "叉子", family=ObjectFamily.UTENSIL,
+        rooms=("kitchen",), parents=("counter", "drawer", "sink", "table"), capabilities=(PICKABLE, CLEANABLE)),
+    "spoon": _candidate_template("spoon", "勺子", family=ObjectFamily.UTENSIL,
+        rooms=("kitchen",), parents=("counter", "drawer", "sink", "table"), capabilities=(PICKABLE, CLEANABLE)),
+    "ladle": _candidate_template("ladle", "汤勺", family=ObjectFamily.UTENSIL,
+        rooms=("kitchen",), parents=("counter", "drawer", "table"), capabilities=(PICKABLE, CLEANABLE)),
+    "peppershaker": _candidate_template("peppershaker", "胡椒瓶", family=ObjectFamily.CONTAINER,
+        rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, CLEANABLE, FINITE_RESOURCE), states={"uses_left": 10}, resource_capacity={"uses_left": 10}),
+    "saltshaker": _candidate_template("saltshaker", "盐瓶", family=ObjectFamily.CONTAINER,
+        rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, CLEANABLE, FINITE_RESOURCE), states={"uses_left": 10}, resource_capacity={"uses_left": 10}),
+    "plunger": _candidate_template("plunger", "马桶吸", family=ObjectFamily.CLEANING_TOOL,
+        rooms=("bathroom",), parents=("floor",), capabilities=(PICKABLE,)),
+    "scrubbrush": _candidate_template("scrubbrush", "清洁刷", family=ObjectFamily.CLEANING_TOOL,
+        rooms=("bathroom",), parents=("floor",), capabilities=(PICKABLE, CLEANABLE)),
+    "soapbar": _candidate_template("soapbar", "肥皂", family=ObjectFamily.CLEANING_TOOL,
+        rooms=("bathroom",), parents=("bathtub", "counter", "sink"), capabilities=(PICKABLE, CLEANABLE)),
+    "tissuebox": _candidate_template("tissuebox", "纸巾盒", family=ObjectFamily.CONTAINER,
+        rooms=("bathroom", "bedroom", "living_room"), capabilities=(PICKABLE, PLACE_TARGET, CLEANABLE, FINITE_RESOURCE), states={"count": 100}, resource_capacity={"count": 100}),
+    "dresser": _candidate_template("dresser", "梳妆柜", family=ObjectFamily.FURNITURE,
+        rooms=("bathroom", "bedroom", "living_room"), parents=("floor",), node_type=NodeType.FIXED_OBJECT,
+        capabilities=(OPENABLE, PLACE_TARGET, CLEANABLE), mode="room"),
+    "bathtub": _candidate_template("bathtub", "浴缸", family=ObjectFamily.FURNITURE,
+        rooms=("bathroom",), parents=("floor",), node_type=NodeType.FIXED_OBJECT,
+        capabilities=(PLACE_TARGET, CLEANABLE), mode="room"),
+    "bathtubbasin": _candidate_template("bathtubbasin", "浴缸盆", family=ObjectFamily.CONTAINER,
+        rooms=("bathroom",), parents=("floor",), node_type=NodeType.FIXED_OBJECT,
+        capabilities=(PLACE_TARGET, CLEANABLE), mode="room"),
+    "newspaper": _candidate_template("newspaper", "报纸", family=ObjectFamily.MEDIA_DEVICE,
+        rooms=("living_room",), capabilities=(PICKABLE, CLEANABLE)),
+    "watch": _candidate_template("watch", "手表", family=ObjectFamily.PERSONAL_ITEM,
+        rooms=("bedroom", "living_room"), capabilities=(PICKABLE, CLEANABLE)),
+    "tvstand": _candidate_template("tvstand", "电视柜", family=ObjectFamily.FURNITURE,
+        rooms=("living_room",), parents=("floor",), node_type=NodeType.FIXED_OBJECT,
+        capabilities=(PLACE_TARGET, CLEANABLE), mode="room"),
+    "teddybear": _candidate_template("teddybear", "泰迪熊", family=ObjectFamily.DECORATION,
+        rooms=("bedroom",), capabilities=(PICKABLE, CLEANABLE)),
+    "basketball": _candidate_template("basketball", "篮球", family=ObjectFamily.PERSONAL_ITEM,
+        rooms=("bedroom",), capabilities=(PICKABLE,)),
+    "tennisracket": _candidate_template("tennisracket", "网球拍", family=ObjectFamily.PERSONAL_ITEM,
+        rooms=("bedroom",), capabilities=(PICKABLE,)),
+    "baseballbat": _candidate_template("baseballbat", "棒球棒", family=ObjectFamily.PERSONAL_ITEM,
+        rooms=("bedroom",), capabilities=(PICKABLE,)),
+    "dumbbell": _candidate_template("dumbbell", "哑铃", family=ObjectFamily.PERSONAL_ITEM,
+        rooms=("bedroom",), capabilities=(PICKABLE,)),
+    "bottle": _candidate_template("bottle", "瓶子", family=ObjectFamily.CONTAINER,
+        rooms=("kitchen",), parents=("counter", "table", "shelf"), capabilities=(PICKABLE, PLACE_TARGET, CLEANABLE)),
+    "winebottle": _candidate_template("winebottle", "酒瓶", family=ObjectFamily.CONTAINER,
+        rooms=("kitchen",), parents=("counter", "table", "refrigerator"), capabilities=(PICKABLE, PLACE_TARGET, CLEANABLE)),
+    "roomdecor": _candidate_template("roomdecor", "房间装饰", family=ObjectFamily.DECORATION,
+        rooms=("living_room",), parents=("floor",), capabilities=(PICKABLE, CLEANABLE)),
+    "poster": _candidate_template("poster", "海报", family=ObjectFamily.DECORATION,
+        rooms=("bedroom",), parents=("shelf",), node_type=NodeType.FIXED_OBJECT,
+        capabilities=(CLEANABLE,), mode="wall"),
+    "ottoman": _candidate_template("ottoman", "脚凳", family=ObjectFamily.FURNITURE,
+        rooms=("living_room",), parents=("floor",), node_type=NodeType.FIXED_OBJECT,
+        capabilities=(PLACE_TARGET, CLEANABLE), mode="room"),
+    "footstool": _candidate_template("footstool", "脚踏凳", family=ObjectFamily.FURNITURE,
+        rooms=("bathroom", "bedroom"), parents=("floor",), node_type=NodeType.FIXED_OBJECT,
+        capabilities=(PLACE_TARGET, CLEANABLE), mode="room"),
+    "dogbed": _candidate_template("dogbed", "宠物窝", family=ObjectFamily.FURNITURE,
+        rooms=("bedroom", "living_room"), parents=("floor",), node_type=NodeType.FIXED_OBJECT,
+        capabilities=(PLACE_TARGET, CLEANABLE), mode="room"),
+    "garbagebag": _candidate_template("garbagebag", "垃圾袋", family=ObjectFamily.CONTAINER,
+        rooms=("bedroom", "kitchen"), parents=("floor",), capabilities=(PICKABLE, DUMPABLE)),
+    "aluminumfoil": _candidate_template("aluminumfoil", "铝箔纸", family=ObjectFamily.UTENSIL,
+        rooms=("kitchen",), parents=("shelf",), capabilities=(PICKABLE,)),
+    "tabletopdecor": _candidate_template("tabletopdecor", "桌面装饰", family=ObjectFamily.DECORATION,
+        rooms=("bedroom",), parents=("desk",), capabilities=(PICKABLE, CLEANABLE)),
+    "vacuumcleaner": _candidate_template("vacuumcleaner", "吸尘器", family=ObjectFamily.CLEANING_TOOL,
+        rooms=("bedroom",), parents=("floor",), capabilities=(PICKABLE,)),
+    "laundryhamper": _candidate_template("laundryhamper", "洗衣篮", family=ObjectFamily.CONTAINER,
+        rooms=("bathroom", "bedroom"), parents=("floor",), capabilities=(PICKABLE, PLACE_TARGET, OPENABLE), mode="room"),
+    "coffeemachine": _candidate_template("coffeemachine", "咖啡机", family=ObjectFamily.APPLIANCE,
+        rooms=("kitchen",), parents=("counter", "table"), node_type=NodeType.FIXED_OBJECT,
+        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, CLEANABLE), states={"is_on": False, "is_running": False, "cycle_remaining": 0}),
+    "coffee": _candidate_template("coffee", "咖啡", family=ObjectFamily.FOOD,
+        rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, PERISHABLE), states={"is_dirty": False}),
+    "spraybottle": _candidate_template("spraybottle", "喷雾瓶", family=ObjectFamily.CONTAINER,
+        rooms=("bathroom", "kitchen"), parents=("counter", "sink", "table"), capabilities=(PICKABLE, PLACE_TARGET, FINITE_RESOURCE), states={"has_water": False, "uses_left": 0}, resource_capacity={"uses_left": 5}),
+    "soapbottle": _candidate_template("soapbottle", "洗手液", family=ObjectFamily.CONTAINER,
+        rooms=("bathroom", "kitchen"), parents=("counter", "sink", "table"), capabilities=(PICKABLE, PLACE_TARGET, FINITE_RESOURCE), states={"amount": 10}, resource_capacity={"amount": 10}),
+    "clothesdryer": _candidate_template("clothesdryer", "烘干机", family=ObjectFamily.APPLIANCE,
+        rooms=("bathroom",), parents=("floor",), node_type=NodeType.FIXED_OBJECT,
+        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, PLACE_TARGET, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED), states={"is_on": False, "is_running": False, "cycle_remaining": 0}, mode="room"),
+    "cleaningcloth": _candidate_template("cleaningcloth", "抹布", family=ObjectFamily.CLEANING_TOOL,
+        rooms=("bathroom", "kitchen"), parents=("counter", "sink", "table"), capabilities=(PICKABLE, CLEANABLE), states={"is_dirty": False, "is_wet": False}),
+    "coffee_beans": _candidate_template("coffee_beans", "咖啡豆", family=ObjectFamily.FOOD,
+        rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE,)),
+    "tissue_refill": _candidate_template("tissue_refill", "纸巾补充包", family=ObjectFamily.PERSONAL_ITEM, rooms=("bathroom", "bedroom")),
+    "soap_refill": _candidate_template("soap_refill", "洗手液补充装", family=ObjectFamily.PERSONAL_ITEM, rooms=("bathroom", "kitchen")),
+    "water_refill": _candidate_template("water_refill", "水补充物", family=ObjectFamily.PERSONAL_ITEM, rooms=("bathroom", "kitchen")),
+    "pepper_refill": _candidate_template("pepper_refill", "胡椒补充包", family=ObjectFamily.FOOD, rooms=("kitchen",)),
+    "salt_refill": _candidate_template("salt_refill", "盐补充包", family=ObjectFamily.FOOD, rooms=("kitchen",)),
+    "toothpaste_refill": _candidate_template("toothpaste_refill", "牙膏补充装", family=ObjectFamily.PERSONAL_ITEM, rooms=("bathroom",)),
+    "paper_pack": _candidate_template("paper_pack", "打印纸", family=ObjectFamily.OFFICE_SUPPLY, rooms=("office", "living_room")),
+    "ink_cartridge": _candidate_template("ink_cartridge", "墨盒", family=ObjectFamily.OFFICE_SUPPLY, rooms=("office", "living_room")),
+})
+
 
 OBJECT_TYPE_ALIASES = {
     "book_stack": "book",
@@ -885,10 +1256,10 @@ def resolve_object_key(object_type: str) -> str:
     return OBJECT_TYPE_ALIASES.get(key, key)
 
 
-def get_object_spec(object_type: str) -> Dict[str, Any]:
+def get_object_spec(object_type: str, *, include_prior: bool = False) -> Dict[str, Any]:
     key = resolve_object_key(object_type)
     if key not in OBJECT_LIBRARY:
-        return {
+        result = {
             "semantic_type": object_type,
             "name": object_type.replace("_", " "),
             "name_cn": object_type,
@@ -897,8 +1268,20 @@ def get_object_spec(object_type: str) -> Dict[str, Any]:
             "interactive_actions": ["pick", "place"],
             "placement": "room",
         }
-    spec = OBJECT_LIBRARY[key]
-    return spec.to_spec()
+    else:
+        spec = OBJECT_LIBRARY[key]
+        result = spec.to_spec()
+    if include_prior:
+        # Priors are evidence for generation/placement, not runtime semantics.
+        from .object_priors import get_object_prior
+
+        prior = get_object_prior(key)
+        if prior is not None:
+            result["allowed_rooms"] = list(prior.allowed_rooms)
+            result["allowed_parents"] = list(prior.allowed_parents)
+            result["functional_class"] = list(prior.functional_class)
+            result["prior_evidence_count"] = prior.evidence_count
+    return result
 
 
 def build_object_node(node_id: str, object_type: str, *, parent: Optional[str] = None, overrides: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:

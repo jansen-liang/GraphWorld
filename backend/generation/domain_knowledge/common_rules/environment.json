@@ -1,0 +1,9 @@
+{
+  "schema_version": "common_environment_rules.v1",
+  "systems": {
+    "weather": ["sunny", "cloudy", "rainy"],
+    "temperature": ["cold", "room", "warm", "hot"],
+    "day_night": ["day", "night"]
+  },
+  "note": "Domain profiles may add effects and task preconditions but do not replace shared systems."
+}

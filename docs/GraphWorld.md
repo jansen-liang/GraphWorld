@@ -248,10 +248,11 @@ GraphWorld 的 Agent 系统运行在动态图世界之上，其目标不是完�
 - `pick`
 - `place`
 - `press`
-- `scan`
-- `pull`
-- `push`
+- `open`
+- `close`
 - `brush`
+- `fold`
+- `dump`
 
 因此，可把规划过程抽象为：
 

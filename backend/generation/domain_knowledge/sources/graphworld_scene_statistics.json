@@ -1,0 +1,1 @@
+{"schema_version": "source_statistics.v1", "source": "GraphWorld", "status": "available", "artifacts": ["backend/data/generation_priors/room_graph.json", "backend/data/generation_priors/object_cooccurrence.json", "backend/data/generation_priors/high_frequency_object_templates.json"]}

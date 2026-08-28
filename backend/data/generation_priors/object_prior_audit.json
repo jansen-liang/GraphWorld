@@ -1,0 +1,4042 @@
+{
+  "audited_object_count": 150,
+  "core_object_count": 72,
+  "external_prior_count": 114,
+  "note": "审计只生成报告，不修改 backend/core；外部先验不是运行时动作合法性。",
+  "objects": [
+    {
+      "allowed_parents": [
+        "sidetable",
+        "dresser",
+        "desk",
+        "coffee_table",
+        "tvstand",
+        "shelf",
+        "chair",
+        "shelvingunit",
+        "bed",
+        "table",
+        "sofa"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "alarmclock"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 4,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "aluminumfoil"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "coffee_table",
+        "desk",
+        "bed",
+        "tvstand",
+        "table",
+        "sidetable",
+        "sofa"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "evidence_count": 16,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "baseballbat"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "chair",
+        "sidetable",
+        "coffee_table",
+        "bed",
+        "box",
+        "dresser",
+        "shelvingunit",
+        "table",
+        "sofa"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "evidence_count": 12,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "basketball"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "counter"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 21,
+      "functional_class": [
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "bathtub"
+      ],
+      "sources": [
+        "ai2thor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 19,
+      "functional_class": [
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "bathtubbasin"
+      ],
+      "sources": [
+        "ai2thor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "evidence_count": 53,
+      "functional_class": [
+        "openable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "blinds"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "table",
+        "desk",
+        "coffee_table",
+        "tvstand",
+        "counter",
+        "chair",
+        "shelf",
+        "dresser"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 8,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "bottle"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "bread"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "sidetable",
+        "sink",
+        "drawer"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "butterknife"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sidetable",
+        "dresser",
+        "coffee_table",
+        "table",
+        "toilet",
+        "bathtub",
+        "tvstand",
+        "floor",
+        "shelf",
+        "garbagecan",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "living_room"
+      ],
+      "evidence_count": 38,
+      "functional_class": [
+        "pickupable",
+        "toggleable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "candle"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "sidetable",
+        "dresser",
+        "shelf",
+        "chair",
+        "coffee_table",
+        "drawer",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "evidence_count": 35,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "cd"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "sidetable",
+        "dresser",
+        "coffee_table",
+        "bed",
+        "table",
+        "chair",
+        "counter",
+        "shelf",
+        "sofa",
+        "tvstand",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "evidence_count": 45,
+      "functional_class": [
+        "pickupable",
+        "toggleable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "cellphone"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 1,
+      "functional_class": [],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "clothesdryer"
+      ],
+      "sources": [
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "moveable",
+        "receptacle",
+        "toggleable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "coffeemachine"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "coffee_table",
+        "sidetable",
+        "dresser",
+        "table",
+        "tvstand",
+        "counter",
+        "floor",
+        "shelf",
+        "bowl",
+        "chair"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "evidence_count": 68,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "creditcard"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "evidence_count": 19,
+      "functional_class": [],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "curtains"
+      ],
+      "sources": [
+        "ai2thor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "desk",
+        "dresser",
+        "coffee_table",
+        "table",
+        "shelf",
+        "tvstand",
+        "shelvingunit"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "evidence_count": 55,
+      "functional_class": [
+        "moveable",
+        "toggleable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "desklamp"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sink",
+        "sidetable",
+        "toilet",
+        "cabinet",
+        "bathtub",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "evidence_count": 39,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "dishsponge"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "evidence_count": 5,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "dogbed"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [],
+      "evidence_count": 0,
+      "functional_class": [],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "doorframe"
+      ],
+      "sources": [
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [],
+      "evidence_count": 0,
+      "functional_class": [],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "doorway"
+      ],
+      "sources": [
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "evidence_count": 31,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "dresser"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "desk"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "evidence_count": 6,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "dumbbell"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "refrigerator",
+        "sink",
+        "counter",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "egg"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "evidence_count": 33,
+      "functional_class": [
+        "moveable",
+        "toggleable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "floorlamp"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom"
+      ],
+      "evidence_count": 5,
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "footstool"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "sink",
+        "plate",
+        "drawer",
+        "sidetable",
+        "desk"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "fork"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen"
+      ],
+      "evidence_count": 7,
+      "functional_class": [
+        "moveable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "garbagebag"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "handtowelholder",
+        "counter"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "handtowel"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 47,
+      "functional_class": [
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "handtowelholder"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "stoveburner",
+        "table",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 17,
+      "functional_class": [
+        "openable",
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "kettle"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "desk",
+        "coffee_table",
+        "chair",
+        "dresser",
+        "tvstand",
+        "floor",
+        "table",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "evidence_count": 64,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "keychain"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sink",
+        "table",
+        "drawer"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "knife"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "drawer"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 13,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "ladle"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom"
+      ],
+      "evidence_count": 10,
+      "functional_class": [
+        "moveable",
+        "openable",
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "laundryhamper"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sink",
+        "dresser",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "evidence_count": 67,
+      "functional_class": [],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "mirror"
+      ],
+      "sources": [
+        "ai2thor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "sofa",
+        "table",
+        "sidetable",
+        "chair",
+        "floor",
+        "coffee_table",
+        "dresser",
+        "shelf",
+        "desk",
+        "ottoman",
+        "shelvingunit",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "evidence_count": 20,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "newspaper"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "evidence_count": 5,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "ottoman"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "chair",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "evidence_count": 75,
+      "functional_class": [],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "painting"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "stoveburner",
+        "table",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "pan"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sidetable",
+        "toilet",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "evidence_count": 16,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "papertowelroll"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "coffee_table",
+        "sidetable"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "peppershaker"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "sofa",
+        "chair",
+        "floor",
+        "sidetable"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "evidence_count": 76,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "pillow"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "plunger"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "evidence_count": 10,
+      "functional_class": [],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "poster"
+      ],
+      "sources": [
+        "ai2thor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "sidetable",
+        "stoveburner",
+        "coffee_table",
+        "desk",
+        "cabinet",
+        "shelvingunit",
+        "sink",
+        "dresser",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "pot"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "evidence_count": 10,
+      "functional_class": [
+        "moveable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "roomdecor"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "dresser",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "evidence_count": 11,
+      "functional_class": [
+        "moveable",
+        "openable",
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "safe"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "coffee_table",
+        "sidetable"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "saltshaker"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "scrubbrush"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "bathtub",
+        "floor",
+        "towelholder",
+        "bathtubbasin",
+        "sink"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 15,
+      "functional_class": [
+        "openable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "showercurtain"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 17,
+      "functional_class": [
+        "openable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "showerdoor"
+      ],
+      "sources": [
+        "ai2thor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "counter",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 13,
+      "functional_class": [],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "showerglass"
+      ],
+      "sources": [
+        "ai2thor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "bathtub",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 27,
+      "functional_class": [
+        "toggleable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "showerhead"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "bathtub",
+        "shelf",
+        "dresser",
+        "toilet",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "soapbar"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sidetable",
+        "sink",
+        "toilet",
+        "shelf",
+        "bathtub",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "evidence_count": 64,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "soapbottle"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "pot",
+        "sink",
+        "stoveburner",
+        "drawer"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "spatula"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sink",
+        "drawer",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "spoon"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sidetable",
+        "toilet",
+        "cabinet",
+        "dresser",
+        "coffee_table",
+        "desk",
+        "table",
+        "shelvingunit",
+        "floor",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "evidence_count": 35,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "spraybottle"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "shelf",
+        "coffee_table",
+        "table",
+        "dresser",
+        "floor",
+        "desk",
+        "tvstand",
+        "shelvingunit",
+        "counter"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "evidence_count": 67,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "statue"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 123,
+      "functional_class": [
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "stoveburner"
+      ],
+      "sources": [
+        "ai2thor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "desk"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "evidence_count": 2,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "tabletopdecor"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "bed",
+        "sidetable",
+        "floor",
+        "chair",
+        "desk"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "evidence_count": 11,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "teddybear"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "coffee_table",
+        "sidetable",
+        "bed",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "evidence_count": 11,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "tennisracket"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "counter",
+        "coffee_table",
+        "shelf",
+        "desk",
+        "dresser",
+        "tvstand",
+        "floor",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "living_room"
+      ],
+      "evidence_count": 25,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "tissuebox"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "moveable",
+        "receptacle",
+        "toggleable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "toaster"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "toilet",
+        "counter",
+        "garbagecan",
+        "floor",
+        "cabinet",
+        "toiletpaperhanger",
+        "shelf",
+        "drawer",
+        "bathtub"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 62,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "toiletpaper"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "toiletpaperhanger"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "towelholder",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "towel"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "evidence_count": 40,
+      "functional_class": [
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "towelholder"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "evidence_count": 16,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "tvstand"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "evidence_count": 2,
+      "functional_class": [
+        "moveable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "vacuumcleaner"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "shelf",
+        "sidetable",
+        "table",
+        "coffee_table",
+        "dresser",
+        "floor",
+        "desk",
+        "counter",
+        "shelvingunit",
+        "tvstand",
+        "plate"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "evidence_count": 72,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "vase"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "coffee_table",
+        "sidetable",
+        "tvstand",
+        "desk",
+        "dresser",
+        "shelf",
+        "chair",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "evidence_count": 21,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "watch"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "evidence_count": 15,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "wateringcan"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "floor",
+        "table",
+        "sidetable"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "evidence_count": 182,
+      "functional_class": [],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "window"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "refrigerator",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "evidence_count": 11,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "ontology_mapping_missing"
+      ],
+      "object_type": null,
+      "raw_labels": [
+        "winebottle"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_mapping"
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom"
+      ],
+      "core_actions": [
+        "brush",
+        "move"
+      ],
+      "core_capabilities": [
+        "cleanable"
+      ],
+      "evidence_count": 34,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [
+        "functional_class_not_supported"
+      ],
+      "object_type": "bed",
+      "raw_labels": [
+        "bed"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": [
+        "receptacle"
+      ]
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "dresser",
+        "coffee_table",
+        "chair",
+        "sidetable",
+        "bed",
+        "table",
+        "sofa",
+        "counter",
+        "shelvingunit",
+        "tvstand",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 43,
+      "functional_class": [
+        "openable",
+        "pickupable"
+      ],
+      "issues": [
+        "parent_rule_unmapped",
+        "functional_class_not_supported"
+      ],
+      "object_type": "book",
+      "raw_labels": [
+        "book"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "dresser",
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": [
+        "openable"
+      ]
+    },
+    {
+      "allowed_parents": [
+        "table",
+        "counter",
+        "coffee_table",
+        "desk",
+        "sidetable",
+        "chair",
+        "shelf",
+        "dresser",
+        "tvstand",
+        "cabinet",
+        "plate"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "pickable"
+      ],
+      "evidence_count": 53,
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ],
+      "issues": [
+        "parent_rule_unmapped"
+      ],
+      "object_type": "bowl",
+      "raw_labels": [
+        "bowl"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "dresser",
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "coffee_table",
+        "floor",
+        "sidetable",
+        "table",
+        "tvstand",
+        "shelvingunit",
+        "shelf",
+        "chair",
+        "desk",
+        "bed"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_actions": [
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 46,
+      "functional_class": [
+        "openable",
+        "pickupable",
+        "receptacle"
+      ],
+      "issues": [
+        "parent_rule_unmapped",
+        "functional_class_not_supported"
+      ],
+      "object_type": "box",
+      "raw_labels": [
+        "box"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": [
+        "openable"
+      ]
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "toilet",
+        "floor",
+        "bathtubbasin",
+        "sidetable",
+        "shelf",
+        "bathtub",
+        "sink",
+        "cabinet"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom"
+      ],
+      "core_actions": [
+        "fold",
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [
+        "foldable"
+      ],
+      "evidence_count": 42,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "parent_rule_unmapped"
+      ],
+      "object_type": "clothes",
+      "raw_labels": [
+        "cloth"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "bathtub",
+        "bathtubbasin"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "coffee_table",
+        "table",
+        "bed",
+        "sofa",
+        "chair",
+        "dresser",
+        "sidetable",
+        "tvstand",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "move",
+        "press"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 67,
+      "functional_class": [
+        "moveable",
+        "openable",
+        "pickupable",
+        "toggleable"
+      ],
+      "issues": [
+        "parent_rule_unmapped",
+        "functional_class_not_supported"
+      ],
+      "object_type": "computer",
+      "raw_labels": [
+        "desktop",
+        "laptop"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "dresser",
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": [
+        "openable",
+        "pickupable"
+      ]
+    },
+    {
+      "allowed_parents": [
+        "sink",
+        "footstool",
+        "plate",
+        "cup",
+        "pan"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen"
+      ],
+      "core_actions": [
+        "brush",
+        "move",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "place_target"
+      ],
+      "evidence_count": 103,
+      "functional_class": [
+        "receptacle"
+      ],
+      "issues": [
+        "parent_rule_unmapped"
+      ],
+      "object_type": "counter",
+      "raw_labels": [
+        "counter"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "footstool",
+        "pan"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sidetable",
+        "table",
+        "coffee_table",
+        "desk",
+        "sink",
+        "cabinet",
+        "dresser",
+        "tvstand",
+        "box"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_actions": [
+        "brush",
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "fillable",
+        "pickable"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ],
+      "issues": [
+        "parent_rule_unmapped"
+      ],
+      "object_type": "cup",
+      "raw_labels": [
+        "cup"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "dresser",
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "sink",
+        "bathtub",
+        "bathtubbasin",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "core_actions": [
+        "move",
+        "press"
+      ],
+      "core_capabilities": [
+        "switchable"
+      ],
+      "evidence_count": 95,
+      "functional_class": [
+        "toggleable"
+      ],
+      "issues": [
+        "parent_rule_unmapped"
+      ],
+      "object_type": "faucet",
+      "raw_labels": [
+        "faucet"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "bathtub",
+        "bathtubbasin"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "sidetable",
+        "desk",
+        "refrigerator",
+        "coffee_table",
+        "chair",
+        "sink",
+        "bed",
+        "sofa",
+        "plate",
+        "shelvingunit",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_actions": [
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [
+        "perishable",
+        "pickable"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "parent_rule_unmapped"
+      ],
+      "object_type": "fruit",
+      "raw_labels": [
+        "apple"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_actions": [
+        "brush",
+        "close",
+        "move",
+        "open",
+        "press"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "containment_blocker",
+        "openable",
+        "start_requires_closed",
+        "switchable"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "moveable",
+        "openable",
+        "receptacle",
+        "toggleable"
+      ],
+      "issues": [
+        "functional_class_not_supported"
+      ],
+      "object_type": "microwave",
+      "raw_labels": [
+        "microwave"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": [
+        "receptacle"
+      ]
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "desk",
+        "table",
+        "counter",
+        "sink",
+        "coffee_table",
+        "coffeemachine",
+        "dresser",
+        "cabinet",
+        "tvstand",
+        "chair"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen"
+      ],
+      "core_actions": [
+        "brush",
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "fillable",
+        "pickable"
+      ],
+      "evidence_count": 49,
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ],
+      "issues": [
+        "parent_rule_unmapped"
+      ],
+      "object_type": "mug",
+      "raw_labels": [
+        "mug"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "coffeemachine",
+        "dresser",
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "sidetable",
+        "coffee_table",
+        "table",
+        "counter",
+        "dresser",
+        "tvstand",
+        "desk",
+        "stool",
+        "shelvingunit",
+        "shelf",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [
+        "pickable",
+        "plant_life"
+      ],
+      "evidence_count": 55,
+      "functional_class": [
+        "moveable"
+      ],
+      "issues": [
+        "parent_rule_unmapped",
+        "functional_class_not_supported"
+      ],
+      "object_type": "plant",
+      "raw_labels": [
+        "houseplant"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "dresser",
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": [
+        "moveable"
+      ]
+    },
+    {
+      "allowed_parents": [
+        "table",
+        "counter",
+        "coffee_table",
+        "sidetable",
+        "desk",
+        "sink",
+        "cabinet",
+        "chair",
+        "dresser",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 43,
+      "functional_class": [
+        "pickupable",
+        "receptacle"
+      ],
+      "issues": [
+        "parent_rule_unmapped"
+      ],
+      "object_type": "plate",
+      "raw_labels": [
+        "plate"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "dresser",
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "cabinet",
+        "counter",
+        "drawer"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_actions": [
+        "brush",
+        "close",
+        "move",
+        "open"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "containment_blocker",
+        "openable"
+      ],
+      "evidence_count": 32,
+      "functional_class": [
+        "openable",
+        "receptacle"
+      ],
+      "issues": [
+        "functional_class_not_supported"
+      ],
+      "object_type": "refrigerator",
+      "raw_labels": [
+        "refrigerator"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": [
+        "receptacle"
+      ]
+    },
+    {
+      "allowed_parents": [
+        "coffee_table",
+        "sidetable",
+        "sofa",
+        "chair",
+        "dresser",
+        "tvstand",
+        "desk",
+        "table",
+        "floor",
+        "bed",
+        "ottoman"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_actions": [
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 36,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "parent_rule_unmapped"
+      ],
+      "object_type": "remote",
+      "raw_labels": [
+        "remotecontrol"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "dresser",
+        "ottoman",
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "desk",
+        "sidetable",
+        "dresser",
+        "table",
+        "coffee_table",
+        "chair",
+        "counter",
+        "box",
+        "floor",
+        "shelf",
+        "sofa",
+        "tvstand"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 81,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [
+        "parent_rule_unmapped"
+      ],
+      "object_type": "stationery",
+      "raw_labels": [
+        "pen",
+        "pencil"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "dresser",
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "tvstand",
+        "dresser",
+        "coffee_table",
+        "shelf",
+        "floor",
+        "sidetable"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "move",
+        "press"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 33,
+      "functional_class": [
+        "moveable",
+        "toggleable"
+      ],
+      "issues": [
+        "parent_rule_unmapped"
+      ],
+      "object_type": "television",
+      "raw_labels": [
+        "television"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "dresser",
+        "tvstand"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "toiletpaperhanger"
+      ],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_actions": [
+        "brush",
+        "move"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 32,
+      "functional_class": [
+        "openable",
+        "receptacle"
+      ],
+      "issues": [
+        "parent_rule_unmapped",
+        "functional_class_not_supported"
+      ],
+      "object_type": "toilet",
+      "raw_labels": [
+        "toilet"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [
+        "toiletpaperhanger"
+      ],
+      "unknown_rooms": [],
+      "unsupported_functional_class": [
+        "openable",
+        "receptacle"
+      ]
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [
+        "place_target"
+      ],
+      "evidence_count": 128,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [
+        "functional_class_not_supported"
+      ],
+      "object_type": "trash_bin",
+      "raw_labels": [
+        "garbagecan"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "needs_rule",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": [
+        "moveable"
+      ]
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "air_conditioner",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "dishwasher",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "dispenser",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "display",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "doctor_coat",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "door",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "drink",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "drying_rack",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "hand_sanitizer_dispenser",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "juice",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "locker",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "machine",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "medical_cart",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "medical_form",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "medicine_box",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "medicine_fridge",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "milk",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "nurse_uniform",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "prescription_sheet",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "printer",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "rack",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "receipt",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "refrigerated_medicine",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "room_light",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "shoe_rack",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "shower",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "signboard",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "stove",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "syringe",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "toilet_brush",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "toothbrush",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "toothpaste",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "wardrobe",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "washing_machine",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "water_dispenser",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "evidence_count": 0,
+      "issues": [
+        "external_evidence_missing"
+      ],
+      "object_type": "wheelchair",
+      "raw_labels": [],
+      "sources": [],
+      "status": "no_external_prior"
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "move",
+        "press"
+      ],
+      "core_capabilities": [
+        "switchable"
+      ],
+      "evidence_count": 128,
+      "functional_class": [
+        "toggleable"
+      ],
+      "issues": [],
+      "object_type": "button",
+      "raw_labels": [
+        "lightswitch"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "cabinet",
+        "counter"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "close",
+        "move",
+        "open",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "openable",
+        "place_target"
+      ],
+      "evidence_count": 516,
+      "functional_class": [
+        "openable",
+        "receptacle"
+      ],
+      "issues": [],
+      "object_type": "cabinet",
+      "raw_labels": [
+        "cabinet"
+      ],
+      "sources": [
+        "ai2thor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "living_room"
+      ],
+      "core_actions": [
+        "move",
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 1,
+      "functional_class": [],
+      "issues": [],
+      "object_type": "cart",
+      "raw_labels": [
+        "cart"
+      ],
+      "sources": [
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "desk",
+        "table"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "move",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "place_target"
+      ],
+      "evidence_count": 178,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [],
+      "object_type": "chair",
+      "raw_labels": [
+        "chair"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "move",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "place_target"
+      ],
+      "evidence_count": 31,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [],
+      "object_type": "coffee_table",
+      "raw_labels": [
+        "coffee_table"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "chair",
+        "desk"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "move",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "place_target"
+      ],
+      "evidence_count": 33,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [],
+      "object_type": "desk",
+      "raw_labels": [
+        "desk"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "close",
+        "move",
+        "open",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "openable",
+        "place_target"
+      ],
+      "evidence_count": 561,
+      "functional_class": [
+        "openable",
+        "receptacle"
+      ],
+      "issues": [],
+      "object_type": "drawer",
+      "raw_labels": [
+        "drawer"
+      ],
+      "sources": [
+        "ai2thor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_actions": [
+        "move",
+        "press"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 123,
+      "functional_class": [
+        "toggleable"
+      ],
+      "issues": [],
+      "object_type": "knob",
+      "raw_labels": [
+        "stoveknob"
+      ],
+      "sources": [
+        "ai2thor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "move",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable"
+      ],
+      "evidence_count": 27,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [],
+      "object_type": "seat",
+      "raw_labels": [
+        "stool"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "desk",
+        "shelf"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "move",
+        "place"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 285,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [],
+      "object_type": "shelf",
+      "raw_labels": [
+        "shelf",
+        "shelvingunit"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [],
+      "evidence_count": 10,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [],
+      "object_type": "shoes",
+      "raw_labels": [
+        "boots"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "kitchen"
+      ],
+      "core_actions": [
+        "brush",
+        "dump",
+        "move",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "fillable",
+        "place_target"
+      ],
+      "evidence_count": 149,
+      "functional_class": [
+        "receptacle"
+      ],
+      "issues": [],
+      "object_type": "sink",
+      "raw_labels": [
+        "sink"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "sidetable",
+        "chair"
+      ],
+      "allowed_rooms": [
+        "bedroom",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "move",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "place_target"
+      ],
+      "evidence_count": 40,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [],
+      "object_type": "sofa",
+      "raw_labels": [
+        "sofa"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "floor",
+        "chair",
+        "plate"
+      ],
+      "allowed_rooms": [
+        "bathroom",
+        "bedroom",
+        "kitchen",
+        "living_room"
+      ],
+      "core_actions": [
+        "brush",
+        "move",
+        "place"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "place_target"
+      ],
+      "evidence_count": 139,
+      "functional_class": [
+        "moveable",
+        "receptacle"
+      ],
+      "issues": [],
+      "object_type": "table",
+      "raw_labels": [
+        "sidetable",
+        "table"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [
+        "counter",
+        "table",
+        "refrigerator",
+        "sink",
+        "plate",
+        "floor"
+      ],
+      "allowed_rooms": [
+        "kitchen"
+      ],
+      "core_actions": [
+        "pick",
+        "place"
+      ],
+      "core_capabilities": [
+        "perishable",
+        "pickable"
+      ],
+      "evidence_count": 96,
+      "functional_class": [
+        "pickupable"
+      ],
+      "issues": [],
+      "object_type": "vegetable",
+      "raw_labels": [
+        "lettuce",
+        "potato",
+        "tomato"
+      ],
+      "sources": [
+        "ai2thor",
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    },
+    {
+      "allowed_parents": [],
+      "allowed_rooms": [
+        "bathroom"
+      ],
+      "core_actions": [
+        "brush",
+        "close",
+        "move",
+        "open",
+        "press"
+      ],
+      "core_capabilities": [
+        "cleanable",
+        "containment_blocker",
+        "openable",
+        "start_requires_closed",
+        "switchable"
+      ],
+      "evidence_count": 1,
+      "functional_class": [],
+      "issues": [],
+      "object_type": "washer",
+      "raw_labels": [
+        "washer"
+      ],
+      "sources": [
+        "procthor"
+      ],
+      "status": "ready",
+      "unknown_parents": [],
+      "unknown_rooms": [],
+      "unsupported_functional_class": []
+    }
+  ],
+  "ontology_version": "0.1",
+  "policy": {
+    "needs_mapping": "外部标签尚未映射到 ontology，不进入模板生成。",
+    "needs_rule": "有模板，但房间/parent/功能先验仍需规则审查。",
+    "needs_template": "已映射或可识别，但 OBJECT_LIBRARY 没有对应模板。",
+    "no_external_prior": "core 模板存在，但当前外部数据没有证据；不能据此判定不合理。",
+    "ready": "已有 core 模板，且房间、parent、功能先验都能被当前 ontology/runtime 解释。"
+  },
+  "schema_version": "0.2",
+  "stats_dir": "backend/data/external_stats",
+  "status_counts": {
+    "needs_mapping": 78,
+    "needs_rule": 20,
+    "no_external_prior": 36,
+    "ready": 16
+  }
+}

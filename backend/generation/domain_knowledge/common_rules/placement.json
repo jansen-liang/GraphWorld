@@ -1,0 +1,9 @@
+{
+  "schema_version": "common_placement_rules.v1",
+  "hard_rules": [
+    {"id": "parent_must_exist", "description": "Every in/on/at object relation references an existing node."},
+    {"id": "parent_must_allow_placement", "description": "Object placement obeys template capabilities and allowed parents."},
+    {"id": "capacity_must_hold", "description": "A container cannot exceed its declared capacity."}
+  ],
+  "relation_defaults": {"room": "in", "surface": "on", "container": "in"}
+}

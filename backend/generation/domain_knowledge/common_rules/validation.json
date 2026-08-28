@@ -1,0 +1,5 @@
+{
+  "schema_version": "common_validation_rules.v1",
+  "required_checks": ["schema", "room_connectivity", "parent_edges", "capacity", "domain_rules", "pddl_task_solvability"],
+  "publish_rule": "Only scenes whose declared tasks have successful PDDL plans enter the dataset index."
+}

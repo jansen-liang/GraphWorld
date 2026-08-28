@@ -1,0 +1,1 @@
+{"room_objects":{"warehouse":{"required":["shelf","box","cart"]},"assembly_line":{"required":["machine"]},"control_room":{"required":["display","computer"]},"workshop":{"required":["table"],"common":["toolkit","box"]}}}

@@ -1,0 +1,134 @@
+{
+  "note": "当前 Office 统计来自手工 scene JSON，用于核对模板覆盖；外部 Office 数据仍需 3D-FRONT/3D-FUTURE。",
+  "scene_count": 4,
+  "scenes": [
+    {
+      "object_counts": {
+        "book": 1,
+        "cabinet": 1,
+        "computer": 3,
+        "counter": 1,
+        "cup": 1,
+        "desk": 3,
+        "display": 1,
+        "microwave": 1,
+        "plant": 2,
+        "printer": 1,
+        "refrigerator": 1,
+        "report": 1,
+        "seat": 4,
+        "signboard": 1,
+        "sink": 1,
+        "table": 1,
+        "toilet": 1,
+        "water_dispenser": 1
+      },
+      "rooms": [
+        "entrance",
+        "manager_office",
+        "meeting_room",
+        "open_office",
+        "outside_home",
+        "pantry",
+        "restroom"
+      ],
+      "scene": "simple_office_1f"
+    },
+    {
+      "object_counts": {
+        "book": 1,
+        "cabinet": 1,
+        "computer": 3,
+        "counter": 1,
+        "cup": 1,
+        "desk": 3,
+        "display": 1,
+        "microwave": 1,
+        "plant": 2,
+        "printer": 1,
+        "refrigerator": 1,
+        "report": 1,
+        "seat": 4,
+        "signboard": 1,
+        "sink": 1,
+        "table": 1,
+        "toilet": 1,
+        "water_dispenser": 1
+      },
+      "rooms": [
+        "entrance",
+        "manager_office",
+        "meeting_room",
+        "open_office",
+        "outside_home",
+        "pantry",
+        "restroom"
+      ],
+      "scene": "simple_office_1f__compact_cleaning"
+    },
+    {
+      "object_counts": {
+        "book": 1,
+        "cabinet": 1,
+        "computer": 3,
+        "counter": 1,
+        "cup": 1,
+        "desk": 3,
+        "display": 1,
+        "microwave": 1,
+        "plant": 2,
+        "printer": 1,
+        "refrigerator": 1,
+        "report": 1,
+        "seat": 4,
+        "signboard": 1,
+        "sink": 1,
+        "table": 1,
+        "toilet": 1,
+        "water_dispenser": 1
+      },
+      "rooms": [
+        "entrance",
+        "manager_office",
+        "meeting_room",
+        "open_office",
+        "outside_home",
+        "pantry",
+        "restroom"
+      ],
+      "scene": "simple_office_1f__normal_logistics"
+    },
+    {
+      "object_counts": {
+        "book": 1,
+        "cabinet": 1,
+        "computer": 3,
+        "counter": 1,
+        "cup": 1,
+        "desk": 3,
+        "display": 1,
+        "microwave": 1,
+        "plant": 2,
+        "printer": 1,
+        "refrigerator": 1,
+        "report": 1,
+        "seat": 4,
+        "signboard": 1,
+        "sink": 1,
+        "table": 1,
+        "toilet": 1,
+        "water_dispenser": 1
+      },
+      "rooms": [
+        "entrance",
+        "manager_office",
+        "meeting_room",
+        "open_office",
+        "outside_home",
+        "pantry",
+        "restroom"
+      ],
+      "scene": "simple_office_1f__spread_device"
+    }
+  ]
+}

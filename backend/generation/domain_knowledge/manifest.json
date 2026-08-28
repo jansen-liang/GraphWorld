@@ -1,0 +1,9 @@
+{
+  "schema_version": "graphworld_domain_knowledge.v1",
+  "common_rules": "common_rules",
+  "domains": ["home", "office", "hospital", "supermarket", "factory"],
+  "sources": "sources",
+  "task_pddl_coverage": "sources/task_pddl_coverage.json",
+  "resolution_order": ["common_rules", "domain_rules", "scene_instance"],
+  "task_support_policy": "candidate_then_pddl_verified"
+}
