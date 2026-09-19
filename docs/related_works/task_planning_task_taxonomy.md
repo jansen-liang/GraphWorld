@@ -1,529 +1,592 @@
-# GraphWorld 任务与世界状态架构
+# GraphWorld 内部文档
+>
+> 目标：统一 Object、State、Edge、Action、Rule、Process 和 Task 的定义，并明确从任务定义到可解任务实例的自动生成链路。
+>
+> 成熟度：`Implemented` 代码已实现；`Proposed` 目标确定但未实现；`Open` 仍需决策。
 
-## 自动化场景生成
+## 1. 文档目标与核心决策
 
-当前场景暂定为 **Home、Office、Hospital、Supermarket、Factory**。程序化生成器顺序为“选择场景域 → 选择该域房间 → 采样对象 → 放置 NPC → 校验/PDDL”。房间不是跨域共享的自由标签；`room_types_for_scene(domain)` 是唯一允许的房间词汇入口。
+GraphWorld 将世界表示为随动作和时间变化的图。任务只描述目标，不预先规定动作序列；规划器根据初始图、目标和世界变化规则寻找计划。
 
-| 场景域 | 房间集合（示例） | 主要任务族 |
-|---|---|---|
-| Home | 玄关、客厅、卧室、浴室、厨房、阳台 | 家务、烹饪、洗衣、收纳、清洁 |
-| Office | 开放办公区、会议室、经理办公室、茶水间、卫生间 | 打印、文件流转、会议、补给、清洁 |
-| Hospital | 大厅、挂号处、候诊区、门诊、治疗室、药房、员工区 | 医疗物资归还、处方/药品流转、床位清洁 |
-| Supermarket | 生鲜区、货架区、收银区、冷藏库、仓库 | 补货、食品搬运、冷链、收银物流、清洁 |
-| Factory | 装配线、车间、仓库、控制室、休息区、收货区 | 零件搬运、装配、质检、维护、交接 |
+当前规则：
+1. 对象模板声明类型、状态、能力和放置约束；对象实例是场景图中的节点。
+2. Edge 表示位置、承载、持有、连接和控制关系；State 表示节点自身属性。
+3. Action 是主体主动执行的原子接口；Rule 是动作触发的即时效果；Process 是过程变化。
+4. 原子任务由初始状态和一个未满足的目标状态组成；组合任务是多个目标状态的合取。
+5. 六类任务是语义分类，只用于统计分析，不参与规划语义。
+6. 新物体和新玩法优先通过对象能力、领域规则、过程和配方扩展，不增加一类专用原子动作。
+7. `has_water` 使用 `0–100` 数值资源。`0` 表示无水，`100` 表示装满；消耗过程可以产生中间值。
+8. 任务实例只有在规划成功且计划能够在 runtime 重放后，才计入已验证任务集。
 
-下表列出各域的代表房间；“任务种类”是具备最小对象集合时的能力声明，不保证每个实例都可解。
+## 2. 世界建模：Object / State / Edge
 
-| 房间 | 必选/常见物体类别 | 可选物体类别 | 可支撑任务种类 |
-|---|---|---|---|
-| 玄关 `entrance` | 门、灯、鞋架、鞋、座椅 | 箱子、推车、钥匙链 | 进出、收纳、搬运、清洁 |
-| 客厅 `living_room` | 沙发、桌子、电视、遥控器、杯子 | 书、植物、箱子、推车 | 休息/社交、遥控设备、饮用、浇水、清洁、收纳 |
-| 卧室 `bedroom` | 床、衣柜、衣物、灯 | 植物、箱子、推车、镜子 | 睡眠、洗衣归位、折叠、浇水、收纳、清洁 |
-| 浴室 `bathroom` | 水槽、水龙头、马桶、淋浴、毛巾 | 牙刷、牙膏、喷雾瓶、箱子 | 取水/倒水、清洁、个人卫生、资源补充 |
-| 厨房 `kitchen` | 水槽、冰箱、微波炉、炉灶、桌子、盘子、碗 | 食品、杯子、咖啡机、箱子、推车 | 烹饪、盛放食品、饮用、食品处置、清洁、补给搬运 |
-| 阳台 `balcony` | 洗衣机、晾衣架、衣物 | 烘干机、植物、推车、箱子 | 洗衣、晾晒、浇水、批量搬运 |
-| 办公室 `office` | 书桌、椅子、电脑、打印机 | 文具、纸张、箱子、推车 | 打印/补纸、办公收纳、清洁、搬运 |
-| 医疗区 `clinic` | 检查床、医疗推车、药柜/冰箱 | 药盒、处方单、轮椅、箱子 | 医疗补给、归还、清洁、冷藏物品搬运 |
+设时刻 $t$ 的世界图为：
 
-生成器必须记录采样 seed、房间实例、对象模板和 NPC 数量；房间库现有约束（邻接、面积、固定设备）继续作为几何生成的第一层校验。
+$$
+G_t=(V_t,E_t,S_t,W_t)
+$$
 
-## 场景图校验与 metadata 合约
+其中 $V_t$ 是节点集合，$E_t$ 是有类型的关系边，$S_t$ 是节点状态，$W_t$ 是时间、天气和房间环境等全局状态。GraphWorld ontology 是这些节点类型、状态、关系和变化规则的统一词汇与约束。
 
-每个生成图都应运行：
+### 2.1 Object
 
-```bash
-python -m backend.tools.validate_scene_graph path/to/scene.json
+对象分为模板和实例：
+
+```text
+ObjectTemplate = semantic_type + family + node_type + capabilities
+               + default_states + placement_spec + required_systems
+
+ObjectInstance = object_id + template_reference + current_states + current_edges
 ```
 
-命令生成同目录 `scene.metadata.json`，格式 `scene_metadata.v1`，至少包含：`object_type_counts`（每种模板实例数）、`family_counts`、`room_count`、`npc_count`、`task_candidates`、`verified_task_kinds`、`verified_task_count` 和 `planner`。`task_candidates` 只是根据对象能力生成的待验证集合，绝不能当作可玩任务；在 PDDL 未运行前，`planner.status=required` 且 `verified_task_kinds=[]`。
+| 字段 | 含义 | 说明 |
+|---|---|---|
+| `semantic_type` | 语义类型 | 物体在世界中的具体类别，例如 `vase`、`sink`、`washing_machine` |
+| `family` | 功能类别 | 更高层的物体分组，例如容器、食品、工具、家具、设备 |
+| `node_type` | 节点类型 | 图结构中的节点角色，例如可移动物体、不可移动物体、控制器 |
+| `capabilities` | 能力集合 | 物体支持的通用能力，例如可抓取、可放置、可打开、可清洁、可计时运行 |
+| `default_states` | 默认状态 | 新实例创建时的初始状态，例如 `is_open=False`、`has_water=0` |
+| `placement_spec` | 放置约束 | 物体允许出现的房间、父节点、表面或容器，以及容量要求 |
+| `required_systems` | 依赖系统 | 物体正常运行所需的系统，例如时间、温度、烹饪或资源消耗系统 |
+| `object_id` | 对象唯一标识 | 场景中具体实例的 ID，例如 `vase_01` |
+| `template_reference` | 对象模板引用 | 该实例所使用的 `ObjectTemplate`，决定其类型、能力和合法状态 |
+| `current_states` | 当前状态 | 实例在当前时刻的状态值，会随 Action、Rule 和 Process 改变 |
+| `current_edges` | 当前关系边 | 实例当前的位置、持有、组成和控制关系，例如 `in`、`on`、`held_by` |
 
-PDDL 适配器必须读取同一图和 metadata，对 `task_candidates` 中的**每个具体任务实例**分别编译 domain/problem 并运行规划器，回写 `verified_task_kinds`、`verified_task_count`、`planner.solved_task_count`、`planner.unsolved_task_kinds`、`planner.command` 和求解证据（problem 文件、plan 文件、状态摘要）。任何任务缺少成功 plan 都不能进入 `verified_task_kinds`。
+`atomic/composite` 与 `movable/fixed` 是不同维度：
 
-场景发布门槛：结构错误为 0；所有声明为支持的任务均有独立 PDDL 成功 plan；失败或超时任务必须列入 `unsolved_task_kinds`；metadata 与图中节点/NPC 计数一致。最终任务数量只取 `verified_task_count`，不取候选数量。
+- 原子物体是在当前粒度下不再拆分的实体，例如盘子、电线、纸巾盒。
+- 复合物体由多个实体及组成关系构成，例如制作汉堡、焊接组件、插花花瓶。
+- 可移动物体能够成为 `pick` 的对象；不可移动物体作为房间结构、设备或放置目标。
+- 数量资源保存在资源节点的数值状态中，例如 `tissuebox.count=100`，不创建 100 个纸巾节点。
 
-## 一、目前最小原子物体清单
+物体库完整清单见附录 A。
 
-这里的“最小”指当前仿真粒度下不再拆分的实体。`atomic/composite` 与 `movable/fixed` 是正交属性；复合物体由多个实体和组合关系生成。
+### 2.2 State
 
-数量资源不逐个建节点，例如纸巾使用 `tissue_resource.count=100`，焊锡使用 `solder.amount`；花瓶水采用粗粒度 `has_water=true/false`。
+State 是节点自身的有类型属性。
 
-当前 `OBJECT_LIBRARY` 共 115 个模板；下表逐个列出
-
-| 物体名称 | 类型 | 移动/不可移动 | 当前默认状态 |
-|---|---|---|---|
-| 门（`door`） | 结构物 | 不可移动 | `is_open`=False；`is_dirty`=False |
-| 按钮（`button`） | 设备 | 不可移动 | `is_on`=False；`is_pressed`=False |
-| 灯（`room_light`） | 设备 | 不可移动 | `is_on`=False |
-| 空调（`air_conditioner`） | 设备 | 不可移动 | `is_on`=False；`is_dirty`=False |
-| 架子（`rack`） | 家具 | 不可移动 | `is_dirty`=False |
-| 鞋架（`shoe_rack`） | 家具 | 不可移动 | `is_dirty`=False |
-| 座椅（`seat`） | 家具 | 不可移动 | `is_dirty`=False |
-| 椅子（`chair`） | 家具 | 不可移动 | `is_dirty`=False |
-| 桌子（`table`） | 家具 | 不可移动 | `is_dirty`=False |
-| 茶几（`coffee_table`） | 家具 | 不可移动 | `is_dirty`=False |
-| 操作台（`counter`） | 家具 | 不可移动 | `is_dirty`=False |
-| 书桌（`desk`） | 家具 | 不可移动 | `is_dirty`=False |
-| 抽屉（`drawer`） | 家具 | 不可移动 | `is_open`=False；`is_dirty`=False |
-| 沙发（`sofa`） | 家具 | 不可移动 | `is_dirty`=False |
-| 床（`bed`） | 家具 | 不可移动 | `is_dirty`=False |
-| 衣柜（`wardrobe`） | 家具 | 不可移动 | `is_open`=False；`is_dirty`=False |
-| 柜子（`cabinet`） | 家具 | 不可移动 | `is_open`=False；`is_dirty`=False |
-| 水槽（`sink`） | 容器/家具 | 不可移动 | `is_dirty`=False；`has_water`=False；最多承载 1 个物体 |
-| 水龙头（`faucet`） | 设备 | 不可移动 | `is_on`=False |
-| 马桶（`toilet`） | 家具 | 不可移动 | `is_dirty`=False |
-| 淋浴（`shower`） | 设备 | 不可移动 | `is_on`=False；`is_dirty`=False |
-| 冰箱（`refrigerator`） | 设备 | 不可移动 | `is_open`=False；`is_dirty`=False |
-| 微波炉（`microwave`） | 设备 | 不可移动 | `is_on`=False；`is_open`=False；`is_dirty`=False |
-| 炉灶（`stove`） | 设备 | 不可移动 | `is_on`=False；`is_dirty`=False |
-| 洗衣机（`washing_machine`） | 设备 | 不可移动 | `is_on`=False；`is_open`=False；`is_dirty`=False |
-| 洗衣机（`washer`） | 设备 | 不可移动 | `is_on`=False；`is_open`=False；`is_dirty`=False |
-| 晾衣架（`drying_rack`） | 家具 | 不可移动 | 无显式状态 |
-| 电视（`television`） | 设备 | 不可移动 | `is_on`=False；`is_dirty`=False |
-| 显示屏（`display`） | 办公用品 | 不可移动 | `is_on`=False；`is_dirty`=False |
-| 植物（`plant`） | 日用品 | 可移动 | `is_wilted`=False；`is_wet`=True；`vitality`=1.0 |
-| 杯子（`mug`） | 日用品 | 可移动 | `is_dirty`=False；`fill_level`=0.0；`is_full`=False |
-| 杯子（`cup`） | 日用品 | 可移动 | `is_dirty`=False；`fill_level`=0.0；`is_full`=False；`is_wet`=False |
-| 盘子（`plate`） | 容器 | 可移动 | `is_dirty`=False |
-| 碗（`bowl`） | 日用品 | 可移动 | `is_dirty`=False；`is_wet`=False |
-| 书（`book`） | 容器 | 可移动 | `is_dirty`=False |
-| 遥控器（`remote`） | 容器 | 可移动 | `is_dirty`=False |
-| 衣物（`clothes`） | 日用品 | 可移动 | `folded`=True；`is_dirty`=False；`is_wet`=False |
-| 鞋（`shoes`） | 日用品 | 可移动 | `is_dirty`=False；`is_wet`=False |
-| 箱子（`box`） | 容器 | 可移动 | `is_dirty`=False |
-| 推车（`cart`） | 容器 | 可移动 | `is_dirty`=False |
-| 电脑（`computer`） | 办公用品 | 不可移动 | `is_on`=False；`is_dirty`=False |
-| 洗碗机（`dishwasher`） | 设备 | 不可移动 | `is_on`=False；`is_open`=False；`is_dirty`=False |
-| 分配器（`dispenser`） | 设备 | 不可移动 | `fill_level`=1.0；`is_full`=False；`is_on`=False；`is_dirty`=False |
-| 医生白大褂（`doctor_coat`） | 日用品 | 可移动 | `is_dirty`=False |
-| 饮料（`drink`） | 食品 | 可移动 | `is_open`=False；`is_rotten`=False |
-| 水果（`fruit`） | 食品 | 可移动 | `is_rotten`=False |
-| 免洗洗手液机（`hand_sanitizer_dispenser`） | 设备 | 不可移动 | `fill_level`=1.0；`is_full`=False；`is_on`=False；`is_dirty`=False |
-| 果汁（`juice`） | 食品 | 可移动 | `is_open`=False；`is_rotten`=False |
-| 旋钮（`knob`） | 设备 | 不可移动 | `is_on`=False |
-| 储物柜（`locker`） | 办公用品 | 不可移动 | `is_open`=False；`is_dirty`=False |
-| 机器（`machine`） | 设备 | 不可移动 | `is_on`=False；`is_dirty`=False |
-| 医疗推车（`medical_cart`） | 医疗用品 | 可移动 | `is_dirty`=False |
-| 医疗表单（`medical_form`） | 医疗用品 | 可移动 | `is_dirty`=False |
-| 药盒（`medicine_box`） | 医疗用品 | 可移动 | `is_open`=False |
-| 药品冰箱（`medicine_fridge`） | 设备 | 不可移动 | `is_open`=False；`is_dirty`=False |
-| 牛奶（`milk`） | 食品 | 可移动 | `is_open`=False；`is_rotten`=False |
-| 护士制服（`nurse_uniform`） | 日用品 | 可移动 | `is_dirty`=False |
-| 处方单（`prescription_sheet`） | 医疗用品 | 可移动 | `is_dirty`=False |
-| 打印机（`printer`） | 设备 | 不可移动 | `is_on`=False；`is_dirty`=False |
-| 收据（`receipt`） | 办公用品 | 可移动 | `is_dirty`=False |
-| 冷藏药品（`refrigerated_medicine`） | 食品 | 可移动 | `is_rotten`=False；`temperature`=cold |
-| 货架（`shelf`） | 家具 | 不可移动 | `is_dirty`=False |
-| 标牌（`signboard`） | 家具 | 不可移动 | `is_dirty`=False |
-| 文具（`stationery`） | 办公用品 | 可移动 | `is_dirty`=False |
-| 注射器（`syringe`） | 医疗用品 | 可移动 | 无显式状态 |
-| 马桶刷（`toilet_brush`） | 容器 | 可移动 | `is_dirty`=False |
-| 牙刷（`toothbrush`） | 日用品 | 可移动 | `is_dirty`=False |
-| 牙膏（`toothpaste`） | 日用品 | 可移动 | `is_dirty`=False |
-| 垃圾桶（`trash_bin`） | 容器 | 可移动 | `is_dirty`=False |
-| 蔬菜（`vegetable`） | 食品 | 可移动 | `is_rotten`=False |
-| 饮水机（`water_dispenser`） | 设备 | 不可移动 | `fill_level`=1.0；`is_full`=False；`is_on`=True；`is_dirty`=False |
-| 轮椅（`wheelchair`） | 医疗用品 | 可移动 | `is_dirty`=False |
-| 枕头（`pillow`） | 家具 | 可移动 | `is_dirty`=False；`is_wet`=False |
-| 画（`painting`） | 装饰 | 不可移动 | `is_dirty`=False |
-| 花瓶（`vase`） | 容器 | 可移动 | `is_dirty`=False；`has_water`=False |
-| 镜子（`mirror`） | 装饰 | 不可移动 | `is_dirty`=False |
-| 毛巾架（`towel_holder`） | 家具 | 不可移动 | 无显式状态 |
-| 毛巾（`towel`） | 工具 | 可移动 | `is_dirty`=False；`folded`=True；`is_wet`=False |
-| 雕像（`statue`） | 装饰 | 可移动 | `is_dirty`=False |
-| 钥匙链（`keychain`） | 日用品 | 可移动 | 无显式状态 |
-| 手机（`cellphone`） | 日用品 | 可移动 | `is_dirty`=False |
-| 面包（`bread`） | 食品 | 可移动 | `is_rotten`=False；`is_dirty`=False |
-| 鸡蛋（`egg`） | 食品 | 可移动 | `is_rotten`=False |
-| 叉子（`fork`） | 工具 | 可移动 | `is_dirty`=False |
-| 勺子（`spoon`） | 工具 | 可移动 | `is_dirty`=False |
-| 汤勺（`ladle`） | 工具 | 可移动 | `is_dirty`=False |
-| 胡椒瓶（`peppershaker`） | 容器 | 可移动 | `is_dirty`=False |
-| 盐瓶（`saltshaker`） | 容器 | 可移动 | `is_dirty`=False |
-| 马桶吸（`plunger`） | 工具 | 可移动 | 无显式状态 |
-| 清洁刷（`scrubbrush`） | 工具 | 可移动 | `is_dirty`=False |
-| 肥皂（`soapbar`） | 工具 | 可移动 | `is_dirty`=False |
-| 纸巾盒（`tissuebox`） | 容器 | 可移动 | `is_dirty`=False |
-| 梳妆柜（`dresser`） | 家具 | 不可移动 | `is_open`=False；`is_dirty`=False |
-| 浴缸（`bathtub`） | 家具 | 不可移动 | `is_dirty`=False |
-| 浴缸盆（`bathtubbasin`） | 容器 | 不可移动 | `is_dirty`=False |
-| 报纸（`newspaper`） | 媒体设备 | 可移动 | `is_dirty`=False |
-| 手表（`watch`） | 日用品 | 可移动 | `is_dirty`=False |
-| 电视柜（`tvstand`） | 家具 | 不可移动 | `is_dirty`=False |
-| 泰迪熊（`teddybear`） | 装饰 | 可移动 | `is_dirty`=False |
-| 篮球（`basketball`） | 日用品 | 可移动 | 无显式状态 |
-| 网球拍（`tennisracket`） | 日用品 | 可移动 | 无显式状态 |
-| 棒球棒（`baseballbat`） | 日用品 | 可移动 | 无显式状态 |
-| 哑铃（`dumbbell`） | 日用品 | 可移动 | 无显式状态 |
-| 瓶子（`bottle`） | 容器 | 可移动 | `is_dirty`=False |
-| 酒瓶（`winebottle`） | 容器 | 可移动 | `is_dirty`=False |
-| 房间装饰（`roomdecor`） | 装饰 | 可移动 | `is_dirty`=False |
-| 海报（`poster`） | 装饰 | 不可移动 | `is_dirty`=False |
-| 脚凳（`ottoman`） | 家具 | 不可移动 | `is_dirty`=False |
-| 脚踏凳（`footstool`） | 家具 | 不可移动 | `is_dirty`=False |
-| 宠物窝（`dogbed`） | 家具 | 不可移动 | `is_dirty`=False |
-| 垃圾袋（`garbagebag`） | 容器 | 可移动 | 无显式状态 |
-| 铝箔纸（`aluminumfoil`） | 工具 | 可移动 | 无显式状态 |
-| 桌面装饰（`tabletopdecor`） | 装饰 | 可移动 | `is_dirty`=False |
-| 吸尘器（`vacuumcleaner`） | 工具 | 可移动 | 无显式状态 |
-| 洗衣篮（`laundryhamper`） | 容器 | 可移动 | `is_open`=False |
-
-## 二、外部数据对象覆盖与缺口
-
-来源：`backend/data/generation_priors/object_catalog_report.md`（生成于 2026-08-22）。当前对象库已不是历史统计中的约 72 个模板，而是 **115 个正式模板**；外部数据中有 **113 个候选标签**，其中 78 个已直接覆盖、3 个可作别名、18 个暂缓、14 个为新模板候选。故“已有 115 个对象”不等于“已有 115 个可用于丰富任务的对象”：下表的 32 项缺的是任务语义或运行时系统，而不只是对象名称。
-
-| 外部对象 | 当前归宿 | 缺少的能力/状态/过程 | 应进入的通用原型 |
-|---|---|---|---|
-| 闹钟（`alarmclock`） | 暂缓 | `alarm_time`、周期事件、通知主体 | `TimedDeviceProcess` + `AlarmEvent` |
-| 百叶窗（`blinds`） | 暂缓 | `is_open`、遮光/通风关系 | `EnvironmentControlProcess` |
-| 黄油刀（`butterknife`） | 暂缓 | `cut`/涂抹工具效果、目标材料变化 | `ToolTransformProcess` |
-| 蜡烛（`candle`） | 暂缓 | `is_lit`、`burn_remaining`、光照、燃尽 | `TimedDeviceProcess` + `LightingProcess` |
-| 光盘（`cd`） | 暂缓 | 媒体载体、播放器兼容、`is_playing` | `MediaPlaybackProcess` |
-| 烘干机（`clothesdryer`） | 新模板候选 | 容器、开关、`cycle_remaining`、干燥完成效果 | `TimedDeviceProcess` |
-| 咖啡机（`coffeemachine`） | 暂缓 | 水/咖啡资源、配方、产物生成 | `ResourceDispenserProcess` + `RecipeProcess` |
-| 信用卡（`creditcard`） | 暂缓 | 账户、金额、支付授权 | `PaymentProcess`（后置领域） |
-| 窗帘（`curtains`） | 新模板候选 | 开合、遮光/通风关系 | `EnvironmentControlProcess` |
-| 台灯（`desklamp`） | 暂缓 | `is_on`、局部照明 | `LightingProcess` |
-| 洗碗海绵（`dishsponge`） | 暂缓 | 湿度、清洁效力、可选消耗量 | `ToolTransformProcess` |
-| 地面（`floor`） | 新模板候选 | 房间空间/承载面权威语义 | `SpatialSurface` |
-| 落地灯（`floorlamp`） | 暂缓 | `is_on`、局部照明 | `LightingProcess` |
-| 水壶（`kettle`） | 新模板候选 | 容量、液体、加热、沸腾过程 | `ThermalCookProcess` |
-| 刀（`knife`） | 暂缓 | 切割工具效果、目标形态变化 | `ToolTransformProcess` |
-| 平底锅（`pan`） | 暂缓 | 容量、热接触、食材烹饪过程 | `ThermalCookProcess` |
-| 纸巾卷（`papertowelroll`） | 新模板候选 | 纸巾资源节点、`count`、补充/消耗 | `FiniteResourceProcess` |
-| 汤锅（`pot`） | 暂缓 | 容量、热接触、食材烹饪过程 | `ThermalCookProcess` |
-| 保险箱（`safe`） | 新模板候选 | `is_open`、`is_locked`、访问控制 | `AccessControlProcess` |
-| 浴帘（`showercurtain`） | 新模板候选 | 开合、淋浴区域边界 | `EnvironmentControlProcess` |
-| 淋浴门（`showerdoor`） | 新模板候选 | 开合、可达性/区域边界 | `AccessControlProcess` |
-| 淋浴玻璃（`showerglass`） | 新模板候选 | 固定边界、可见/阻隔关系 | `SpatialSurface` |
-| 花洒（`showerhead`） | 新模板候选 | 水源控制、目标区域湿润 | `ResourceDispenserProcess` |
-| 洗手液瓶（`soapbottle`） | 暂缓 | 液体资源、按压分配、`amount` | `FiniteResourceProcess` |
-| 锅铲（`spatula`） | 新模板候选 | 翻动工具效果、烹饪前置条件 | `ToolTransformProcess` |
-| 喷雾瓶（`spraybottle`） | 暂缓 | `has_water`、`uses_left`、按压目标效果 | `FiniteResourceProcess` |
-| 炉头（`stoveburner`） | 暂缓 | 热源、作用范围、设备控制 | `ThermalCookProcess` |
-| 烤面包机（`toaster`） | 新模板候选 | 容器、开关、`cycle_remaining`、烤制完成 | `TimedDeviceProcess` + `ThermalCookProcess` |
-| 卫生纸（`toiletpaper`） | 暂缓 | 资源节点、`count`、使用/补充 | `FiniteResourceProcess` |
-| 卫生纸架（`toiletpaperhanger`） | 新模板候选 | 资源挂载关系、容量 | `ResourceHolder` |
-| 浇水壶（`wateringcan`） | 新模板候选 | `has_water`、容量、倾倒/浇灌效果 | `FiniteResourceProcess` |
-| 窗户（`window`） | 暂缓 | 开合、温度/湿度/通风交换 | `EnvironmentControlProcess` |
-
-这里不应把 32 个对象逐个补成专用代码。正确的单位是“**对象模板声明能力与参数，通用过程解释能力**”：例如喷壶、浇水壶、洗手液瓶、卫生纸都只是在资源种类、容量、消耗量、目标效果上不同；洗衣机、烘干机、微波炉、烤面包机则共用同一个计时设备过程。
-
-| 通用原型 | 模板声明的参数 | 运行时的统一变化 | 可覆盖对象 |
-|---|---|---|---|
-| 有限资源/分配 | `resource_kind`、`capacity`、`uses_per_refill`、`effect` | `amount/uses_left -= n`；不足时禁用；`refill` 恢复 | 纸巾、卫生纸、洗手液、喷壶、浇水壶、焊锡 |
-| 定时设备 | `duration`、输入容器、完成效果 | 启动后创建 `ProcessInstance`；tick 减少 `cycle_remaining`；完成后提交 effects | 洗衣机、烘干机、微波炉、烤面包机、唱片机、闹钟 |
-| 热加工 | `heat_source`、温度阈值、配方/完成效果 | 热源作用范围内累积热量；达到阈值触发 cooked/boiling/burnt | 炉头、平底锅、汤锅、水壶、烤面包机 |
-| 工具变换 | `tool_effect`、目标类型、前置条件 | 合法工具作用于目标，修改 `is_dirty`、`cut_state`、`configuration` 等 | 刀、黄油刀、锅铲、海绵、刷子 |
-| 配方制作/装配 | `ingredients`、工作台、工具、输出模板 | 校验输入与 edge；消耗材料；`spawn` 复合产物 | 汉堡、焊接电路、咖啡、折纸成品 |
-| 环境控制 | `control_target`、作用区域、环境效果 | `open/close/press` 改变环境边或环境变量 | 窗户、百叶窗、窗帘、灯、花洒 |
-| 生命周期/衰减 | `tick_rule`、阈值、后果 | 时间事件修改资源/活力；阈值触发状态和任务 | 花瓶水、花、食物、蜡烛 |
-
-
-## 三、当前空间关系有哪些
-
-空间关系是场景图中连接节点的基础语义，分为位置/承载关系、房间连通关系和控制/逻辑关系。关系的具体实例属于场景图；关系类型和允许的主体/目标由 `backend/core/edges.py` 统一注册。
-
-### 3.1 当前关系总表
-
-以下是当前代码注册的完整关系集合。关系名称必须使用表中的规范值；任务模板、场景生成器和 PDDL 编译器不得自行创造同义字符串。
-
-| 关系值 | 类别 | 典型源节点 | 典型目标节点 | 语义/用途 |
+| 状态组 | 状态 | 值域 | 作用 | 成熟度 |
 |---|---|---|---|---|
-| `at` | 物理/位置 | 人、机器人 | 房间、固定物体 | 主体当前所在位置 |
-| `in` | 物理/承载 | 物体 | 容器、房间 | 物体位于容器或房间内 |
-| `on` | 物理/承载 | 物体 | 桌面、货架等表面 | 物体位于承载面上 |
-| `ontop` | 物理/承载 | 物体 | 物体、表面 | `on` 的更具体上方关系 |
-| `inside` | 物理/承载 | 物体 | 容器 | 物体物理上位于容器内部 |
-| `contains` | 物理/反向承载 | 容器、房间 | 物体 | `in`/`inside` 的反向表达 |
-| `held_by` | 物理/持有 | 物体 | 人、机器人 | 物体被主体拿持 |
-| `near` | 物理/邻近 | 主体、物体 | 物体、设备 | 足够接近，可以执行局部交互 |
-| `beside` | 物理/邻接 | 物体、房间 | 物体、房间 | 两节点并排相邻 |
-| `next_to` | 物理/邻接 | 物体、房间 | 物体、房间 | 两节点直接相邻，常用于布局/导航 |
-| `under` | 物理/相对位置 | 物体 | 物体、表面 | 源节点位于目标下方 |
-| `far` | 物理/距离 | 主体、物体 | 主体、物体 | 两节点距离较远的语义标记 |
-| `neighbour` | 物理/房间拓扑 | 房间 | 房间 | 房间拓扑相邻，不保证可直接通行 |
-| `connected` | 物理/房间拓扑 | 房间、空间 | 房间、空间 | 存在通道或门连接，可用于路径规划 |
-| `belongs_to` | 物理/层级 | 房间、节点 | 楼层、场景 | 节点属于更高层级空间 |
-| `controls` | 逻辑/控制 | 遥控器、按钮 | 设备 | 源节点可以控制目标设备 |
-| `linked_to` | 逻辑/关联 | 任意实体 | 任意实体 | 两个实体存在语义绑定 |
-| `powered_by` | 逻辑/能源 | 设备 | 电源、能源节点 | 设备依赖目标能源才能运行 |
+| 控制 | `is_open`、`is_on`、`is_pressed`、`is_running` | Boolean | 门、容器、控制器和设备运行状态 | Implemented |
+| 一般条件 | `is_dirty`、`is_wet`、`is_broken`、`is_blocked`、`folded` | Boolean | 清洁、干湿、完整性、阻塞和构型条件 | Implemented |
+| 数量资源 | `cycle_remaining`、`fill_level`、`uses_left`、`count`、`amount`、`capacity` | Number | 计时、液体、使用次数、库存和容量 | Implemented |
+| 水资源 | `has_water` | Number `[0,100]` | 水槽和容器当前水量 | Proposed：当前代码为 Boolean |
+| 材料与热状态 | `temperature`、`is_cooked`、`is_burnt`、`is_frozen`、`is_boiling` | Number/Enum/Boolean | 加热、冷却和加工结果 | Partial：状态已注册，过程未完整覆盖 |
+| 生命周期 | `is_rotten`、`is_wilted`、`vitality` | Boolean/Number | 食物腐败和植物生命状态 | Implemented |
+| 派生状态 | `is_full` 等 | Boolean | 由数量阈值推导，避免与源数值独立更新 | Partial |
 
-关系的方向不能随意交换。例如对象到容器使用 `in`，容器到对象使用 `contains`；房间之间使用 `connected`，结构门的两端另外记录在门节点的 `connected_rooms` 字段中。
+状态更新必须记录 `old_value -> new_value`。同一语义只保留一个权威状态，例如清洁统一使用 `is_dirty=false`，不再独立维护 `is_clean=true`。
 
-### 3.2 位置与承载关系
+### 2.3 Edge
 
-| 关系 | 含义 | 典型变化动作 |
+核心关系保留为最小、定向的集合：
+
+| 关系 | 源节点 | 目标节点 | 语义 | 主要修改者 | 成熟度 |
+|---|---|---|---|---|---|
+| `at` | 主体 | 房间或固定物体 | 主体所在位置 | `move` | Implemented |
+| `in` | 物体 | 容器或房间 | 物体位于内部 | `place`、Rule、Process | Implemented |
+| `on` | 物体 | 表面 | 物体位于表面 | `place`、Rule、Process | Implemented |
+| `held_by` | 物体 | 主体 | 物体被持有 | `pick`、`place` | Implemented |
+| `near` | 主体或物体 | 物体或设备 | 满足局部交互距离 | `move`、`place` | Implemented |
+| `connected` | 房间 | 房间 | 可导航拓扑连接 | 场景生成器 | Implemented |
+| `controls` | 控制器 | 设备或作用区域 | 控制关系 | 场景生成器 | Implemented |
+| `part_of` | 部件 | 复合物体 | 组成关系 | 配方或装配 Rule | Proposed |
+
+`contains` 是 `in` 的反向查询，不作为独立权威边存储。`inside`、`inside_room`、`ontop`、`neighbour` 等历史写法在读入时归一化到核心关系。
+
+每个可移动物体同一时刻只保留一个位置父节点。执行 `pick` 或 `place` 时先移除旧位置边，再添加新边。
+
+## 3. 世界变化机制：Action / Rule / Process
+
+世界变化统一表示为：
+
+```text
+TransitionEffect = state_updates + resource_updates
+                 + add_edges + remove_edges + spawn + despawn
+```
+
+| 字段 | 含义 | 说明 |
 |---|---|---|
-| `at` | 人、机器人或物体位于目标位置/房间 | `move`、NPC event |
-| `in` / `inside` | 物体位于容器或房间内部 | `place`、`pick` |
-| `on` / `ontop` | 物体位于承载面上 | `place`、`pick` |
-| `contains` | `in`/`inside` 的容器反向关系 | `place`、`pick` |
-| `held_by` | 物体被主体拿持 | `pick`、`place` |
-| `near` | 主体或物体与目标相邻到足以交互 | `move`、`place` |
-| `beside` / `next_to` | 两个节点空间上相邻 | 场景布局、`place` |
-| `under` | 物体位于另一个物体下方 | 场景布局、`place` |
+| `state_updates` | 状态更新 | 修改节点的一般状态，例如 `is_dirty: true -> false`、`is_on: false -> true` |
+| `resource_updates` | 资源更新 | 修改可计数或可消耗资源，例如 `count: 100 -> 99`、`has_water: 100 -> 80` |
+| `add_edges` | 新增关系边 | 建立新的图关系，例如放下盘子后新增 `in(plate,cabinet)` |
+| `remove_edges` | 删除关系边 | 移除失效的图关系，例如抓取盘子时删除 `on(plate,table)` |
+| `spawn` | 生成节点 | 在 runtime 中创建新对象实例，例如配方完成后生成汉堡 |
+| `despawn` | 删除节点 | 从活动世界中移除已消耗或销毁的对象，例如制作后移除被消耗的原料 |
 
-### 3.3 房间与拓扑关系
+`resource_updates` 在数据结构上也属于状态更新，但单独列出便于检查容量、消耗和补充是否守恒。
 
-| 关系 | 含义 | 用途 |
+### 3.1 Action
+
+Action 是主体可主动选择的最小接口。动作名不绑定对象；参数化后形成实例化动作，例如 `pick(robot_01, vase_01)`。
+
+当前已实现 10 个动作：
+
+| Action | 参数 | 前置条件 | 效果 | 成熟度 |
+|---|---|---|---|---|
+| `move` | `actor,target` | 目标可达，结构门不阻塞 | 替换主体的 `at/near` edge | Implemented |
+| `pick` | `actor,object` | 物体可移动、同房间、手为空、父容器可访问 | `object --held_by--> actor` | Implemented |
+| `place` | `actor,object,target` | 主体持有物体，目标可放置、可访问且容量允许 | 建立 `in/on` edge | Implemented |
+| `open` | `actor,target` | 目标支持打开且当前关闭 | `is_open=true`；水龙头使用 `is_on=true` | Implemented |
+| `close` | `actor,target` | 目标支持关闭且当前打开 | `is_open=false`；水龙头使用 `is_on=false` | Implemented |
+| `press` | `actor,target` | 目标可按压，设备输入和门状态合法 | 切换控制状态或启动过程 | Implemented |
+| `brush` | `actor,target` | 目标可清洁且当前脏 | `is_dirty=false` | Implemented |
+| `fold` | `actor,target` | 目标是干燥布类 | `folded=true` | Implemented |
+| `dump` | `actor,target` | 主体持有可倾倒容器，接收目标兼容 | 清空资源或迁移内容物 | Implemented |
+| `refill` | `actor,target,supply` | 补充物兼容且与主体同房间 | 资源恢复到容量，消耗补充物 | Implemented |
+
+以下动作只在不可由现有动作和领域规则表达的直接主体操作时增加：
+
+| Candidate Action | 用途 | 成熟度 |
 |---|---|---|
-| `connected` | 两个房间或空间通过门/通道连通 | PDDL 路径规划、可达性校验 |
-| `neighbour` | 房间在拓扑上相邻，但不一定允许直接通行 | 房间布局约束 |
-| `belongs_to` | 房间属于楼层或场景 | 场景层级组织 |
-| `far` | 两个节点距离较远的语义标记 | 代价、行为先验或评分 |
+| `connect(actor,part_a,part_b)` | 直接连接、焊接或装配两个兼容部件 | Proposed |
+| `rotate(actor,object,operation)` | 魔方转面、旋转零件或改变离散构型 | Proposed |
+| `consume(actor,resource,target)` | 主体主动消耗有明确目标的资源 | Open |
 
-其中，`connected` 是导航和跨房间任务的权威关系；结构门节点的 `connected_rooms` 必须与对应的 `room_edge` 一致。`blocks_navigation` 和 `is_open` 决定该连接当前是否可通过。
+`fill` 不是自由动作。容器装水由位置条件和水龙头操作触发。`discard` 也不需要独立动作；将对象放入垃圾桶或执行 `dump` 后，由领域规则更新其生命周期。
 
-### 3.4 控制与逻辑关系
+### 3.2 Rule
 
-| 关系 | 含义 | 典型用途 |
+Rule 是动作执行后立即触发的领域效果：
+
+```text
+Rule = trigger_action + conditions + immediate_effects
+```
+
+| 字段 | 含义 | 说明 |
 |---|---|---|
-| `controls` | 一个设备/按钮控制另一个设备 | 遥控器控制电视或空调 |
-| `linked_to` | 两个节点存在语义关联 | 设备、资源或任务绑定 |
-| `powered_by` | 设备依赖能源节点 | 电力和设备启停校验 |
+| `trigger_action` | 触发动作 | 启动规则检查的主体动作，例如 `open(faucet)`、`place(vase,sink)` |
+| `conditions` | 生效条件 | 规则必须满足的图关系、状态、类型和能力约束 |
+| `immediate_effects` | 即时效果 | 动作完成后立即提交的 `TransitionEffect`，不经过时间倒计时 |
 
-这些关系通常不表示几何位置，而是用于动作前置条件、领域过程和 PDDL 编译。
+目标规则包括：
 
-## 四、目前状态空间
-
-状态由 `backend/core/states.py` 的离散状态空间约束；数量、配置和主体状态可继续扩展。当前共注册 25 个状态：17 个布尔状态、7 个数值状态（`cycle_remaining`、`fill_level`、`vitality`、`uses_left`、`count`、`amount`、`capacity`）和 1 个数值/枚举状态（`temperature`）。其中水槽使用独立的布尔 `has_water`，不使用 `fill_level`；水槽的容量语义是“可承载一个物体”，不是液体体积。整体状态空间仍以布尔量为主，尚不足以表达库存、有限使用次数、连续加工阶段和复杂配置。
-
-| 状态名称 | 可被哪种动作改变 |
-|---|---|
-| `is_dirty` | `brush`；使用、泼洒等外部事件 |
-| `is_wet` | `press`/清洗过程/干燥过程 |
-| `is_clean`（建议补充或由 `is_dirty=false` 推导） | `brush`、清洗过程 |
-| `has_water` | 水龙头开关、容器入水槽、蒸发/消耗事件；水槽和花瓶采用二值水状态 |
-| `fill_level`、`is_full` | 仅用于需要数量容量的容器/资源，不用于水槽 |
-| `is_open` | `open`、`close` |
-| `is_on`、`is_pressed` | `press`、`open`、`close` 或设备控制逻辑 |
-| `cycle_remaining`、`cycle` | `press` 启动过程、时间推进 |
-| `is_cooked`、`is_burnt` | 加热/烹饪过程、时间事件 |
-| `temperature`、`is_frozen`、`is_boiling` | 加热、冷却、时间事件 |
-| `is_folded` / `fold_state` | `fold`、`unfold` |
-| `orientation`、`configuration` | `rotate`、`fold`、`connect` |
-| `is_connected` / `is_assembled` | `connect`、装配过程 |
-| `vitality`、`is_wilted` | 浇水、时间衰减 |
-| `health`、`mood` | 社交、唱片播放、环境事件、长期状态影响 |
-| `count`、`amount`、`uses_left` | `consume`、`refill/fill`、制作过程 |
-| `lifecycle`（active/discarded/consumed） | `discard`、`consume`、制作生成/销毁 |
-
-状态变化必须记录 `old_value -> new_value`，并注明触发动作或时间事件。
-
-## 五、目前动作空间
-
-动作名称是无对象的原子接口；绑定主体、对象、目标后才形成实例化动作。
-
-| 动作名称 | 可改变哪些状态 | 前置条件 |
-|---|---|---|
-| `move` | 机器人/人的位置状态；位置 edge | 目标空间节点可达、路径未阻塞 |
-| `pick` | 持有状态；`held_by` edge | 对象可移动、可抓取、同房间且手为空 |
-| `place` | 对象位置/容器归属；`in/on/at` edge | 主体持有对象、目标可放置且容量允许 |
-| `open` | `is_open`、相关设备访问状态 | 目标可打开、同位置、未被锁定 |
-| `close` | `is_open` | 目标可关闭且当前打开 |
-| `press` | `is_pressed`、`is_on`、设备模式；可触发过程 | 目标可按压、主体可达 |
-| `brush` | `is_dirty`、清洁状态 | 目标可清洁、主体可达 |
-| `fold` | `folded`、`fold_state` | 目标可折叠、满足干燥/可操作条件 |
-| `dump` | 容器内容、数量资源；容器/内容 edge | 主体持有可倾倒容器、目标兼容 |
-| `consume`（建议新增） | `count`、`amount`、`uses_left`、`lifecycle` | 资源数量足够、消费条件满足 |
-| `discard`（建议新增） | `lifecycle=discarded` | 对象允许丢弃；必要时主体持有或位于垃圾桶附近 |
-| `connect`（建议新增） | `is_connected`、`is_assembled` | 部件兼容、位置/工具/材料满足 |
-| `rotate`（建议新增） | `orientation`、`configuration` | 对象可旋转、目标面/方向参数合法 |
-
-动作效果统一为：`state_updates + resource_updates + add_edges + remove_edges + spawn + despawn`。
-
-`fill` 不应注册为自由原子动作。以花瓶为例，`place(vase, sink)` 先建立 `in(vase, sink)`，随后 `open(faucet)` 在水龙头控制该水槽且花瓶在槽内时，立即产生 `vase.has_water: false -> true`；这是一条由操作动作触发的领域规则，不允许机器人在任何位置直接执行 `fill(vase)`。
-
-## 六、最小任务集合
-
-### 6.1 任务不是物体模板：Domain、Grounding、PDDL 三层
-
-任务与物体的建模粒度不同。物体模板可以预先声明 `semantic_type`、状态和能力；任务模板只能预先声明“需要什么能力、如何绑定参数、要达到什么目标”，不能预先写死对象 ID、房间 ID 或路线。建议把任务定义为以下三层：
-
-| 层 | 输入/输出 | 是否写入 domain JSON | 说明 |
+| Rule | 条件 | 即时效果 | 成熟度 |
 |---|---|---|---|
-| 任务模板（schema） | 参数查询、触发条件、需求能力、目标表达式、PDDL compiler | 是 | 例如 `clean_surface` 需要可清洁目标和清洁工具 |
-| 场景实例化（grounding） | scene graph + 模板 -> task instance | 否，写入 scene metadata | 解析 `target=bed_1`、`tool=vacuum_1`、`destination=wardrobe_1`，并检查房间拓扑可达 |
-| 规划验证（PDDL） | task instance -> problem/plan/result | 否，保存 evidence | 将已绑定的节点、初始状态、门和 `connected` 边编译为一个具体 problem；只有成功 plan 才算支持 |
+| 水槽供水 | `controls(faucet,sink)` 且 `open(faucet)` | `sink.has_water=100` | Proposed：当前代码为 Boolean |
+| 水槽停水 | `controls(faucet,sink)` 且 `close(faucet)` | `sink.has_water=0` | Proposed：当前代码为 Boolean |
+| 容器装水 | 容器 `in sink` 且 `sink.has_water>0` | 容器 `has_water=100` | Proposed：当前 Boolean 规则部分支持 |
+| 布类浸湿 | 布类 `in sink` 且 `sink.has_water>0` | `is_wet=true` | Partial：当前只在放入水槽时触发 |
+| 垃圾处置 | 对象进入兼容垃圾桶或垃圾站 | 更新位置和处置状态 | Partial |
+| 控制传播 | `controls(button,device)` 且 `press(button)` | 切换设备或启动过程 | Implemented |
 
-因此，`clean` 在 domain 中不是“清洁客厅”，而是一个可复用模板：
+Rule 不由规划器作为机器人动作选择，但其效果必须进入规划模型，否则 PDDL 计划与 runtime 会产生语义偏差。
+
+### 3.3 Process
+
+Process 表示跨 tick 的环境变化：
+
+```text
+ProcessInstance = process_type + participants + remaining
+                + invariants + finish_effects
+```
+
+| 字段 | 含义 | 说明 |
+|---|---|---|
+| `process_type` | 过程类型 | 过程采用的通用规则，例如洗衣、烘干、打印、配方制作或自然衰减 |
+| `participants` | 参与对象 | 本次过程涉及的设备、输入物、输出物和作用对象的实例 ID |
+| `remaining` | 剩余时间 | 距离过程完成还需推进的 tick 数；每次时间推进后递减 |
+| `invariants` | 持续约束 | 过程运行期间必须持续满足的条件，例如设备保持关闭、输入仍在设备内 |
+| `finish_effects` | 完成效果 | `remaining=0` 时一次性提交的 `TransitionEffect`，例如洗净衣物或生成产物 |
+
+| Process | 启动条件 | tick/完成效果 | 成熟度 |
+|---|---|---|---|
+| 洗衣 | 衣物在关闭的洗衣机内并启动 | 倒计时结束后 `is_dirty=false,is_wet=true,folded=false` | Implemented |
+| 烘干/晾干 | 湿衣物在烘干机或晾衣架上 | 倒计时结束后 `is_wet=false` | Implemented |
+| 打印 | 打印机有纸和墨并启动 | 消耗资源并生成 `receipt` | Partial |
+| 咖啡制作 | 咖啡机有水、咖啡豆和杯子并启动 | 消耗咖啡豆并生成 `coffee` | Partial |
+| 花瓶耗水 | 花在有水花瓶中 | `has_water` 随时间下降，耗尽后植物活力下降 | Proposed：当前仅有布尔耗尽逻辑 |
+| 食物腐败 | 易腐食物随时间变化 | 达到阈值后 `is_rotten=true` | Implemented |
+
+过程完成效果可以同时改变多个状态和边。过程不是原子任务，也不是主体动作。
+
+## 4. 任务模型：Atomic Goal / Atomic Task / Composite Task
+
+### 4.1 Atomic Goal
+
+Atomic Goal 是相对于当前版本 ontology 的一个规范化目标文字。原子性是语法边界，不是物理世界中的绝对不可分性。
+
+| 目标类型 | 形式 | 示例 |
+|---|---|---|
+| 状态目标 | `state(object,key)=value` | `plate.is_dirty=false` |
+| 关系目标 | `relation(source,type,target)` | `in(plate,cabinet)` |
+| 存在性目标 | `exists(object)=value` | `exists(hamburger_01)=true` |
+
+一个存在性目标可以由配方过程产生多个内部效果。`exists(hamburger_01)=true` 仍是一个 Atomic Goal，但配方必须同时保证原料消耗、组成关系和输出位置一致。
+
+### 4.2 Atomic Task
+
+原子任务由初始约束 $C_0$ 和一个尚未满足的 Atomic Goal $g$ 构成：
+
+$$
+\tau=(C_0,g),\quad G_0\models C_0,\quad G_0\not\models g
+$$
+
+`G_0 \not\models g` 排除零步任务。Atomic Task 不等于 Action；完成一个原子任务可能需要多个动作。
+
+```text
+Atomic Task: in(plate_01, cabinet_01)
+Possible Plan: open(cabinet_01) -> pick(plate_01)
+             -> move(cabinet_01) -> place(plate_01,cabinet_01)
+```
+
+### 4.3 Composite Task
+
+组合任务共享同一个初始约束，并要求多个 Atomic Goal 同时成立：
+
+$$
+T=(C_0,\Gamma),\qquad \Gamma=g_1\land g_2\land\cdots\land g_n
+$$
+
+例如“把脏盘子洗净、晾干并放回橱柜”的目标是：
+
+```text
+plate.is_dirty=false
+AND plate.is_wet=false
+AND in(plate,cabinet)
+```
+
+任务只保存目标和必要约束，不保存路线、动作顺序或计划长度。规划器负责复用共享步骤、处理前置条件并决定顺序。
+
+## 5. 六类任务标签
+
+六类标签根据目标变化的语义计算，用于数据统计、任务采样、难度分层和结果分析。不是互斥分区，不参与 PDDL 求解。
+
+| 标签 | 触发依据 | 典型 Atomic Goal |
+|---|---|---|
+| 清洁 `clean` | 洁净或污染状态变化 | `is_dirty=false` |
+| 制作 `make` | 目标实体生成，或目标复合结构成立 | `exists(hamburger)=true`、`part_of(wire,board)` |
+| 迁移 `relocate` | 非主体物体的位置、容器、表面或持有关系变化 | `in(plate,cabinet)` |
+| 操作 `operate` | 设备控制、资源量或构型状态变化 | `is_on=true`、`has_water=100`、`configuration=solved` |
+| 交互 `interact` | 主体之间的信息、社会关系或交接结果变化 | `acknowledged(human,robot)` |
+| 移动 `navigate` | 主体自身的位置关系变化 | `at(robot,kitchen)` |
+
+标签由目标集合计算，不是人工写唯一类别：
+
+```text
+labels(T) = union(label(g) for g in goals(T))
+```
+
+例如，制作汉堡并放入冰箱标记为 `make + relocate`。把物品交给人可以标记为 `relocate + interact`。当移动只服务其他目标时，`move` 是支撑动作；只有主体位置本身属于目标时，任务才带 `navigate` 标签。
+
+## 6. 任务自动生成：Schema / Grounding / Planning / Replay
+
+自动任务生成分为四层：
+
+| 层 | 输入 | 输出 | 职责 |
+|---|---|---|---|
+| Schema | ontology + 任务种类 | 参数查询、初始约束、目标表达式 | 定义可生成什么任务，不绑定实例 ID |
+| Grounding | schema + scene graph | `task_instance.json` | 绑定对象，检查类型、能力、资源和静态拓扑 |
+| Planning | task instance + transition model | PDDL problem + plan | 搜索满足目标的动作序列 |
+| Replay | plan + runtime | execution trace + final graph | 逐步执行计划，验证实际效果与规划语义一致 |
+
+任务 schema 只声明 `binding`、`initial_constraints`、`requirements` 和 `goals`：
 
 ```json
 {
-  "task_id": "clean_surface",
-  "family": "clean",
-  "parameters": {
-    "target": {"object_query": {"state": {"is_dirty": true}}},
-    "tool": {"object_query": {"capability": "cleaning"}}
+  "task_id": "store_object",
+  "binding": {
+    "object": {"query": {"capability": "pickable"}},
+    "destination": {"query": {"capability": "place_target"}}
   },
-  "requirements": {"actions": ["move", "brush"]},
-  "goal": [{"target.state.is_dirty": false}],
-  "pddl": {"compiler": "graphworld.generic.clean_surface.v1"}
+  "initial_constraints": [
+    {"not_relation": ["object", "in", "destination"]}
+  ],
+  "requirements": {
+    "world_rules": ["placement_compatibility"]
+  },
+  "goals": [
+    {"relation": ["object", "in", "destination"]}
+  ]
 }
 ```
 
-实例化器随后对图执行：
+完整流程为：
 
 ```text
-候选 target/tool -> 同房间或 connected 路径检查 -> 解析门与容器约束
-                 -> 生成 task_instance.json -> 编译 PDDL -> Fast Downward
+选择 schema
+-> 查询并绑定场景对象
+-> 检查 C0、类型、能力、资源和静态可达性
+-> 生成一个或多个 Atomic Goal
+-> 编译 PDDL domain/problem
+-> 调用 Fast Downward
+-> 在 runtime 重放计划
+-> 保存 solved + replay-pass 实例
+-> 记录 rejected / unsolved / timeout / replay-failed 反例
 ```
 
-`move` 不需要在任务先验里枚举。它是满足任务所需的支撑动作，由 PDDL 根据当前 `room_edge`、结构门 `connected_rooms` 和 `blocks_navigation` 自动产生路线。若图中没有清洁工具、目标不可达、门无法打开或目标状态不满足，grounding 阶段丢弃该候选；若 grounding 成功但 PDDL 无解，则记录为 `unsolved`，不能计入任务数量。
+Grounding 只排除类型不兼容、资源不存在和静态不可达等确定失败。复杂可解性由规划器判断。经典 PDDL 的对象集合固定，因此配方输出在 problem 中预先声明为 `exists=false` 的潜在对象，过程完成后将其切换为 `exists=true`。runtime 可以直接 `spawn` 新节点。
 
-任务模板应分为三类约束：`requirements`（能力/动作/资源）、`binding`（对象和节点查询）、`goal`（状态和关系终态）。路径、具体步骤、代价和 plan 长度均属于实例或验证结果，不属于领域先验。
-
-### 任务统计与 PDDL 覆盖现状
-
-当前统计分三层，不能混为一个数字：
-
-| 层级 | 当前数量 | 来源 | 含义 |
-|---|---:|---|---|
-| 一级任务类型 | 6 | 本文任务 taxonomy | `clean/make/relocate/operate/interact/navigate` |
-| Core 具体技能 | 12 | `backend/core/assets/task_library.py` | 已有运行时任务/维护技能注册，不等于都有 PDDL |
-| PDDL 已验证任务族 | 1 | `backend/tools/try_laundry_fastdownward.py` | 洗衣子任务，Fast Downward 成功，已知计划长度 17 |
-
-现阶段没有“全部任务的 PDDL 解法统计”。`task_pddl_coverage.json` 保存这个缺口和统计口径；后续每增加一个任务，必须登记任务 schema、实例化参数、PDDL problem、planner 状态、plan 长度和证据路径。任务数量最终按成功 PDDL plan 的**任务实例**统计，而不是按一级类型或 core 技能数量统计。
-
-任务由目标状态/edge 定义；复杂任务由多个最小任务或过程组合。`navigate` 当到达位置是目标时是任务，否则只是支撑动作。
-
-| 任务名称 | 典型展开举例 |
-|---|---|
-| 清洁 `clean` | `pick(brush) -> move(target) -> brush(target)`；目标 `is_dirty: true -> false` |
-| 制作 `make` | 汉堡：收集原料 -> 灶台加工 -> `connect/stack` -> 生成 `burger`；焊接：收集电线/电路板/焊锡 -> 焊台操作 -> `connect` -> 生成焊接组件 |
-| 迁移 `relocate` | `pick(object) -> move(destination) -> place(object,destination)`；目标是 `in/on/at/held_by` edge 变化 |
-| 操作 `operate` | 花瓶：`place(vase,sink) -> open(faucet)`，满足位置和控制关系后立即 `has_water=false -> true`，再 `close(faucet)`；洗衣机：`press(start) -> process -> clothes.clean/wet`；纸巾盒补给：`count=0 -> refill -> count=100` |
-| 交互 `interact` | `move(person) -> approach -> give/receive`；唱片机播放期间改变 `human.mood` |
-| 移动 `navigate` | `move(robot, room_B)`；目标是机器人位置 edge 从 `room_A` 变为 `room_B` |
-| 迁移 `relocate` | 枯萎花：`pick -> move(trash_bin) -> place`，同时 `lifecycle=discarded`；喷壶装水后移动到花旁再执行 `press` |
-
-时间过程不是新的原子动作，而是带 `duration/tick/finish_effects` 的过程：花耗水、花枯萎、洗衣完成、唱片停止都由时间事件推进。
-
-## 七、边界情况
-
-| 情况 | 现有六类/动作是否直接覆盖 | 处理方式 |
-|---|---|---|
-| 资源消耗：纸巾、焊锡、喷壶次数 | 部分覆盖 | 增加 `count/amount/uses_left`，由 `consume` 改变 |
-| 时间过程：洗衣、唱片、花耗水 | 不能由瞬时动作独立表达 | `ProcessInstance + Scheduler` |
-| 复合物生成：汉堡、焊接组件 | 不能只靠 edge 表示 | `spawn` 新实体，或将部件升级为 composite |
-| 配置空间：折纸、魔方 | 不是普通位置 edge | `fold_state/configuration/orientation` |
-| 纯信息任务：问答、识别、记忆 | 没有物理 state/edge 变化 | 增加 belief/information 状态，或标注为非物理任务 |
-| 持续约束：保持温度、花鲜活、设备运行 | 不是一次性终态 | 增加 `duration/invariant` |
-| 多主体同步：协同抬物、分工 | 单一动作不足 | 增加角色、同步和联合前置条件 |
-| 代价优化：最短路径、低能耗、安全 | 不是状态完成条件 | 单独记录 `cost/safety` 目标 |
-
-## 八、理想架构
+任务覆盖统计要保存：
 
 ```text
-Entity Catalog
-  -> Entity Instances
-  -> State / Resource / Configuration Store
-  -> Relation Graph
-  -> Primitive Action Registry
-  -> Transition Engine
-  -> Process Definitions + Scheduler
-  -> Event / Decay / Consumption Rules
-  -> Task Triggers
-  -> Task Goals + Validator
-  -> Replay / Score
+schema_id, instance_id, ontology_version, scene_id, seed,
+grounding_status, planner_status, plan_length, replay_status,
+initial_graph, goal_literals, plan, final_graph_delta
 ```
 
-```python
-WorldState:
-    entities: dict[EntityId, Entity]
-    states: dict[EntityId, dict[str, Any]]
-    resources: dict[EntityId, dict[str, float]]
-    edges: Graph
-    processes: list[ProcessInstance]
-    events: PriorityQueue
-    tasks: list[TaskInstance]
-    clock: int
+## 7. 典型任务的完整建模案例
+
+### 7.1 插花、装水并放回
+
+成熟度：目标语义案例。数值水资源和“开水时作用于水槽已有内容物”的规则为 `Proposed`。
+
+初始图：
+
+```text
+at(robot,living_room)
+on(flower,table)
+on(vase,vase_home)
+vase.has_water=0
+controls(faucet,sink)
+connected(living_room,bathroom)
 ```
 
-模板只描述“它能参与什么过程”和参数；过程定义才描述状态与 edge 如何变化。下面是应该落到数据文件/注册表的最小形式，而不是每加一个对象都新增 `if semantic == ...`：
+目标：
+
+```text
+in(flower,vase)
+AND vase.has_water=100
+AND on(vase,vase_home)
+```
+
+一种计划：
+
+```text
+pick(flower)
+-> place(flower,vase)
+-> pick(vase)
+-> move(bathroom)
+-> place(vase,sink)
+-> open(faucet)
+-> close(faucet)
+-> pick(vase)
+-> move(living_room)
+-> place(vase,vase_home)
+```
+
+关键即时规则：
+
+```text
+open(faucet) -> sink.has_water: 0 -> 100
+in(vase,sink) AND sink.has_water>0 -> vase.has_water: 0 -> 100
+close(faucet) -> sink.has_water: 100 -> 0
+```
+
+花瓶水不会因关闭水龙头而清空。后续自然过程逐步消耗 `vase.has_water`；水耗尽后，植物 `vitality` 才开始下降。该组合任务的标签为 `relocate + operate`。
+
+### 7.2 制作汉堡
+
+成熟度：目标语义案例。汉堡对象模板、工作台和通用 Recipe Registry 为 `Proposed`。
+
+配方：
 
 ```yaml
-spraybottle:
-  capabilities: [movable, refillable, finite_resource, target_effect]
-  resources: {water: {capacity: 5, current: 5}}
-  processes:
-    - kind: finite_resource
-      trigger: press
-      requires: [held_by(actor), near(target, actor), resource.water >= 1]
-      effects:
-        - resource.water: -1
-        - target.vitality: +0.2
-
-washer:
-  capabilities: [openable, switchable, container, timed_device]
-  processes:
-    - kind: timed_device
-      trigger: press
-      duration: 10
-      requires: [is_open == false, contains(clothes)]
-      finish_effects:
-        - child.is_dirty: false
-        - child.is_wet: true
+recipe_id: hamburger
+processor: assembly_table
+inputs:
+  bread: 2
+  cooked_patty: 1
+  lettuce: 1
+duration: 3
+consumes: [bread, cooked_patty, lettuce]
+output: hamburger
 ```
 
-花瓶/水槽使用同一机制，但不建立 `fill` 动作：水龙头的过程规则写成 `trigger: open`、`requires: controls(faucet, sink) and in(container, sink)`、`effects: container.has_water=true`。因此 edge 是前置条件和过程作用域，state/resource 才是结果；更换为杯子、喷壶或浇水壶时只需模板参数不同。
-
-水槽本身只有二值状态 `has_water`，没有 `fill_level`。`open(faucet)` 将其设为 `true`，`close(faucet)` 将其设为 `false`。水槽最多承载一个对象：若当前水槽有水，`place(container, sink)` 立即把该容器的 `has_water` 设为 `true`；若 `place(cloth, sink)`，则把布类对象的 `is_wet` 设为 `true`。因此“水槽有水”与“容器被水槽装满”是两个不同节点的状态变化。
-
-| 当前模块 | 理想职责 |
-|---|---|
-| `scenegraph.py` | `WorldState` 的实体与关系存储适配层 |
-| `nodes.py`、`object_library.py` | Entity Catalog、对象能力和复合对象模板 |
-| `states.py` | State/Resource/Configuration 定义和校验 |
-| `edges.py` | Relation Graph、边约束和 edge validator |
-| `actions.py`、`action_schemas.py`、`effects.py` | Primitive Action Registry + Transition Engine |
-| `timed_transitions.py` | Process Scheduler；从语义分支改为声明式过程 |
-| `domain_rules.py` | 过程、资源和事件规则目录 |
-| `goal_lifecycle.py` | Task Trigger/Goal/Validator；减少硬编码 phase 分支 |
-| `scene_preparation.py` | 初始实体、资源、关系和过程实例化 |
-
-建议新增：
+目标：
 
 ```text
-backend/core/world/{world_state.py,entities.py,resources.py,lifecycle.py}
-backend/core/processes/{definitions.py,scheduler.py,builtin.py}
-backend/core/tasks/{definitions.py,triggers.py,validators.py}
+exists(hamburger_01)=true
 ```
 
-重构顺序：先引入 `WorldState` 兼容层；再统一 Entity/Resource；然后统一动作 transition；接着把 `timed_transitions` 改为 scheduler；最后将 `goal_lifecycle` 改为声明式任务。旧 JSON 和旧动作接口先通过 adapter 兼容，不要一次性重写。
+机器人只执行通用动作：收集输入，将输入放入工作台并启动设备。Recipe Process 校验输入后倒计时，完成时消耗原料、激活输出节点、建立输出位置和 `part_of` 关系。PDDL 编译器可以生成内部 `finish_recipe` 算子，但该算子不是机器人 Action，也不需要新增 `make_hamburger`。
 
-## 九、待办与后续研究方向
+## 8. 当前实现覆盖
 
-### 1. 评价体系总结
+| 能力 | 当前数量或范围 | 成熟度 | 事实来源 |
+|---|---:|---|---|
+| 对象模板 | 130 | Implemented | `backend/core/assets/object_library.py` |
+| 对象语义类型 | 18 个 `ObjectFamily`，部分仍由规则推断 | Partial | `backend/core/assets/object_model.py` |
+| 注册状态 | 25 | Implemented | `backend/core/states.py` |
+| Runtime Action | 10 | Implemented | `backend/core/actions.py`、`action_schemas.py` |
+| Core Task Skill | 12 | Implemented | `backend/core/assets/task_library.py` |
+| 空间、容器与控制关系 | 核心关系已注册，仍有历史别名 | Partial | `backend/core/edges.py` |
+| 洗衣、烘干和自然衰减 | tick transition | Implemented | `backend/core/timed_transitions.py` |
+| 打印和咖啡配方 | 2 类数据驱动过程 | Partial | `backend/core/processes.py` |
+| `has_water: 0–100` | 数值水资源 | Proposed | 当前 `states.py` 和 `effects.py` 仍按 Boolean 处理 |
+| 通用 recipe registry | 任意输入、设备、输出和完成效果 | Proposed | 当前仅打印/咖啡专用分支 |
+| 通用 Schema Grounding | 任意任务 schema 到实例 | Proposed | 尚无统一实例化器 |
+| 通用 PDDL 编译 | scene + schema + rules/processes 到 PDDL | Proposed | 当前只有 laundry 专用脚本 |
+| PDDL 已验证任务族 | 1：laundry，已知计划长度 17 | Implemented | `backend/tools/try_laundry_fastdownward.py` |
+| Planner 到 runtime Replay | 自动逐步重放与终态核验 | Proposed | 尚无通用闭环 |
+| 六类标签自动计算 | goal literals 到多标签 | Proposed | 当前只有文档 taxonomy |
 
-面向物理世界的具身智能体（不是处理文档、网页等纯数字任务），系统梳理其应具备的核心能力，并确定能力分层、评价指标及其与数据集和 benchmark 的对应关系。
+任务数量按实例统计。只有 `planner_status=solved` 且 `replay_status=pass` 的任务实例进入已验证集合；一级标签数、Task Skill 数和可解实例数不得混为同一个数字。
 
-重点包括：
+## 9. 未决问题与后续工作
 
-- 当前“世界宏观 + 个体微观”的能力划分是否足够深刻、完整；
-- 是否需要补充感知、空间理解、状态估计、规划、操作、移动、交互、协作、长期自主和安全等能力层；
-- 各项能力如何通过可重复任务体现；
-- 使用哪些成功率、效率、鲁棒性、恢复能力和长期运行分数；
-- 继续调研智能体评价、具身智能评价和持续自主能力相关文献。
+| 优先级 | 问题 | 下一步 | 完成条件 |
+|---|---|---|---|
+| P0 | `has_water` 仍是 Boolean | 将状态定义、对象默认值、Rule、Process 和测试迁移到 `[0,100]` | 水槽、花瓶、喷壶和咖啡机共享数值语义 |
+| P0 | 规划语义与 runtime 可能不一致 | 建立统一 Transition IR，供 runtime 和 PDDL compiler 共用 | 同一计划的预测 delta 与重放 delta 一致 |
+| P0 | 通用 schema grounding 缺失 | 实现 query、constraint、goal 的统一绑定器 | 多场景可批量生成 task instance |
+| P1 | Recipe 仍有专用代码分支 | 建立声明式 Recipe Registry 和通用 Process | 新增产品只增加数据和必要能力 |
+| P1 | 时间过程的 PDDL 表达未定 | 在 PDDL2.1 durative action 与离散 tick compilation 中选定一种 | 洗衣、耗水和腐败可规划并可重放 |
+| P1 | `connect/rotate/consume` 边界未定 | 用焊接、魔方和有限资源任务验证是否需要新 Action | 每个新 Action 都对应不可替代的主体操作 |
+| P1 | 部分对象类型由自动规则误分类 | 校正对象模板的显式 `family` | 容器、工具、设备、媒体等类型与语义一致 |
+| P1 | 六类标签尚未自动化 | 实现 goal-to-label 规则并运行现有任务语料 | 所有实例可重复得到相同多标签 |
+| P2 | 对象和状态表容易与代码漂移 | 从 registries 自动生成附录和覆盖统计 | CI 检测文档快照与代码不一致 |
+| P2 | 文献任务映射仍是初步统计 | 扩展任务实例、目标谓词和未覆盖反例 | 能说明六类标签的覆盖范围和扩展点 |
 
-### 2. Benchmark 与数据集调研
+## 附录 A：完整对象清单
 
-继续详细调研数据集和 benchmark 相关文献，并按 GraphWorld 本体归类：物体（object）、状态（state）、动作（action）、空间关系（relation）、任务（task）、场景/房间拓扑/主体（scene/topology/agent）。
+下表以当前 130 个 `OBJECT_LIBRARY` 模板为基础。类型列采用目标语义类型，不保留当前自动推断产生的明显误分类；`has_water` 按目标设计写为数值默认值 `0`，其余状态沿用当前模板。对象表应在后续由代码自动生成。
 
-调研结果用于构造领域数据（domain knowledge），服务于程序化场景生成、任务候选生成、自动 PDDL 求解与验证、结果可视化，并支持讨论不同场景和任务的可玩性。
+| Semantic Type | 名称 | 类型 | 移动性 | 默认状态 |
+|---|---|---|---|---|
+| `door` | 门 | 结构物 | 不可移动 | `is_open=False`, `is_dirty=False` |
+| `button` | 按钮 | 设备 | 不可移动 | `is_on=False`, `is_pressed=False` |
+| `room_light` | 灯 | 照明设备 | 不可移动 | `is_on=False` |
+| `air_conditioner` | 空调 | 设备 | 不可移动 | `is_on=False`, `is_dirty=False` |
+| `rack` | 架子 | 家具 | 不可移动 | `is_dirty=False` |
+| `shoe_rack` | 鞋架 | 家具 | 不可移动 | `is_dirty=False` |
+| `seat` | 座椅 | 家具 | 不可移动 | `is_dirty=False` |
+| `chair` | 椅子 | 家具 | 不可移动 | `is_dirty=False` |
+| `table` | 桌子 | 家具 | 不可移动 | `is_dirty=False` |
+| `coffee_table` | 茶几 | 家具 | 不可移动 | `is_dirty=False` |
+| `counter` | 操作台 | 家具 | 不可移动 | `is_dirty=False` |
+| `desk` | 书桌 | 家具 | 不可移动 | `is_dirty=False` |
+| `drawer` | 抽屉 | 家具 | 不可移动 | `is_open=False`, `is_dirty=False` |
+| `sofa` | 沙发 | 家具 | 不可移动 | `is_dirty=False` |
+| `bed` | 床 | 家具 | 不可移动 | `is_dirty=False` |
+| `wardrobe` | 衣柜 | 家具 | 不可移动 | `is_open=False`, `is_dirty=False` |
+| `cabinet` | 柜子 | 家具 | 不可移动 | `is_open=False`, `is_dirty=False` |
+| `sink` | 水槽 | 家具/容器 | 不可移动 | `is_dirty=False`, `has_water=0` |
+| `faucet` | 水龙头 | 设备 | 不可移动 | `is_on=False` |
+| `toilet` | 马桶 | 家具 | 不可移动 | `is_dirty=False` |
+| `shower` | 淋浴 | 设备 | 不可移动 | `is_on=False`, `is_dirty=False` |
+| `refrigerator` | 冰箱 | 设备 | 不可移动 | `is_open=False`, `is_dirty=False` |
+| `microwave` | 微波炉 | 设备 | 不可移动 | `is_on=False`, `is_running=False`, `cycle_remaining=0`, `is_open=False`, `is_dirty=False` |
+| `stove` | 炉灶 | 设备 | 不可移动 | `is_on=False`, `is_dirty=False` |
+| `washing_machine` | 洗衣机 | 设备 | 不可移动 | `is_on=False`, `is_running=False`, `cycle_remaining=0`, `is_open=False`, `is_dirty=False` |
+| `washer` | 洗衣机 | 设备 | 不可移动 | `is_on=False`, `is_running=False`, `cycle_remaining=0`, `is_open=False`, `is_dirty=False` |
+| `drying_rack` | 晾衣架 | 家具 | 不可移动 | 无 |
+| `television` | 电视 | 媒体设备 | 不可移动 | `is_on=False`, `is_dirty=False` |
+| `display` | 显示屏 | 办公用品 | 不可移动 | `is_on=False`, `is_dirty=False` |
+| `plant` | 植物 | 植物 | 可移动 | `is_wilted=False`, `is_wet=True`, `vitality=1.0` |
+| `mug` | 杯子 | 容器 | 可移动 | `is_dirty=False`, `fill_level=0.0`, `is_full=False` |
+| `cup` | 杯子 | 容器 | 可移动 | `is_dirty=False`, `fill_level=0.0`, `is_full=False`, `is_wet=False` |
+| `plate` | 盘子 | 容器 | 可移动 | `capacity=1`, `is_dirty=False` |
+| `bowl` | 碗 | 容器 | 可移动 | `is_dirty=False`, `capacity=1`, `is_wet=False` |
+| `book` | 书 | 媒体物品 | 可移动 | `is_dirty=False` |
+| `remote` | 遥控器 | 控制器 | 可移动 | `is_on=False`, `is_dirty=False`, `is_pressed=False` |
+| `clothes` | 衣物 | 个人物品 | 可移动 | `folded=True`, `is_dirty=False`, `is_wet=False` |
+| `shoes` | 鞋 | 个人物品 | 可移动 | `is_dirty=False`, `is_wet=False` |
+| `box` | 箱子 | 容器 | 可移动 | `capacity=5`, `is_dirty=False` |
+| `cart` | 推车 | 容器 | 可移动 | `capacity=5`, `is_dirty=False` |
+| `computer` | 电脑 | 办公用品 | 不可移动 | `is_on=False`, `is_dirty=False` |
+| `dishwasher` | 洗碗机 | 设备 | 不可移动 | `is_on=False`, `is_open=False`, `is_dirty=False` |
+| `dispenser` | 分配器 | 设备 | 不可移动 | `fill_level=1.0`, `is_full=False`, `is_on=False`, `is_dirty=False` |
+| `doctor_coat` | 医生白大褂 | 个人物品 | 可移动 | `is_dirty=False` |
+| `drink` | 饮料 | 食品 | 可移动 | `is_open=False`, `is_rotten=False` |
+| `fruit` | 水果 | 食品 | 可移动 | `is_rotten=False` |
+| `hand_sanitizer_dispenser` | 免洗洗手液机 | 设备 | 不可移动 | `fill_level=1.0`, `is_full=False`, `is_on=False`, `is_dirty=False` |
+| `juice` | 果汁 | 食品 | 可移动 | `is_open=False`, `is_rotten=False` |
+| `knob` | 旋钮 | 设备 | 不可移动 | `is_on=False` |
+| `locker` | 储物柜 | 办公用品 | 不可移动 | `is_open=False`, `is_dirty=False` |
+| `machine` | 机器 | 设备 | 不可移动 | `is_on=False`, `is_dirty=False` |
+| `medical_cart` | 医疗推车 | 医疗用品 | 可移动 | `is_dirty=False` |
+| `medical_form` | 医疗表单 | 医疗用品 | 可移动 | `is_dirty=False` |
+| `medicine_box` | 药盒 | 医疗用品 | 可移动 | `is_open=False` |
+| `medicine_fridge` | 药品冰箱 | 设备 | 不可移动 | `is_open=False`, `is_dirty=False` |
+| `milk` | 牛奶 | 食品 | 可移动 | `is_open=False`, `is_rotten=False` |
+| `nurse_uniform` | 护士制服 | 个人物品 | 可移动 | `is_dirty=False` |
+| `prescription_sheet` | 处方单 | 医疗用品 | 可移动 | `is_dirty=False` |
+| `printer` | 打印机 | 设备 | 不可移动 | `is_on=False`, `is_running=False`, `cycle_remaining=0`, `is_dirty=False`, `count=0`, `amount=0` |
+| `receipt` | 收据 | 办公用品 | 可移动 | `is_dirty=False` |
+| `refrigerated_medicine` | 冷藏药品 | 食品 | 可移动 | `is_rotten=False`, `temperature=cold` |
+| `shelf` | 货架 | 家具 | 不可移动 | `is_dirty=False` |
+| `signboard` | 标牌 | 家具 | 不可移动 | `is_dirty=False` |
+| `stationery` | 文具 | 办公用品 | 可移动 | `is_dirty=False` |
+| `syringe` | 注射器 | 医疗用品 | 可移动 | 无 |
+| `toilet_brush` | 马桶刷 | 清洁工具 | 可移动 | `is_dirty=False` |
+| `toothbrush` | 牙刷 | 个人物品 | 可移动 | `is_dirty=False` |
+| `toothpaste` | 牙膏 | 个人物品 | 可移动 | `is_dirty=False`, `uses_left=20` |
+| `trash_bin` | 垃圾桶 | 容器 | 可移动 | `is_dirty=False` |
+| `vegetable` | 蔬菜 | 食品 | 可移动 | `is_rotten=False` |
+| `water_dispenser` | 饮水机 | 设备 | 不可移动 | `fill_level=1.0`, `is_full=False`, `is_on=True`, `is_dirty=False` |
+| `wheelchair` | 轮椅 | 医疗用品 | 可移动 | `is_dirty=False` |
+| `pillow` | 枕头 | 家具附件 | 可移动 | `is_dirty=False`, `is_wet=False` |
+| `painting` | 画 | 装饰品 | 不可移动 | `is_dirty=False` |
+| `vase` | 花瓶 | 容器 | 可移动 | `is_dirty=False`, `has_water=0` |
+| `mirror` | 镜子 | 装饰品 | 不可移动 | `is_dirty=False` |
+| `towel_holder` | 毛巾架 | 家具附件 | 不可移动 | 无 |
+| `towel` | 毛巾 | 清洁工具 | 可移动 | `is_dirty=False`, `folded=True`, `is_wet=False` |
+| `statue` | 雕像 | 装饰品 | 可移动 | `is_dirty=False` |
+| `keychain` | 钥匙链 | 个人物品 | 可移动 | 无 |
+| `cellphone` | 手机 | 媒体设备 | 可移动 | `is_dirty=False` |
+| `bread` | 面包 | 食品 | 可移动 | `is_rotten=False`, `is_dirty=False` |
+| `egg` | 鸡蛋 | 食品 | 可移动 | `is_rotten=False` |
+| `fork` | 叉子 | 餐厨工具 | 可移动 | `is_dirty=False` |
+| `spoon` | 勺子 | 餐厨工具 | 可移动 | `is_dirty=False` |
+| `ladle` | 汤勺 | 餐厨工具 | 可移动 | `is_dirty=False` |
+| `peppershaker` | 胡椒瓶 | 容器 | 可移动 | `is_dirty=False`, `uses_left=10` |
+| `saltshaker` | 盐瓶 | 容器 | 可移动 | `is_dirty=False`, `uses_left=10` |
+| `plunger` | 马桶吸 | 清洁工具 | 可移动 | 无 |
+| `scrubbrush` | 清洁刷 | 清洁工具 | 可移动 | `is_dirty=False` |
+| `soapbar` | 肥皂 | 清洁工具 | 可移动 | `is_dirty=False` |
+| `tissuebox` | 纸巾盒 | 容器 | 可移动 | `is_dirty=False`, `count=100` |
+| `dresser` | 梳妆柜 | 家具 | 不可移动 | `is_open=False`, `is_dirty=False` |
+| `bathtub` | 浴缸 | 家具 | 不可移动 | `is_dirty=False` |
+| `bathtubbasin` | 浴缸盆 | 容器 | 不可移动 | `is_dirty=False` |
+| `newspaper` | 报纸 | 媒体物品 | 可移动 | `is_dirty=False` |
+| `watch` | 手表 | 个人设备 | 可移动 | `is_dirty=False` |
+| `tvstand` | 电视柜 | 家具 | 不可移动 | `is_dirty=False` |
+| `teddybear` | 泰迪熊 | 装饰品 | 可移动 | `is_dirty=False` |
+| `basketball` | 篮球 | 个人物品 | 可移动 | 无 |
+| `tennisracket` | 网球拍 | 个人物品 | 可移动 | 无 |
+| `baseballbat` | 棒球棒 | 个人物品 | 可移动 | 无 |
+| `dumbbell` | 哑铃 | 个人物品 | 可移动 | 无 |
+| `bottle` | 瓶子 | 容器 | 可移动 | `is_dirty=False` |
+| `winebottle` | 酒瓶 | 容器 | 可移动 | `is_dirty=False` |
+| `roomdecor` | 房间装饰 | 装饰品 | 可移动 | `is_dirty=False` |
+| `poster` | 海报 | 装饰品 | 不可移动 | `is_dirty=False` |
+| `ottoman` | 脚凳 | 家具 | 不可移动 | `is_dirty=False` |
+| `footstool` | 脚踏凳 | 家具 | 不可移动 | `is_dirty=False` |
+| `dogbed` | 宠物窝 | 家具 | 不可移动 | `is_dirty=False` |
+| `garbagebag` | 垃圾袋 | 容器 | 可移动 | 无 |
+| `aluminumfoil` | 铝箔纸 | 餐厨工具 | 可移动 | 无 |
+| `tabletopdecor` | 桌面装饰 | 装饰品 | 可移动 | `is_dirty=False` |
+| `vacuumcleaner` | 吸尘器 | 清洁设备 | 可移动 | 无 |
+| `laundryhamper` | 洗衣篮 | 容器 | 可移动 | `is_open=False` |
+| `coffeemachine` | 咖啡机 | 设备 | 不可移动 | `is_on=False`, `is_running=False`, `cycle_remaining=0`, `is_dirty=False` |
+| `coffee` | 咖啡 | 食品 | 可移动 | `is_rotten=False`, `is_dirty=False` |
+| `spraybottle` | 喷雾瓶 | 容器 | 可移动 | `has_water=0`, `uses_left=0` |
+| `soapbottle` | 洗手液 | 容器 | 可移动 | `amount=10` |
+| `clothesdryer` | 烘干机 | 设备 | 不可移动 | `is_on=False`, `is_running=False`, `cycle_remaining=0`, `is_open=False` |
+| `cleaningcloth` | 抹布 | 清洁工具 | 可移动 | `is_dirty=False`, `is_wet=False` |
+| `coffee_beans` | 咖啡豆 | 食品 | 可移动 | 无 |
+| `tissue_refill` | 纸巾补充包 | 个人物品 | 可移动 | 无 |
+| `soap_refill` | 洗手液补充装 | 个人物品 | 可移动 | 无 |
+| `water_refill` | 水补充物 | 个人物品 | 可移动 | 无 |
+| `pepper_refill` | 胡椒补充包 | 食品 | 可移动 | 无 |
+| `salt_refill` | 盐补充包 | 食品 | 可移动 | 无 |
+| `toothpaste_refill` | 牙膏补充装 | 个人物品 | 可移动 | 无 |
+| `paper_pack` | 打印纸 | 办公用品 | 可移动 | 无 |
+| `ink_cartridge` | 墨盒 | 办公用品 | 可移动 | 无 |
 
-### 3. 方法调研：免训与训练路线
+## 附录 B：文献与数据集映射
 
-将相关方法分为免训练（training-free）和训练型（training-based）两类，分别研究其自进化机制和评价方式。
+本表记录六类标签的初步来源和任务证据。它用于扩展任务语料，不表示六类已经构成完备或互斥的文献 taxonomy。详细来源保存在 `reference_table_graphworld_related_work.xlsx` 和 `task_planning_task_taxonomy.csv`。
 
-#### 3.1 免训 Agent 如何自进化
+| 来源 | 代表任务或机制 | 对应标签 | 对 GraphWorld 的作用 |
+|---|---|---|---|
+| ALFRED | Clean & Place、Heat/Cool & Place、Pick & Place | `clean`、`make`、`relocate` | 提供组合目标、导航、抓取、容器和设备操作实例 |
+| BEHAVIOR-1K | cleaning、personal care、cooking、物品整理 | `clean`、`make`、`relocate`、`operate` | 提供丰富状态谓词和长程家庭活动 |
+| VirtualHome | cooking、cleaning、laundry、Grab/Put/Open 程序 | `clean`、`make`、`relocate`、`operate` | 提供程序动作和状态更新表示 |
+| SayCan | 取物、放置、递送、清理溢出物 | `clean`、`relocate`、`interact` | 提供语言技能选择和 affordance grounding |
+| SayPlan | 搜索物体、跨房间导航、整理和放置 | `relocate`、`navigate` | 提供场景图检索和长程子目标分解 |
+| MiniGrid / GridWorld | DoorKey、Unlock、Pickup、PutNext | `operate`、`relocate`、`navigate` | 提供离散拓扑、钥匙门依赖和基础规划任务 |
 
-重点调研记忆、反思、工具调用、规划修正、经验回放、技能组合和环境反馈等机制，以及它们如何在不更新模型参数的情况下提高长期任务表现。
-
-#### 3.2 训练型路线
-
-梳理监督学习、模仿学习、强化学习、世界模型、技能蒸馏和在线适应等路线。对于依赖参数更新的路线，暂不统称为“自进化”，可使用“监督进化”或更准确的训练型适应/进化术语，具体命名待文献调研后确定。
-
-### 4. 系统平台集成与应用（崔书博）
-
-推进 GraphWorld 与系统平台、智能体、评价模块、数据集生成器、规划器、可视化工具及实际应用场景的集成，明确模块接口、运行流程和应用验证方案。
+后续统计以具体任务实例为单位，至少记录原始任务、初始条件、目标谓词、所需能力、代表动作、GraphWorld 标签和无法表达的部分。
