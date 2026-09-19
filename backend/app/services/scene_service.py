@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 from backend.app.core.errors import NotFoundError
 from backend.app.repositories.scene_repo import SceneRepository
 from backend.app.runtime.scene_importer import infer_scene_id, import_scene
+from backend.app.runtime.scene_layout import ensure_scene_layout, validate_scene_layout
 from backend.app.schemas.graph import GraphEdge, GraphNode, SceneGraphResponse
-from backend.app.schemas.scene import SceneImportRequest, SceneRead, SceneVersionRead
+from backend.app.schemas.scene import SceneImportRequest, SceneLayoutValidation, ScenePublishRequest, SceneRead, SceneVersionRead
 
 
 class SceneService:
@@ -78,7 +79,7 @@ class SceneService:
         edges = self.repo.version_edges(scene_version_id)
         return SceneGraphResponse(
             scene_version_id=scene_version_id,
-            source_json=version.source_json,
+            source_json=ensure_scene_layout(version.source_json),
             nodes=[
                 GraphNode(
                     id=node.node_key,
@@ -97,4 +98,25 @@ class SceneService:
                 )
                 for edge in edges
             ],
+        )
+
+    def validate_layout(self, scene_version_id: str, source_json: dict) -> SceneLayoutValidation:
+        if self.repo.get_version(scene_version_id) is None:
+            raise NotFoundError(f"Scene version not found: {scene_version_id}")
+        issues = validate_scene_layout(source_json)
+        return SceneLayoutValidation(valid=not issues, issues=issues)
+
+    def publish_layout(self, scene_version_id: str, request: ScenePublishRequest) -> SceneVersionRead:
+        base_version = self.repo.get_version(scene_version_id)
+        if base_version is None:
+            raise NotFoundError(f"Scene version not found: {scene_version_id}")
+        issues = validate_scene_layout(request.source_json)
+        if issues:
+            raise ValueError("; ".join(issues))
+        return self.import_scene(
+            SceneImportRequest(
+                scene_id=base_version.scene_id,
+                source_json=request.source_json,
+                description=request.description,
+            )
         )

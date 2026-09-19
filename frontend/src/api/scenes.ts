@@ -1,5 +1,5 @@
 import { requestJson } from "./client";
-import type { SceneGraphResponse, SceneRead, SceneVersionRead } from "../types/api";
+import type { SceneGraphResponse, SceneLayoutValidation, SceneRead, SceneVersionRead } from "../types/api";
 
 export function listScenes() {
   return requestJson<SceneRead[]>("/scenes");
@@ -15,4 +15,21 @@ export function listSceneVersions(sceneId: string) {
 
 export function getSceneGraph(sceneVersionId: string) {
   return requestJson<SceneGraphResponse>(`/scene-versions/${sceneVersionId}/graph`);
+}
+
+export function validateSceneLayout(sceneVersionId: string, sourceJson: Record<string, unknown>) {
+  return requestJson<SceneLayoutValidation>(`/scene-versions/${sceneVersionId}/layout/validate`, {
+    method: "POST",
+    body: JSON.stringify({ source_json: sourceJson }),
+  });
+}
+
+export function publishSceneLayout(sceneVersionId: string, sourceJson: Record<string, unknown>) {
+  return requestJson<SceneVersionRead>(`/scene-versions/${sceneVersionId}/layout/publish`, {
+    method: "POST",
+    body: JSON.stringify({
+      source_json: sourceJson,
+      description: "Published from the 2D scene builder.",
+    }),
+  });
 }

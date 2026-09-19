@@ -13,8 +13,9 @@ def test_health_and_scene_import_smoke(monkeypatch, tmp_path):
 
     from fastapi.testclient import TestClient
 
-    from backend.app.db.models import Base
-    from backend.app.db.session import engine
+    from backend.app.core.security import hash_password
+    from backend.app.db.models import Base, User
+    from backend.app.db.session import SessionLocal, engine
     from backend.app.main import app
 
     Base.metadata.create_all(bind=engine)
@@ -23,6 +24,13 @@ def test_health_and_scene_import_smoke(monkeypatch, tmp_path):
     health = client.get("/api/health")
     assert health.status_code == 200
     assert health.json()["status"] == "ok"
+
+    with SessionLocal() as db:
+        db.add(User(id="admin", username="admin", display_name="Admin", role="admin", password_hash=hash_password("admin123"), is_active=True))
+        db.commit()
+    login = client.post("/api/auth/login", json={"username": "admin", "password": "admin123"})
+    assert login.status_code == 200
+    client.headers["Authorization"] = f"Bearer {login.json()['access_token']}"
 
     with open("backend/data/sg_output/simple_graph/simple_home_1f.json", encoding="utf-8") as file:
         source_json = json.load(file)
@@ -43,6 +51,21 @@ def test_health_and_scene_import_smoke(monkeypatch, tmp_path):
     assert graph.status_code == 200
     assert len(graph.json()["nodes"]) == 75
     assert len(graph.json()["edges"]) == 92
+    assert len(graph.json()["source_json"]["layout"]["rooms"]) == 7
+
+    validated = client.post(
+        f"/api/scene-versions/{scene_version_id}/layout/validate",
+        json={"source_json": graph.json()["source_json"]},
+    )
+    assert validated.status_code == 200
+    assert validated.json() == {"valid": True, "issues": []}
+
+    published = client.post(
+        f"/api/scene-versions/{scene_version_id}/layout/publish",
+        json={"source_json": graph.json()["source_json"], "description": "editor smoke"},
+    )
+    assert published.status_code == 201
+    assert published.json()["version"] == 2
 
     human_run = client.post(
         "/api/runs",

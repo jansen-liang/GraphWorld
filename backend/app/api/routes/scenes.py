@@ -10,7 +10,14 @@ from backend.app.core.errors import NotFoundError
 from backend.app.db.models import User
 from backend.app.db.session import get_db
 from backend.app.schemas.graph import SceneGraphResponse
-from backend.app.schemas.scene import SceneImportRequest, SceneRead, SceneVersionRead
+from backend.app.schemas.scene import (
+    SceneImportRequest,
+    SceneLayoutRequest,
+    SceneLayoutValidation,
+    ScenePublishRequest,
+    SceneRead,
+    SceneVersionRead,
+)
 from backend.app.services.scene_service import SceneService
 
 router = APIRouter()
@@ -71,3 +78,31 @@ def get_scene_graph(
         return service.get_graph(scene_version_id)
     except NotFoundError as error:
         raise HTTPException(status_code=404, detail=str(error)) from error
+
+
+@router.post("/scene-versions/{scene_version_id}/layout/validate", response_model=SceneLayoutValidation)
+def validate_scene_layout(
+    scene_version_id: str,
+    request: SceneLayoutRequest,
+    _: User = Depends(require_admin),
+    service: SceneService = Depends(get_scene_service),
+) -> SceneLayoutValidation:
+    try:
+        return service.validate_layout(scene_version_id, request.source_json)
+    except NotFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+
+
+@router.post("/scene-versions/{scene_version_id}/layout/publish", response_model=SceneVersionRead, status_code=201)
+def publish_scene_layout(
+    scene_version_id: str,
+    request: ScenePublishRequest,
+    _: User = Depends(require_admin),
+    service: SceneService = Depends(get_scene_service),
+) -> SceneVersionRead:
+    try:
+        return service.publish_layout(scene_version_id, request)
+    except NotFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error

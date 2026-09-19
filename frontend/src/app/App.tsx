@@ -8,6 +8,7 @@ import { RunConfigPage } from "../features/run-config/RunConfigPage";
 import { RunDetailPage } from "../features/run-monitor/RunDetailPage";
 import { RunListPage } from "../features/run-monitor/RunListPage";
 import { ReplayPage } from "../features/replay/ReplayPage";
+import { SceneBuilderPage } from "../features/scene-builder/SceneBuilderPage";
 
 export function App() {
   const auth = useAuth();
@@ -24,6 +25,7 @@ export function App() {
           <Route path="/" element={<Navigate to="/scenes" replace />} />
           <Route path="/scenes" element={<SceneListPage />} />
           <Route path="/scenes/:sceneId" element={<SceneDetailPage />} />
+          <Route path="/scenes/:sceneId/edit" element={<SceneBuilderPage />} />
           <Route path="/runs" element={<RunListPage />} />
           <Route path="/runs/new" element={<RunConfigPage />} />
           <Route path="/runs/:runId" element={<RunDetailPage />} />

@@ -54,6 +54,11 @@ export interface SceneGraphResponse {
   source_json: Record<string, unknown>;
 }
 
+export interface SceneLayoutValidation {
+  valid: boolean;
+  issues: string[];
+}
+
 export interface CandidateAction {
   action_id: string;
   action_type: string;

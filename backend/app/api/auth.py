@@ -58,7 +58,10 @@ def get_current_user(
     now = datetime.now(timezone.utc)
     if token is None or token.revoked_at is not None:
         raise HTTPException(status_code=401, detail="Invalid access token")
-    if token.expires_at is not None and token.expires_at < now:
+    expires_at = token.expires_at
+    if expires_at is not None and expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if expires_at is not None and expires_at < now:
         raise HTTPException(status_code=401, detail="Access token expired")
     user = token.user
     if user is None or not user.is_active:

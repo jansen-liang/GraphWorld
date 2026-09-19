@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Pencil, Play } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getScene, getSceneGraph, listScenes, listSceneVersions } from "../../api/scenes";
 import type { SceneVersionRead } from "../../types/api";
 import { SceneGraphCanvas } from "../scene-graph/SceneGraphCanvas";
 import { useSceneViewStore } from "../../stores/sceneViewStore";
+import { useAuth } from "../../app/auth";
 
 function sourceNodes(sourceJson: Record<string, unknown>): Record<string, unknown>[] {
   const nodes = sourceJson.nodes;
@@ -56,6 +57,7 @@ function snapshotLabel(version: SceneVersionRead) {
 export function SceneDetailPage() {
   const { sceneId = "" } = useParams();
   const navigate = useNavigate();
+  const auth = useAuth();
   const [versionId, setVersionId] = useState("");
   const selectedNodeId = useSceneViewStore((state) => state.selectedNodeId);
   const setSelectedNodeId = useSceneViewStore((state) => state.setSelectedNodeId);
@@ -115,6 +117,12 @@ export function SceneDetailPage() {
               ))}
             </select>
           </label>
+          {auth.isAdmin && (
+            <Link className="button" to={`/scenes/${sceneId}/edit?version=${activeVersionId}`}>
+              <Pencil size={16} aria-hidden />
+              Edit 2D
+            </Link>
+          )}
           <Link className="button primary" to={`/runs/new?sceneVersionId=${activeVersionId}`}>
             <Play size={16} aria-hidden />
             Run
