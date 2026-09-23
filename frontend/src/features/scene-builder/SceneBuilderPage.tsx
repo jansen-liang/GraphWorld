@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, Box, Check, CopyPlus, DoorOpen, Network, PanelsTopLeft, Save, Warehouse } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { AlertTriangle, Box, Check, CopyPlus, DoorOpen, Network, PanelsTopLeft, Save, Trash2, Warehouse } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { getScene, getSceneGraph, listObjectCatalog, listSceneVersions, publishSceneLayout, validateSceneLayout } from "../../api/scenes";
 import { useAuth } from "../../app/auth";
@@ -185,6 +185,36 @@ export function SceneBuilderPage() {
     updateLayout({ ...layout, objects: { ...layout.objects, [objectId]: { ...layout.objects[objectId], ...patch } } });
   }
 
+  const updateSimulationPlacement = useCallback((objectId: string, parentId: string) => {
+    setDraft((current) => {
+      if (!current) return current;
+      const next = deepCopy(current);
+      const node = next.nodes?.find((entry) => text(entry.id) === objectId);
+      if (!node) return current;
+      node.parent = parentId;
+      next.nodes = (next.nodes ?? []).map((entry) => {
+        if (!Array.isArray(entry.child)) return entry;
+        const child = entry.child.filter((id) => text(id) !== objectId);
+        if (text(entry.id) === parentId) child.push(objectId);
+        return { ...entry, child };
+      });
+      next.edges = (next.edges ?? []).filter((edge) =>
+        !(["on", "contains", "inside", "inside_room"].includes(text(edge.relation || edge.edge_type))
+          && text(edge.target_id || edge.target) === objectId),
+      );
+      const parentIsRoom = isRoom(next.nodes?.find((entry) => text(entry.id) === parentId) ?? {});
+      next.edges.push({
+        category: parentIsRoom ? "structural" : "containment",
+        relation: parentIsRoom ? "inside_room" : "on",
+        edge_type: parentIsRoom ? "structural_edge" : "containment_edge",
+        source_id: parentId,
+        target_id: objectId,
+        properties: {},
+      });
+      return next;
+    });
+  }, []);
+
   function placeObjectInRoom(objectId: string, roomId: string) {
     if (!draft || !layout || !layout.objects[objectId] || !layout.rooms[roomId]) return;
     const next = deepCopy(draft);
@@ -253,6 +283,39 @@ export function SceneBuilderPage() {
     };
     setDraft(next);
     setSelectedId(id);
+    setValidation(null);
+  }
+
+  function deleteSelectedNode() {
+    if (!draft || !layout || !selectedNode || isRoom(selectedNode)) return;
+    const removeIds = new Set<string>([selectedId]);
+    const pending = [selectedId];
+    while (pending.length) {
+      const parentId = pending.pop()!;
+      const parent = nodeById.get(parentId);
+      const children = Array.isArray(parent?.child) ? parent.child.map(text) : [];
+      children.forEach((childId) => {
+        if (!removeIds.has(childId)) {
+          removeIds.add(childId);
+          pending.push(childId);
+        }
+      });
+    }
+    const next = deepCopy(draft);
+    next.nodes = (next.nodes ?? [])
+      .filter((node) => !removeIds.has(text(node.id)))
+      .map((node) => Array.isArray(node.child)
+        ? { ...node, child: node.child.filter((child) => !removeIds.has(text(child))) }
+        : node);
+    next.edges = (next.edges ?? []).filter((edge) =>
+      !removeIds.has(text(edge.source_id || edge.source))
+      && !removeIds.has(text(edge.target_id || edge.target)));
+    removeIds.forEach((id) => {
+      delete next.layout!.objects[id];
+      delete next.layout!.doors[id];
+    });
+    setDraft(next);
+    setSelectedId(selectedRoomId);
     setValidation(null);
   }
 
@@ -326,6 +389,9 @@ export function SceneBuilderPage() {
               </button>
             ))}
           </div>
+          <button className="button builder-delete-button" type="button" onClick={deleteSelectedNode} disabled={!selectedNode || isRoom(selectedNode)}>
+            <Trash2 size={15} /> Delete selected node
+          </button>
 
           <div className="builder-catalog">
             <div className="catalog-heading"><strong>Object library</strong><small>{objectCatalog.data?.length ?? 0} specifications from PostgreSQL</small></div>
@@ -353,7 +419,7 @@ export function SceneBuilderPage() {
             {lastInteractionHit && <span className="builder-hit-readout" title="Latest Three.js raycast hit">hit: {lastInteractionHit.node_id}{lastInteractionHit.surface_uv ? ` · UV ${lastInteractionHit.surface_uv.map((value) => value.toFixed(2)).join(",")}` : ""}</span>}
           </div>
           {view === "2d" && <FloorplanCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} />}
-          {view === "3d" && <Scene3DCanvas nodes={nodes} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} catalog={objectCatalog.data ?? []} onInteractionHit={setLastInteractionHit} />}
+          {view === "3d" && <Scene3DCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} onSimulationPlace={updateSimulationPlacement} catalog={objectCatalog.data ?? []} onInteractionHit={setLastInteractionHit} />}
           {view === "graph" && <div className="builder-graph-stage"><SceneGraphCanvas nodes={nodes} edges={edges} selectedNodeId={selectedId} onSelectNode={setSelectedId} /></div>}
         </main>
 

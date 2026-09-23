@@ -735,14 +735,6 @@
       "source_id": "outside_home",
       "target_id": "entrance",
       "properties": {}
-    },
-    {
-      "category": "web_seed",
-      "relation": "at",
-      "edge_type": "web_seed_edge",
-      "source_id": "bed_bedroom",
-      "target_id": "human_resident",
-      "properties": {}
     }
   ],
   "nodes": [
@@ -1481,9 +1473,7 @@
     {
       "id": "bed_bedroom",
       "name": "bed",
-      "child": [
-        "human_resident"
-      ],
+      "child": [],
       "parent": "bedroom",
       "states": {
         "is_dirty": false
@@ -2853,29 +2843,8 @@
         "move",
         "place"
       ]
-    },
-    {
-      "id": "human_resident",
-      "name": "white_collar_worker",
-      "role": "resident",
-      "child": [],
-      "parent": "bed_bedroom",
-      "states": {},
-      "name_cn": "普通白领",
-      "persona": "weekday_office_worker",
-      "node_type": "human",
-      "semantic_type": "human",
-      "current_activity": "sleeping",
-      "interactive_actions": []
     }
   ],
-  "web_seed": {
-    "npc_ids": [
-      "human_resident"
-    ],
-    "profile": "base_scene_with_default_npcs",
-    "npc_count": 1
-  },
   "scene_name": "simple_home_1f",
   "world_state": {
     "day": 1,

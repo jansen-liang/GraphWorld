@@ -297,22 +297,6 @@
       "properties": {}
     },
     {
-      "category": "structural",
-      "relation": "part_of",
-      "edge_type": "structural_edge",
-      "source_id": "desk_bedroom",
-      "target_id": "desk_drawer_bedroom",
-      "properties": {}
-    },
-    {
-      "category": "containment",
-      "relation": "in",
-      "edge_type": "containment_edge",
-      "source_id": "desk_drawer_bedroom",
-      "target_id": "stationery_set_bedroom",
-      "properties": {}
-    },
-    {
       "category": "containment",
       "relation": "on",
       "edge_type": "containment_edge",
@@ -743,6 +727,134 @@
       "source_id": "bed_bedroom",
       "target_id": "human_resident",
       "properties": {}
+    },
+    {
+      "category": "containment",
+      "relation": "on",
+      "edge_type": "containment_edge",
+      "source_id": "stove_kitchen",
+      "target_id": "vegetables_fridge_kitchen",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "kitchen",
+      "target_id": "milk_fridge_kitchen",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "kitchen",
+      "target_id": "juice_fridge_kitchen",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_balcony",
+      "target_id": "living_room",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_balcony",
+      "target_id": "balcony",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_bedroom",
+      "target_id": "living_room",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_bedroom",
+      "target_id": "bedroom",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_kitchen",
+      "target_id": "living_room",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_kitchen",
+      "target_id": "kitchen",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_bathroom",
+      "target_id": "bedroom",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_bathroom",
+      "target_id": "bathroom",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_entrance",
+      "target_id": "outside_home",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_entrance",
+      "target_id": "entrance",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_living_room",
+      "target_id": "entrance",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_living_room",
+      "target_id": "living_room",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "kitchen",
+      "target_id": "bowls_dishwasher_kitchen",
+      "properties": {}
     }
   ],
   "nodes": [
@@ -845,7 +957,10 @@
         "light_kitchen",
         "microwave_kitchen",
         "sink_kitchen",
-        "stove_kitchen"
+        "stove_kitchen",
+        "milk_fridge_kitchen",
+        "juice_fridge_kitchen",
+        "bowls_dishwasher_kitchen"
       ],
       "parent": "F1",
       "states": {},
@@ -1193,7 +1308,7 @@
       "states": {
         "is_full": false,
         "is_dirty": false,
-        "fill_level": 0.0
+        "fill_level": 0
       },
       "name_cn": "洗手池",
       "mobility": "fixed",
@@ -1240,10 +1355,7 @@
       "id": "fridge_kitchen",
       "name": "refrigerator",
       "child": [
-        "door_fridge_kitchen",
-        "juice_fridge_kitchen",
-        "milk_fridge_kitchen",
-        "vegetables_fridge_kitchen"
+        "door_fridge_kitchen"
       ],
       "parent": "kitchen",
       "states": {
@@ -1258,6 +1370,59 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "components": [
+          {
+            "role": "hinge",
+            "anchor": [
+              0.08,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [],
+            "semantic_type": "hinge"
+          },
+          {
+            "role": "door",
+            "anchor": [
+              0.95,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "openable"
+            ],
+            "semantic_type": "door"
+          },
+          {
+            "role": "storage_slot",
+            "anchor": [
+              0.5,
+              0.5,
+              0.5
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "interior",
+            "repeatable": true,
+            "capabilities": [
+              "place_target"
+            ],
+            "semantic_type": "storage_slot"
+          }
+        ]
+      },
       "semantic_type": "refrigerator",
       "semantic_class": "appliance",
       "affordance_count": 3,
@@ -1273,7 +1438,7 @@
       "id": "milk_fridge_kitchen",
       "name": "milk",
       "child": [],
-      "parent": "fridge_kitchen",
+      "parent": "kitchen",
       "states": {
         "is_open": false,
         "is_cooked": false,
@@ -1302,7 +1467,7 @@
       "id": "juice_fridge_kitchen",
       "name": "juice",
       "child": [],
-      "parent": "fridge_kitchen",
+      "parent": "kitchen",
       "states": {
         "is_open": false,
         "is_cooked": false,
@@ -1331,7 +1496,7 @@
       "id": "vegetables_fridge_kitchen",
       "name": "vegetable",
       "child": [],
-      "parent": "fridge_kitchen",
+      "parent": "stove_kitchen",
       "states": {
         "is_cooked": false,
         "is_rotten": false,
@@ -1357,7 +1522,6 @@
       "id": "dishwasher_kitchen",
       "name": "dishwasher",
       "child": [
-        "bowls_dishwasher_kitchen",
         "dishwasher_kitchen_button",
         "dishwasher_kitchen_door"
       ],
@@ -1376,6 +1540,59 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "components": [
+          {
+            "role": "hinge",
+            "anchor": [
+              0.08,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [],
+            "semantic_type": "hinge"
+          },
+          {
+            "role": "door",
+            "anchor": [
+              0.5,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "openable"
+            ],
+            "semantic_type": "door"
+          },
+          {
+            "role": "start_button",
+            "anchor": [
+              0.82,
+              0.82,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "switchable"
+            ],
+            "semantic_type": "button"
+          }
+        ]
+      },
       "semantic_type": "dishwasher",
       "semantic_class": "appliance",
       "affordance_count": 5,
@@ -1393,7 +1610,7 @@
       "id": "bowls_dishwasher_kitchen",
       "name": "bowl",
       "child": [],
-      "parent": "dishwasher_kitchen",
+      "parent": "kitchen",
       "states": {
         "is_wet": false,
         "is_dirty": false
@@ -1437,6 +1654,59 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "components": [
+          {
+            "role": "hinge",
+            "anchor": [
+              0.08,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [],
+            "semantic_type": "hinge"
+          },
+          {
+            "role": "door",
+            "anchor": [
+              0.5,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "openable"
+            ],
+            "semantic_type": "door"
+          },
+          {
+            "role": "start_button",
+            "anchor": [
+              0.82,
+              0.82,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "switchable"
+            ],
+            "semantic_type": "button"
+          }
+        ]
+      },
       "semantic_type": "microwave",
       "semantic_class": "appliance",
       "affordance_count": 5,
@@ -1454,7 +1724,8 @@
       "id": "stove_kitchen",
       "name": "stove",
       "child": [
-        "stove_kitchen_knob"
+        "stove_kitchen_knob",
+        "vegetables_fridge_kitchen"
       ],
       "parent": "kitchen",
       "states": {
@@ -1526,6 +1797,67 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "storage": {
+          "kind": "mixed",
+          "levels": 3,
+          "columns": 2,
+          "depth_cm": 35,
+          "drawer_count": 2,
+          "slot_semantic_type": "storage_slot"
+        },
+        "components": [
+          {
+            "role": "hinge",
+            "anchor": [
+              0.08,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [],
+            "semantic_type": "hinge"
+          },
+          {
+            "role": "door",
+            "anchor": [
+              0.5,
+              0.5,
+              0
+            ],
+            "optional": true,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "openable"
+            ],
+            "semantic_type": "door"
+          },
+          {
+            "role": "storage_slot",
+            "anchor": [
+              0.5,
+              0.5,
+              0.5
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "interior",
+            "repeatable": true,
+            "capabilities": [
+              "place_target"
+            ],
+            "semantic_type": "storage_slot"
+          }
+        ]
+      },
       "semantic_type": "cabinet",
       "semantic_class": "container",
       "affordance_count": 5,
@@ -1654,8 +1986,7 @@
       "id": "desk_bedroom",
       "name": "desk",
       "child": [
-        "book_stack_bedroom",
-        "desk_drawer_bedroom"
+        "book_stack_bedroom"
       ],
       "parent": "bedroom",
       "states": {
@@ -1669,6 +2000,35 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "storage": {
+          "kind": "mixed",
+          "levels": 2,
+          "columns": 1,
+          "depth_cm": 42,
+          "drawer_count": 2,
+          "slot_semantic_type": "storage_slot"
+        },
+        "components": [
+          {
+            "role": "storage_slot",
+            "anchor": [
+              0.5,
+              0.5,
+              0.5
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "interior",
+            "repeatable": true,
+            "capabilities": [
+              "place_target"
+            ],
+            "semantic_type": "storage_slot"
+          }
+        ]
+      },
       "semantic_type": "desk",
       "semantic_class": "furniture",
       "affordance_count": 3,
@@ -1676,61 +2036,6 @@
         "brush",
         "place",
         "move"
-      ]
-    },
-    {
-      "id": "desk_drawer_bedroom",
-      "name": "drawer",
-      "child": [
-        "stationery_set_bedroom"
-      ],
-      "parent": "desk_bedroom",
-      "states": {
-        "is_open": false,
-        "is_dirty": false
-      },
-      "name_cn": "抽屉",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "drawer",
-      "semantic_class": "container",
-      "affordance_count": 5,
-      "blocks_containment": true,
-      "interactive_actions": [
-        "open",
-        "close",
-        "brush",
-        "place",
-        "move"
-      ]
-    },
-    {
-      "id": "stationery_set_bedroom",
-      "name": "stationery",
-      "child": [],
-      "parent": "desk_drawer_bedroom",
-      "states": {
-        "is_dirty": false
-      },
-      "name_cn": "文具套装",
-      "mobility": "movable",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "movable_object",
-      "semantic_type": "stationery",
-      "semantic_class": "tool",
-      "affordance_count": 2,
-      "interactive_actions": [
-        "pick",
-        "place"
       ]
     },
     {
@@ -1769,7 +2074,7 @@
       "states": {
         "is_full": false,
         "is_dirty": false,
-        "fill_level": 0.0
+        "fill_level": 0
       },
       "name_cn": "洗手池",
       "mobility": "fixed",
@@ -1828,6 +2133,27 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "components": [
+          {
+            "role": "flush_button",
+            "anchor": [
+              0.72,
+              0.62,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "top",
+            "repeatable": false,
+            "capabilities": [
+              "switchable"
+            ],
+            "semantic_type": "button"
+          }
+        ]
+      },
       "semantic_type": "toilet",
       "semantic_class": "appliance",
       "affordance_count": 2,
@@ -1883,6 +2209,59 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "components": [
+          {
+            "role": "hinge",
+            "anchor": [
+              0.08,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [],
+            "semantic_type": "hinge"
+          },
+          {
+            "role": "door",
+            "anchor": [
+              0.5,
+              0.48,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "openable"
+            ],
+            "semantic_type": "door"
+          },
+          {
+            "role": "start_button",
+            "anchor": [
+              0.82,
+              0.82,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "switchable"
+            ],
+            "semantic_type": "button"
+          }
+        ]
+      },
       "semantic_type": "washer",
       "semantic_class": "appliance",
       "affordance_count": 5,
@@ -2005,7 +2384,7 @@
         "is_wet": false,
         "is_full": false,
         "is_dirty": false,
-        "fill_level": 0.0
+        "fill_level": 0
       },
       "name_cn": "杯子",
       "mobility": "movable",
@@ -2056,7 +2435,7 @@
       "states": {
         "is_full": false,
         "is_dirty": false,
-        "fill_level": 0.0
+        "fill_level": 0
       },
       "name_cn": "垃圾桶",
       "mobility": "fixed",
@@ -2869,6 +3248,1099 @@
       "interactive_actions": []
     }
   ],
+  "layout": {
+    "doors": {
+      "door_balcony": {
+        "wall": "south",
+        "room_a_id": "living_room",
+        "room_b_id": "balcony",
+        "hinge_side": "start",
+        "width_cells": 10,
+        "offset_cells": 15,
+        "open_angle_deg": 90,
+        "open_direction": "inward"
+      },
+      "door_bedroom": {
+        "wall": "north",
+        "room_a_id": "living_room",
+        "room_b_id": "bedroom",
+        "hinge_side": "start",
+        "width_cells": 10,
+        "offset_cells": 20,
+        "open_angle_deg": 90,
+        "open_direction": "inward"
+      },
+      "door_kitchen": {
+        "wall": "east",
+        "room_a_id": "living_room",
+        "room_b_id": "kitchen",
+        "hinge_side": "start",
+        "width_cells": 10,
+        "offset_cells": 10,
+        "open_angle_deg": 90,
+        "open_direction": "inward"
+      },
+      "door_bathroom": {
+        "wall": "west",
+        "room_a_id": "bedroom",
+        "room_b_id": "bathroom",
+        "hinge_side": "start",
+        "width_cells": 10,
+        "offset_cells": 7,
+        "open_angle_deg": 90,
+        "open_direction": "inward"
+      },
+      "door_entrance": {
+        "wall": "east",
+        "room_a_id": "outside_home",
+        "room_b_id": "entrance",
+        "hinge_side": "start",
+        "width_cells": 10,
+        "offset_cells": 11,
+        "open_angle_deg": 90,
+        "open_direction": "inward"
+      },
+      "door_living_room": {
+        "wall": "east",
+        "room_a_id": "entrance",
+        "room_b_id": "living_room",
+        "hinge_side": "start",
+        "width_cells": 10,
+        "offset_cells": 10,
+        "open_angle_deg": 90,
+        "open_direction": "inward"
+      }
+    },
+    "rooms": {
+      "balcony": {
+        "x_cm": 910,
+        "y_cm": 910,
+        "z_cm": 0,
+        "grid_x": 91,
+        "grid_y": 91,
+        "depth_cm": 200,
+        "width_cm": 400,
+        "height_cm": 260,
+        "depth_cells": 20,
+        "width_cells": 40
+      },
+      "bedroom": {
+        "x_cm": 910,
+        "y_cm": 10,
+        "z_cm": 0,
+        "grid_x": 91,
+        "grid_y": 1,
+        "depth_cm": 400,
+        "width_cm": 500,
+        "height_cm": 260,
+        "depth_cells": 40,
+        "width_cells": 50
+      },
+      "kitchen": {
+        "x_cm": 1510,
+        "y_cm": 410,
+        "z_cm": 0,
+        "grid_x": 151,
+        "grid_y": 41,
+        "depth_cm": 300,
+        "width_cm": 400,
+        "height_cm": 260,
+        "depth_cells": 30,
+        "width_cells": 40
+      },
+      "bathroom": {
+        "x_cm": 610,
+        "y_cm": 10,
+        "z_cm": 0,
+        "grid_x": 61,
+        "grid_y": 1,
+        "depth_cm": 250,
+        "width_cm": 300,
+        "height_cm": 260,
+        "depth_cells": 25,
+        "width_cells": 30
+      },
+      "entrance": {
+        "x_cm": 510,
+        "y_cm": 410,
+        "z_cm": 0,
+        "grid_x": 51,
+        "grid_y": 41,
+        "depth_cm": 300,
+        "width_cm": 400,
+        "height_cm": 260,
+        "depth_cells": 30,
+        "width_cells": 40
+      },
+      "living_room": {
+        "x_cm": 910,
+        "y_cm": 410,
+        "z_cm": 0,
+        "grid_x": 91,
+        "grid_y": 41,
+        "depth_cm": 500,
+        "width_cm": 600,
+        "height_cm": 260,
+        "depth_cells": 50,
+        "width_cells": 60
+      },
+      "outside_home": {
+        "x_cm": 10,
+        "y_cm": 400,
+        "z_cm": 0,
+        "grid_x": 1,
+        "grid_y": 40,
+        "depth_cm": 400,
+        "width_cm": 500,
+        "height_cm": 260,
+        "depth_cells": 40,
+        "width_cells": 50
+      }
+    },
+    "units": "meter",
+    "objects": {
+      "bed_bedroom": {
+        "x_cm": 1210,
+        "y_cm": 50,
+        "z_cm": 5,
+        "grid_x": 30,
+        "grid_y": 4,
+        "room_id": "bedroom",
+        "depth_cm": 160,
+        "rotation": 0,
+        "width_cm": 200,
+        "height_cm": 50,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 16,
+        "width_cells": 20,
+        "layout_anchor": "north-west"
+      },
+      "cup_bathroom": {
+        "x_cm": 796,
+        "y_cm": 216,
+        "z_cm": 63,
+        "grid_x": 19,
+        "grid_y": 21,
+        "room_id": "bathroom",
+        "depth_cm": 9,
+        "rotation": 0,
+        "width_cm": 9,
+        "height_cm": 11,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "contained",
+        "placement_mode": "contained",
+        "parent_object_id": "sink_bathroom"
+      },
+      "desk_bedroom": {
+        "x_cm": 920,
+        "y_cm": 330,
+        "z_cm": 0,
+        "grid_x": 1,
+        "grid_y": 32,
+        "room_id": "bedroom",
+        "depth_cm": 70,
+        "rotation": 0,
+        "width_cm": 130,
+        "height_cm": 75,
+        "depth_cells": 7,
+        "width_cells": 13,
+        "layout_anchor": "south-wall"
+      },
+      "sink_kitchen": {
+        "x_cm": 1645,
+        "y_cm": 425,
+        "z_cm": 0,
+        "grid_x": 14,
+        "grid_y": 2,
+        "room_id": "kitchen",
+        "depth_cm": 50,
+        "rotation": 0,
+        "width_cm": 70,
+        "height_cm": 25,
+        "rotation_x": 2,
+        "rotation_y": 0,
+        "rotation_z": 2,
+        "depth_cells": 5,
+        "width_cells": 7,
+        "layout_anchor": "scan"
+      },
+      "chair_balcony": {
+        "x_cm": 1190,
+        "y_cm": 930,
+        "z_cm": 0,
+        "grid_x": 28,
+        "grid_y": 2,
+        "room_id": "balcony",
+        "depth_cm": 60,
+        "rotation": 0,
+        "width_cm": 60,
+        "height_cm": 85,
+        "depth_cells": 6,
+        "width_cells": 6,
+        "layout_anchor": "center"
+      },
+      "light_balcony": {
+        "x_cm": 1085,
+        "y_cm": 965,
+        "z_cm": -5,
+        "grid_x": 18,
+        "grid_y": 6,
+        "room_id": "balcony",
+        "depth_cm": 30,
+        "rotation": 0,
+        "width_cm": 30,
+        "height_cm": 10,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "light_bedroom": {
+        "x_cm": 1140,
+        "y_cm": 200,
+        "z_cm": 0,
+        "grid_x": 23,
+        "grid_y": 19,
+        "room_id": "bedroom",
+        "depth_cm": 30,
+        "rotation": 0,
+        "width_cm": 30,
+        "height_cm": 10,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "light_kitchen": {
+        "x_cm": 1655,
+        "y_cm": 545,
+        "z_cm": -5,
+        "grid_x": 14,
+        "grid_y": 13,
+        "room_id": "kitchen",
+        "depth_cm": 30,
+        "rotation": 0,
+        "width_cm": 30,
+        "height_cm": 10,
+        "rotation_y": 0,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "plant_balcony": {
+        "x_cm": 1220,
+        "y_cm": 1040,
+        "z_cm": 0,
+        "grid_x": 31,
+        "grid_y": 13,
+        "room_id": "balcony",
+        "depth_cm": 30,
+        "rotation": 0,
+        "width_cm": 30,
+        "height_cm": 60,
+        "depth_cells": 6,
+        "width_cells": 8,
+        "layout_anchor": "south-east"
+      },
+      "sink_bathroom": {
+        "x_cm": 735,
+        "y_cm": 210,
+        "z_cm": 28,
+        "grid_x": 13,
+        "grid_y": 20,
+        "room_id": "bathroom",
+        "depth_cm": 50,
+        "rotation": 0,
+        "width_cm": 70,
+        "height_cm": 25,
+        "depth_cells": 5,
+        "width_cells": 7,
+        "layout_anchor": "service-wall"
+      },
+      "stove_kitchen": {
+        "x_cm": 1735,
+        "y_cm": 420,
+        "z_cm": 5,
+        "grid_x": 23,
+        "grid_y": 1,
+        "room_id": "kitchen",
+        "depth_cm": 60,
+        "rotation": 0,
+        "width_cm": 70,
+        "height_cm": 90,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 6,
+        "width_cells": 8,
+        "layout_anchor": "scan"
+      },
+      "bench_entrance": {
+        "x_cm": 680,
+        "y_cm": 650,
+        "z_cm": 0,
+        "grid_x": 17,
+        "grid_y": 24,
+        "room_id": "entrance",
+        "depth_cm": 60,
+        "rotation": 0,
+        "width_cm": 60,
+        "height_cm": 85,
+        "depth_cells": 6,
+        "width_cells": 6,
+        "layout_anchor": "center"
+      },
+      "button_balcony": {
+        "x_cm": 1006,
+        "y_cm": 926,
+        "z_cm": -2,
+        "grid_x": 9,
+        "grid_y": 1,
+        "room_id": "balcony",
+        "depth_cm": 8,
+        "rotation": 2,
+        "width_cm": 8,
+        "height_cm": 4,
+        "rotation_y": 2,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "button_bedroom": {
+        "x_cm": 1226,
+        "y_cm": 376,
+        "z_cm": -72,
+        "grid_x": 32,
+        "grid_y": 37,
+        "room_id": "bedroom",
+        "depth_cm": 8,
+        "rotation": 0,
+        "width_cm": 8,
+        "height_cm": 4,
+        "rotation_x": 3,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "button_kitchen": {
+        "x_cm": 1510,
+        "y_cm": 616,
+        "z_cm": -72,
+        "grid_x": 0,
+        "grid_y": 21,
+        "room_id": "kitchen",
+        "depth_cm": 8,
+        "rotation": 0,
+        "width_cm": 8,
+        "height_cm": 4,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 3,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "faucet_kitchen": {
+        "x_cm": 1650,
+        "y_cm": 450,
+        "z_cm": -185,
+        "grid_x": 14,
+        "grid_y": 4,
+        "room_id": "kitchen",
+        "depth_cm": 20,
+        "rotation": 0,
+        "width_cm": 20,
+        "height_cm": 30,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "fridge_kitchen": {
+        "x_cm": 1795,
+        "y_cm": 630,
+        "z_cm": 0,
+        "grid_x": 29,
+        "grid_y": 22,
+        "room_id": "kitchen",
+        "depth_cm": 80,
+        "rotation": 0,
+        "width_cm": 90,
+        "height_cm": 180,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 8,
+        "width_cells": 8,
+        "layout_anchor": "service-wall"
+      },
+      "light_bathroom": {
+        "x_cm": 675,
+        "y_cm": 125,
+        "z_cm": 25,
+        "grid_x": 7,
+        "grid_y": 12,
+        "room_id": "bathroom",
+        "depth_cm": 30,
+        "rotation": 0,
+        "width_cm": 30,
+        "height_cm": 10,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "light_entrance": {
+        "x_cm": 705,
+        "y_cm": 545,
+        "z_cm": 35,
+        "grid_x": 20,
+        "grid_y": 14,
+        "room_id": "entrance",
+        "depth_cm": 30,
+        "rotation": 0,
+        "width_cm": 30,
+        "height_cm": 10,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "tv_living_room": {
+        "x_cm": 1260,
+        "y_cm": 425,
+        "z_cm": 70,
+        "grid_x": 35,
+        "grid_y": 2,
+        "room_id": "living_room",
+        "depth_cm": 10,
+        "rotation": 0,
+        "width_cm": 100,
+        "height_cm": 60,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 6,
+        "width_cells": 12,
+        "layout_anchor": "scan"
+      },
+      "button_bathroom": {
+        "x_cm": 876,
+        "y_cm": 196,
+        "z_cm": -102,
+        "grid_x": 27,
+        "grid_y": 19,
+        "room_id": "bathroom",
+        "depth_cm": 8,
+        "rotation": 0,
+        "width_cm": 8,
+        "height_cm": 4,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 3,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "button_entrance": {
+        "x_cm": 516,
+        "y_cm": 636,
+        "z_cm": -72,
+        "grid_x": 1,
+        "grid_y": 23,
+        "room_id": "entrance",
+        "depth_cm": 8,
+        "rotation": 0,
+        "width_cm": 8,
+        "height_cm": 4,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 3,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "counter_kitchen": {
+        "x_cm": 1510,
+        "y_cm": 628,
+        "z_cm": 5,
+        "grid_x": 0,
+        "grid_y": 22,
+        "room_id": "kitchen",
+        "depth_cm": 65,
+        "rotation": 0,
+        "width_cm": 180,
+        "height_cm": 90,
+        "depth_cells": 7,
+        "width_cells": 18,
+        "layout_anchor": "service-wall"
+      },
+      "faucet_bathroom": {
+        "x_cm": 740,
+        "y_cm": 230,
+        "z_cm": -155,
+        "grid_x": 13,
+        "grid_y": 22,
+        "room_id": "bathroom",
+        "depth_cm": 20,
+        "rotation": 0,
+        "width_cm": 20,
+        "height_cm": 30,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "toilet_bathroom": {
+        "x_cm": 655,
+        "y_cm": 185,
+        "z_cm": 3,
+        "grid_x": 5,
+        "grid_y": 18,
+        "room_id": "bathroom",
+        "depth_cm": 70,
+        "rotation": 0,
+        "width_cm": 70,
+        "height_cm": 75,
+        "depth_cells": 5,
+        "width_cells": 7,
+        "layout_anchor": "center"
+      },
+      "washer_bathroom": {
+        "x_cm": 700,
+        "y_cm": 18,
+        "z_cm": 0,
+        "grid_x": 9,
+        "grid_y": 1,
+        "room_id": "bathroom",
+        "depth_cm": 65,
+        "rotation": 2,
+        "width_cm": 60,
+        "height_cm": 85,
+        "rotation_x": 0,
+        "rotation_y": 2,
+        "rotation_z": 0,
+        "depth_cells": 8,
+        "width_cells": 8,
+        "layout_anchor": "service-wall"
+      },
+      "shoes_entrance_1": {
+        "x_cm": 760,
+        "y_cm": 630,
+        "z_cm": 0,
+        "grid_x": 25,
+        "grid_y": 22,
+        "room_id": "entrance",
+        "depth_cm": 12,
+        "rotation": 0,
+        "width_cm": 30,
+        "height_cm": 10,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "contained",
+        "placement_mode": "contained",
+        "parent_object_id": "shoe_rack_entrance"
+      },
+      "shoes_entrance_2": {
+        "x_cm": 700,
+        "y_cm": 460,
+        "z_cm": 0,
+        "grid_x": 19,
+        "grid_y": 5,
+        "room_id": "entrance",
+        "depth_cm": 12,
+        "rotation": 0,
+        "width_cm": 30,
+        "height_cm": 10,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "contained",
+        "placement_mode": "contained",
+        "parent_object_id": "shoe_rack_entrance"
+      },
+      "shoes_entrance_3": {
+        "x_cm": 770,
+        "y_cm": 570,
+        "z_cm": 0,
+        "grid_x": 26,
+        "grid_y": 16,
+        "room_id": "entrance",
+        "depth_cm": 12,
+        "rotation": 0,
+        "width_cm": 30,
+        "height_cm": 10,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "contained",
+        "placement_mode": "contained",
+        "parent_object_id": "shoe_rack_entrance"
+      },
+      "sofa_living_room": {
+        "x_cm": 1210,
+        "y_cm": 815,
+        "z_cm": 0,
+        "grid_x": 30,
+        "grid_y": 41,
+        "room_id": "living_room",
+        "depth_cm": 90,
+        "rotation": 0,
+        "width_cm": 200,
+        "height_cm": 85,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 9,
+        "width_cells": 20,
+        "layout_anchor": "north-wall"
+      },
+      "wardrobe_bedroom": {
+        "x_cm": 1270,
+        "y_cm": 343,
+        "z_cm": 5,
+        "grid_x": 36,
+        "grid_y": 33,
+        "room_id": "bedroom",
+        "depth_cm": 55,
+        "rotation": 0,
+        "width_cm": 120,
+        "height_cm": 90,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 6,
+        "width_cells": 12,
+        "layout_anchor": "scan"
+      },
+      "clothes_bedroom_1": {
+        "x_cm": 1138,
+        "y_cm": 163,
+        "z_cm": 0,
+        "grid_x": 23,
+        "grid_y": 15,
+        "room_id": "bedroom",
+        "depth_cm": 35,
+        "rotation": 0,
+        "width_cm": 45,
+        "height_cm": 5,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "center"
+      },
+      "clothes_bedroom_2": {
+        "x_cm": 1108,
+        "y_cm": 83,
+        "z_cm": 8,
+        "grid_x": 20,
+        "grid_y": 7,
+        "room_id": "bedroom",
+        "depth_cm": 35,
+        "rotation": 0,
+        "width_cm": 45,
+        "height_cm": 5,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "south-east"
+      },
+      "clothes_bedroom_3": {
+        "x_cm": 1168,
+        "y_cm": 23,
+        "z_cm": 0,
+        "grid_x": 26,
+        "grid_y": 1,
+        "room_id": "bedroom",
+        "depth_cm": 35,
+        "rotation": 0,
+        "width_cm": 45,
+        "height_cm": 5,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "scan"
+      },
+      "light_living_room": {
+        "x_cm": 1190,
+        "y_cm": 650,
+        "z_cm": 25,
+        "grid_x": 28,
+        "grid_y": 24,
+        "room_id": "living_room",
+        "depth_cm": 30,
+        "rotation": 0,
+        "width_cm": 30,
+        "height_cm": 10,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "microwave_kitchen": {
+        "x_cm": 1620,
+        "y_cm": 638,
+        "z_cm": 103,
+        "grid_x": 11,
+        "grid_y": 23,
+        "room_id": "kitchen",
+        "depth_cm": 45,
+        "rotation": 0,
+        "width_cm": 60,
+        "height_cm": 35,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 5,
+        "width_cells": 6,
+        "layout_anchor": "scan"
+      },
+      "book_stack_bedroom": {
+        "x_cm": 920,
+        "y_cm": 330,
+        "z_cm": 0,
+        "grid_x": 1,
+        "grid_y": 32,
+        "room_id": "bedroom",
+        "depth_cm": 22,
+        "rotation": 0,
+        "width_cm": 15,
+        "height_cm": 3,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "contained",
+        "placement_mode": "contained",
+        "parent_object_id": "desk_bedroom"
+      },
+      "button_living_room": {
+        "x_cm": 916,
+        "y_cm": 666,
+        "z_cm": -62,
+        "grid_x": 1,
+        "grid_y": 26,
+        "room_id": "living_room",
+        "depth_cm": 8,
+        "rotation": 0,
+        "width_cm": 8,
+        "height_cm": 4,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 3,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "wall-mounted",
+        "placement_mode": "wall_mounted"
+      },
+      "dishwasher_kitchen": {
+        "x_cm": 1700,
+        "y_cm": 548,
+        "z_cm": 0,
+        "grid_x": 19,
+        "grid_y": 14,
+        "room_id": "kitchen",
+        "depth_cm": 65,
+        "rotation": 0,
+        "width_cm": 60,
+        "height_cm": 85,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 7,
+        "width_cells": 7,
+        "layout_anchor": "side-wall"
+      },
+      "shoe_rack_entrance": {
+        "x_cm": 520,
+        "y_cm": 660,
+        "z_cm": 0,
+        "grid_x": 1,
+        "grid_y": 25,
+        "room_id": "entrance",
+        "depth_cm": 50,
+        "rotation": 0,
+        "width_cm": 150,
+        "height_cm": 180,
+        "depth_cells": 5,
+        "width_cells": 15,
+        "layout_anchor": "north-wall"
+      },
+      "stove_kitchen_knob": {
+        "x_cm": 1735,
+        "y_cm": 420,
+        "z_cm": 0,
+        "grid_x": 23,
+        "grid_y": 1,
+        "room_id": "kitchen",
+        "depth_cm": 6,
+        "rotation": 0,
+        "width_cm": 6,
+        "height_cm": 5,
+        "depth_cells": 2,
+        "width_cells": 2,
+        "layout_anchor": "contained",
+        "placement_mode": "contained",
+        "parent_object_id": "stove_kitchen"
+      },
+      "drying_rack_balcony": {
+        "x_cm": 1070,
+        "y_cm": 1050,
+        "z_cm": 0,
+        "grid_x": 16,
+        "grid_y": 14,
+        "room_id": "balcony",
+        "depth_cm": 45,
+        "rotation": 0,
+        "width_cm": 120,
+        "height_cm": 150,
+        "depth_cells": 6,
+        "width_cells": 8,
+        "layout_anchor": "north-west"
+      },
+      "milk_fridge_kitchen": {
+        "x_cm": 1837,
+        "y_cm": 557,
+        "z_cm": 0,
+        "grid_x": 33,
+        "grid_y": 15,
+        "room_id": "kitchen",
+        "depth_cm": 7,
+        "rotation": 0,
+        "width_cm": 7,
+        "height_cm": 22,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "surface",
+        "placement_mode": "surface"
+      },
+      "toothbrush_bathroom": {
+        "x_cm": 735,
+        "y_cm": 210,
+        "z_cm": 0,
+        "grid_x": 13,
+        "grid_y": 20,
+        "room_id": "bathroom",
+        "depth_cm": 2,
+        "rotation": 0,
+        "width_cm": 2,
+        "height_cm": 18,
+        "depth_cells": 1,
+        "width_cells": 1,
+        "layout_anchor": "contained",
+        "placement_mode": "contained",
+        "parent_object_id": "sink_bathroom"
+      },
+      "toothpaste_bathroom": {
+        "x_cm": 735,
+        "y_cm": 210,
+        "z_cm": 0,
+        "grid_x": 13,
+        "grid_y": 20,
+        "room_id": "bathroom",
+        "depth_cm": 5,
+        "rotation": 0,
+        "width_cm": 5,
+        "height_cm": 18,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 1,
+        "width_cells": 1,
+        "layout_anchor": "contained",
+        "placement_mode": "contained",
+        "parent_object_id": "sink_bathroom"
+      },
+      "juice_fridge_kitchen": {
+        "x_cm": 1817,
+        "y_cm": 557,
+        "z_cm": 0,
+        "grid_x": 31,
+        "grid_y": 15,
+        "room_id": "kitchen",
+        "depth_cm": 7,
+        "rotation": 0,
+        "width_cm": 7,
+        "height_cm": 22,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "surface",
+        "placement_mode": "surface"
+      },
+      "toilet_brush_bathroom": {
+        "x_cm": 634,
+        "y_cm": 224,
+        "z_cm": 10,
+        "grid_x": 2,
+        "grid_y": 21,
+        "room_id": "bathroom",
+        "depth_cm": 12,
+        "rotation": 0,
+        "width_cm": 12,
+        "height_cm": 40,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "south-east"
+      },
+      "trash_bin_living_room": {
+        "x_cm": 1420,
+        "y_cm": 840,
+        "z_cm": 0,
+        "grid_x": 51,
+        "grid_y": 43,
+        "room_id": "living_room",
+        "depth_cm": 35,
+        "rotation": 0,
+        "width_cm": 35,
+        "height_cm": 50,
+        "depth_cells": 6,
+        "width_cells": 8,
+        "layout_anchor": "south-east"
+      },
+      "washer_bathroom_button": {
+        "x_cm": 700,
+        "y_cm": 18,
+        "z_cm": -3,
+        "grid_x": 9,
+        "grid_y": 1,
+        "room_id": "bathroom",
+        "depth_cm": 8,
+        "rotation": 0,
+        "width_cm": 8,
+        "height_cm": 4,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "contained",
+        "placement_mode": "contained",
+        "parent_object_id": "washer_bathroom"
+      },
+      "bowls_dishwasher_kitchen": {
+        "x_cm": 1669,
+        "y_cm": 589,
+        "z_cm": 5,
+        "grid_x": 16,
+        "grid_y": 18,
+        "room_id": "kitchen",
+        "depth_cm": 22,
+        "rotation": 0,
+        "width_cm": 22,
+        "height_cm": 10,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 4,
+        "width_cells": 4,
+        "layout_anchor": "surface",
+        "placement_mode": "surface"
+      },
+      "coffee_table_living_room": {
+        "x_cm": 1240,
+        "y_cm": 650,
+        "z_cm": 3,
+        "grid_x": 33,
+        "grid_y": 24,
+        "room_id": "living_room",
+        "depth_cm": 80,
+        "rotation": 0,
+        "width_cm": 140,
+        "height_cm": 75,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 8,
+        "width_cells": 14,
+        "layout_anchor": "work-zone"
+      },
+      "microwave_kitchen_button": {
+        "x_cm": 1620,
+        "y_cm": 638,
+        "z_cm": 0,
+        "grid_x": 11,
+        "grid_y": 23,
+        "room_id": "kitchen",
+        "depth_cm": 8,
+        "rotation": 0,
+        "width_cm": 8,
+        "height_cm": 4,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "contained",
+        "placement_mode": "contained",
+        "parent_object_id": "microwave_kitchen"
+      },
+      "dishwasher_kitchen_button": {
+        "x_cm": 1710,
+        "y_cm": 638,
+        "z_cm": 0,
+        "grid_x": 20,
+        "grid_y": 23,
+        "room_id": "kitchen",
+        "depth_cm": 8,
+        "rotation": 0,
+        "width_cm": 8,
+        "height_cm": 4,
+        "depth_cells": 3,
+        "width_cells": 3,
+        "layout_anchor": "contained",
+        "placement_mode": "contained",
+        "parent_object_id": "dishwasher_kitchen"
+      },
+      "vegetables_fridge_kitchen": {
+        "x_cm": 1743,
+        "y_cm": 453,
+        "z_cm": 95,
+        "grid_x": 23,
+        "grid_y": 4,
+        "room_id": "kitchen",
+        "depth_cm": 15,
+        "rotation": 0,
+        "width_cm": 15,
+        "height_cm": 15,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
+        "depth_cells": 2,
+        "width_cells": 2,
+        "layout_anchor": "surface",
+        "placement_mode": "surface",
+        "parent_object_id": "stove_kitchen"
+      }
+    },
+    "grid_size": 0.1,
+    "geometry_resolution_cm": 1,
+    "object_layout_strategy": "semantic_v1"
+  },
   "web_seed": {
     "npc_ids": [
       "human_resident"

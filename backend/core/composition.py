@@ -92,32 +92,32 @@ DEFAULT_COMPOSITIONS: dict[str, CompositionSpec] = {
     "washing_machine": CompositionSpec(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.48, 0.0), capabilities=("openable",)),
-        _component("start_button", "button", face="front", anchor=(0.82, 0.82, 0.0), capabilities=("switchable",)),
+        _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
     )),
     "washer": CompositionSpec(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.48, 0.0), capabilities=("openable",)),
-        _component("start_button", "button", face="front", anchor=(0.82, 0.82, 0.0), capabilities=("switchable",)),
+        _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
     )),
     "microwave": CompositionSpec(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.5, 0.0), capabilities=("openable",)),
-        _component("start_button", "button", face="front", anchor=(0.82, 0.82, 0.0), capabilities=("switchable",)),
+        _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
     )),
     "dishwasher": CompositionSpec(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.5, 0.0), capabilities=("openable",)),
-        _component("start_button", "button", face="front", anchor=(0.82, 0.82, 0.0), capabilities=("switchable",)),
+        _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
     )),
     "dryer": CompositionSpec(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.48, 0.0), capabilities=("openable",)),
-        _component("start_button", "button", face="front", anchor=(0.82, 0.82, 0.0), capabilities=("switchable",)),
+        _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
     )),
     "clothesdryer": CompositionSpec(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.48, 0.0), capabilities=("openable",)),
-        _component("start_button", "button", face="front", anchor=(0.82, 0.82, 0.0), capabilities=("switchable",)),
+        _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
     )),
     "elevator": CompositionSpec(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),

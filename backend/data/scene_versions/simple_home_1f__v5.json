@@ -748,7 +748,15 @@
       "category": "structural",
       "relation": "connects",
       "edge_type": "structural_edge",
-      "source_id": "door_balcony",
+      "source_id": "door_living_room",
+      "target_id": "entrance",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_living_room",
       "target_id": "living_room",
       "properties": {}
     },
@@ -756,8 +764,16 @@
       "category": "structural",
       "relation": "connects",
       "edge_type": "structural_edge",
-      "source_id": "door_balcony",
-      "target_id": "balcony",
+      "source_id": "door_kitchen",
+      "target_id": "living_room",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connects",
+      "edge_type": "structural_edge",
+      "source_id": "door_kitchen",
+      "target_id": "kitchen",
       "properties": {}
     },
     {
@@ -780,7 +796,7 @@
       "category": "structural",
       "relation": "connects",
       "edge_type": "structural_edge",
-      "source_id": "door_kitchen",
+      "source_id": "door_balcony",
       "target_id": "living_room",
       "properties": {}
     },
@@ -788,8 +804,8 @@
       "category": "structural",
       "relation": "connects",
       "edge_type": "structural_edge",
-      "source_id": "door_kitchen",
-      "target_id": "kitchen",
+      "source_id": "door_balcony",
+      "target_id": "balcony",
       "properties": {}
     },
     {
@@ -822,22 +838,6 @@
       "edge_type": "structural_edge",
       "source_id": "door_entrance",
       "target_id": "entrance",
-      "properties": {}
-    },
-    {
-      "category": "structural",
-      "relation": "connects",
-      "edge_type": "structural_edge",
-      "source_id": "door_living_room",
-      "target_id": "entrance",
-      "properties": {}
-    },
-    {
-      "category": "structural",
-      "relation": "connects",
-      "edge_type": "structural_edge",
-      "source_id": "door_living_room",
-      "target_id": "living_room",
       "properties": {}
     }
   ],
@@ -1354,6 +1354,59 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "components": [
+          {
+            "role": "hinge",
+            "anchor": [
+              0.08,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [],
+            "semantic_type": "hinge"
+          },
+          {
+            "role": "door",
+            "anchor": [
+              0.95,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "openable"
+            ],
+            "semantic_type": "door"
+          },
+          {
+            "role": "storage_slot",
+            "anchor": [
+              0.5,
+              0.5,
+              0.5
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "interior",
+            "repeatable": true,
+            "capabilities": [
+              "place_target"
+            ],
+            "semantic_type": "storage_slot"
+          }
+        ]
+      },
       "semantic_type": "refrigerator",
       "semantic_class": "appliance",
       "affordance_count": 3,
@@ -1472,6 +1525,59 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "components": [
+          {
+            "role": "hinge",
+            "anchor": [
+              0.08,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [],
+            "semantic_type": "hinge"
+          },
+          {
+            "role": "door",
+            "anchor": [
+              0.5,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "openable"
+            ],
+            "semantic_type": "door"
+          },
+          {
+            "role": "start_button",
+            "anchor": [
+              0.82,
+              0.82,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "switchable"
+            ],
+            "semantic_type": "button"
+          }
+        ]
+      },
       "semantic_type": "dishwasher",
       "semantic_class": "appliance",
       "affordance_count": 5,
@@ -1533,6 +1639,59 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "components": [
+          {
+            "role": "hinge",
+            "anchor": [
+              0.08,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [],
+            "semantic_type": "hinge"
+          },
+          {
+            "role": "door",
+            "anchor": [
+              0.5,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "openable"
+            ],
+            "semantic_type": "door"
+          },
+          {
+            "role": "start_button",
+            "anchor": [
+              0.82,
+              0.82,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "switchable"
+            ],
+            "semantic_type": "button"
+          }
+        ]
+      },
       "semantic_type": "microwave",
       "semantic_class": "appliance",
       "affordance_count": 5,
@@ -1622,6 +1781,67 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "storage": {
+          "kind": "mixed",
+          "levels": 3,
+          "columns": 2,
+          "depth_cm": 35,
+          "drawer_count": 2,
+          "slot_semantic_type": "storage_slot"
+        },
+        "components": [
+          {
+            "role": "hinge",
+            "anchor": [
+              0.08,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [],
+            "semantic_type": "hinge"
+          },
+          {
+            "role": "door",
+            "anchor": [
+              0.5,
+              0.5,
+              0
+            ],
+            "optional": true,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "openable"
+            ],
+            "semantic_type": "door"
+          },
+          {
+            "role": "storage_slot",
+            "anchor": [
+              0.5,
+              0.5,
+              0.5
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "interior",
+            "repeatable": true,
+            "capabilities": [
+              "place_target"
+            ],
+            "semantic_type": "storage_slot"
+          }
+        ]
+      },
       "semantic_type": "cabinet",
       "semantic_class": "container",
       "affordance_count": 5,
@@ -1765,6 +1985,35 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "storage": {
+          "kind": "mixed",
+          "levels": 2,
+          "columns": 1,
+          "depth_cm": 42,
+          "drawer_count": 2,
+          "slot_semantic_type": "storage_slot"
+        },
+        "components": [
+          {
+            "role": "storage_slot",
+            "anchor": [
+              0.5,
+              0.5,
+              0.5
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "interior",
+            "repeatable": true,
+            "capabilities": [
+              "place_target"
+            ],
+            "semantic_type": "storage_slot"
+          }
+        ]
+      },
       "semantic_type": "desk",
       "semantic_class": "furniture",
       "affordance_count": 3,
@@ -1793,6 +2042,27 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "components": [
+          {
+            "role": "drawer_slot",
+            "anchor": [
+              0.5,
+              0.5,
+              0.5
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "interior",
+            "repeatable": false,
+            "capabilities": [
+              "place_target"
+            ],
+            "semantic_type": "storage_slot"
+          }
+        ]
+      },
       "semantic_type": "drawer",
       "semantic_class": "container",
       "affordance_count": 5,
@@ -1924,6 +2194,27 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "components": [
+          {
+            "role": "flush_button",
+            "anchor": [
+              0.72,
+              0.62,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "top",
+            "repeatable": false,
+            "capabilities": [
+              "switchable"
+            ],
+            "semantic_type": "button"
+          }
+        ]
+      },
       "semantic_type": "toilet",
       "semantic_class": "appliance",
       "affordance_count": 2,
@@ -1979,6 +2270,59 @@
         "appearance": ""
       },
       "node_type": "fixed_object",
+      "composition": {
+        "components": [
+          {
+            "role": "hinge",
+            "anchor": [
+              0.08,
+              0.5,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "fixed_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [],
+            "semantic_type": "hinge"
+          },
+          {
+            "role": "door",
+            "anchor": [
+              0.5,
+              0.48,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "openable"
+            ],
+            "semantic_type": "door"
+          },
+          {
+            "role": "start_button",
+            "anchor": [
+              0.82,
+              0.82,
+              0
+            ],
+            "optional": false,
+            "relation": "component_of",
+            "node_type": "control_object",
+            "mount_face": "front",
+            "repeatable": false,
+            "capabilities": [
+              "switchable"
+            ],
+            "semantic_type": "button"
+          }
+        ]
+      },
       "semantic_type": "washer",
       "semantic_class": "appliance",
       "affordance_count": 5,
@@ -3117,11 +3461,11 @@
     "units": "meter",
     "objects": {
       "bed_bedroom": {
-        "x_cm": 1210,
-        "y_cm": 90,
+        "x_cm": 1010,
+        "y_cm": 20,
         "z_cm": 0,
-        "grid_x": 30,
-        "grid_y": 8,
+        "grid_x": 10,
+        "grid_y": 1,
         "room_id": "bedroom",
         "depth_cm": 160,
         "rotation": 0,
@@ -3138,10 +3482,10 @@
         "grid_x": 1,
         "grid_y": 1,
         "room_id": "bathroom",
-        "depth_cm": 9,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 9,
-        "height_cm": 11,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "contained",
@@ -3164,26 +3508,26 @@
         "layout_anchor": "south-wall"
       },
       "sink_kitchen": {
-        "x_cm": 1655,
-        "y_cm": 445,
+        "x_cm": 1700,
+        "y_cm": 420,
         "z_cm": 0,
-        "grid_x": 15,
-        "grid_y": 4,
+        "grid_x": 19,
+        "grid_y": 1,
         "room_id": "kitchen",
         "depth_cm": 50,
         "rotation": 0,
         "width_cm": 70,
-        "height_cm": 25,
+        "height_cm": 80,
         "depth_cells": 5,
         "width_cells": 7,
         "layout_anchor": "scan"
       },
       "chair_balcony": {
-        "x_cm": 1190,
-        "y_cm": 930,
+        "x_cm": 1080,
+        "y_cm": 980,
         "z_cm": 0,
-        "grid_x": 28,
-        "grid_y": 2,
+        "grid_x": 17,
+        "grid_y": 7,
         "room_id": "balcony",
         "depth_cm": 60,
         "rotation": 0,
@@ -3210,11 +3554,11 @@
         "placement_mode": "wall_mounted"
       },
       "light_bedroom": {
-        "x_cm": 1140,
-        "y_cm": 200,
+        "x_cm": 920,
+        "y_cm": 10,
         "z_cm": 0,
-        "grid_x": 23,
-        "grid_y": 19,
+        "grid_x": 1,
+        "grid_y": 0,
         "room_id": "bedroom",
         "depth_cm": 30,
         "rotation": 0,
@@ -3226,11 +3570,11 @@
         "placement_mode": "wall_mounted"
       },
       "light_kitchen": {
-        "x_cm": 1625,
-        "y_cm": 505,
-        "z_cm": -5,
-        "grid_x": 12,
-        "grid_y": 10,
+        "x_cm": 1530,
+        "y_cm": 410,
+        "z_cm": 0,
+        "grid_x": 2,
+        "grid_y": 0,
         "room_id": "kitchen",
         "depth_cm": 30,
         "rotation": 0,
@@ -3248,10 +3592,10 @@
         "grid_x": 31,
         "grid_y": 13,
         "room_id": "balcony",
-        "depth_cm": 30,
+        "depth_cm": 60,
         "rotation": 0,
-        "width_cm": 30,
-        "height_cm": 60,
+        "width_cm": 80,
+        "height_cm": 80,
         "depth_cells": 6,
         "width_cells": 8,
         "layout_anchor": "south-east"
@@ -3266,32 +3610,32 @@
         "depth_cm": 50,
         "rotation": 0,
         "width_cm": 70,
-        "height_cm": 25,
+        "height_cm": 80,
         "depth_cells": 5,
         "width_cells": 7,
         "layout_anchor": "service-wall"
       },
       "stove_kitchen": {
-        "x_cm": 1815,
-        "y_cm": 620,
-        "z_cm": 5,
-        "grid_x": 31,
-        "grid_y": 21,
+        "x_cm": 1700,
+        "y_cm": 470,
+        "z_cm": 0,
+        "grid_x": 19,
+        "grid_y": 6,
         "room_id": "kitchen",
         "depth_cm": 60,
         "rotation": 0,
-        "width_cm": 70,
-        "height_cm": 90,
+        "width_cm": 80,
+        "height_cm": 80,
         "depth_cells": 6,
         "width_cells": 8,
         "layout_anchor": "scan"
       },
       "bench_entrance": {
         "x_cm": 680,
-        "y_cm": 650,
+        "y_cm": 530,
         "z_cm": 0,
         "grid_x": 17,
-        "grid_y": 24,
+        "grid_y": 12,
         "room_id": "entrance",
         "depth_cm": 60,
         "rotation": 0,
@@ -3334,11 +3678,11 @@
         "placement_mode": "wall_mounted"
       },
       "button_kitchen": {
-        "x_cm": 1596,
-        "y_cm": 606,
-        "z_cm": -2,
-        "grid_x": 9,
-        "grid_y": 20,
+        "x_cm": 1510,
+        "y_cm": 410,
+        "z_cm": 0,
+        "grid_x": 0,
+        "grid_y": 0,
         "room_id": "kitchen",
         "depth_cm": 8,
         "rotation": 0,
@@ -3350,11 +3694,11 @@
         "placement_mode": "wall_mounted"
       },
       "faucet_kitchen": {
-        "x_cm": 1650,
-        "y_cm": 600,
-        "z_cm": 5,
-        "grid_x": 14,
-        "grid_y": 19,
+        "x_cm": 1520,
+        "y_cm": 410,
+        "z_cm": 0,
+        "grid_x": 1,
+        "grid_y": 0,
         "room_id": "kitchen",
         "depth_cm": 20,
         "rotation": 0,
@@ -3366,11 +3710,11 @@
         "placement_mode": "wall_mounted"
       },
       "fridge_kitchen": {
-        "x_cm": 1815,
-        "y_cm": 450,
+        "x_cm": 1820,
+        "y_cm": 420,
         "z_cm": 0,
         "grid_x": 31,
-        "grid_y": 4,
+        "grid_y": 1,
         "room_id": "kitchen",
         "depth_cm": 80,
         "rotation": 0,
@@ -3381,16 +3725,19 @@
         "layout_anchor": "service-wall"
       },
       "light_bathroom": {
-        "x_cm": 630,
-        "y_cm": 10,
-        "z_cm": 0,
-        "grid_x": 2,
-        "grid_y": 0,
+        "x_cm": 755,
+        "y_cm": 105,
+        "z_cm": -5,
+        "grid_x": 15,
+        "grid_y": 10,
         "room_id": "bathroom",
         "depth_cm": 30,
         "rotation": 0,
         "width_cm": 30,
         "height_cm": 10,
+        "rotation_x": 0,
+        "rotation_y": 0,
+        "rotation_z": 0,
         "depth_cells": 3,
         "width_cells": 3,
         "layout_anchor": "wall-mounted",
@@ -3419,10 +3766,10 @@
         "grid_x": 1,
         "grid_y": 1,
         "room_id": "living_room",
-        "depth_cm": 10,
+        "depth_cm": 60,
         "rotation": 0,
-        "width_cm": 100,
-        "height_cm": 60,
+        "width_cm": 120,
+        "height_cm": 80,
         "depth_cells": 6,
         "width_cells": 12,
         "layout_anchor": "scan"
@@ -3460,11 +3807,11 @@
         "placement_mode": "wall_mounted"
       },
       "counter_kitchen": {
-        "x_cm": 1510,
-        "y_cm": 638,
-        "z_cm": 5,
-        "grid_x": 0,
-        "grid_y": 23,
+        "x_cm": 1520,
+        "y_cm": 420,
+        "z_cm": 0,
+        "grid_x": 1,
+        "grid_y": 1,
         "room_id": "kitchen",
         "depth_cm": 65,
         "rotation": 0,
@@ -3497,10 +3844,10 @@
         "grid_x": 11,
         "grid_y": 10,
         "room_id": "bathroom",
-        "depth_cm": 70,
+        "depth_cm": 50,
         "rotation": 0,
         "width_cm": 70,
-        "height_cm": 75,
+        "height_cm": 80,
         "depth_cells": 5,
         "width_cells": 7,
         "layout_anchor": "center"
@@ -3521,16 +3868,16 @@
         "layout_anchor": "service-wall"
       },
       "shoes_entrance_1": {
-        "x_cm": 760,
-        "y_cm": 630,
+        "x_cm": 520,
+        "y_cm": 420,
         "z_cm": 0,
-        "grid_x": 25,
-        "grid_y": 22,
+        "grid_x": 1,
+        "grid_y": 1,
         "room_id": "entrance",
-        "depth_cm": 12,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 30,
-        "height_cm": 10,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "contained",
@@ -3538,16 +3885,16 @@
         "parent_object_id": "shoe_rack_entrance"
       },
       "shoes_entrance_2": {
-        "x_cm": 700,
-        "y_cm": 460,
+        "x_cm": 520,
+        "y_cm": 420,
         "z_cm": 0,
-        "grid_x": 19,
-        "grid_y": 5,
+        "grid_x": 1,
+        "grid_y": 1,
         "room_id": "entrance",
-        "depth_cm": 12,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 30,
-        "height_cm": 10,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "contained",
@@ -3555,16 +3902,16 @@
         "parent_object_id": "shoe_rack_entrance"
       },
       "shoes_entrance_3": {
-        "x_cm": 770,
-        "y_cm": 570,
+        "x_cm": 520,
+        "y_cm": 420,
         "z_cm": 0,
-        "grid_x": 26,
-        "grid_y": 16,
+        "grid_x": 1,
+        "grid_y": 1,
         "room_id": "entrance",
-        "depth_cm": 12,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 30,
-        "height_cm": 10,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "contained",
@@ -3587,11 +3934,11 @@
         "layout_anchor": "north-wall"
       },
       "wardrobe_bedroom": {
-        "x_cm": 1240,
-        "y_cm": 10,
+        "x_cm": 1160,
+        "y_cm": 20,
         "z_cm": 0,
-        "grid_x": 33,
-        "grid_y": 0,
+        "grid_x": 25,
+        "grid_y": 1,
         "room_id": "bedroom",
         "depth_cm": 55,
         "rotation": 0,
@@ -3608,10 +3955,10 @@
         "grid_x": 23,
         "grid_y": 18,
         "room_id": "bedroom",
-        "depth_cm": 35,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 45,
-        "height_cm": 5,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "center"
@@ -3623,10 +3970,10 @@
         "grid_x": 45,
         "grid_y": 35,
         "room_id": "bedroom",
-        "depth_cm": 35,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 45,
-        "height_cm": 5,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "south-east"
@@ -3638,10 +3985,10 @@
         "grid_x": 21,
         "grid_y": 1,
         "room_id": "bedroom",
-        "depth_cm": 35,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 45,
-        "height_cm": 5,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "scan"
@@ -3663,11 +4010,11 @@
         "placement_mode": "wall_mounted"
       },
       "microwave_kitchen": {
-        "x_cm": 1720,
-        "y_cm": 648,
-        "z_cm": 3,
-        "grid_x": 21,
-        "grid_y": 24,
+        "x_cm": 1520,
+        "y_cm": 490,
+        "z_cm": 0,
+        "grid_x": 1,
+        "grid_y": 8,
         "room_id": "kitchen",
         "depth_cm": 45,
         "rotation": 0,
@@ -3684,10 +4031,10 @@
         "grid_x": 1,
         "grid_y": 32,
         "room_id": "bedroom",
-        "depth_cm": 22,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 15,
-        "height_cm": 3,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "contained",
@@ -3711,11 +4058,11 @@
         "placement_mode": "wall_mounted"
       },
       "dishwasher_kitchen": {
-        "x_cm": 1740,
-        "y_cm": 538,
+        "x_cm": 1830,
+        "y_cm": 520,
         "z_cm": 0,
-        "grid_x": 23,
-        "grid_y": 13,
+        "grid_x": 32,
+        "grid_y": 11,
         "room_id": "kitchen",
         "depth_cm": 65,
         "rotation": 0,
@@ -3727,10 +4074,10 @@
       },
       "shoe_rack_entrance": {
         "x_cm": 520,
-        "y_cm": 660,
+        "y_cm": 420,
         "z_cm": 0,
         "grid_x": 1,
-        "grid_y": 25,
+        "grid_y": 1,
         "room_id": "entrance",
         "depth_cm": 50,
         "rotation": 0,
@@ -3775,16 +4122,16 @@
         "parent_object_id": "desk_bedroom"
       },
       "drying_rack_balcony": {
-        "x_cm": 1070,
-        "y_cm": 1050,
+        "x_cm": 920,
+        "y_cm": 920,
         "z_cm": 0,
-        "grid_x": 16,
-        "grid_y": 14,
+        "grid_x": 1,
+        "grid_y": 1,
         "room_id": "balcony",
-        "depth_cm": 45,
+        "depth_cm": 60,
         "rotation": 0,
-        "width_cm": 120,
-        "height_cm": 150,
+        "width_cm": 80,
+        "height_cm": 80,
         "depth_cells": 6,
         "width_cells": 8,
         "layout_anchor": "north-west"
@@ -3796,10 +4143,10 @@
         "grid_x": 31,
         "grid_y": 1,
         "room_id": "kitchen",
-        "depth_cm": 7,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 7,
-        "height_cm": 22,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "contained",
@@ -3847,10 +4194,10 @@
         "grid_x": 31,
         "grid_y": 1,
         "room_id": "kitchen",
-        "depth_cm": 7,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 7,
-        "height_cm": 22,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "contained",
@@ -3864,10 +4211,10 @@
         "grid_x": 25,
         "grid_y": 20,
         "room_id": "bathroom",
-        "depth_cm": 12,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 12,
-        "height_cm": 40,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "south-east"
@@ -3879,10 +4226,10 @@
         "grid_x": 51,
         "grid_y": 43,
         "room_id": "living_room",
-        "depth_cm": 35,
+        "depth_cm": 60,
         "rotation": 0,
-        "width_cm": 35,
-        "height_cm": 50,
+        "width_cm": 80,
+        "height_cm": 80,
         "depth_cells": 6,
         "width_cells": 8,
         "layout_anchor": "south-east"
@@ -3894,10 +4241,10 @@
         "grid_x": 1,
         "grid_y": 32,
         "room_id": "bedroom",
-        "depth_cm": 10,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 15,
-        "height_cm": 4,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "contained",
@@ -3922,16 +4269,16 @@
         "parent_object_id": "washer_bathroom"
       },
       "bowls_dishwasher_kitchen": {
-        "x_cm": 1849,
-        "y_cm": 559,
-        "z_cm": 2,
-        "grid_x": 34,
-        "grid_y": 15,
+        "x_cm": 1830,
+        "y_cm": 520,
+        "z_cm": 0,
+        "grid_x": 32,
+        "grid_y": 11,
         "room_id": "kitchen",
-        "depth_cm": 22,
+        "depth_cm": 40,
         "rotation": 0,
-        "width_cm": 22,
-        "height_cm": 10,
+        "width_cm": 40,
+        "height_cm": 80,
         "depth_cells": 4,
         "width_cells": 4,
         "layout_anchor": "contained",

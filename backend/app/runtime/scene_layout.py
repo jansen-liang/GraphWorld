@@ -897,7 +897,11 @@ def validate_scene_layout(source_json: dict[str, Any]) -> list[str]:
         x, y, width, depth = (int(value) for value in values if value is not None)
         if width <= 0 or depth <= 0:
             issues.append(f"Object {object_id} must have positive cell dimensions.")
-        if x < 0 or y < 0 or x + width > int(room["width_cells"]) or y + depth > int(room["depth_cells"]):
+        if placement.get("placement_mode") == "wall_mounted":
+            outside = x < 0 or y < 0 or x >= int(room["width_cells"]) or y >= int(room["depth_cells"])
+        else:
+            outside = x < 0 or y < 0 or x + width > int(room["width_cells"]) or y + depth > int(room["depth_cells"])
+        if outside:
             issues.append(f"Object {object_id} must remain inside room {room_id}.")
 
     for room_id, room_sweeps in _door_sweeps(rooms, doors).items():

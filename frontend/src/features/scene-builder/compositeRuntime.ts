@@ -18,6 +18,7 @@ export interface CompositeJoint {
   localPosition: THREE.Vector3;
   baseQuaternion: THREE.Quaternion;
   axis: THREE.Vector3;
+  axisSpace: "local" | "world";
   travel: number;
   progress: number;
   open: boolean;
@@ -31,13 +32,15 @@ export interface CompositeObject {
 }
 
 function localPart(mesh: THREE.Object3D, host: THREE.Object3D): CompositePart {
-  const inverse = host.quaternion.clone().invert();
-  return {
-    mesh,
-    host,
-    localPosition: mesh.position.clone().sub(host.position).applyQuaternion(inverse),
-    localQuaternion: inverse.multiply(mesh.quaternion.clone()),
-  };
+  host.updateMatrixWorld(true);
+  const worldPosition = mesh.getWorldPosition(new THREE.Vector3());
+  const worldQuaternion = mesh.getWorldQuaternion(new THREE.Quaternion());
+  const localPosition = host.worldToLocal(worldPosition);
+  const localQuaternion = host.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(worldQuaternion);
+  host.add(mesh);
+  mesh.position.copy(localPosition);
+  mesh.quaternion.copy(localQuaternion);
+  return { mesh, host, localPosition: localPosition.clone(), localQuaternion: localQuaternion.clone() };
 }
 
 export function createComposite(id: string, host: THREE.Object3D): CompositeObject {
@@ -50,16 +53,38 @@ export function attachPart(composite: CompositeObject, mesh: THREE.Object3D): Co
   return part;
 }
 
-export function attachHinge(composite: CompositeObject, id: string, panel: THREE.Object3D, pivot: THREE.Group, travel: number): CompositeJoint {
+export function attachLocalPart(composite: CompositeObject, mesh: THREE.Object3D): CompositePart {
+  const localPosition = mesh.position.clone();
+  const localQuaternion = mesh.quaternion.clone();
+  composite.host.add(mesh);
+  mesh.position.copy(localPosition);
+  mesh.quaternion.copy(localQuaternion);
+  const part = { mesh, host: composite.host, localPosition, localQuaternion };
+  composite.parts.push(part);
+  return part;
+}
+
+export function attachHinge(composite: CompositeObject, id: string, panel: THREE.Object3D, pivot: THREE.Group, travel: number, axisSpace: "local" | "world" = "local"): CompositeJoint {
+  composite.host.updateMatrixWorld(true);
+  const pivotWorldPosition = pivot.getWorldPosition(new THREE.Vector3());
+  const pivotWorldQuaternion = pivot.getWorldQuaternion(new THREE.Quaternion());
+  const localPosition = composite.host.worldToLocal(pivotWorldPosition);
+  const localQuaternion = composite.host.getWorldQuaternion(new THREE.Quaternion()).invert().multiply(pivotWorldQuaternion);
+  const parent = pivot.parent;
+  parent?.remove(pivot);
+  composite.host.add(pivot);
+  pivot.position.copy(localPosition);
+  pivot.quaternion.copy(localQuaternion);
   const joint: CompositeJoint = {
     id,
     kind: "hinge",
     mesh: panel,
     host: composite.host,
     pivot,
-    localPosition: pivot.position.clone().sub(composite.host.position).applyQuaternion(composite.host.quaternion.clone().invert()),
-    baseQuaternion: pivot.quaternion.clone(),
+    localPosition: localPosition.clone(),
+    baseQuaternion: localQuaternion.clone(),
     axis: new THREE.Vector3(0, 1, 0),
+    axisSpace,
     travel,
     progress: 0,
     open: false,
@@ -69,14 +94,16 @@ export function attachHinge(composite: CompositeObject, id: string, panel: THREE
 }
 
 export function attachPrismatic(composite: CompositeObject, id: string, mesh: THREE.Object3D, travel: number): CompositeJoint {
+  const part = localPart(mesh, composite.host);
   const joint: CompositeJoint = {
     id,
     kind: "prismatic",
     mesh,
     host: composite.host,
-    localPosition: mesh.position.clone().sub(composite.host.position).applyQuaternion(composite.host.quaternion.clone().invert()),
-    baseQuaternion: mesh.quaternion.clone(),
+    localPosition: part.localPosition,
+    baseQuaternion: part.localQuaternion,
     axis: new THREE.Vector3(0, 0, -1),
+    axisSpace: "local",
     travel,
     progress: 0,
     open: false,
@@ -88,22 +115,22 @@ export function attachPrismatic(composite: CompositeObject, id: string, mesh: TH
 export function updateComposites(composites: CompositeObject[], delta = 0.18): void {
   composites.forEach((composite) => {
     composite.parts.forEach((part) => {
-      part.mesh.position.copy(composite.host.position).add(part.localPosition.clone().applyQuaternion(composite.host.quaternion));
-      part.mesh.quaternion.copy(composite.host.quaternion).multiply(part.localQuaternion);
+      part.mesh.position.copy(part.localPosition);
+      part.mesh.quaternion.copy(part.localQuaternion);
     });
     composite.joints.forEach((joint) => {
       const target = joint.open ? 1 : 0;
       joint.progress += (target - joint.progress) * delta;
       if (Math.abs(target - joint.progress) < 0.001) joint.progress = target;
-      const hostOffset = joint.localPosition.clone().applyQuaternion(composite.host.quaternion);
       if (joint.kind === "hinge" && joint.pivot) {
-        joint.pivot.position.copy(composite.host.position).add(hostOffset);
-        joint.pivot.quaternion.copy(composite.host.quaternion).multiply(joint.baseQuaternion);
-        joint.pivot.rotateY(joint.travel * joint.progress);
+        joint.pivot.position.copy(joint.localPosition);
+        const axis = joint.axisSpace === "world"
+          ? joint.pivot.worldToLocal(new THREE.Vector3().copy(joint.axis).add(joint.pivot.getWorldPosition(new THREE.Vector3()))).normalize()
+          : joint.axis;
+        joint.pivot.quaternion.copy(joint.baseQuaternion).multiply(new THREE.Quaternion().setFromAxisAngle(axis, joint.travel * joint.progress));
       } else {
-        joint.mesh.position.copy(composite.host.position).add(hostOffset);
-        joint.mesh.quaternion.copy(composite.host.quaternion).multiply(joint.baseQuaternion);
-        joint.mesh.position.add(joint.axis.clone().applyQuaternion(composite.host.quaternion).normalize().multiplyScalar(joint.travel * joint.progress));
+        joint.mesh.position.copy(joint.localPosition).add(joint.axis.clone().multiplyScalar(joint.travel * joint.progress));
+        joint.mesh.quaternion.copy(joint.baseQuaternion);
       }
     });
   });

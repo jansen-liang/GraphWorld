@@ -9,6 +9,9 @@ def test_device_and_storage_templates_expose_composition_contracts():
     cabinet = OBJECT_LIBRARY["cabinet"].instantiate("cabinet_01")
 
     assert {item["role"] for item in washer["composition"]["components"]} == {"hinge", "door", "start_button"}
+    for semantic_type in ("washing_machine", "washer", "microwave", "dishwasher", "dryer", "clothesdryer"):
+        start_button = next(item for item in composition_for(semantic_type).to_dict()["components"] if item["role"] == "start_button")
+        assert start_button["mount_face"] == "top"
     assert toilet["composition"]["components"][0]["role"] == "flush_button"
     assert cabinet["composition"]["storage"] == {
         "kind": "mixed",

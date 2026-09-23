@@ -48,6 +48,18 @@ def test_rejects_room_overlap_and_object_outside_room():
     assert any("sofa_living_room" in issue and "inside room" in issue for issue in issues)
 
 
+def test_wall_mounted_object_uses_anchor_not_full_footprint_for_room_bounds():
+    scene = ensure_scene_layout(load_home_scene())
+    room = scene["layout"]["rooms"]["kitchen"]
+    button = scene["layout"]["objects"]["button_kitchen"]
+    button.update({"grid_x": room["width_cells"] - 1, "grid_y": 1, "width_cells": 3, "depth_cells": 3})
+
+    assert not any("button_kitchen" in issue and "inside room" in issue for issue in validate_scene_layout(scene))
+
+    button["grid_x"] = room["width_cells"]
+    assert any("button_kitchen" in issue and "inside room" in issue for issue in validate_scene_layout(scene))
+
+
 def test_corridor_connections_are_open_passages_without_doors():
     scene = ensure_scene_layout(load_hospital_scene())
     doors = scene["layout"]["doors"].values()

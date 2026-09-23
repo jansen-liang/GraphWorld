@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "object_count": 130,
+  "object_count": 137,
   "objects": [
     {
       "semantic_type": "air_conditioner",
@@ -60,6 +60,31 @@
       ],
       "state_schema": {},
       "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "assembly_line",
+      "name": "assembly line",
+      "name_cn": "装配线",
+      "category": "generic",
+      "dimensions_cm": {
+        "width": 10.0,
+        "depth": 10.0,
+        "height": 80.0
+      },
+      "capabilities": [
+        "switchable",
+        "timed_device",
+        "workbench",
+        "place_target",
+        "reachable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_on": false,
+        "is_running": false,
+        "cycle_remaining": 0
+      },
       "is_active": true
     },
     {
@@ -344,6 +369,26 @@
           ],
           "value_type": "boolean",
           "description": "controls watering and wetting effects",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
+        },
+        "water_level": {
+          "name": "water_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "number",
+          "description": "continuous water quantity; has_water is its compatibility projection",
           "derived_from": [],
           "requires_capabilities": [
             "water_container"
@@ -1222,6 +1267,26 @@
           "requires_capabilities": [
             "fillable"
           ]
+        },
+        "water_level": {
+          "name": "water_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "number",
+          "description": "continuous water quantity; has_water is its compatibility projection",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
         }
       },
       "default_states": {
@@ -1870,6 +1935,72 @@
       },
       "default_states": {
         "is_rotten": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "elevator",
+      "name": "elevator",
+      "name_cn": "电梯",
+      "category": "generic",
+      "dimensions_cm": {
+        "width": 10.0,
+        "depth": 10.0,
+        "height": 80.0
+      },
+      "capabilities": [
+        "openable",
+        "reachable",
+        "switchable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_on": false,
+        "is_open": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "fan",
+      "name": "fan",
+      "name_cn": "风扇",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 10.0,
+        "depth": 10.0,
+        "height": 80.0
+      },
+      "capabilities": [
+        "switchable",
+        "cleanable",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_dirty": false,
+        "is_running": false
       },
       "is_active": true
     },
@@ -2877,6 +3008,26 @@
           "requires_capabilities": [
             "fillable"
           ]
+        },
+        "water_level": {
+          "name": "water_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "number",
+          "description": "continuous water quantity; has_water is its compatibility projection",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
         }
       },
       "default_states": {
@@ -3195,7 +3346,9 @@
       },
       "capabilities": [
         "pickable",
-        "plant_life"
+        "plant_life",
+        "reachable",
+        "dumpable"
       ],
       "state_schema": {
         "vitality": {
@@ -3397,6 +3550,7 @@
         "timed_device",
         "workbench",
         "finite_resource",
+        "place_target",
         "reachable",
         "cleanable"
       ],
@@ -3774,6 +3928,27 @@
       "is_active": true
     },
     {
+      "semantic_type": "sandwich",
+      "name": "sandwich",
+      "name_cn": "三明治",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 10.0,
+        "depth": 10.0,
+        "height": 80.0
+      },
+      "capabilities": [
+        "pickable",
+        "perishable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false,
+        "is_rotten": false
+      },
+      "is_active": true
+    },
+    {
       "semantic_type": "scrubbrush",
       "name": "scrubbrush",
       "name_cn": "清洁刷",
@@ -4079,6 +4254,26 @@
           "requires_capabilities": [
             "water_container"
           ]
+        },
+        "water_level": {
+          "name": "water_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "number",
+          "description": "continuous water quantity; has_water is its compatibility projection",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
         }
       },
       "default_states": {
@@ -4356,6 +4551,26 @@
           "derived_from": [],
           "requires_capabilities": [
             "finite_resource"
+          ]
+        },
+        "water_level": {
+          "name": "water_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "number",
+          "description": "continuous water quantity; has_water is its compatibility projection",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
           ]
         }
       },
@@ -4872,6 +5087,27 @@
       "is_active": true
     },
     {
+      "semantic_type": "tomato",
+      "name": "tomato",
+      "name_cn": "番茄",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 10.0,
+        "depth": 10.0,
+        "height": 80.0
+      },
+      "capabilities": [
+        "pickable",
+        "perishable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false,
+        "is_rotten": false
+      },
+      "is_active": true
+    },
+    {
       "semantic_type": "toothbrush",
       "name": "toothbrush",
       "name_cn": "牙刷",
@@ -5249,11 +5485,32 @@
           "requires_capabilities": [
             "water_container"
           ]
+        },
+        "water_level": {
+          "name": "water_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "number",
+          "description": "continuous water quantity; has_water is its compatibility projection",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
         }
       },
       "default_states": {
         "is_dirty": false,
-        "has_water": false
+        "has_water": false,
+        "water_level": 0.0
       },
       "is_active": true
     },
@@ -5352,10 +5609,12 @@
       },
       "capabilities": [
         "reachable",
-        "openable"
+        "openable",
+        "switchable"
       ],
       "state_schema": {},
       "default_states": {
+        "is_on": false,
         "is_open": false,
         "is_dirty": false
       },
@@ -5673,6 +5932,68 @@
       "is_active": true
     },
     {
+      "semantic_type": "wateringcan",
+      "name": "wateringcan",
+      "name_cn": "浇水壶",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 10.0,
+        "depth": 10.0,
+        "height": 80.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {
+        "has_water": {
+          "name": "has_water",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "boolean",
+          "description": "controls watering and wetting effects",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
+        },
+        "water_level": {
+          "name": "water_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "number",
+          "description": "continuous water quantity; has_water is its compatibility projection",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
+        }
+      },
+      "default_states": {
+        "has_water": true,
+        "water_level": 100.0
+      },
+      "is_active": true
+    },
+    {
       "semantic_type": "wheelchair",
       "name": "wheelchair",
       "name_cn": "轮椅",
@@ -5732,6 +6053,30 @@
       },
       "default_states": {
         "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "workbench",
+      "name": "workbench",
+      "name_cn": "料理台",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 10.0,
+        "depth": 10.0,
+        "height": 80.0
+      },
+      "capabilities": [
+        "switchable",
+        "timed_device",
+        "workbench",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_on": false,
+        "is_running": false,
+        "cycle_remaining": 0
       },
       "is_active": true
     }

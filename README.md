@@ -870,7 +870,6 @@ PostgreSQL 是 Web 后端保存用户、场景版本和运行记录所需的存�
 ```bash
 export GRAPHWORLD_DATABASE_URL='postgresql+psycopg://graphworld:graphworld@127.0.0.1:55432/graphworld'
 python scripts/export_scene_version.py --all
-python scripts/export_object_catalog.py
 ```
 
-这些命令会把数据库中的全部场景版本（包括网页编辑后的布局、物体、节点和关系）写入 `backend/data/scene_versions/`，并把完整物体目录（尺寸、类别、能力和状态定义）写入 `backend/data/object_catalog/object_catalog.json`。导出后再提交并推送 Git，即可将场景和物体数据随代码发布。
+该命令会把数据库中的全部场景版本（包括网页编辑后的布局、物体、节点和关系）写入 `backend/data/scene_versions/`，文件名包含场景 ID 和版本号。导出后再提交并推送 Git，即可将场景数据随代码发布。

@@ -845,6 +845,13 @@ pre {
   overflow: auto;
 }
 
+.builder-delete-button {
+  width: 100%;
+  margin-top: 8px;
+  justify-content: center;
+  color: #b91c1c;
+}
+
 .builder-list-button {
   display: grid;
   width: 100%;

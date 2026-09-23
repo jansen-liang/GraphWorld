@@ -6,16 +6,18 @@ import { Eye, EyeOff, Play, Square, Layers3 } from "lucide-react";
 import type { FloorplanLayout } from "./FloorplanCanvas";
 import type { ObjectCatalogEntry } from "../../api/scenes";
 import type { InteractionHit } from "../../types/api";
-import { attachHinge, attachPart, attachPrismatic, createComposite, updateComposites, type CompositeObject } from "./compositeRuntime";
+import { attachHinge, attachLocalPart, attachPart, attachPrismatic, createComposite, updateComposites, type CompositeObject } from "./compositeRuntime";
 
 type RawNode = Record<string, unknown>;
 
 interface Scene3DCanvasProps {
   nodes: RawNode[];
+  edges: RawNode[];
   layout: FloorplanLayout;
   selectedId: string;
   onSelect: (id: string) => void;
   onChange: (layout: FloorplanLayout) => void;
+  onSimulationPlace?: (objectId: string, parentId: string) => void;
   catalog: ObjectCatalogEntry[];
   onInteractionHit?: (hit: InteractionHit) => void;
 }
@@ -71,13 +73,18 @@ function colorFor(index: number): number {
   return [0x3b82f6, 0x10b981, 0xf59e0b, 0xec4899, 0x8b5cf6, 0x06b6d4][index % 6];
 }
 
+function normalizeQuarterTurn(radians: number): number {
+  return ((Math.round(radians / (Math.PI / 2)) % 4) + 4) % 4;
+}
+
 type WallSide = "north" | "east" | "south" | "west";
 const OPPOSITE_WALL: Record<WallSide, WallSide> = { north: "south", east: "west", south: "north", west: "east" };
 
-export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, catalog, onInteractionHit }: Scene3DCanvasProps) {
+export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onChange, onSimulationPlace, catalog, onInteractionHit }: Scene3DCanvasProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const selectRef = useRef(onSelect);
   const changeRef = useRef(onChange);
+  const simulationPlaceRef = useRef(onSimulationPlace);
   const cameraStateRef = useRef<{ position: THREE.Vector3; target: THREE.Vector3 } | null>(null);
   const selectionVisualsRef = useRef(new Map<string, THREE.Object3D>());
   const transformControlsRef = useRef<TransformControls | null>(null);
@@ -93,11 +100,12 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
   const [heldObjectLabel, setHeldObjectLabel] = useState("");
   const [viewMode, setViewMode] = useState<"first" | "third">("first");
   const [layersOpen, setLayersOpen] = useState(false);
-  const [layerVisibility, setLayerVisibility] = useState({ labels: true, ceiling: true, floor: true, objects: true });
+  const [layerVisibility, setLayerVisibility] = useState({ labels: true, ceiling: false, floor: true, objects: true });
   const viewModeRef = useRef(viewMode);
   const handsRef = useRef({ left: false, right: false });
   selectRef.current = onSelect;
   changeRef.current = onChange;
+  simulationPlaceRef.current = onSimulationPlace;
   selectedIdRef.current = selectedId;
   viewModeRef.current = viewMode;
 
@@ -154,7 +162,7 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
     host.replaceChildren(renderer.domElement);
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
+    controls.enableDamping = false;
     controls.maxPolarAngle = Math.PI / 2.02;
     // Keep selection and camera navigation on separate mouse gestures:
     // left = select/drag, middle = orbit, wheel = zoom, right = pan.
@@ -166,19 +174,37 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
     const collisionMeshes: THREE.Mesh[] = [];
     const objectMeshes = new Map<string, THREE.Mesh>();
     const objectLabels = new Map<string, THREE.Sprite>();
-      const animatedMeshes = new Map<string, { mesh: THREE.Mesh; base: THREE.Vector3 }>();
+    const animatedMeshes = new Map<string, { mesh: THREE.Mesh; base: THREE.Vector3 }>();
     const effectMeshes = new Array<{
       mesh: THREE.Mesh;
       host: THREE.Mesh;
       nodeId: string;
-      kind: "droplet" | "drying" | "steam" | "broken";
+      kind: "droplet" | "drying" | "steam" | "broken" | "stain";
       offset: THREE.Vector3;
       phase: number;
     }>();
     const composites: CompositeObject[] = [];
     const runtimeOpen = new Map<string, boolean>();
+    const runtimeLightState = new Map<string, boolean>();
+    const runtimeSinkFill = new Map<string, number>();
+    const waterMeshes = new Map<string, THREE.Mesh>();
+    const runtimeDeviceRunning = new Map<string, boolean>();
+    const placedContents = new Map<string, number>();
+    const controlTargets = new Map<string, string[]>();
+    const faucetsBySink = new Map<string, RawNode[]>();
+    edges.forEach((edge) => {
+      if (text(edge.relation || edge.edge_type) !== "controls") return;
+      const source = text(edge.source_id || edge.source);
+      const target = text(edge.target_id || edge.target);
+      controlTargets.set(source, [...(controlTargets.get(source) ?? []), target]);
+      if (semantic(nodes.find((node) => text(node.id) === source)) === "faucet") {
+        faucetsBySink.set(target, [...(faucetsBySink.get(target) ?? []), nodes.find((node) => text(node.id) === source)!]);
+      }
+    });
     let heldObjectId: string | null = null;
     const heldOriginalPositions = new Map<string, THREE.Vector3>();
+    const heldOriginalRotations = new Map<string, THREE.Quaternion>();
+    const heldOriginalParents = new Map<string, string>();
     const transformControls = new TransformControls(camera, renderer.domElement);
     transformControls.setMode("translate");
     transformControls.setSpace("world");
@@ -189,6 +215,9 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
     rotationControls.setSpace("world");
     rotationControls.setSize(0.95);
     rotationControls.setRotationSnap(Math.PI / 2);
+    rotationControls.showX = true;
+    rotationControls.showY = true;
+    rotationControls.showZ = true;
     rotationControlsRef.current = rotationControls;
     objectMeshesRef.current = objectMeshes;
     scene.add(transformControls.getHelper());
@@ -198,6 +227,27 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
     if (!labelsVisible) camera.layers.disable(1);
     const dragState = { id: "", roomId: "", gridX: 0, gridY: 0, pointerId: -1, moved: false, hit: false, startX: 0, startY: 0 };
     const nodeById = new Map(nodes.map((node) => [text(node.id), node]));
+    const componentNodesByHost = new Map<string, RawNode[]>();
+    const componentNodeIds = new Set<string>();
+    const componentEdgeRelations = new Set(["component_of", "controls", "part_of"]);
+    nodes.forEach((node) => {
+      const hostId = text(node.component_of || node.parent);
+      if (!hostId) return;
+      const nodeSemantic = semantic(node);
+      const isMechanicalComponent = Boolean(text(node.component_role)) || ["button", "door", "hinge", "drawer"].includes(nodeSemantic);
+      if (isMechanicalComponent && (text(node.component_of) || edges.some((edge) => {
+        const relation = text(edge.relation || edge.edge_type);
+        const source = text(edge.source_id || edge.source);
+        const target = text(edge.target_id || edge.target);
+        return componentEdgeRelations.has(relation)
+          && ((source === text(node.id) && target === hostId) || (source === hostId && target === text(node.id)));
+      }))) componentNodeIds.add(text(node.id));
+      componentNodesByHost.set(hostId, [...(componentNodesByHost.get(hostId) ?? []), node]);
+    });
+    faucetsBySink.forEach((faucets, sinkId) => {
+      faucets.forEach((faucet) => componentNodeIds.add(text(faucet.id)));
+      componentNodesByHost.set(sinkId, [...(componentNodesByHost.get(sinkId) ?? []), ...faucets]);
+    });
     const catalogByType = new Map(catalog.map((entry) => [entry.semantic_type.toLowerCase(), entry]));
     const roomEntries = Object.entries(layout.rooms);
     selectionVisualsRef.current.clear();
@@ -209,13 +259,28 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
 
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(allWidth + 2, allDepth + 2),
-      new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.95 }),
+      new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.95 }),
     );
     floor.rotation.x = -Math.PI / 2;
     floor.position.set((allWidth - 1) / 2, -0.01, (allDepth - 1) / 2);
     floor.receiveShadow = true;
     floor.userData = { id: "__floor__", simulationSurface: true, layer: "floor" };
     scene.add(floor);
+    roomEntries.forEach(([, room]) => {
+      const ceiling = new THREE.Mesh(
+        new THREE.PlaneGeometry(room.width_cells * cell, room.depth_cells * cell),
+        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.96, side: THREE.DoubleSide }),
+      );
+      ceiling.rotation.x = Math.PI / 2;
+      ceiling.position.set(
+        (room.grid_x + room.width_cells / 2) * cell,
+        roomHeight,
+        (room.grid_y + room.depth_cells / 2) * cell,
+      );
+      ceiling.userData.layer = "ceiling";
+      ceiling.visible = layerVisibility.ceiling;
+      scene.add(ceiling);
+    });
     // The floor is a valid placement surface in first-person mode. It is
     // filtered out of editor selection below so it cannot steal room clicks.
     interactive.push(floor);
@@ -225,7 +290,7 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
     grid.userData.layer = "floor";
 
     const wallKeys = new Set<string>();
-    const wallMaterial = () => new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.82, metalness: 0.02 });
+    const wallMaterial = () => new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.9, metalness: 0.01 });
     const wallOpenings = (roomId: string, wall: WallSide): Array<[number, number]> => {
       const openings: Array<[number, number]> = [];
       Object.values(layout.doors).forEach((door) => {
@@ -333,13 +398,17 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
       const room = layout.rooms[item.room_id];
       if (!room) return;
       const node = nodeById.get(objectId);
+      if (componentNodeIds.has(objectId)) return;
       const catalogEntry = catalogByType.get(semantic(node));
       const [widthCm, depthCm, heightCm] = catalogEntry
         ? [catalogEntry.width_cm, catalogEntry.depth_cm, catalogEntry.height_cm]
         : [item.width_cm ?? Math.max(1, item.width_cells * cell * 100), item.depth_cm ?? Math.max(1, item.depth_cells * cell * 100), item.height_cm ?? 80];
-      const width = widthCm / 100;
-      const depth = depthCm / 100;
-      const height = heightCm / 100;
+      const componentHost = text(node?.component_of || node?.parent);
+      const componentRole = text(node?.component_role);
+      const isGraphComponent = Boolean(text(node?.component_of) || edges.some((edge) => text(edge.relation || edge.edge_type) === "component_of" && text(edge.source_id || edge.source) === objectId));
+      const width = (isGraphComponent ? item.width_cm ?? widthCm : widthCm) / 100;
+      const depth = (isGraphComponent ? item.depth_cm ?? depthCm : depthCm) / 100;
+      const height = (isGraphComponent ? item.height_cm ?? heightCm : heightCm) / 100;
       const placementMode = item.placement_mode;
       const parentMesh = item.parent_object_id ? objectMeshes.get(item.parent_object_id) : undefined;
       const parentHeight = parentMesh?.geometry.boundingBox ? parentMesh.geometry.boundingBox.max.y - parentMesh.geometry.boundingBox.min.y : 0.8;
@@ -350,9 +419,45 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
           : 0;
       const x = ((item.x_cm ?? ((room.grid_x + item.grid_x) * cell * 100)) / 100) + width / 2;
       const z = ((item.y_cm ?? ((room.grid_y + item.grid_y) * cell * 100)) / 100) + depth / 2;
+      const hostRotation = Number(item.rotation_y ?? item.rotation ?? 0) * Math.PI / 2;
+      const worldPointForHost = (px: number, py: number, pz: number) =>
+        new THREE.Vector3(px - x, py - (baseHeight + (item.z_cm ?? 0) / 100 + height / 2), pz - z)
+          .applyAxisAngle(new THREE.Vector3(0, 1, 0), hostRotation)
+          .add(new THREE.Vector3(x, baseHeight + (item.z_cm ?? 0) / 100 + height / 2, z));
       const selected = selectedId === objectId;
       const states = node?.states as Record<string, unknown> | undefined;
-      const objectMaterial = new THREE.MeshStandardMaterial({ color: CATEGORY_COLORS[objectCategory(node)], transparent: true, opacity: 0.86, roughness: 0.72 });
+      const composition = node?.composition && typeof node.composition === "object"
+        ? node.composition as { components?: Array<Record<string, unknown>>; storage?: Record<string, unknown> }
+        : null;
+      const componentNodes = componentNodesByHost.get(objectId) ?? [];
+      const componentNodeForRole = (role: string, index?: number) => componentNodes.find((componentNode) => {
+        const componentRole = text(componentNode.component_role);
+        const componentType = semantic(componentNode);
+        if (componentRole === role || componentType === role) {
+          return index == null || Number(componentNode.component_index ?? 0) === index;
+        }
+        return false;
+      });
+      const hasFrontCavity = Boolean(composition?.storage || composition?.components?.some((part) => text(part.role || part.semantic_type) === "door"));
+      const isDrawer = semantic(node) === "drawer" || componentRole === "drawer";
+      const isClothes = semantic(node) === "clothes";
+      const isComponentDoor = semantic(node) === "door" || componentRole === "door";
+      const folded = Boolean(states?.folded);
+      const objectMaterial = new THREE.MeshStandardMaterial({
+        color: isDrawer ? 0x64748b : isClothes ? 0x94a3b8 : CATEGORY_COLORS[objectCategory(node)],
+        transparent: true,
+        opacity: 0.86,
+        roughness: 0.72,
+      });
+      const isOpenFrame = ["rack", "shoe_rack", "drying_rack", "shelf"].includes(semantic(node));
+      if (isOpenFrame) {
+        objectMaterial.opacity = 0;
+        objectMaterial.depthWrite = false;
+      }
+      if (hasFrontCavity || semantic(node) === "sink") {
+        objectMaterial.opacity = 0;
+        objectMaterial.depthWrite = false;
+      }
       if (Boolean(states?.is_broken)) {
         objectMaterial.color = new THREE.Color(0x991b1b);
         objectMaterial.opacity = 0.72;
@@ -362,9 +467,23 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
         objectMaterial.emissive = new THREE.Color(0xffd166);
         objectMaterial.emissiveIntensity = 0.85;
       }
-      const mesh = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), objectMaterial);
+      const drawerFaceDepth = Math.min(0.035, depth * 0.08);
+      const mesh = new THREE.Mesh(
+        isComponentDoor
+          ? new THREE.BoxGeometry(width * 0.92, height * 0.92, Math.min(0.04, depth * 0.1))
+          : isDrawer
+          ? new THREE.BoxGeometry(width * 0.94, height * 0.92, drawerFaceDepth)
+          : isClothes
+            ? new THREE.BoxGeometry(width * (folded ? 0.72 : 1), height * (folded ? 0.42 : 1), depth * (folded ? 1.2 : 0.72))
+            : new THREE.BoxGeometry(width, height, depth),
+        objectMaterial,
+      );
       mesh.geometry.computeBoundingBox();
-      mesh.position.set(x, baseHeight + (item.z_cm ?? 0) / 100 + height / 2, z);
+      mesh.position.set(
+        x,
+        baseHeight + (item.z_cm ?? 0) / 100 + height / 2,
+        isComponentDoor || isDrawer ? z - depth / 2 + drawerFaceDepth / 2 : z,
+      );
       mesh.rotation.set(
         Number(item.rotation_x ?? 0) * Math.PI / 2,
         Number(item.rotation_y ?? item.rotation ?? 0) * Math.PI / 2,
@@ -379,21 +498,161 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
       objectMeshes.set(objectId, mesh);
       const composite = createComposite(objectId, mesh);
       composites.push(composite);
+      if (isOpenFrame) {
+        const frameMaterial = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.72 });
+        const rail = Math.min(0.045, Math.min(width, depth) * 0.08);
+        const shelfCount = semantic(node) === "drying_rack" ? 2 : 3;
+        for (let level = 0; level < shelfCount; level += 1) {
+          const levelY = mesh.position.y - height / 2 + (height * (level + 0.5)) / shelfCount;
+          const shelfDepth = semantic(node) === "drying_rack" ? depth * 0.82 : depth * 0.72;
+          const shelf = new THREE.Mesh(new THREE.BoxGeometry(width * 0.88, rail, shelfDepth), frameMaterial.clone());
+          shelf.position.copy(worldPointForHost(x, levelY, z));
+          shelf.rotation.y = hostRotation;
+          shelf.userData = { id: objectId, componentId: `${objectId}_shelf_${level + 1}`, componentRole: "storage_slot", capabilities: ["place_target"] };
+          scene.add(shelf);
+          interactive.push(shelf);
+          attachPart(composite, shelf);
+        }
+        [-1, 1].forEach((side) => {
+          const post = new THREE.Mesh(new THREE.BoxGeometry(rail, height, rail), frameMaterial.clone());
+          post.position.copy(worldPointForHost(x + side * (width / 2 - rail / 2), mesh.position.y, z - depth * 0.36));
+          post.rotation.y = hostRotation;
+          scene.add(post);
+          attachPart(composite, post);
+        });
+      }
+      if (hasFrontCavity || semantic(node) === "sink") {
+        const shellMaterial = new THREE.MeshStandardMaterial({ color: CATEGORY_COLORS[objectCategory(node)], roughness: 0.78, metalness: 0.04 });
+        const addShellPanel = (panelWidth: number, panelHeight: number, panelDepth: number, px: number, py: number, pz: number) => {
+          const panel = new THREE.Mesh(new THREE.BoxGeometry(panelWidth, panelHeight, panelDepth), shellMaterial.clone());
+          panel.position.copy(worldPointForHost(px, py, pz));
+          panel.rotation.y = hostRotation;
+          panel.castShadow = true;
+          panel.receiveShadow = true;
+          panel.userData.layer = "objects";
+          scene.add(panel);
+          attachPart(composite, panel);
+        };
+        const wall = Math.min(0.06, Math.max(0.025, Math.min(width, depth) * 0.08));
+        const openFront = hasFrontCavity;
+        addShellPanel(width, wall, depth, x, mesh.position.y - height / 2 + wall / 2, z);
+        if (semantic(node) !== "sink") {
+          addShellPanel(width, wall, depth, x, mesh.position.y + height / 2 - wall / 2, z);
+        }
+        addShellPanel(wall, height, depth, x - width / 2 + wall / 2, mesh.position.y, z);
+        addShellPanel(wall, height, depth, x + width / 2 - wall / 2, mesh.position.y, z);
+        addShellPanel(width, height, wall, x, mesh.position.y, z + depth / 2 - wall / 2);
+        if (!openFront) addShellPanel(width, height, wall, x, mesh.position.y, z - depth / 2 + wall / 2);
+        if (semantic(node) === "sink") {
+          const basinWidth = width * 0.72;
+          const basinDepth = depth * 0.62;
+          const basinWall = Math.min(0.045, wall);
+          const rimY = mesh.position.y + height / 2 - basinWall / 2;
+          const basinY = mesh.position.y + height * 0.05;
+          const basinSideHeight = Math.max(basinWall, rimY - basinY);
+          const basinBottom = new THREE.Mesh(
+            new THREE.BoxGeometry(basinWidth, basinWall, basinDepth),
+            new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.34, metalness: 0.12 }),
+          );
+          basinBottom.position.set(x, basinY, z);
+          basinBottom.userData.layer = "objects";
+          scene.add(basinBottom);
+          attachPart(composite, basinBottom);
+          const basinMaterial = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.32, metalness: 0.16 });
+          const basinSides = [
+            { w: basinWidth, d: basinWall, px: x, pz: z - basinDepth / 2 + basinWall / 2 },
+            { w: basinWidth, d: basinWall, px: x, pz: z + basinDepth / 2 - basinWall / 2 },
+            { w: basinWall, d: basinDepth, px: x - basinWidth / 2 + basinWall / 2, pz: z },
+            { w: basinWall, d: basinDepth, px: x + basinWidth / 2 - basinWall / 2, pz: z },
+          ];
+          basinSides.forEach((side) => {
+            const basinSide = new THREE.Mesh(new THREE.BoxGeometry(side.w, basinSideHeight, side.d), basinMaterial.clone());
+            basinSide.position.copy(worldPointForHost(side.px, basinY + basinSideHeight / 2, side.pz));
+            basinSide.userData.layer = "objects";
+            basinSide.rotation.y = hostRotation;
+            scene.add(basinSide);
+            attachPart(composite, basinSide);
+          });
+          addShellPanel(basinWidth, basinWall, basinWall, x, rimY, z - basinDepth / 2);
+          addShellPanel(basinWidth, basinWall, basinWall, x, rimY, z + basinDepth / 2);
+          addShellPanel(basinWall, basinWall, basinDepth, x - basinWidth / 2, rimY, z);
+          addShellPanel(basinWall, basinWall, basinDepth, x + basinWidth / 2, rimY, z);
+        }
+      }
+      if (["light", "room_light"].includes(semantic(node))) {
+        const lamp = new THREE.PointLight(0xffe6a3, Boolean(states?.is_on) ? 2.2 : 0, 5.5, 1.8);
+        lamp.position.set(0, placementMode === "wall_mounted" ? -0.35 : Math.max(0.15, height / 2), 0);
+        mesh.add(lamp);
+        runtimeLightState.set(objectId, Boolean(states?.is_on));
+      }
+      if (semantic(node) === "sink") {
+        runtimeSinkFill.set(objectId, Number(states?.fill_level ?? (states?.is_full ? 1 : 0)));
+        const drain = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.045, 0.045, 0.018, 16),
+          new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.65, roughness: 0.32 }),
+        );
+        drain.position.set(width * 0.28, height * 0.18, -depth / 2 - 0.018);
+        drain.rotation.x = Math.PI / 2;
+        drain.userData = { id: objectId, componentId: `${objectId}_drain`, componentRole: "sink_drain" };
+        attachLocalPart(composite, drain);
+        interactive.push(drain);
+        const water = new THREE.Mesh(
+          new THREE.BoxGeometry(width * 0.62, 0.012, depth * 0.5),
+          new THREE.MeshPhysicalMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.72, roughness: 0.12, metalness: 0.08 }),
+        );
+        water.position.set(0, height * 0.05, 0);
+        water.userData = { layer: "objects" };
+        water.visible = runtimeSinkFill.get(objectId)! > 0;
+        mesh.add(water);
+        waterMeshes.set(objectId, water);
+        animatedMeshes.set(objectId, { mesh: water, base: water.position.clone() });
+        const faucetNode = faucetsBySink.get(objectId)?.[0];
+        if (faucetNode) {
+          const faucetGroup = new THREE.Group();
+          faucetGroup.position.set(0, height * 0.38, depth * 0.34);
+          faucetGroup.userData = { id: text(faucetNode.id), componentId: text(faucetNode.id), componentRole: "faucet" };
+          const metal = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, metalness: 0.82, roughness: 0.22 });
+          const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.022, height * 0.34, 12), metal);
+          stem.position.y = height * 0.17;
+          const spout = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, depth * 0.32, 12), metal);
+          spout.rotation.x = Math.PI / 2;
+          spout.position.set(0, height * 0.32, -depth * 0.12);
+          stem.userData = { id: text(faucetNode.id), componentId: text(faucetNode.id), componentRole: "faucet" };
+          spout.userData = { id: text(faucetNode.id), componentId: text(faucetNode.id), componentRole: "faucet" };
+          faucetGroup.add(stem, spout);
+          attachLocalPart(composite, faucetGroup);
+          interactive.push(stem, spout);
+        }
+      }
+      if (["washer", "washing_machine", "microwave", "dishwasher", "dryer", "clothesdryer"].includes(semantic(node))) {
+        runtimeDeviceRunning.set(objectId, Boolean(states?.is_running));
+        animatedMeshes.set(objectId, { mesh, base: mesh.position.clone() });
+      }
       if (Boolean(states?.is_running) || (Boolean(states?.is_on) && ["fan", "ceiling_fan", "ventilator"].includes(semantic(node)))) {
         animatedMeshes.set(objectId, { mesh, base: mesh.position.clone() });
       }
       if (node?.physics_state === "falling") {
         animatedMeshes.set(objectId, { mesh, base: mesh.position.clone() });
       }
-      if (Boolean(states?.is_wet)) {
+      if (Boolean(states?.is_wet) || semantic(node) === "clothes") {
         const dropletMaterial = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0369a1, emissiveIntensity: 0.25, transparent: true, opacity: 0.82, roughness: 0.25 });
         const dropletRadius = Math.max(0.012, Math.min(width, depth) * 0.035);
-        [[-0.28, 0.2], [0.05, -0.16], [0.31, 0.08]].forEach(([ox, oz], index) => {
+        [[-0.28, 0.2], [0.05, -0.16], [0.31, 0.08], [-0.12, -0.3], [0.24, 0.32]].forEach(([ox, oz], index) => {
           const droplet = new THREE.Mesh(new THREE.SphereGeometry(dropletRadius, 8, 6), dropletMaterial.clone());
           droplet.position.set(mesh.position.x + ox * width, mesh.position.y + height * 0.25, mesh.position.z + oz * depth);
           scene.add(droplet);
           effectMeshes.push({ mesh: droplet, host: mesh, nodeId: objectId, kind: "droplet", offset: new THREE.Vector3(ox * width, height * 0.25, oz * depth), phase: index * 1.7 });
         });
+        if (semantic(node) === "clothes") {
+          const stainMaterial = new THREE.MeshStandardMaterial({ color: 0x79513b, roughness: 0.96, transparent: true, opacity: 0.88 });
+          [[-0.22, 0.18], [0.16, 0.04], [0.05, -0.24]].forEach(([ox, oy], index) => {
+            const stain = new THREE.Mesh(new THREE.SphereGeometry(Math.max(0.018, width * (0.045 + index * 0.008)), 7, 5), stainMaterial.clone());
+            stain.scale.set(1.3, 0.38, 0.12);
+            stain.position.set(mesh.position.x + ox * width, mesh.position.y + oy * height, mesh.position.z - depth / 2 - 0.006);
+            scene.add(stain);
+            effectMeshes.push({ mesh: stain, host: mesh, nodeId: objectId, kind: "stain", offset: new THREE.Vector3(ox * width, oy * height, -depth / 2 - 0.006), phase: index });
+          });
+        }
         if (states?.cycle_remaining != null) {
           const bubbleMaterial = new THREE.MeshStandardMaterial({ color: 0xfacc15, emissive: 0xca8a04, emissiveIntensity: 0.35, transparent: true, opacity: 0.7 });
           [0.22, 0.5, 0.78].forEach((offset, index) => {
@@ -441,9 +700,6 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
       scene.add(label);
       objectLabels.set(objectId, label);
 
-      const composition = node?.composition && typeof node.composition === "object"
-        ? node.composition as { components?: Array<Record<string, unknown>>; storage?: Record<string, unknown> }
-        : null;
       const componentMaterial = (role: string) => new THREE.MeshStandardMaterial({
         color: role.includes("button") || role.includes("flush") ? 0xf59e0b : role.includes("drawer") ? 0x0f766e : 0x334155,
         transparent: true,
@@ -452,7 +708,8 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
       });
       const addComponentMesh = (role: string, face: string, anchor: number[], geometry: THREE.BufferGeometry, position: THREE.Vector3, componentId = `${objectId}_${role}`) => {
         const component = new THREE.Mesh(geometry, componentMaterial(role));
-        component.position.copy(position);
+        component.position.copy(worldPointForHost(position.x, position.y, position.z));
+        component.rotation.y = hostRotation;
         component.userData = { id: objectId, componentId, componentRole: role, componentFace: face };
         component.castShadow = true;
         scene.add(component);
@@ -464,7 +721,11 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
       };
       composition?.components?.forEach((component) => {
         const role = text(component.role || component.semantic_type || "component");
-        const face = text(component.mount_face || "front");
+        // Old snapshots stored device start buttons on the front. Treat their
+        // semantic role as authoritative so existing versions get the fixed
+        // top mounting without requiring a data migration.
+        const hasDeviceDoor = composition?.components?.some((entry) => text(entry.role || entry.semantic_type) === "door");
+        const face = role.includes("button") && hasDeviceDoor ? "top" : text(component.mount_face || "front");
         const anchor = Array.isArray(component.anchor) ? component.anchor.map(Number) : [0.5, 0.5, 0];
         const ax = Math.max(0, Math.min(1, anchor[0] ?? 0.5));
         const ay = Math.max(0, Math.min(1, anchor[1] ?? 0.5));
@@ -472,10 +733,13 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
         if (role.includes("button") || role.includes("knob")) {
           const buttonSize = Math.max(0.045, Math.min(width, depth) * 0.11);
           const buttonGeometry = new THREE.BoxGeometry(buttonSize, buttonSize, buttonSize * 0.5);
+          const isDeviceControl = role.includes("button") && hasDeviceDoor;
+          const buttonLocalZ = isDeviceControl ? -depth * 0.34 : (ay - 0.5) * depth;
           const buttonPosition = face === "top"
-            ? new THREE.Vector3(x + (ax - 0.5) * width, mesh.position.y + height / 2 + buttonSize / 2, z + (ay - 0.5) * depth)
+            ? new THREE.Vector3(x + (ax - 0.5) * width, mesh.position.y + height / 2 + buttonSize / 2, z + buttonLocalZ)
             : new THREE.Vector3(x + (ax - 0.5) * width, mesh.position.y + (ay - 0.5) * height, z - depth / 2 - buttonSize / 3);
-          addComponentMesh(role, face, [ax, ay, az], buttonGeometry, buttonPosition);
+          const buttonNode = componentNodeForRole(role) ?? componentNodes.find((entry) => semantic(entry) === "button");
+          addComponentMesh(role, face, [ax, ay, az], buttonGeometry, buttonPosition, text(buttonNode?.id) || `${objectId}_${role}`);
         } else if (role === "hinge") {
           const hingeGeometry = new THREE.CylinderGeometry(Math.max(0.018, Math.min(width, height) * 0.035), Math.max(0.018, Math.min(width, height) * 0.035), Math.max(0.12, height * 0.55), 10);
           const hingePosition = new THREE.Vector3(
@@ -487,10 +751,11 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
           // CylinderGeometry is already aligned to Y, so the hinge pin stays
           // vertical (the door's rotation axis) instead of pointing along Z.
         } else if (role === "door") {
-          const doorWidth = Math.max(0.08, width * 0.78);
-          const doorHeight = Math.max(0.12, height * 0.76);
+          const faceInset = Math.min(0.025, Math.min(width, height) * 0.035);
+          const doorWidth = Math.max(0.08, width - faceInset * 2);
+          const doorHeight = Math.max(0.12, height - faceInset * 2);
           const doorGeometry = face === "top"
-            ? new THREE.BoxGeometry(doorWidth, 0.025, Math.max(0.08, depth * 0.72))
+            ? new THREE.BoxGeometry(doorWidth, 0.025, Math.max(0.08, depth - faceInset * 2))
             : new THREE.BoxGeometry(doorWidth, doorHeight, 0.035);
           if (face === "top") {
             addComponentMesh(role, face, [ax, ay, az], doorGeometry, new THREE.Vector3(x, mesh.position.y + height / 2 + 0.018, z));
@@ -502,16 +767,38 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
           const hingeAnchorX = Array.isArray(hingeSpec?.anchor) ? Number(hingeSpec.anchor[0]) : 0.08;
           const rightHinged = hingeAnchorX >= 0.5;
             const pivot = new THREE.Group();
-            pivot.position.set(x + (rightHinged ? width / 2 : -width / 2), mesh.position.y, z - depth / 2 - 0.02);
+            pivot.position.copy(worldPointForHost(x + (rightHinged ? width / 2 : -width / 2), mesh.position.y, z - depth / 2 - 0.02));
+            pivot.rotation.y = hostRotation;
+            const doorNode = componentNodeForRole("door");
+            const componentId = text(doorNode?.id) || `${objectId}_${role}`;
             const panel = new THREE.Mesh(doorGeometry, componentMaterial(role));
             panel.position.set(rightHinged ? -doorWidth / 2 : doorWidth / 2, 0, 0);
-            panel.userData = { id: objectId, componentId: `${objectId}_${role}`, componentRole: role, componentFace: face };
+            panel.userData = { id: objectId, componentId, componentRole: role, componentFace: face };
             panel.castShadow = true;
             pivot.add(panel);
             scene.add(pivot);
             interactive.push(panel);
-            attachHinge(composite, `${objectId}_${role}`, panel, pivot, rightHinged ? -Math.PI / 2 : Math.PI / 2);
+            attachHinge(composite, componentId, panel, pivot, rightHinged ? -Math.PI / 2 : Math.PI / 2);
           }
+        } else if (role === "drawer_slot" && isDrawer) {
+          const trayMaterial = componentMaterial("drawer");
+          const trayDepth = depth * 0.78;
+          const trayHeight = Math.max(0.04, height * 0.72);
+          const trayWall = Math.min(0.025, Math.max(0.012, height * 0.1));
+          const trayCenterZ = z - depth / 2 + drawerFaceDepth + trayDepth / 2;
+          const trayParts = [
+            { w: width * 0.9, h: trayWall, d: trayDepth, x, y: mesh.position.y - trayHeight / 2, z: trayCenterZ },
+            { w: trayWall, h: trayHeight, d: trayDepth, x: x - width * 0.45, y: mesh.position.y, z: trayCenterZ },
+            { w: trayWall, h: trayHeight, d: trayDepth, x: x + width * 0.45, y: mesh.position.y, z: trayCenterZ },
+            { w: width * 0.9, h: trayHeight, d: trayWall, x, y: mesh.position.y, z: trayCenterZ + trayDepth / 2 },
+          ];
+          trayParts.forEach((part) => {
+            const trayPart = new THREE.Mesh(new THREE.BoxGeometry(part.w, part.h, part.d), trayMaterial.clone());
+            trayPart.position.set(part.x, part.y, part.z);
+            trayPart.userData = { id: objectId, componentRole: "drawer_tray" };
+            scene.add(trayPart);
+            attachPart(composite, trayPart);
+          });
         }
       });
       const storage = composition?.storage;
@@ -527,11 +814,12 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
               new THREE.BoxGeometry(width * 0.82 / columns, Math.max(0.08, height * 0.72 / levels), depth * 0.68),
               new THREE.MeshBasicMaterial({ color: 0x93c5fd, transparent: true, opacity: 0.08, depthWrite: false }),
             );
-            slot.position.set(
+            slot.position.copy(worldPointForHost(
               x + (column + 0.5 - columns / 2) * (width * 0.82 / columns),
               mesh.position.y - height / 2 + (level + 0.5) * (height * 0.72 / levels) + height * 0.14,
               z - depth * 0.04,
-            );
+            ));
+            slot.rotation.y = hostRotation;
             slot.userData = {
               id: objectId,
               componentId: `${objectId}_slot_l${level + 1}_c${column + 1}`,
@@ -544,14 +832,16 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
         }
         for (let level = 1; level < levels; level += 1) {
           const shelf = new THREE.Mesh(new THREE.BoxGeometry(width * 0.82, 0.018, depth * 0.72), new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.8 }));
-          shelf.position.set(x, mesh.position.y - height / 2 + (height * level) / levels, z - depth * 0.04);
+          shelf.position.copy(worldPointForHost(x, mesh.position.y - height / 2 + (height * level) / levels, z - depth * 0.04));
+          shelf.rotation.y = hostRotation;
           shelf.userData = { id: objectId, componentRole: "storage_shelf" };
           scene.add(shelf);
           mountStoragePart(shelf);
         }
         for (let column = 1; column < columns; column += 1) {
           const divider = new THREE.Mesh(new THREE.BoxGeometry(0.018, height * 0.76, depth * 0.72), new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.8 }));
-          divider.position.set(x - width / 2 + (width * column) / columns, mesh.position.y, z - depth * 0.04);
+          divider.position.copy(worldPointForHost(x - width / 2 + (width * column) / columns, mesh.position.y, z - depth * 0.04));
+          divider.rotation.y = hostRotation;
           divider.userData = { id: objectId, componentRole: "storage_divider" };
           scene.add(divider);
           mountStoragePart(divider);
@@ -562,16 +852,20 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
           const drawerLevel = Math.floor(drawerIndex / columns) % levels;
           const drawerWidth = width * 0.82 / columns;
           const drawerHeight = Math.max(0.08, height * 0.72 / levels - 0.025);
-          const drawer = new THREE.Group();
-          drawer.position.set(
-            x + (drawerColumn + 0.5 - columns / 2) * drawerWidth,
-            mesh.position.y - height / 2 + height * 0.14 + (drawerLevel + 0.5) * (height * 0.72 / levels),
-            z - depth / 2 - 0.035,
-          );
-          const componentId = `${objectId}_drawer_${drawerIndex + 1}`;
-          drawer.userData = { id: objectId, componentId, componentRole: `drawer_${drawerIndex + 1}` };
           const wallDepth = Math.max(0.08, depth * 0.62);
           const wallThickness = 0.025;
+          const drawer = new THREE.Group();
+          drawer.position.copy(worldPointForHost(
+            x + (drawerColumn + 0.5 - columns / 2) * drawerWidth,
+            mesh.position.y - height / 2 + height * 0.14 + (drawerLevel + 0.5) * (height * 0.72 / levels),
+            // Closed drawers stay inside the cabinet.  The prismatic joint
+            // moves them toward -Z only after an explicit open interaction.
+            z - depth / 2 + wallDepth / 2 + 0.01,
+          ));
+          drawer.rotation.y = hostRotation;
+          const drawerNode = componentNodeForRole("drawer", drawerIndex);
+          const componentId = text(drawerNode?.id) || `${objectId}_drawer_${drawerIndex + 1}`;
+          drawer.userData = { id: objectId, componentId, componentRole: `drawer_${drawerIndex + 1}` };
           const bottom = new THREE.Mesh(new THREE.BoxGeometry(drawerWidth, wallThickness, wallDepth), componentMaterial("drawer"));
           bottom.position.y = -drawerHeight / 2;
           const front = new THREE.Mesh(new THREE.BoxGeometry(drawerWidth, drawerHeight, wallThickness), componentMaterial("drawer"));
@@ -588,15 +882,18 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
           scene.add(drawer);
           interactive.push(front);
           interactive.push(bottom);
-          attachPrismatic(composite, componentId, drawer, Math.max(0.08, depth - 0.06));
+          const drawerAxisLength = mesh.geometry.boundingBox?.getSize(new THREE.Vector3()).z ?? depth;
+          const guideOverlap = Math.min(wallDepth * 0.62, drawerAxisLength * 0.38);
+          attachPrismatic(composite, componentId, drawer, Math.max(0, drawerAxisLength - guideOverlap));
         }
       }
     });
 
-    const pendingTransform = { id: "", changed: false };
+    const pendingTransform: { id: string; changed: boolean; startPosition: THREE.Vector3 | null } = { id: "", changed: false, startPosition: null };
     const gizmoLock = { active: false };
     const transformGuard = { active: false };
     const lastValidPositions = new Map<string, THREE.Vector3>();
+    objectMeshes.forEach((mesh, id) => lastValidPositions.set(id, mesh.position.clone()));
     const dimensionsFor = (id: string) => {
       const item = layout.objects[id];
       const entry = catalogByType.get(semantic(nodeById.get(id)));
@@ -606,7 +903,7 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
         height: (entry?.height_cm ?? item?.height_cm ?? 80) / 100,
       };
     };
-    const canOccupy = (id: string, position: THREE.Vector3) => {
+    const canOccupy = (id: string, position: THREE.Vector3, currentPosition: THREE.Vector3) => {
       const item = layout.objects[id];
       if (!item || item.placement_mode === "contained" || item.placement_mode === "wall_mounted") return true;
       const room = layout.rooms[item.room_id];
@@ -617,12 +914,19 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
       const roomWidth = room.width_cells * cell;
       const roomDepth = room.depth_cells * cell;
       if (position.x - dimensions.width / 2 < roomX || position.x + dimensions.width / 2 > roomX + roomWidth || position.z - dimensions.depth / 2 < roomZ || position.z + dimensions.depth / 2 > roomZ + roomDepth || position.y - dimensions.height / 2 < 0) return false;
+      const overlapVolume = (first: THREE.Vector3, second: THREE.Vector3, otherSize: { width: number; depth: number; height: number }) =>
+        Math.max(0, (dimensions.width + otherSize.width) / 2 - Math.abs(first.x - second.x))
+        * Math.max(0, (dimensions.depth + otherSize.depth) / 2 - Math.abs(first.z - second.z))
+        * Math.max(0, (dimensions.height + otherSize.height) / 2 - Math.abs(first.y - second.y));
       for (const [otherId, otherMesh] of objectMeshes) {
         if (otherId === id) continue;
         const other = layout.objects[otherId];
         if (!other || other.room_id !== item.room_id || other.placement_mode === "contained" || other.placement_mode === "wall_mounted") continue;
         const otherSize = dimensionsFor(otherId);
-        if (Math.abs(position.x - otherMesh.position.x) < (dimensions.width + otherSize.width) / 2 && Math.abs(position.z - otherMesh.position.z) < (dimensions.depth + otherSize.depth) / 2 && Math.abs(position.y - otherMesh.position.y) < (dimensions.height + otherSize.height) / 2) return false;
+        const candidateOverlap = overlapVolume(position, otherMesh.position, otherSize);
+        if (candidateOverlap <= 0) continue;
+        const currentOverlap = overlapVolume(currentPosition, otherMesh.position, otherSize);
+        if (currentOverlap <= 0 || candidateOverlap >= currentOverlap) return false;
       }
       return true;
     };
@@ -644,12 +948,13 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
         Math.round(mesh.position.y / cell) * cell,
         Math.round(mesh.position.z / cell) * cell,
       );
-      snapped.x = Math.max(roomX + size.width / 2, Math.min(roomX + roomWidth - size.width / 2, snapped.x));
-      snapped.z = Math.max(roomZ + size.depth / 2, Math.min(roomZ + roomDepth - size.depth / 2, snapped.z));
+      const wallMounted = item.placement_mode === "wall_mounted";
+      snapped.x = Math.max(roomX + (wallMounted ? 0 : size.width / 2), Math.min(roomX + roomWidth - (wallMounted ? 0 : size.width / 2), snapped.x));
+      snapped.z = Math.max(roomZ + (wallMounted ? 0 : size.depth / 2), Math.min(roomZ + roomDepth - (wallMounted ? 0 : size.depth / 2), snapped.z));
       snapped.y = Math.max(size.height / 2, snapped.y);
       const previous = lastValidPositions.get(id) ?? mesh.position.clone();
       transformGuard.active = true;
-      mesh.position.copy(canOccupy(id, snapped) ? snapped : previous);
+      mesh.position.copy(canOccupy(id, snapped, previous) ? snapped : previous);
       transformGuard.active = false;
       lastValidPositions.set(id, mesh.position.clone());
     };
@@ -672,37 +977,55 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
         : 0.8;
       const baseHeight = item.placement_mode === "wall_mounted"
         ? 2.1
-        : item.placement_mode === "contained"
+        : item.placement_mode === "contained" && !(pendingTransform.startPosition && mesh.position.distanceToSquared(pendingTransform.startPosition) > 0.0001)
           ? Math.max(0.02, (parentMesh?.position.y ?? parentHeight) - parentHeight / 2 + 0.03)
           : 0;
+      const detachContained = item.placement_mode === "contained"
+        && Boolean(pendingTransform.startPosition && mesh.position.distanceToSquared(pendingTransform.startPosition) > 0.0001);
       const next = structuredClone(layout);
       const room = layout.rooms[item.room_id];
       const xCm = Math.round((mesh.position.x - width / 200) * 100);
       const yCm = Math.round((mesh.position.z - depth / 200) * 100);
+      const wallMounted = item.placement_mode === "wall_mounted";
+      const rotationX = normalizeQuarterTurn(mesh.rotation.x);
+      const rotationY = normalizeQuarterTurn(mesh.rotation.y);
+      const rotationZ = normalizeQuarterTurn(mesh.rotation.z);
       next.objects[pendingTransform.id] = {
         ...next.objects[pendingTransform.id],
+        ...(detachContained ? { placement_mode: "surface" as const, parent_object_id: undefined, layout_anchor: "surface" } : {}),
         // Keep the grid coordinates in sync with the physical snapshot. The
         // 2D editor renders these fields, while 3D preserves centimeter
         // precision and vertical placement in z_cm.
-        grid_x: room ? Math.round((xCm - (room.x_cm ?? room.grid_x * cell * 100)) / (cell * 100)) : item.grid_x,
-        grid_y: room ? Math.round((yCm - (room.y_cm ?? room.grid_y * cell * 100)) / (cell * 100)) : item.grid_y,
+        grid_x: room ? wallMounted
+          ? Math.max(0, Math.min(room.width_cells - 1, Math.floor((xCm - (room.x_cm ?? room.grid_x * cell * 100)) / (cell * 100))))
+          : Math.round((xCm - (room.x_cm ?? room.grid_x * cell * 100)) / (cell * 100))
+          : item.grid_x,
+        grid_y: room ? wallMounted
+          ? Math.max(0, Math.min(room.depth_cells - 1, Math.floor((yCm - (room.y_cm ?? room.grid_y * cell * 100)) / (cell * 100))))
+          : Math.round((yCm - (room.y_cm ?? room.grid_y * cell * 100)) / (cell * 100))
+          : item.grid_y,
         x_cm: xCm,
         y_cm: yCm,
         z_cm: Math.round((mesh.position.y - baseHeight - height / 200) * 100),
-        rotation: Math.round(mesh.rotation.y / (Math.PI / 2)) % 4,
-        rotation_x: Math.round(mesh.rotation.x / (Math.PI / 2)) % 4,
-        rotation_y: Math.round(mesh.rotation.y / (Math.PI / 2)) % 4,
-        rotation_z: Math.round(mesh.rotation.z / (Math.PI / 2)) % 4,
+        rotation: rotationY,
+        rotation_x: rotationX,
+        rotation_y: rotationY,
+        rotation_z: rotationZ,
       };
       changeRef.current(next);
+      if (detachContained) simulationPlaceRef.current?.(pendingTransform.id, item.room_id);
       pendingTransform.id = "";
       pendingTransform.changed = false;
+      pendingTransform.startPosition = null;
     };
     transformControls.addEventListener("dragging-changed", (event) => {
       controls.enabled = !(event.value as boolean);
       gizmoLock.active = Boolean(event.value);
       rotationControls.enabled = !Boolean(event.value);
-      if (event.value) pendingTransform.id = String(transformControls.object?.userData.id || selectedId);
+      if (event.value) {
+        pendingTransform.id = String(transformControls.object?.userData.id || selectedId);
+        pendingTransform.startPosition = transformControls.object?.position.clone() ?? null;
+      }
       else commitTransform();
     });
     transformControls.addEventListener("mouseDown", () => { gizmoLock.active = true; rotationControls.enabled = false; });
@@ -717,12 +1040,30 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
       controls.enabled = !(event.value as boolean);
       gizmoLock.active = Boolean(event.value);
       transformControls.enabled = !Boolean(event.value);
-      if (event.value) pendingTransform.id = String(rotationControls.object?.userData.id || selectedId);
-      else commitTransform();
+      if (event.value) {
+        pendingTransform.id = String(rotationControls.object?.userData.id || selectedId);
+        pendingTransform.startPosition = rotationControls.object?.position.clone() ?? null;
+      }
     });
     rotationControls.addEventListener("mouseDown", () => { gizmoLock.active = true; transformControls.enabled = false; });
-    rotationControls.addEventListener("mouseUp", () => { gizmoLock.active = false; transformControls.enabled = true; });
-    rotationControls.addEventListener("objectChange", () => { pendingTransform.changed = true; });
+    rotationControls.addEventListener("mouseUp", () => {
+      gizmoLock.active = false;
+      transformControls.enabled = true;
+      const mesh = rotationControls.object as THREE.Object3D | undefined;
+      if (mesh) {
+        mesh.rotation.set(
+          normalizeQuarterTurn(mesh.rotation.x) * Math.PI / 2,
+          normalizeQuarterTurn(mesh.rotation.y) * Math.PI / 2,
+          normalizeQuarterTurn(mesh.rotation.z) * Math.PI / 2,
+        );
+      }
+      commitTransform();
+    });
+    rotationControls.addEventListener("objectChange", () => {
+      pendingTransform.changed = true;
+      const mesh = rotationControls.object;
+      if (mesh) pendingTransform.id = String(mesh.userData.id || selectedId);
+    });
 
     const center = new THREE.Vector3(allWidth / 2, 0.8, allDepth / 2);
     const savedCamera = cameraStateRef.current;
@@ -743,9 +1084,11 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
       player: new THREE.Vector3(center.x, 1.6, center.z),
     };
     const cameraDirection = new THREE.Vector3();
+    const handGeometry = new THREE.SphereGeometry(0.11, 16, 12);
+    const handMaterial = new THREE.MeshStandardMaterial({ color: 0xf2b38b, roughness: 0.78 });
     const hands = {
-      left: new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.28, 4, 8), new THREE.MeshStandardMaterial({ color: 0xf2b38b })),
-      right: new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.28, 4, 8), new THREE.MeshStandardMaterial({ color: 0xf2b38b })),
+      left: new THREE.Mesh(handGeometry, handMaterial),
+      right: new THREE.Mesh(handGeometry, handMaterial),
     };
     const playerBody = new THREE.Mesh(
       new THREE.CapsuleGeometry(0.28, 1.04, 8, 16),
@@ -799,7 +1142,11 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
         const heldMesh = objectMeshes.get(heldObjectId);
         const original = heldOriginalPositions.get(heldObjectId);
         if (heldMesh && original) heldMesh.position.copy(original);
+        const originalRotation = heldOriginalRotations.get(heldObjectId);
+        if (heldMesh && originalRotation) heldMesh.quaternion.copy(originalRotation);
         if (heldMesh) heldMesh.userData.held = false;
+        const originalParent = heldOriginalParents.get(heldObjectId);
+        if (originalParent) placedContents.set(originalParent, (placedContents.get(originalParent) ?? 0) + 1);
         heldObjectId = null;
         setHeldObjectLabel("");
       }
@@ -821,8 +1168,17 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
     };
     simulationControllerRef.current = { start: startSimulation, stop: stopSimulation };
     const onKeyDown = (event: KeyboardEvent) => {
-      if (simulation.active && event.code === "KeyQ") { handsRef.current.left = true; return; }
-      if (simulation.active && event.code === "KeyE") { handsRef.current.right = true; return; }
+      if (simulation.active && (event.code === "KeyQ" || event.code === "KeyE")) {
+        event.preventDefault();
+        if (!event.repeat) {
+          handsRef.current[event.code === "KeyQ" ? "left" : "right"] = true;
+          pointer.set(0, 0);
+          raycaster.setFromCamera(pointer, camera);
+          const hit = raycaster.intersectObjects(interactive, false).find((candidate) => String(candidate.object.userData.id || "") !== heldObjectId);
+          if (hit) simulationClick(hit);
+        }
+        return;
+      }
       if (!simulation.active || !["KeyW", "KeyA", "KeyS", "KeyD"].includes(event.code)) return;
       event.preventDefault();
       simulation.keys.add(event.code);
@@ -853,11 +1209,9 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
     const nodeCapabilities = (node: RawNode | undefined): string[] => Array.isArray(node?.capabilities) ? node.capabilities.map(String) : [];
     const isPickable = (id: string) => {
       const node = nodeById.get(id);
-      const semanticType = semantic(node);
-      if (["chair", "seat", "sofa", "bed", "table", "coffee_table", "desk", "counter", "cabinet", "wardrobe", "shelf", "rack", "toilet", "sink"].includes(semanticType)) return false;
       const capabilities = nodeCapabilities(node);
       if (capabilities.some((item) => ["pickable", "pickupable", "graspable"].includes(item))) return true;
-      if (text(node?.node_type) !== "movable_object") return false;
+      if (text(node?.mobility) !== "movable" && text(node?.node_type) !== "movable_object") return false;
       const mesh = objectMeshes.get(id);
       if (!mesh) return false;
       if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox();
@@ -872,24 +1226,84 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
     const isPlaceTarget = (id: string, normal?: THREE.Vector3) => {
       const node = nodeById.get(id);
       const capabilities = nodeCapabilities(node);
-      const type = semantic(node);
       if (id === "__floor__") return Boolean(normal?.y && normal.y > 0.5);
       return capabilities.some((item) => ["place_target", "receptacle", "support_surface"].includes(item))
-        || ["table", "counter", "desk", "shelf", "cabinet", "drawer", "refrigerator", "washer", "washing_machine", "microwave"].includes(type)
         || Boolean(normal?.y && normal.y > 0.5);
     };
     const toggleComponent = (hitObject: THREE.Object3D) => {
       const role = text(hitObject.userData.componentRole);
       const componentId = text(hitObject.userData.componentId);
       if (!componentId || !["door", "drawer"].some((kind) => role === kind || role.startsWith(`${kind}_`))) return false;
-      runtimeOpen.set(componentId, !(runtimeOpen.get(componentId) ?? false));
+      const parentStates = nodeById.get(String(hitObject.userData.id || ""))?.states as Record<string, unknown> | undefined;
+      runtimeOpen.set(componentId, !(runtimeOpen.get(componentId) ?? Boolean(parentStates?.is_open)));
       return true;
     };
     const simulationClick = (hit: THREE.Intersection<THREE.Object3D>) => {
       if (!simulation.active) return;
-      if (toggleComponent(hit.object)) return;
+      const componentRole = text(hit.object.userData.componentRole);
+      const componentId = text(hit.object.userData.componentId);
       const id = String(hit.object.userData.id || "");
+      if (componentRole === "sink_drain") {
+        runtimeSinkFill.set(id, 0);
+        const water = waterMeshes.get(id);
+        if (water) water.visible = false;
+        return;
+      }
+      if (toggleComponent(hit.object)) return;
       if (!id) return;
+      const targetNode = nodeById.get(id);
+      if (semantic(targetNode) === "faucet") {
+        (controlTargets.get(id) ?? []).forEach((sinkId) => {
+          if ((runtimeSinkFill.get(sinkId) ?? 0) >= 1) return;
+          runtimeSinkFill.set(sinkId, 1);
+          const water = waterMeshes.get(sinkId);
+          if (water) {
+            water.visible = true;
+            water.scale.set(0.12, 1, 0.12);
+            water.position.y -= 0.035;
+          }
+        });
+        return;
+      }
+      if (semantic(targetNode) === "button" || componentRole.includes("button") || componentRole.includes("knob")) {
+        const targets = controlTargets.get(componentId) ?? controlTargets.get(id) ?? [];
+        targets.forEach((lightId) => {
+          if (runtimeDeviceRunning.has(lightId)) {
+            const nextRunning = !runtimeDeviceRunning.get(lightId);
+            runtimeDeviceRunning.set(lightId, nextRunning);
+            const device = objectMeshes.get(lightId);
+            if (device?.material instanceof THREE.MeshStandardMaterial) {
+              device.material.emissive.set(nextRunning ? 0x0ea5e9 : 0x000000);
+              device.material.emissiveIntensity = nextRunning ? 0.45 : 0;
+            }
+            return;
+          }
+          const nextOn = !(runtimeLightState.get(lightId) ?? Boolean((nodeById.get(lightId)?.states as Record<string, unknown> | undefined)?.is_on));
+          runtimeLightState.set(lightId, nextOn);
+          const lamp = objectMeshes.get(lightId);
+          lamp?.traverse((part) => {
+            if (part instanceof THREE.PointLight) part.intensity = nextOn ? 2.8 : 0;
+            if (part === lamp && part instanceof THREE.Mesh && part.material instanceof THREE.MeshStandardMaterial) {
+              part.material.emissive.set(nextOn ? 0xffd166 : 0x000000);
+              part.material.emissiveIntensity = nextOn ? 0.85 : 0;
+            }
+          });
+        });
+        return;
+      }
+      if (["light", "room_light"].includes(semantic(targetNode))) {
+        const nextOn = !(runtimeLightState.get(id) ?? Boolean((targetNode?.states as Record<string, unknown> | undefined)?.is_on));
+        runtimeLightState.set(id, nextOn);
+        const targetMesh = objectMeshes.get(id);
+        if (targetMesh) targetMesh.traverse((part) => {
+          if (part instanceof THREE.PointLight) part.intensity = nextOn ? 2.2 : 0;
+          if (part === targetMesh && part instanceof THREE.Mesh && part.material instanceof THREE.MeshStandardMaterial) {
+            part.material.emissive.set(nextOn ? 0xffd166 : 0x000000);
+            part.material.emissiveIntensity = nextOn ? 0.85 : 0;
+          }
+        });
+        return;
+      }
       if (heldObjectId) {
         if (id === heldObjectId) return;
         const heldMesh = objectMeshes.get(heldObjectId);
@@ -898,6 +1312,19 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
           const heldBounds = heldMesh.geometry.boundingBox;
           const halfHeight = heldBounds ? (heldBounds.max.y - heldBounds.min.y) / 2 : 0.05;
           const targetNode = nodeById.get(id);
+          const declaredCapacity = Number(targetNode?.capacity ?? targetNode?.slot_count);
+          const capacity = id === "__floor__" || !Number.isFinite(declaredCapacity)
+            ? Number.POSITIVE_INFINITY
+            : declaredCapacity;
+          const alreadyPlaced = placedContents.get(id) ?? edges.filter((edge) =>
+            text(edge.source_id || edge.source) === id && ["on", "contains", "inside"].includes(text(edge.relation || edge.edge_type)),
+          ).length;
+          if (alreadyPlaced >= capacity) return;
+          const heldSize = heldBounds?.getSize(new THREE.Vector3()) ?? new THREE.Vector3(0.1, 0.1, 0.1);
+          const targetSize = id === "__floor__"
+            ? { width: allWidth, depth: allDepth, height: roomHeight }
+            : dimensionsFor(id);
+          if (heldSize.x > targetSize.width || heldSize.y > targetSize.height || heldSize.z > targetSize.depth) return;
           const configuredGridCm = Number(targetNode?.surface_grid_cm ?? targetNode?.support_grid_cm ?? 10);
           const gridMeters = Math.max(0.01, Number.isFinite(configuredGridCm) ? configuredGridCm / 100 : 0.1);
           // Place the object's footprint centre on the hit surface, snapped
@@ -912,13 +1339,49 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
             placeX = THREE.MathUtils.clamp(placeX, targetBounds.min.x + halfWidth, targetBounds.max.x - halfWidth);
             placeZ = THREE.MathUtils.clamp(placeZ, targetBounds.min.z + halfDepth, targetBounds.max.z - halfDepth);
           } else {
-            placeX = THREE.MathUtils.clamp(placeX, 0.05, allWidth - 0.05);
-            placeZ = THREE.MathUtils.clamp(placeZ, 0.05, allDepth - 0.05);
+            placeX = THREE.MathUtils.clamp(placeX, heldSize.x / 2, allWidth - heldSize.x / 2);
+            placeZ = THREE.MathUtils.clamp(placeZ, heldSize.z / 2, allDepth - heldSize.z / 2);
           }
           heldMesh.position.set(placeX, surfaceY + Math.max(0.01, halfHeight), placeZ);
-          heldMesh.rotation.set(0, 0, 0);
-          heldMesh.quaternion.identity();
+          const originalRotation = heldOriginalRotations.get(heldObjectId) ?? new THREE.Quaternion();
+          heldMesh.quaternion.copy(originalRotation);
           heldMesh.userData.held = false;
+          heldMesh.userData.parentObjectId = id;
+          placedContents.set(id, alreadyPlaced + 1);
+          heldOriginalParents.delete(heldObjectId);
+          heldOriginalPositions.delete(heldObjectId);
+          heldOriginalRotations.delete(heldObjectId);
+          const currentPlacement = layout.objects[heldObjectId];
+          const objectNode = nodeById.get(heldObjectId);
+          const roomId = currentPlacement?.room_id ?? String(objectNode?.room_id || "");
+          const room = layout.rooms[roomId];
+          if (currentPlacement && room) {
+            const widthCm = currentPlacement.width_cm ?? currentPlacement.width_cells * cell * 100;
+            const depthCm = currentPlacement.depth_cm ?? currentPlacement.depth_cells * cell * 100;
+            const roomXcm = room.x_cm ?? room.grid_x * cell * 100;
+            const roomYcm = room.y_cm ?? room.grid_y * cell * 100;
+            const xCm = Math.round((placeX - widthCm / 200) * 100);
+            const yCm = Math.round((placeZ - depthCm / 200) * 100);
+            const targetParentId = id === "__floor__" ? roomId : id;
+            const nextLayout = structuredClone(layout);
+            nextLayout.objects[heldObjectId] = {
+              ...currentPlacement,
+              placement_mode: "surface",
+              parent_object_id: targetParentId === roomId ? undefined : targetParentId,
+              layout_anchor: "surface",
+              x_cm: xCm,
+              y_cm: yCm,
+              z_cm: Math.round((heldMesh.position.y - halfHeight) * 100),
+              grid_x: Math.max(0, Math.floor((xCm - roomXcm) / (cell * 100))),
+              grid_y: Math.max(0, Math.floor((yCm - roomYcm) / (cell * 100))),
+              rotation: normalizeQuarterTurn(heldMesh.rotation.y),
+              rotation_x: normalizeQuarterTurn(heldMesh.rotation.x),
+              rotation_y: normalizeQuarterTurn(heldMesh.rotation.y),
+              rotation_z: normalizeQuarterTurn(heldMesh.rotation.z),
+            };
+            changeRef.current(nextLayout);
+            simulationPlaceRef.current?.(heldObjectId, targetParentId);
+          }
           heldObjectId = null;
           setHeldObjectLabel("");
         }
@@ -927,7 +1390,20 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
       if (isPickable(id)) {
         const mesh = objectMeshes.get(id);
         if (!mesh) return;
+        const parentId = text(edges.find((edge) =>
+          text(edge.target_id || edge.target) === id
+          && ["on", "contains", "inside"].includes(text(edge.relation || edge.edge_type)),
+        )?.source_id || "");
+        if (parentId) {
+          const count = placedContents.get(parentId) ?? edges.filter((edge) =>
+            text(edge.source_id || edge.source) === parentId
+            && ["on", "contains", "inside"].includes(text(edge.relation || edge.edge_type)),
+          ).length;
+          placedContents.set(parentId, Math.max(0, count - 1));
+          heldOriginalParents.set(id, parentId);
+        }
         heldOriginalPositions.set(id, mesh.position.clone());
+        heldOriginalRotations.set(id, mesh.quaternion.clone());
         heldObjectId = id;
         mesh.userData.held = true;
         setHeldObjectLabel(nodeName(nodeById.get(id)) || id);
@@ -962,8 +1438,16 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
       const hits = raycaster.intersectObjects(interactive, false).filter((candidate) => String(candidate.object.userData.id || "") !== heldObjectId);
       // Prefer the nearest actual object mesh. The floor is only a target in
       // simulation mode; it must never become an editor selection.
-      const hit = hits.find((candidate) => objectMeshes.has(String(candidate.object.userData.id)))
-        ?? (simulation.active ? hits.find((candidate) => candidate.object.userData.simulationSurface) : undefined);
+      const componentHit = simulation.active
+        ? hits.find((candidate) => {
+            const role = text(candidate.object.userData.componentRole);
+            return role === "sink_drain" || role === "door" || role.startsWith("drawer") || role.includes("button");
+          })
+        : undefined;
+      const objectHit = hits.find((candidate) => objectMeshes.has(String(candidate.object.userData.id)));
+      const hit = componentHit && (!objectHit || componentHit.distance <= objectHit.distance + 0.08)
+        ? componentHit
+        : objectHit ?? (simulation.active ? hits.find((candidate) => candidate.object.userData.simulationSurface) : undefined);
       if (!hit?.object.userData.id) {
         dragState.id = "";
         return;
@@ -1108,12 +1592,15 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
         const cameraTarget = simulation.player.clone();
         if (third) {
           camera.position.copy(simulation.player).add(new THREE.Vector3(Math.sin(simulation.yaw) * 2.8, 1.1, Math.cos(simulation.yaw) * 2.8));
-          cameraTarget.y += 0.25;
+          cameraTarget.add(new THREE.Vector3(-Math.sin(simulation.yaw) * Math.cos(simulation.pitch), Math.sin(simulation.pitch) + 0.25, -Math.cos(simulation.yaw) * Math.cos(simulation.pitch)));
         } else {
           camera.position.copy(simulation.player);
         }
-        camera.rotation.set(simulation.pitch, simulation.yaw, 0, "YXZ");
-        if (third) camera.lookAt(cameraTarget);
+        if (third) {
+          camera.lookAt(cameraTarget);
+        } else {
+          camera.rotation.set(simulation.pitch, simulation.yaw, 0, "YXZ");
+        }
         if (heldObjectId) {
           const heldMesh = objectMeshes.get(heldObjectId);
           if (heldMesh) {
@@ -1126,8 +1613,9 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
         }
         const handPose = (hand: THREE.Mesh, left: boolean, raised: boolean) => {
           const side = left ? -1 : 1;
-          const target = simulation.player.clone()
-            .add(new THREE.Vector3(side * (raised ? 0.3 : 0.22), raised ? 1.35 : 0.95, -0.48));
+          camera.updateMatrixWorld();
+          const target = camera.position.clone()
+            .add(new THREE.Vector3(side * (raised ? 0.3 : 0.22), raised ? -0.05 : -0.2, -0.48).applyQuaternion(camera.quaternion));
           hand.position.lerp(target, Math.min(1, delta * 12));
           hand.quaternion.copy(camera.quaternion);
           hand.visible = viewModeRef.current === "first";
@@ -1143,9 +1631,18 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
         const node = nodeById.get(id);
         const nodeStates = node?.states as Record<string, unknown> | undefined;
         const nodeSemantic = semantic(node);
+        if (nodeSemantic === "sink") {
+          const full = (runtimeSinkFill.get(id) ?? 0) > 0;
+          mesh.visible = full;
+          const wave = full ? 1 + Math.sin(time * 2.8) * 0.025 : 0.12;
+          mesh.scale.set(wave, 1, wave);
+          mesh.position.set(base.x, base.y + (full ? Math.sin(time * 2) * 0.004 : -0.035), base.z);
+          return;
+        }
         const running = Boolean(nodeStates?.is_running) || (Boolean(nodeStates?.is_on) && ["fan", "ceiling_fan", "ventilator"].includes(nodeSemantic));
+        const interactiveRunning = runtimeDeviceRunning.get(id) ?? false;
         const falling = node?.physics_state === "falling";
-        if (!running && !falling) {
+        if (!running && !interactiveRunning && !falling) {
           mesh.position.copy(base);
           return;
         }
@@ -1154,15 +1651,16 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
           mesh.position.set(base.x, Math.max(mesh.geometry.boundingBox?.max.y ?? 0.02, base.y - drop), base.z);
           return;
         }
-        const pulse = Math.sin(time * 18 + id.length) * 0.003;
+        const pulse = Math.sin(time * (interactiveRunning ? 24 : 18) + id.length) * (interactiveRunning ? 0.008 : 0.003);
         mesh.position.set(base.x + pulse, base.y, base.z - pulse * 0.7);
       });
       composites.forEach((composite) => {
+        const hostStates = nodeById.get(composite.id)?.states as Record<string, unknown> | undefined;
         composite.joints.forEach((joint) => {
           const componentNode = nodeById.get(joint.id);
           const states = componentNode?.states as Record<string, unknown> | undefined;
           joint.open = runtimeOpen.get(joint.id)
-            ?? Boolean(states?.is_open);
+            ?? Boolean(states?.is_open ?? hostStates?.is_open);
         });
       });
       updateComposites(composites);
@@ -1173,15 +1671,20 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
           ? Boolean(effectStates?.is_wet)
           : kind === "drying"
             ? Boolean(effectStates?.is_wet) && effectStates?.cycle_remaining != null
-            : kind === "steam"
+              : kind === "steam"
               ? String(effectStates?.temperature || "").toLowerCase() === "hot"
-              : Boolean(effectStates?.is_broken);
+              : kind === "stain"
+                ? Boolean(effectStates?.is_dirty)
+                : Boolean(effectStates?.is_broken);
         if (!mesh.visible) return;
         mesh.position.copy(host.position).add(offset);
         if (kind === "droplet") {
-          const bob = (Math.sin(time * 5 + phase) + 1) * 0.018;
-          mesh.position.y -= bob;
+          const slide = (time * 0.22 + phase * 0.17) % 1;
+          mesh.position.y = host.position.y + offset.y + host.geometry.boundingBox!.min.y + slide * (host.geometry.boundingBox!.max.y - host.geometry.boundingBox!.min.y);
+          mesh.position.x += Math.sin(time * 4 + phase) * 0.008;
           mesh.scale.setScalar(0.78 + 0.22 * Math.sin(time * 4 + phase) ** 2);
+        } else if (kind === "stain") {
+          mesh.position.copy(host.position).add(offset);
         } else if (kind === "drying" || kind === "steam") {
           const bob = (Math.sin(time * 3.5 + phase) + 1) * 0.025;
           mesh.position.y += bob;
@@ -1197,6 +1700,20 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
           selectionVisualsRef.current.get(id)?.position.copy(mesh.position);
         }
       });
+      if (labelsVisible) {
+        camera.updateMatrixWorld();
+        const direction = new THREE.Vector3();
+        const ray = new THREE.Raycaster();
+        objectLabels.forEach((label, id) => {
+          const target = objectMeshes.get(id);
+          if (!target) return;
+          direction.subVectors(label.position, camera.position);
+          const distance = direction.length();
+          ray.set(camera.position, direction.normalize());
+          const blockers = ray.intersectObjects(collisionMeshes, false);
+          label.visible = !blockers.some((hit) => hit.object !== target && hit.distance < distance - 0.04);
+        });
+      }
       renderer.render(scene, camera);
       frame = requestAnimationFrame(animate);
     };
@@ -1230,7 +1747,7 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
       <div className="scene3d-crosshair" aria-hidden="true" />
       <div className="scene3d-simulation-hint">
         <strong>{viewMode === "first" ? "第一人称仿真" : "第三人称仿真"}</strong>
-        <span>WASD 移动 · 鼠标观察 · 左键点击物体 · Esc 释放鼠标</span>
+        <span>WASD 移动 · 鼠标观察 · Q/E 双手交互 · 左键点击 · Esc 释放鼠标</span>
         {heldObjectLabel && <span className="scene3d-held-status">手持：{heldObjectLabel} · 点击承载面放置</span>}
         {!pointerLocked && <button type="button" onClick={() => simulationControllerRef.current?.start()}>点击继续控制视角</button>}
       </div>
@@ -1239,22 +1756,25 @@ export function Scene3DCanvas({ nodes, layout, selectedId, onSelect, onChange, c
 }
 
 function makeLabel(value: string, color = "#334155"): THREE.Sprite {
+  const displayText = value.slice(0, 30);
   const canvas = document.createElement("canvas");
   const measureCanvas = document.createElement("canvas");
   const measureContext = measureCanvas.getContext("2d")!;
-  measureContext.font = "700 26px sans-serif";
-  const labelWidth = Math.max(100, Math.min(520, Math.ceil(measureContext.measureText(value).width + 20)));
-  canvas.width = labelWidth; canvas.height = 58;
+  measureContext.font = "700 22px sans-serif";
+  const horizontalPadding = 8;
+  const labelWidth = Math.min(520, Math.ceil(measureContext.measureText(displayText).width + horizontalPadding * 2));
+  canvas.width = Math.max(1, labelWidth); canvas.height = 44;
   const context = canvas.getContext("2d")!;
   context.fillStyle = "rgba(255,255,255,0.92)";
   context.beginPath();
-  context.roundRect(2, 2, labelWidth - 4, 54, 8);
+  context.roundRect(2, 2, labelWidth - 4, 40, 6);
   context.fill();
-  context.font = "700 26px sans-serif";
+  context.font = "700 22px sans-serif";
   context.fillStyle = color;
-  context.fillText(value.slice(0, 30), 6, 40);
+  context.textBaseline = "middle";
+  context.fillText(displayText, horizontalPadding, 22);
   const texture = new THREE.CanvasTexture(canvas);
   const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false }));
-  sprite.scale.set(labelWidth / 220, 0.26, 1);
+  sprite.scale.set(labelWidth / 240, 0.18, 1);
   return sprite;
 }
