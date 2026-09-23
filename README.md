@@ -864,3 +864,12 @@ npm run dev
 PostgreSQL 是 Web 后端保存用户、场景版本和运行记录所需的存储服务；正常启动不需要手写 SQL。`alembic upgrade head` 是自动数据库迁移命令，不是业务操作。Redis 只在运行异步任务时使用；需要后台 worker 时，再开一个终端执行 `eval "$(scripts/web_services.sh env)"` 后运行 `scripts/web_worker.sh`。
 
 上面的 `backend/run_experiment.py` 命令属于论文/批量实验 CLI，不是 Web 界面的启动方式。
+
+导出 Web 场景库到仓库：
+
+```bash
+export GRAPHWORLD_DATABASE_URL='postgresql+psycopg://graphworld:graphworld@127.0.0.1:55432/graphworld'
+python scripts/export_scene_version.py --all
+```
+
+该命令会把数据库中的全部场景版本（包括网页编辑后的布局、物体、节点和关系）写入 `backend/data/scene_versions/`，文件名包含场景 ID 和版本号。导出后再提交并推送 Git，即可将场景数据随代码发布。

@@ -1,0 +1,1298 @@
+{
+  "edges": [
+    {
+      "category": "structural",
+      "relation": "contains",
+      "edge_type": "structural_edge",
+      "source_id": "F1",
+      "target_id": "entrance",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "contains",
+      "edge_type": "structural_edge",
+      "source_id": "F1",
+      "target_id": "outside_home",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "contains",
+      "edge_type": "structural_edge",
+      "source_id": "F1",
+      "target_id": "produce_area",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "contains",
+      "edge_type": "structural_edge",
+      "source_id": "F1",
+      "target_id": "shelf_area",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "contains",
+      "edge_type": "structural_edge",
+      "source_id": "F1",
+      "target_id": "checkout_area",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "contains",
+      "edge_type": "structural_edge",
+      "source_id": "F1",
+      "target_id": "cold_storage",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "contains",
+      "edge_type": "structural_edge",
+      "source_id": "F1",
+      "target_id": "staff_room",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connected",
+      "edge_type": "structural_edge",
+      "source_id": "outside_home",
+      "target_id": "entrance",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connected",
+      "edge_type": "structural_edge",
+      "source_id": "entrance",
+      "target_id": "checkout_area",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connected",
+      "edge_type": "structural_edge",
+      "source_id": "checkout_area",
+      "target_id": "shelf_area",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connected",
+      "edge_type": "structural_edge",
+      "source_id": "shelf_area",
+      "target_id": "produce_area",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connected",
+      "edge_type": "structural_edge",
+      "source_id": "shelf_area",
+      "target_id": "cold_storage",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "connected",
+      "edge_type": "structural_edge",
+      "source_id": "cold_storage",
+      "target_id": "staff_room",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "entrance",
+      "target_id": "signboard_entrance",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "entrance",
+      "target_id": "cart_entrance",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "produce_area",
+      "target_id": "shelf_produce",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "produce_area",
+      "target_id": "scale_produce",
+      "properties": {}
+    },
+    {
+      "category": "containment",
+      "relation": "on",
+      "edge_type": "containment_edge",
+      "source_id": "shelf_produce",
+      "target_id": "vegetable_produce_1",
+      "properties": {}
+    },
+    {
+      "category": "containment",
+      "relation": "on",
+      "edge_type": "containment_edge",
+      "source_id": "shelf_produce",
+      "target_id": "vegetable_produce_2",
+      "properties": {}
+    },
+    {
+      "category": "containment",
+      "relation": "on",
+      "edge_type": "containment_edge",
+      "source_id": "shelf_produce",
+      "target_id": "fruit_produce_1",
+      "properties": {}
+    },
+    {
+      "category": "containment",
+      "relation": "on",
+      "edge_type": "containment_edge",
+      "source_id": "shelf_produce",
+      "target_id": "fruit_produce_2",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "shelf_area",
+      "target_id": "shelf_dry_goods",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "shelf_area",
+      "target_id": "shelf_snacks",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "shelf_area",
+      "target_id": "box_shelf_stock",
+      "properties": {}
+    },
+    {
+      "category": "containment",
+      "relation": "on",
+      "edge_type": "containment_edge",
+      "source_id": "shelf_dry_goods",
+      "target_id": "drink_shelf_1",
+      "properties": {}
+    },
+    {
+      "category": "containment",
+      "relation": "on",
+      "edge_type": "containment_edge",
+      "source_id": "shelf_dry_goods",
+      "target_id": "drink_shelf_2",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "checkout_area",
+      "target_id": "counter_checkout",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "checkout_area",
+      "target_id": "display_checkout",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "checkout_area",
+      "target_id": "table_checkout",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "checkout_area",
+      "target_id": "trash_bin_checkout",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "checkout_area",
+      "target_id": "cart_return_checkout",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "cold_storage",
+      "target_id": "fridge_cold_storage",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "cold_storage",
+      "target_id": "box_cold_storage",
+      "properties": {}
+    },
+    {
+      "category": "containment",
+      "relation": "in",
+      "edge_type": "containment_edge",
+      "source_id": "fridge_cold_storage",
+      "target_id": "milk_cold_storage_1",
+      "properties": {}
+    },
+    {
+      "category": "containment",
+      "relation": "in",
+      "edge_type": "containment_edge",
+      "source_id": "fridge_cold_storage",
+      "target_id": "juice_cold_storage_1",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "staff_room",
+      "target_id": "table_staff_room",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "staff_room",
+      "target_id": "seat_staff_room",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "staff_room",
+      "target_id": "cabinet_staff_room",
+      "properties": {}
+    },
+    {
+      "category": "structural",
+      "relation": "inside_room",
+      "edge_type": "structural_edge",
+      "source_id": "staff_room",
+      "target_id": "receiving_dock_staff_room",
+      "properties": {}
+    },
+    {
+      "category": "web_seed",
+      "relation": "at",
+      "edge_type": "web_seed_edge",
+      "source_id": "outside_home",
+      "target_id": "customer_1",
+      "properties": {}
+    },
+    {
+      "category": "web_seed",
+      "relation": "at",
+      "edge_type": "web_seed_edge",
+      "source_id": "outside_home",
+      "target_id": "cashier_1",
+      "properties": {}
+    },
+    {
+      "category": "web_seed",
+      "relation": "at",
+      "edge_type": "web_seed_edge",
+      "source_id": "outside_home",
+      "target_id": "stocker_1",
+      "properties": {}
+    }
+  ],
+  "nodes": [
+    {
+      "id": "F1",
+      "name": "Floor 1",
+      "child": [],
+      "parent": null,
+      "states": {},
+      "name_cn": "第 1 层",
+      "mobility": "structural",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "floor_number": 1,
+      "semantic_type": "floor",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ]
+    },
+    {
+      "id": "entrance",
+      "name": "Entrance",
+      "child": [
+        "signboard_entrance",
+        "cart_entrance"
+      ],
+      "parent": null,
+      "states": {},
+      "name_cn": "入口",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "outside_home",
+      "name": "Outside",
+      "child": [
+        "customer_1",
+        "cashier_1",
+        "stocker_1"
+      ],
+      "parent": null,
+      "states": {},
+      "name_cn": "店外",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "produce_area",
+      "name": "Produce Area",
+      "child": [
+        "shelf_produce",
+        "scale_produce"
+      ],
+      "parent": null,
+      "states": {},
+      "name_cn": "生鲜区",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "shelf_area",
+      "name": "Shelf Area",
+      "child": [
+        "shelf_dry_goods",
+        "shelf_snacks",
+        "box_shelf_stock"
+      ],
+      "parent": null,
+      "states": {},
+      "name_cn": "货架区",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "checkout_area",
+      "name": "Checkout Area",
+      "child": [
+        "counter_checkout",
+        "display_checkout",
+        "table_checkout",
+        "cart_return_checkout",
+        "trash_bin_checkout"
+      ],
+      "parent": null,
+      "states": {},
+      "name_cn": "收银区",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "cold_storage",
+      "name": "Cold Storage",
+      "child": [
+        "fridge_cold_storage",
+        "box_cold_storage"
+      ],
+      "parent": null,
+      "states": {},
+      "name_cn": "冷藏区",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "staff_room",
+      "name": "Staff Room",
+      "child": [
+        "table_staff_room",
+        "seat_staff_room",
+        "cabinet_staff_room",
+        "receiving_dock_staff_room"
+      ],
+      "parent": null,
+      "states": {},
+      "name_cn": "员工室",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "signboard_entrance",
+      "name": "signboard",
+      "child": [],
+      "parent": "entrance",
+      "states": {},
+      "name_cn": "导视牌",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "signboard",
+      "semantic_class": "appliance",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ]
+    },
+    {
+      "id": "cart_entrance",
+      "name": "cart",
+      "child": [],
+      "parent": "entrance",
+      "states": {},
+      "name_cn": "购物车",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "movable_object",
+      "semantic_type": "cart",
+      "semantic_class": "tool",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "pick",
+        "scan"
+      ]
+    },
+    {
+      "id": "shelf_produce",
+      "name": "shelf",
+      "child": [
+        "vegetable_produce_1",
+        "vegetable_produce_2",
+        "fruit_produce_1",
+        "fruit_produce_2"
+      ],
+      "parent": "produce_area",
+      "states": {
+        "is_full": false,
+        "fill_level": 0.8
+      },
+      "name_cn": "货架",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "shelf",
+      "semantic_class": "furniture",
+      "affordance_count": 6,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "vegetable_produce_1",
+      "name": "vegetable",
+      "child": [],
+      "parent": "shelf_produce",
+      "states": {
+        "is_cooked": false,
+        "is_rotten": false,
+        "temperature": "room"
+      },
+      "name_cn": "蔬菜",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "movable_object",
+      "semantic_type": "vegetable",
+      "semantic_class": "consumable",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "pick",
+        "scan"
+      ]
+    },
+    {
+      "id": "vegetable_produce_2",
+      "name": "vegetable",
+      "child": [],
+      "parent": "shelf_produce",
+      "states": {
+        "is_cooked": false,
+        "is_rotten": false,
+        "temperature": "room"
+      },
+      "name_cn": "蔬菜",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "movable_object",
+      "semantic_type": "vegetable",
+      "semantic_class": "consumable",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "pick",
+        "scan"
+      ]
+    },
+    {
+      "id": "fruit_produce_1",
+      "name": "fruit",
+      "child": [],
+      "parent": "shelf_produce",
+      "states": {
+        "is_cooked": false,
+        "is_rotten": false,
+        "temperature": "room"
+      },
+      "name_cn": "水果",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "movable_object",
+      "semantic_type": "fruit",
+      "semantic_class": "consumable",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "pick",
+        "scan"
+      ]
+    },
+    {
+      "id": "fruit_produce_2",
+      "name": "fruit",
+      "child": [],
+      "parent": "shelf_produce",
+      "states": {
+        "is_cooked": false,
+        "is_rotten": false,
+        "temperature": "room"
+      },
+      "name_cn": "水果",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "movable_object",
+      "semantic_type": "fruit",
+      "semantic_class": "consumable",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "pick",
+        "scan"
+      ]
+    },
+    {
+      "id": "scale_produce",
+      "name": "machine",
+      "child": [],
+      "parent": "produce_area",
+      "states": {},
+      "name_cn": "称重机",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "machine",
+      "semantic_class": "tool",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ]
+    },
+    {
+      "id": "shelf_dry_goods",
+      "name": "shelf",
+      "child": [
+        "drink_shelf_1",
+        "drink_shelf_2"
+      ],
+      "parent": "shelf_area",
+      "states": {
+        "is_full": false,
+        "fill_level": 0.7
+      },
+      "name_cn": "货架",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "shelf",
+      "semantic_class": "furniture",
+      "affordance_count": 6,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "drink_shelf_1",
+      "name": "drink",
+      "child": [],
+      "parent": "shelf_dry_goods",
+      "states": {
+        "is_cooked": false,
+        "is_rotten": false,
+        "temperature": "room"
+      },
+      "name_cn": "饮料",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "movable_object",
+      "semantic_type": "drink",
+      "semantic_class": "consumable",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "pick",
+        "scan"
+      ]
+    },
+    {
+      "id": "drink_shelf_2",
+      "name": "drink",
+      "child": [],
+      "parent": "shelf_dry_goods",
+      "states": {
+        "is_cooked": false,
+        "is_rotten": false,
+        "temperature": "room"
+      },
+      "name_cn": "饮料",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "movable_object",
+      "semantic_type": "drink",
+      "semantic_class": "consumable",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "pick",
+        "scan"
+      ]
+    },
+    {
+      "id": "shelf_snacks",
+      "name": "shelf",
+      "child": [],
+      "parent": "shelf_area",
+      "states": {
+        "is_full": false,
+        "fill_level": 0.6
+      },
+      "name_cn": "货架",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "shelf",
+      "semantic_class": "furniture",
+      "affordance_count": 6,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "box_shelf_stock",
+      "name": "box",
+      "child": [],
+      "parent": "shelf_area",
+      "states": {
+        "is_full": false,
+        "fill_level": 0.5
+      },
+      "name_cn": "补货箱",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "movable_object",
+      "semantic_type": "box",
+      "semantic_class": "container",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "pick",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "counter_checkout",
+      "name": "counter",
+      "child": [],
+      "parent": "checkout_area",
+      "states": {
+        "is_full": false,
+        "fill_level": 0.0
+      },
+      "name_cn": "收银台",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "counter",
+      "semantic_class": "furniture",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan",
+        "brush"
+      ]
+    },
+    {
+      "id": "display_checkout",
+      "name": "display",
+      "child": [],
+      "parent": "checkout_area",
+      "states": {
+        "is_on": false
+      },
+      "name_cn": "显示屏",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "display",
+      "semantic_class": "appliance",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ]
+    },
+    {
+      "id": "table_checkout",
+      "name": "table",
+      "child": [],
+      "parent": "checkout_area",
+      "states": {
+        "is_full": false,
+        "is_dirty": false,
+        "fill_level": 0.0
+      },
+      "name_cn": "打包台",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "table",
+      "semantic_class": "furniture",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan",
+        "brush"
+      ]
+    },
+    {
+      "id": "trash_bin_checkout",
+      "name": "trash bin",
+      "child": [],
+      "parent": "checkout_area",
+      "states": {
+        "is_on": false,
+        "is_full": false,
+        "fill_level": 0.1
+      },
+      "name_cn": "垃圾桶",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "trash_bin",
+      "semantic_class": "container",
+      "affordance_count": 8,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "cart_return_checkout",
+      "name": "cart return",
+      "child": [],
+      "parent": "checkout_area",
+      "states": {},
+      "name_cn": "购物车回收点",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "max_capacity": 3,
+      "semantic_type": "cart_return",
+      "semantic_class": "furniture",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "fridge_cold_storage",
+      "name": "refrigerator",
+      "child": [
+        "milk_cold_storage_1",
+        "juice_cold_storage_1"
+      ],
+      "parent": "cold_storage",
+      "states": {
+        "is_on": true,
+        "is_full": false,
+        "is_open": false,
+        "fill_level": 0.6,
+        "cycle_remaining": 0
+      },
+      "name_cn": "冷柜",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "max_capacity": 3,
+      "semantic_type": "fridge",
+      "semantic_class": "appliance",
+      "affordance_count": 10,
+      "blocks_containment": true,
+      "interactive_actions": [
+        "move",
+        "place",
+        "open",
+        "close",
+        "scan"
+      ]
+    },
+    {
+      "id": "milk_cold_storage_1",
+      "name": "milk",
+      "child": [],
+      "parent": "fridge_cold_storage",
+      "states": {
+        "is_cooked": false,
+        "is_rotten": false,
+        "temperature": "cold"
+      },
+      "name_cn": "牛奶",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "movable_object",
+      "semantic_type": "milk",
+      "semantic_class": "consumable",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "pick",
+        "scan"
+      ]
+    },
+    {
+      "id": "juice_cold_storage_1",
+      "name": "juice",
+      "child": [],
+      "parent": "fridge_cold_storage",
+      "states": {
+        "is_cooked": false,
+        "is_rotten": false,
+        "temperature": "cold"
+      },
+      "name_cn": "果汁",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "movable_object",
+      "semantic_type": "juice",
+      "semantic_class": "consumable",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "pick",
+        "scan"
+      ]
+    },
+    {
+      "id": "box_cold_storage",
+      "name": "box",
+      "child": [],
+      "parent": "cold_storage",
+      "states": {
+        "is_full": false,
+        "fill_level": 0.4
+      },
+      "name_cn": "周转箱",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "movable_object",
+      "semantic_type": "box",
+      "semantic_class": "container",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "pick",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "table_staff_room",
+      "name": "table",
+      "child": [],
+      "parent": "staff_room",
+      "states": {
+        "is_full": false,
+        "is_dirty": false,
+        "fill_level": 0.0
+      },
+      "name_cn": "桌子",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "table",
+      "semantic_class": "furniture",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "seat_staff_room",
+      "name": "seat",
+      "child": [],
+      "parent": "staff_room",
+      "states": {
+        "is_dirty": false
+      },
+      "name_cn": "座椅",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "seat",
+      "semantic_class": "furniture",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "cabinet_staff_room",
+      "name": "cabinet",
+      "child": [],
+      "parent": "staff_room",
+      "states": {
+        "is_full": false,
+        "is_open": false,
+        "fill_level": 0.3
+      },
+      "name_cn": "柜子",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "semantic_type": "cabinet",
+      "semantic_class": "container",
+      "affordance_count": 8,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan",
+        "open",
+        "close",
+        "pull",
+        "push"
+      ]
+    },
+    {
+      "id": "receiving_dock_staff_room",
+      "name": "receiving dock",
+      "child": [],
+      "parent": "staff_room",
+      "states": {},
+      "name_cn": "到货区",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "fixed_object",
+      "max_capacity": 5,
+      "semantic_type": "receiving_dock",
+      "semantic_class": "furniture",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ]
+    },
+    {
+      "id": "customer_1",
+      "name": "customer",
+      "role": "customer",
+      "child": [],
+      "parent": "outside_home",
+      "states": {},
+      "name_cn": "顾客",
+      "persona": "supermarket_customer",
+      "node_type": "human",
+      "semantic_type": "human",
+      "current_activity": "store_away",
+      "interactive_actions": []
+    },
+    {
+      "id": "cashier_1",
+      "name": "cashier",
+      "role": "cashier",
+      "child": [],
+      "parent": "outside_home",
+      "states": {},
+      "name_cn": "收银员",
+      "persona": "supermarket_cashier",
+      "node_type": "human",
+      "semantic_type": "human",
+      "current_activity": "store_off_shift",
+      "interactive_actions": []
+    },
+    {
+      "id": "stocker_1",
+      "name": "stocker",
+      "role": "stocker",
+      "child": [],
+      "parent": "outside_home",
+      "states": {},
+      "name_cn": "理货员",
+      "persona": "supermarket_stocker",
+      "node_type": "human",
+      "semantic_type": "human",
+      "current_activity": "store_off_shift",
+      "interactive_actions": []
+    }
+  ],
+  "web_seed": {
+    "npc_ids": [
+      "customer_1",
+      "cashier_1",
+      "stocker_1"
+    ],
+    "profile": "base_scene_with_default_npcs",
+    "npc_count": 3
+  },
+  "scene_name": "simple_supermarket_1f",
+  "world_state": {
+    "day": 1,
+    "step": 0,
+    "time_min": 360,
+    "minutes_per_step": 10
+  },
+  "scene_name_cn": "简单超市单层"
+}
