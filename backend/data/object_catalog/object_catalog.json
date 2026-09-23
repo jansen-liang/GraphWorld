@@ -1,0 +1,5739 @@
+{
+  "schema_version": 1,
+  "object_count": 130,
+  "objects": [
+    {
+      "semantic_type": "air_conditioner",
+      "name": "air conditioner",
+      "name_cn": "空调",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 90.0,
+        "depth": 25.0,
+        "height": 30.0
+      },
+      "capabilities": [
+        "switchable",
+        "cleanable",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "aluminumfoil",
+      "name": "aluminumfoil",
+      "name_cn": "铝箔纸",
+      "category": "utensil",
+      "dimensions_cm": {
+        "width": 25.0,
+        "depth": 8.0,
+        "height": 8.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "baseballbat",
+      "name": "baseballbat",
+      "name_cn": "棒球棒",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 8.0,
+        "height": 85.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "basketball",
+      "name": "basketball",
+      "name_cn": "篮球",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 24.0,
+        "depth": 24.0,
+        "height": 24.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "bathtub",
+      "name": "bathtub",
+      "name_cn": "浴缸",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 170.0,
+        "depth": 75.0,
+        "height": 60.0
+      },
+      "capabilities": [
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "bathtubbasin",
+      "name": "bathtubbasin",
+      "name_cn": "浴缸盆",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 50.0,
+        "depth": 35.0,
+        "height": 20.0
+      },
+      "capabilities": [
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "bed",
+      "name": "bed",
+      "name_cn": "床",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 200.0,
+        "depth": 160.0,
+        "height": 50.0
+      },
+      "capabilities": [
+        "cleanable",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "book",
+      "name": "book",
+      "name_cn": "书",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 15.0,
+        "depth": 22.0,
+        "height": 3.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "bottle",
+      "name": "bottle",
+      "name_cn": "瓶子",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 7.0,
+        "depth": 7.0,
+        "height": 25.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "bowl",
+      "name": "bowl",
+      "name_cn": "碗",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 22.0,
+        "depth": 22.0,
+        "height": 10.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable",
+        "capacity_holder"
+      ],
+      "state_schema": {
+        "capacity": {
+          "name": "capacity",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "limits contained item count",
+          "derived_from": [],
+          "requires_capabilities": [
+            "capacity_holder"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "has_water": {
+          "name": "has_water",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "boolean",
+          "description": "controls watering and wetting effects",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
+        }
+      },
+      "default_states": {
+        "is_wet": false,
+        "capacity": 1,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "box",
+      "name": "box",
+      "name_cn": "箱子",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 35.0,
+        "depth": 25.0,
+        "height": 20.0
+      },
+      "capabilities": [
+        "capacity_holder",
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {
+        "capacity": {
+          "name": "capacity",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "limits contained item count",
+          "derived_from": [],
+          "requires_capabilities": [
+            "capacity_holder"
+          ]
+        }
+      },
+      "default_states": {
+        "capacity": 5,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "bread",
+      "name": "bread",
+      "name_cn": "面包",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 25.0,
+        "depth": 12.0,
+        "height": 10.0
+      },
+      "capabilities": [
+        "pickable",
+        "perishable"
+      ],
+      "state_schema": {
+        "is_burnt": {
+          "name": "is_burnt",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "egg",
+            "bread"
+          ],
+          "value_type": "boolean",
+          "description": "food disposal",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cookable"
+          ]
+        },
+        "is_cooked": {
+          "name": "is_cooked",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "egg",
+            "bread"
+          ],
+          "value_type": "boolean",
+          "description": "enables eating",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cookable"
+          ]
+        },
+        "temperature": {
+          "name": "temperature",
+          "domain": [],
+          "category": "thermal",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit",
+            "egg",
+            "bread",
+            "water"
+          ],
+          "value_type": "number_or_enum",
+          "description": "drives thermal phases and cooking",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive",
+            "cookable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false,
+        "is_rotten": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "button",
+      "name": "button",
+      "name_cn": "按钮",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 8.0,
+        "height": 4.0
+      },
+      "capabilities": [
+        "switchable",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_pressed": {
+          "name": "is_pressed",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "button",
+            "switch",
+            "knob"
+          ],
+          "value_type": "boolean",
+          "description": "propagates control",
+          "derived_from": [],
+          "requires_capabilities": [
+            "switchable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_pressed": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "cabinet",
+      "name": "cabinet",
+      "name_cn": "柜子",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 120.0,
+        "depth": 55.0,
+        "height": 90.0
+      },
+      "capabilities": [
+        "openable",
+        "cleanable",
+        "place_target",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_open": {
+          "name": "is_open",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "door",
+            "cabinet",
+            "fridge",
+            "drawer",
+            "washer",
+            "microwave"
+          ],
+          "value_type": "boolean",
+          "description": "controls access",
+          "derived_from": [],
+          "requires_capabilities": [
+            "openable"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_open": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "cart",
+      "name": "cart",
+      "name_cn": "推车",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 90.0,
+        "depth": 55.0,
+        "height": 95.0
+      },
+      "capabilities": [
+        "capacity_holder",
+        "reachable",
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {
+        "capacity": {
+          "name": "capacity",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "limits contained item count",
+          "derived_from": [],
+          "requires_capabilities": [
+            "capacity_holder"
+          ]
+        }
+      },
+      "default_states": {
+        "capacity": 5,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "cellphone",
+      "name": "cellphone",
+      "name_cn": "手机",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 16.0,
+        "height": 1.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "chair",
+      "name": "chair",
+      "name_cn": "椅子",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 60.0,
+        "depth": 60.0,
+        "height": 85.0
+      },
+      "capabilities": [
+        "cleanable",
+        "place_target",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "cleaningcloth",
+      "name": "cleaningcloth",
+      "name_cn": "抹布",
+      "category": "cleaning_tool",
+      "dimensions_cm": {
+        "width": 30.0,
+        "depth": 30.0,
+        "height": 1.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_wet": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "clothes",
+      "name": "clothes",
+      "name_cn": "衣物",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 45.0,
+        "depth": 35.0,
+        "height": 5.0
+      },
+      "capabilities": [
+        "foldable",
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {
+        "folded": {
+          "name": "folded",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "clothes",
+            "towel",
+            "blanket"
+          ],
+          "value_type": "boolean",
+          "description": "improves storage",
+          "derived_from": [],
+          "requires_capabilities": [
+            "foldable"
+          ]
+        },
+        "is_wet": {
+          "name": "is_wet",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "clothes",
+            "towel",
+            "floor",
+            "cup",
+            "sink_area"
+          ],
+          "value_type": "boolean",
+          "description": "blocks folding",
+          "derived_from": [],
+          "requires_capabilities": []
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "folded": true,
+        "is_wet": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "clothesdryer",
+      "name": "clothesdryer",
+      "name_cn": "烘干机",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 60.0,
+        "depth": 65.0,
+        "height": 85.0
+      },
+      "capabilities": [
+        "switchable",
+        "timed_device",
+        "openable",
+        "place_target",
+        "containment_blocker",
+        "start_requires_closed"
+      ],
+      "state_schema": {
+        "is_running": {
+          "name": "is_running",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "washer",
+            "washing_machine",
+            "dryer",
+            "clothesdryer",
+            "microwave",
+            "printer",
+            "coffeemachine",
+            "coffee_machine"
+          ],
+          "value_type": "boolean",
+          "description": "tracks active process",
+          "derived_from": [],
+          "requires_capabilities": [
+            "timed_device"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_open": false,
+        "is_running": false,
+        "cycle_remaining": 0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "coffee",
+      "name": "coffee",
+      "name_cn": "咖啡",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 8.0,
+        "height": 12.0
+      },
+      "capabilities": [
+        "pickable",
+        "perishable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false,
+        "is_rotten": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "coffee_beans",
+      "name": "coffee beans",
+      "name_cn": "咖啡豆",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 10.0,
+        "depth": 10.0,
+        "height": 8.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "coffee_table",
+      "name": "coffee table",
+      "name_cn": "茶几",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 110.0,
+        "depth": 60.0,
+        "height": 45.0
+      },
+      "capabilities": [
+        "cleanable",
+        "place_target",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "coffeemachine",
+      "name": "coffeemachine",
+      "name_cn": "咖啡机",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 35.0,
+        "depth": 30.0,
+        "height": 45.0
+      },
+      "capabilities": [
+        "switchable",
+        "timed_device",
+        "workbench",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "is_running": {
+          "name": "is_running",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "washer",
+            "washing_machine",
+            "dryer",
+            "clothesdryer",
+            "microwave",
+            "printer",
+            "coffeemachine",
+            "coffee_machine"
+          ],
+          "value_type": "boolean",
+          "description": "tracks active process",
+          "derived_from": [],
+          "requires_capabilities": [
+            "timed_device"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_dirty": false,
+        "is_running": false,
+        "cycle_remaining": 0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "computer",
+      "name": "computer",
+      "name_cn": "电脑",
+      "category": "office_supply",
+      "dimensions_cm": {
+        "width": 55.0,
+        "depth": 20.0,
+        "height": 45.0
+      },
+      "capabilities": [
+        "reachable",
+        "switchable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "is_broken": {
+          "name": "is_broken",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "cup",
+            "plate",
+            "computer",
+            "device"
+          ],
+          "value_type": "boolean",
+          "description": "blocks normal use",
+          "derived_from": [],
+          "requires_capabilities": []
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "counter",
+      "name": "counter",
+      "name_cn": "操作台",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 180.0,
+        "depth": 65.0,
+        "height": 90.0
+      },
+      "capabilities": [
+        "cleanable",
+        "place_target",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "cup",
+      "name": "cup",
+      "name_cn": "杯子",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 9.0,
+        "depth": 9.0,
+        "height": 11.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable",
+        "fillable"
+      ],
+      "state_schema": {
+        "is_wet": {
+          "name": "is_wet",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "clothes",
+            "towel",
+            "floor",
+            "cup",
+            "sink_area"
+          ],
+          "value_type": "boolean",
+          "description": "blocks folding",
+          "derived_from": [],
+          "requires_capabilities": []
+        },
+        "is_full": {
+          "name": "is_full",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "basket",
+            "cup",
+            "container"
+          ],
+          "value_type": "boolean",
+          "description": "blocks filling",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "has_water": {
+          "name": "has_water",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "boolean",
+          "description": "controls watering and wetting effects",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
+        },
+        "is_broken": {
+          "name": "is_broken",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "cup",
+            "plate",
+            "computer",
+            "device"
+          ],
+          "value_type": "boolean",
+          "description": "blocks normal use",
+          "derived_from": [],
+          "requires_capabilities": []
+        },
+        "fill_level": {
+          "name": "fill_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "cup",
+            "container"
+          ],
+          "value_type": "number",
+          "description": "drives is_full",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_wet": false,
+        "is_full": false,
+        "is_dirty": false,
+        "fill_level": 0.0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "desk",
+      "name": "desk",
+      "name_cn": "书桌",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 130.0,
+        "depth": 70.0,
+        "height": 75.0
+      },
+      "capabilities": [
+        "cleanable",
+        "place_target",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "dishwasher",
+      "name": "dishwasher",
+      "name_cn": "洗碗机",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 60.0,
+        "depth": 65.0,
+        "height": 85.0
+      },
+      "capabilities": [
+        "switchable",
+        "openable",
+        "cleanable",
+        "containment_blocker",
+        "start_requires_closed",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_on": {
+          "name": "is_on",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "stove",
+            "faucet",
+            "washer",
+            "dishwasher",
+            "light",
+            "tv",
+            "microwave"
+          ],
+          "value_type": "boolean",
+          "description": "starts cycles",
+          "derived_from": [],
+          "requires_capabilities": [
+            "switchable"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "cycle_remaining": {
+          "name": "cycle_remaining",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "washer",
+            "dishwasher",
+            "microwave"
+          ],
+          "value_type": "number",
+          "description": "tracks cycle completion",
+          "derived_from": [],
+          "requires_capabilities": []
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_open": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "dispenser",
+      "name": "dispenser",
+      "name_cn": "分配器",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 30.0,
+        "depth": 30.0,
+        "height": 45.0
+      },
+      "capabilities": [
+        "fillable",
+        "reachable",
+        "switchable"
+      ],
+      "state_schema": {
+        "is_full": {
+          "name": "is_full",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "basket",
+            "cup",
+            "container"
+          ],
+          "value_type": "boolean",
+          "description": "blocks filling",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        },
+        "fill_level": {
+          "name": "fill_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "cup",
+            "container"
+          ],
+          "value_type": "number",
+          "description": "drives is_full",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_full": false,
+        "is_dirty": false,
+        "fill_level": 1.0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "display",
+      "name": "display",
+      "name_cn": "显示屏",
+      "category": "office_supply",
+      "dimensions_cm": {
+        "width": 100.0,
+        "depth": 10.0,
+        "height": 60.0
+      },
+      "capabilities": [
+        "switchable",
+        "cleanable",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "doctor_coat",
+      "name": "doctor coat",
+      "name_cn": "医生白大褂",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 55.0,
+        "depth": 35.0,
+        "height": 8.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "dogbed",
+      "name": "dogbed",
+      "name_cn": "宠物窝",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 80.0,
+        "depth": 60.0,
+        "height": 20.0
+      },
+      "capabilities": [
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "door",
+      "name": "door",
+      "name_cn": "门",
+      "category": "structural",
+      "dimensions_cm": {
+        "width": 90.0,
+        "depth": 10.0,
+        "height": 210.0
+      },
+      "capabilities": [
+        "structural_door",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_open": {
+          "name": "is_open",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "door",
+            "cabinet",
+            "fridge",
+            "drawer",
+            "washer",
+            "microwave"
+          ],
+          "value_type": "boolean",
+          "description": "controls access",
+          "derived_from": [],
+          "requires_capabilities": [
+            "openable"
+          ]
+        },
+        "is_blocked": {
+          "name": "is_blocked",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "door",
+            "path",
+            "container"
+          ],
+          "value_type": "boolean",
+          "description": "blocks navigation or access",
+          "derived_from": [],
+          "requires_capabilities": []
+        }
+      },
+      "default_states": {
+        "is_open": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "drawer",
+      "name": "drawer",
+      "name_cn": "抽屉",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 80.0,
+        "depth": 50.0,
+        "height": 75.0
+      },
+      "capabilities": [
+        "openable",
+        "cleanable",
+        "place_target",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_open": {
+          "name": "is_open",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "door",
+            "cabinet",
+            "fridge",
+            "drawer",
+            "washer",
+            "microwave"
+          ],
+          "value_type": "boolean",
+          "description": "controls access",
+          "derived_from": [],
+          "requires_capabilities": [
+            "openable"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_open": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "dresser",
+      "name": "dresser",
+      "name_cn": "梳妆柜",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 100.0,
+        "depth": 45.0,
+        "height": 85.0
+      },
+      "capabilities": [
+        "openable",
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_open": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "drink",
+      "name": "drink",
+      "name_cn": "饮料",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 7.0,
+        "depth": 7.0,
+        "height": 22.0
+      },
+      "capabilities": [
+        "pickable",
+        "openable",
+        "perishable"
+      ],
+      "state_schema": {
+        "is_frozen": {
+          "name": "is_frozen",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit"
+          ],
+          "value_type": "boolean",
+          "description": "blocks immediate use",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive"
+          ]
+        },
+        "is_boiling": {
+          "name": "is_boiling",
+          "domain": [],
+          "category": "thermal",
+          "applies_to": [
+            "water",
+            "drink",
+            "liquid"
+          ],
+          "value_type": "boolean",
+          "description": "Derived when liquid temperature reaches its boiling point.",
+          "derived_from": [
+            "temperature"
+          ],
+          "requires_capabilities": [
+            "liquid",
+            "cookable"
+          ]
+        },
+        "temperature": {
+          "name": "temperature",
+          "domain": [],
+          "category": "thermal",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit",
+            "egg",
+            "bread",
+            "water"
+          ],
+          "value_type": "number_or_enum",
+          "description": "drives thermal phases and cooking",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive",
+            "cookable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_open": false,
+        "is_rotten": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "drying_rack",
+      "name": "drying rack",
+      "name_cn": "晾衣架",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 120.0,
+        "depth": 45.0,
+        "height": 150.0
+      },
+      "capabilities": [
+        "reachable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "dumbbell",
+      "name": "dumbbell",
+      "name_cn": "哑铃",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 12.0,
+        "depth": 12.0,
+        "height": 28.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "egg",
+      "name": "egg",
+      "name_cn": "鸡蛋",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 5.0,
+        "depth": 5.0,
+        "height": 7.0
+      },
+      "capabilities": [
+        "pickable",
+        "perishable"
+      ],
+      "state_schema": {
+        "is_burnt": {
+          "name": "is_burnt",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "egg",
+            "bread"
+          ],
+          "value_type": "boolean",
+          "description": "food disposal",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cookable"
+          ]
+        },
+        "is_cooked": {
+          "name": "is_cooked",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "egg",
+            "bread"
+          ],
+          "value_type": "boolean",
+          "description": "enables eating",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cookable"
+          ]
+        },
+        "temperature": {
+          "name": "temperature",
+          "domain": [],
+          "category": "thermal",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit",
+            "egg",
+            "bread",
+            "water"
+          ],
+          "value_type": "number_or_enum",
+          "description": "drives thermal phases and cooking",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive",
+            "cookable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_rotten": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "faucet",
+      "name": "faucet",
+      "name_cn": "水龙头",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 20.0,
+        "depth": 20.0,
+        "height": 30.0
+      },
+      "capabilities": [
+        "switchable",
+        "water_source_control"
+      ],
+      "state_schema": {
+        "is_on": {
+          "name": "is_on",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "stove",
+            "faucet",
+            "washer",
+            "dishwasher",
+            "light",
+            "tv",
+            "microwave"
+          ],
+          "value_type": "boolean",
+          "description": "starts cycles",
+          "derived_from": [],
+          "requires_capabilities": [
+            "switchable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "footstool",
+      "name": "footstool",
+      "name_cn": "脚踏凳",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 45.0,
+        "depth": 35.0,
+        "height": 30.0
+      },
+      "capabilities": [
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "fork",
+      "name": "fork",
+      "name_cn": "叉子",
+      "category": "utensil",
+      "dimensions_cm": {
+        "width": 3.0,
+        "depth": 3.0,
+        "height": 20.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "fruit",
+      "name": "fruit",
+      "name_cn": "水果",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 12.0,
+        "depth": 12.0,
+        "height": 12.0
+      },
+      "capabilities": [
+        "pickable",
+        "perishable"
+      ],
+      "state_schema": {
+        "is_frozen": {
+          "name": "is_frozen",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit"
+          ],
+          "value_type": "boolean",
+          "description": "blocks immediate use",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive"
+          ]
+        },
+        "is_rotten": {
+          "name": "is_rotten",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit",
+            "organic_item"
+          ],
+          "value_type": "boolean",
+          "description": "dispose or remove",
+          "derived_from": [],
+          "requires_capabilities": [
+            "perishable"
+          ]
+        },
+        "temperature": {
+          "name": "temperature",
+          "domain": [],
+          "category": "thermal",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit",
+            "egg",
+            "bread",
+            "water"
+          ],
+          "value_type": "number_or_enum",
+          "description": "drives thermal phases and cooking",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive",
+            "cookable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_rotten": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "garbagebag",
+      "name": "garbagebag",
+      "name_cn": "垃圾袋",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 35.0,
+        "depth": 20.0,
+        "height": 45.0
+      },
+      "capabilities": [
+        "pickable",
+        "dumpable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "hand_sanitizer_dispenser",
+      "name": "hand sanitizer dispenser",
+      "name_cn": "免洗洗手液机",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 12.0,
+        "depth": 10.0,
+        "height": 25.0
+      },
+      "capabilities": [
+        "fillable",
+        "reachable",
+        "switchable"
+      ],
+      "state_schema": {
+        "is_full": {
+          "name": "is_full",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "basket",
+            "cup",
+            "container"
+          ],
+          "value_type": "boolean",
+          "description": "blocks filling",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        },
+        "fill_level": {
+          "name": "fill_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "cup",
+            "container"
+          ],
+          "value_type": "number",
+          "description": "drives is_full",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_full": false,
+        "is_dirty": false,
+        "fill_level": 1.0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "ink_cartridge",
+      "name": "ink cartridge",
+      "name_cn": "墨盒",
+      "category": "office_supply",
+      "dimensions_cm": {
+        "width": 12.0,
+        "depth": 5.0,
+        "height": 8.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "juice",
+      "name": "juice",
+      "name_cn": "果汁",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 7.0,
+        "depth": 7.0,
+        "height": 22.0
+      },
+      "capabilities": [
+        "pickable",
+        "openable",
+        "perishable"
+      ],
+      "state_schema": {
+        "is_frozen": {
+          "name": "is_frozen",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit"
+          ],
+          "value_type": "boolean",
+          "description": "blocks immediate use",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive"
+          ]
+        },
+        "is_rotten": {
+          "name": "is_rotten",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit",
+            "organic_item"
+          ],
+          "value_type": "boolean",
+          "description": "dispose or remove",
+          "derived_from": [],
+          "requires_capabilities": [
+            "perishable"
+          ]
+        },
+        "temperature": {
+          "name": "temperature",
+          "domain": [],
+          "category": "thermal",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit",
+            "egg",
+            "bread",
+            "water"
+          ],
+          "value_type": "number_or_enum",
+          "description": "drives thermal phases and cooking",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive",
+            "cookable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_open": false,
+        "is_rotten": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "keychain",
+      "name": "keychain",
+      "name_cn": "钥匙链",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 4.0,
+        "depth": 2.0,
+        "height": 1.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "knob",
+      "name": "knob",
+      "name_cn": "旋钮",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 6.0,
+        "depth": 6.0,
+        "height": 5.0
+      },
+      "capabilities": [
+        "reachable",
+        "switchable"
+      ],
+      "state_schema": {
+        "is_pressed": {
+          "name": "is_pressed",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "button",
+            "switch",
+            "knob"
+          ],
+          "value_type": "boolean",
+          "description": "propagates control",
+          "derived_from": [],
+          "requires_capabilities": [
+            "switchable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "ladle",
+      "name": "ladle",
+      "name_cn": "汤勺",
+      "category": "utensil",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 8.0,
+        "height": 35.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "laundryhamper",
+      "name": "laundryhamper",
+      "name_cn": "洗衣篮",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 45.0,
+        "depth": 45.0,
+        "height": 60.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "openable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_open": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "locker",
+      "name": "locker",
+      "name_cn": "储物柜",
+      "category": "office_supply",
+      "dimensions_cm": {
+        "width": 50.0,
+        "depth": 50.0,
+        "height": 180.0
+      },
+      "capabilities": [
+        "reachable",
+        "openable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_open": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "machine",
+      "name": "machine",
+      "name_cn": "机器",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 80.0,
+        "depth": 70.0,
+        "height": 100.0
+      },
+      "capabilities": [
+        "reachable",
+        "switchable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "medical_cart",
+      "name": "medical cart",
+      "name_cn": "医疗推车",
+      "category": "medical_supply",
+      "dimensions_cm": {
+        "width": 70.0,
+        "depth": 50.0,
+        "height": 100.0
+      },
+      "capabilities": [
+        "reachable",
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "medical_form",
+      "name": "medical form",
+      "name_cn": "医疗表单",
+      "category": "medical_supply",
+      "dimensions_cm": {
+        "width": 21.0,
+        "depth": 30.0,
+        "height": 0.2
+      },
+      "capabilities": [
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "medicine_box",
+      "name": "medicine box",
+      "name_cn": "药盒",
+      "category": "medical_supply",
+      "dimensions_cm": {
+        "width": 18.0,
+        "depth": 12.0,
+        "height": 8.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "openable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_open": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "medicine_fridge",
+      "name": "medicine fridge",
+      "name_cn": "药品冰箱",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 70.0,
+        "depth": 70.0,
+        "height": 180.0
+      },
+      "capabilities": [
+        "openable",
+        "cleanable",
+        "containment_blocker",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_open": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "microwave",
+      "name": "microwave",
+      "name_cn": "微波炉",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 60.0,
+        "depth": 45.0,
+        "height": 35.0
+      },
+      "capabilities": [
+        "switchable",
+        "timed_device",
+        "openable",
+        "cleanable",
+        "containment_blocker",
+        "start_requires_closed",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_on": {
+          "name": "is_on",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "stove",
+            "faucet",
+            "washer",
+            "dishwasher",
+            "light",
+            "tv",
+            "microwave"
+          ],
+          "value_type": "boolean",
+          "description": "starts cycles",
+          "derived_from": [],
+          "requires_capabilities": [
+            "switchable"
+          ]
+        },
+        "is_open": {
+          "name": "is_open",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "door",
+            "cabinet",
+            "fridge",
+            "drawer",
+            "washer",
+            "microwave"
+          ],
+          "value_type": "boolean",
+          "description": "controls access",
+          "derived_from": [],
+          "requires_capabilities": [
+            "openable"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "is_running": {
+          "name": "is_running",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "washer",
+            "washing_machine",
+            "dryer",
+            "clothesdryer",
+            "microwave",
+            "printer",
+            "coffeemachine",
+            "coffee_machine"
+          ],
+          "value_type": "boolean",
+          "description": "tracks active process",
+          "derived_from": [],
+          "requires_capabilities": [
+            "timed_device"
+          ]
+        },
+        "cycle_remaining": {
+          "name": "cycle_remaining",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "washer",
+            "dishwasher",
+            "microwave"
+          ],
+          "value_type": "number",
+          "description": "tracks cycle completion",
+          "derived_from": [],
+          "requires_capabilities": []
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_open": false,
+        "is_dirty": false,
+        "is_running": false,
+        "cycle_remaining": 0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "milk",
+      "name": "milk",
+      "name_cn": "牛奶",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 7.0,
+        "depth": 7.0,
+        "height": 22.0
+      },
+      "capabilities": [
+        "pickable",
+        "openable",
+        "perishable"
+      ],
+      "state_schema": {
+        "is_frozen": {
+          "name": "is_frozen",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit"
+          ],
+          "value_type": "boolean",
+          "description": "blocks immediate use",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive"
+          ]
+        },
+        "is_rotten": {
+          "name": "is_rotten",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit",
+            "organic_item"
+          ],
+          "value_type": "boolean",
+          "description": "dispose or remove",
+          "derived_from": [],
+          "requires_capabilities": [
+            "perishable"
+          ]
+        },
+        "temperature": {
+          "name": "temperature",
+          "domain": [],
+          "category": "thermal",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit",
+            "egg",
+            "bread",
+            "water"
+          ],
+          "value_type": "number_or_enum",
+          "description": "drives thermal phases and cooking",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive",
+            "cookable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_open": false,
+        "is_rotten": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "mirror",
+      "name": "mirror",
+      "name_cn": "镜子",
+      "category": "decoration",
+      "dimensions_cm": {
+        "width": 80.0,
+        "depth": 4.0,
+        "height": 100.0
+      },
+      "capabilities": [
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "mug",
+      "name": "mug",
+      "name_cn": "杯子",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 10.0,
+        "depth": 10.0,
+        "height": 11.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable",
+        "fillable"
+      ],
+      "state_schema": {
+        "is_full": {
+          "name": "is_full",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "basket",
+            "cup",
+            "container"
+          ],
+          "value_type": "boolean",
+          "description": "blocks filling",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "has_water": {
+          "name": "has_water",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "boolean",
+          "description": "controls watering and wetting effects",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
+        },
+        "fill_level": {
+          "name": "fill_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "cup",
+            "container"
+          ],
+          "value_type": "number",
+          "description": "drives is_full",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_full": false,
+        "is_dirty": false,
+        "fill_level": 0.0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "newspaper",
+      "name": "newspaper",
+      "name_cn": "报纸",
+      "category": "media_device",
+      "dimensions_cm": {
+        "width": 30.0,
+        "depth": 42.0,
+        "height": 1.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "nurse_uniform",
+      "name": "nurse uniform",
+      "name_cn": "护士制服",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 55.0,
+        "depth": 35.0,
+        "height": 8.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "ottoman",
+      "name": "ottoman",
+      "name_cn": "脚凳",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 60.0,
+        "depth": 60.0,
+        "height": 40.0
+      },
+      "capabilities": [
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "painting",
+      "name": "painting",
+      "name_cn": "画",
+      "category": "decoration",
+      "dimensions_cm": {
+        "width": 100.0,
+        "depth": 5.0,
+        "height": 70.0
+      },
+      "capabilities": [
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "paper_pack",
+      "name": "paper pack",
+      "name_cn": "打印纸",
+      "category": "office_supply",
+      "dimensions_cm": {
+        "width": 22.0,
+        "depth": 30.0,
+        "height": 5.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "pepper_refill",
+      "name": "pepper refill",
+      "name_cn": "胡椒补充包",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 8.0,
+        "height": 12.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "peppershaker",
+      "name": "peppershaker",
+      "name_cn": "胡椒瓶",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 6.0,
+        "depth": 6.0,
+        "height": 12.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable",
+        "finite_resource"
+      ],
+      "state_schema": {
+        "count": {
+          "name": "count",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "resource inventory",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "amount": {
+          "name": "amount",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "material quantity",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "uses_left": {
+          "name": "uses_left",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "finite resource availability",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false,
+        "uses_left": 10
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "pillow",
+      "name": "pillow",
+      "name_cn": "枕头",
+      "category": "furniture_accessory",
+      "dimensions_cm": {
+        "width": 60.0,
+        "depth": 40.0,
+        "height": 15.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_wet": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "plant",
+      "name": "plant",
+      "name_cn": "植物",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 30.0,
+        "depth": 30.0,
+        "height": 60.0
+      },
+      "capabilities": [
+        "pickable",
+        "plant_life"
+      ],
+      "state_schema": {
+        "vitality": {
+          "name": "vitality",
+          "domain": [],
+          "category": "life",
+          "applies_to": [
+            "plant"
+          ],
+          "value_type": "number",
+          "description": "drives wilted",
+          "derived_from": [],
+          "requires_capabilities": [
+            "plant_life"
+          ]
+        },
+        "is_wilted": {
+          "name": "is_wilted",
+          "domain": [],
+          "category": "life",
+          "applies_to": [
+            "plant"
+          ],
+          "value_type": "boolean",
+          "description": "lowers vitality",
+          "derived_from": [],
+          "requires_capabilities": [
+            "plant_life"
+          ]
+        }
+      },
+      "default_states": {
+        "is_wet": true,
+        "vitality": 1.0,
+        "is_wilted": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "plate",
+      "name": "plate",
+      "name_cn": "盘子",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 24.0,
+        "depth": 24.0,
+        "height": 3.0
+      },
+      "capabilities": [
+        "capacity_holder",
+        "pickable",
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "capacity": {
+          "name": "capacity",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "limits contained item count",
+          "derived_from": [],
+          "requires_capabilities": [
+            "capacity_holder"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "is_broken": {
+          "name": "is_broken",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "cup",
+            "plate",
+            "computer",
+            "device"
+          ],
+          "value_type": "boolean",
+          "description": "blocks normal use",
+          "derived_from": [],
+          "requires_capabilities": []
+        }
+      },
+      "default_states": {
+        "capacity": 1,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "plunger",
+      "name": "plunger",
+      "name_cn": "马桶吸",
+      "category": "cleaning_tool",
+      "dimensions_cm": {
+        "width": 15.0,
+        "depth": 15.0,
+        "height": 55.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "poster",
+      "name": "poster",
+      "name_cn": "海报",
+      "category": "decoration",
+      "dimensions_cm": {
+        "width": 60.0,
+        "depth": 2.0,
+        "height": 90.0
+      },
+      "capabilities": [
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "prescription_sheet",
+      "name": "prescription sheet",
+      "name_cn": "处方单",
+      "category": "medical_supply",
+      "dimensions_cm": {
+        "width": 21.0,
+        "depth": 30.0,
+        "height": 0.2
+      },
+      "capabilities": [
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "printer",
+      "name": "printer",
+      "name_cn": "打印机",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 45.0,
+        "depth": 40.0,
+        "height": 30.0
+      },
+      "capabilities": [
+        "switchable",
+        "timed_device",
+        "workbench",
+        "finite_resource",
+        "reachable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "count": {
+          "name": "count",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "resource inventory",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "amount": {
+          "name": "amount",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "material quantity",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "uses_left": {
+          "name": "uses_left",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "finite resource availability",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "is_running": {
+          "name": "is_running",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "washer",
+            "washing_machine",
+            "dryer",
+            "clothesdryer",
+            "microwave",
+            "printer",
+            "coffeemachine",
+            "coffee_machine"
+          ],
+          "value_type": "boolean",
+          "description": "tracks active process",
+          "derived_from": [],
+          "requires_capabilities": [
+            "timed_device"
+          ]
+        }
+      },
+      "default_states": {
+        "count": 0,
+        "is_on": false,
+        "amount": 0,
+        "is_dirty": false,
+        "is_running": false,
+        "cycle_remaining": 0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "rack",
+      "name": "rack",
+      "name_cn": "架子",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 150.0,
+        "depth": 50.0,
+        "height": 180.0
+      },
+      "capabilities": [
+        "reachable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "receipt",
+      "name": "receipt",
+      "name_cn": "收据",
+      "category": "office_supply",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 20.0,
+        "height": 0.2
+      },
+      "capabilities": [
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "refrigerated_medicine",
+      "name": "refrigerated medicine",
+      "name_cn": "冷藏药品",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 8.0,
+        "height": 5.0
+      },
+      "capabilities": [
+        "pickable",
+        "perishable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_rotten": false,
+        "temperature": "cold"
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "refrigerator",
+      "name": "refrigerator",
+      "name_cn": "冰箱",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 90.0,
+        "depth": 80.0,
+        "height": 180.0
+      },
+      "capabilities": [
+        "openable",
+        "cleanable",
+        "containment_blocker",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_open": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "remote",
+      "name": "remote",
+      "name_cn": "遥控器",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 5.0,
+        "depth": 18.0,
+        "height": 2.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "switchable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_on": false,
+        "is_dirty": false,
+        "is_pressed": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "room_light",
+      "name": "light",
+      "name_cn": "灯",
+      "category": "lighting",
+      "dimensions_cm": {
+        "width": 30.0,
+        "depth": 30.0,
+        "height": 10.0
+      },
+      "capabilities": [
+        "switchable",
+        "reachable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_on": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "roomdecor",
+      "name": "roomdecor",
+      "name_cn": "房间装饰",
+      "category": "decoration",
+      "dimensions_cm": {
+        "width": 30.0,
+        "depth": 10.0,
+        "height": 30.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "salt_refill",
+      "name": "salt refill",
+      "name_cn": "盐补充包",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 8.0,
+        "height": 12.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "saltshaker",
+      "name": "saltshaker",
+      "name_cn": "盐瓶",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 6.0,
+        "depth": 6.0,
+        "height": 12.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable",
+        "finite_resource"
+      ],
+      "state_schema": {
+        "count": {
+          "name": "count",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "resource inventory",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "amount": {
+          "name": "amount",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "material quantity",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "uses_left": {
+          "name": "uses_left",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "finite resource availability",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false,
+        "uses_left": 10
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "scrubbrush",
+      "name": "scrubbrush",
+      "name_cn": "清洁刷",
+      "category": "cleaning_tool",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 8.0,
+        "height": 25.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "seat",
+      "name": "seat",
+      "name_cn": "座椅",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 60.0,
+        "depth": 60.0,
+        "height": 85.0
+      },
+      "capabilities": [
+        "cleanable",
+        "reachable",
+        "place_target"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "shelf",
+      "name": "shelf",
+      "name_cn": "货架",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 150.0,
+        "depth": 50.0,
+        "height": 180.0
+      },
+      "capabilities": [
+        "reachable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "shoe_rack",
+      "name": "shoe rack",
+      "name_cn": "鞋架",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 100.0,
+        "depth": 35.0,
+        "height": 100.0
+      },
+      "capabilities": [
+        "cleanable",
+        "place_target",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "shoes",
+      "name": "shoes",
+      "name_cn": "鞋",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 30.0,
+        "depth": 12.0,
+        "height": 10.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_wet": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "shower",
+      "name": "shower",
+      "name_cn": "淋浴",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 25.0,
+        "depth": 25.0,
+        "height": 220.0
+      },
+      "capabilities": [
+        "reachable",
+        "switchable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "signboard",
+      "name": "signboard",
+      "name_cn": "标牌",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 80.0,
+        "depth": 5.0,
+        "height": 40.0
+      },
+      "capabilities": [
+        "reachable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "sink",
+      "name": "sink",
+      "name_cn": "水槽",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 70.0,
+        "depth": 50.0,
+        "height": 25.0
+      },
+      "capabilities": [
+        "cleanable",
+        "place_target",
+        "reachable",
+        "dumpable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "has_water": {
+          "name": "has_water",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "boolean",
+          "description": "controls watering and wetting effects",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false,
+        "has_water": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "soap_refill",
+      "name": "soap refill",
+      "name_cn": "洗手液补充装",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 10.0,
+        "depth": 10.0,
+        "height": 18.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "soapbar",
+      "name": "soapbar",
+      "name_cn": "肥皂",
+      "category": "cleaning_tool",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 6.0,
+        "height": 3.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "soapbottle",
+      "name": "soapbottle",
+      "name_cn": "洗手液",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 8.0,
+        "height": 22.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "finite_resource"
+      ],
+      "state_schema": {
+        "count": {
+          "name": "count",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "resource inventory",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "amount": {
+          "name": "amount",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "material quantity",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "uses_left": {
+          "name": "uses_left",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "finite resource availability",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        }
+      },
+      "default_states": {
+        "amount": 10
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "sofa",
+      "name": "sofa",
+      "name_cn": "沙发",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 200.0,
+        "depth": 90.0,
+        "height": 85.0
+      },
+      "capabilities": [
+        "cleanable",
+        "place_target",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "spoon",
+      "name": "spoon",
+      "name_cn": "勺子",
+      "category": "utensil",
+      "dimensions_cm": {
+        "width": 4.0,
+        "depth": 4.0,
+        "height": 20.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "spraybottle",
+      "name": "spraybottle",
+      "name_cn": "喷雾瓶",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 9.0,
+        "depth": 9.0,
+        "height": 25.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "finite_resource"
+      ],
+      "state_schema": {
+        "count": {
+          "name": "count",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "resource inventory",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "amount": {
+          "name": "amount",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "material quantity",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "has_water": {
+          "name": "has_water",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "boolean",
+          "description": "controls watering and wetting effects",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
+        },
+        "uses_left": {
+          "name": "uses_left",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "finite resource availability",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        }
+      },
+      "default_states": {
+        "has_water": false,
+        "uses_left": 0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "stationery",
+      "name": "stationery",
+      "name_cn": "文具",
+      "category": "office_supply",
+      "dimensions_cm": {
+        "width": 15.0,
+        "depth": 10.0,
+        "height": 4.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "statue",
+      "name": "statue",
+      "name_cn": "雕像",
+      "category": "decoration",
+      "dimensions_cm": {
+        "width": 30.0,
+        "depth": 30.0,
+        "height": 45.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "stove",
+      "name": "stove",
+      "name_cn": "炉灶",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 70.0,
+        "depth": 60.0,
+        "height": 90.0
+      },
+      "capabilities": [
+        "reachable",
+        "switchable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_on": {
+          "name": "is_on",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "stove",
+            "faucet",
+            "washer",
+            "dishwasher",
+            "light",
+            "tv",
+            "microwave"
+          ],
+          "value_type": "boolean",
+          "description": "starts cycles",
+          "derived_from": [],
+          "requires_capabilities": [
+            "switchable"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "syringe",
+      "name": "syringe",
+      "name_cn": "注射器",
+      "category": "medical_supply",
+      "dimensions_cm": {
+        "width": 2.0,
+        "depth": 2.0,
+        "height": 15.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "table",
+      "name": "table",
+      "name_cn": "桌子",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 140.0,
+        "depth": 80.0,
+        "height": 75.0
+      },
+      "capabilities": [
+        "cleanable",
+        "place_target",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "tabletopdecor",
+      "name": "tabletopdecor",
+      "name_cn": "桌面装饰",
+      "category": "decoration",
+      "dimensions_cm": {
+        "width": 20.0,
+        "depth": 20.0,
+        "height": 20.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "teddybear",
+      "name": "teddybear",
+      "name_cn": "泰迪熊",
+      "category": "decoration",
+      "dimensions_cm": {
+        "width": 25.0,
+        "depth": 20.0,
+        "height": 30.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "television",
+      "name": "television",
+      "name_cn": "电视",
+      "category": "generic",
+      "dimensions_cm": {
+        "width": 110.0,
+        "depth": 8.0,
+        "height": 70.0
+      },
+      "capabilities": [
+        "reachable",
+        "switchable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "tennisracket",
+      "name": "tennisracket",
+      "name_cn": "网球拍",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 25.0,
+        "depth": 3.0,
+        "height": 70.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "tissue_refill",
+      "name": "tissue refill",
+      "name_cn": "纸巾补充包",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 20.0,
+        "depth": 10.0,
+        "height": 5.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "tissuebox",
+      "name": "tissuebox",
+      "name_cn": "纸巾盒",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 14.0,
+        "depth": 10.0,
+        "height": 12.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "cleanable",
+        "finite_resource"
+      ],
+      "state_schema": {
+        "count": {
+          "name": "count",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "resource inventory",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "amount": {
+          "name": "amount",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "material quantity",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "uses_left": {
+          "name": "uses_left",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "finite resource availability",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        }
+      },
+      "default_states": {
+        "count": 100,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "toilet",
+      "name": "toilet",
+      "name_cn": "马桶",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 70.0,
+        "depth": 70.0,
+        "height": 75.0
+      },
+      "capabilities": [
+        "reachable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "toilet_brush",
+      "name": "toilet brush",
+      "name_cn": "马桶刷",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 12.0,
+        "depth": 12.0,
+        "height": 40.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "toothbrush",
+      "name": "toothbrush",
+      "name_cn": "牙刷",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 2.0,
+        "depth": 2.0,
+        "height": 18.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "toothpaste",
+      "name": "toothpaste",
+      "name_cn": "牙膏",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 5.0,
+        "depth": 5.0,
+        "height": 18.0
+      },
+      "capabilities": [
+        "pickable",
+        "finite_resource",
+        "place_target"
+      ],
+      "state_schema": {
+        "count": {
+          "name": "count",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "resource inventory",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "amount": {
+          "name": "amount",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "material quantity",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        },
+        "uses_left": {
+          "name": "uses_left",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [],
+          "value_type": "number",
+          "description": "finite resource availability",
+          "derived_from": [],
+          "requires_capabilities": [
+            "finite_resource"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false,
+        "uses_left": 20
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "toothpaste_refill",
+      "name": "toothpaste refill",
+      "name_cn": "牙膏补充装",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 5.0,
+        "depth": 5.0,
+        "height": 18.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "towel",
+      "name": "towel",
+      "name_cn": "毛巾",
+      "category": "cleaning_tool",
+      "dimensions_cm": {
+        "width": 60.0,
+        "depth": 30.0,
+        "height": 2.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable",
+        "foldable"
+      ],
+      "state_schema": {
+        "folded": {
+          "name": "folded",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "clothes",
+            "towel",
+            "blanket"
+          ],
+          "value_type": "boolean",
+          "description": "improves storage",
+          "derived_from": [],
+          "requires_capabilities": [
+            "foldable"
+          ]
+        },
+        "is_wet": {
+          "name": "is_wet",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "clothes",
+            "towel",
+            "floor",
+            "cup",
+            "sink_area"
+          ],
+          "value_type": "boolean",
+          "description": "blocks folding",
+          "derived_from": [],
+          "requires_capabilities": []
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "folded": true,
+        "is_wet": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "towel_holder",
+      "name": "towel holder",
+      "name_cn": "毛巾架",
+      "category": "furniture_accessory",
+      "dimensions_cm": {
+        "width": 50.0,
+        "depth": 10.0,
+        "height": 10.0
+      },
+      "capabilities": [
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "trash_bin",
+      "name": "trash bin",
+      "name_cn": "垃圾桶",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 35.0,
+        "depth": 35.0,
+        "height": 50.0
+      },
+      "capabilities": [
+        "place_target",
+        "pickable"
+      ],
+      "state_schema": {
+        "is_full": {
+          "name": "is_full",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "basket",
+            "cup",
+            "container"
+          ],
+          "value_type": "boolean",
+          "description": "blocks filling",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        },
+        "fill_level": {
+          "name": "fill_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "cup",
+            "container"
+          ],
+          "value_type": "number",
+          "description": "drives is_full",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "tvstand",
+      "name": "tvstand",
+      "name_cn": "电视柜",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 120.0,
+        "depth": 40.0,
+        "height": 55.0
+      },
+      "capabilities": [
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "vacuumcleaner",
+      "name": "vacuumcleaner",
+      "name_cn": "吸尘器",
+      "category": "cleaning_tool",
+      "dimensions_cm": {
+        "width": 35.0,
+        "depth": 35.0,
+        "height": 110.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "vase",
+      "name": "vase",
+      "name_cn": "花瓶",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 15.0,
+        "depth": 15.0,
+        "height": 25.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "has_water": {
+          "name": "has_water",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "sink",
+            "vase",
+            "cup",
+            "mug",
+            "bowl",
+            "wateringcan",
+            "spraybottle"
+          ],
+          "value_type": "boolean",
+          "description": "controls watering and wetting effects",
+          "derived_from": [],
+          "requires_capabilities": [
+            "water_container"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false,
+        "has_water": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "vegetable",
+      "name": "vegetable",
+      "name_cn": "蔬菜",
+      "category": "food",
+      "dimensions_cm": {
+        "width": 15.0,
+        "depth": 15.0,
+        "height": 15.0
+      },
+      "capabilities": [
+        "pickable",
+        "perishable"
+      ],
+      "state_schema": {
+        "is_frozen": {
+          "name": "is_frozen",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit"
+          ],
+          "value_type": "boolean",
+          "description": "blocks immediate use",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive"
+          ]
+        },
+        "is_rotten": {
+          "name": "is_rotten",
+          "domain": [],
+          "category": "material",
+          "applies_to": [
+            "food",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit",
+            "organic_item"
+          ],
+          "value_type": "boolean",
+          "description": "dispose or remove",
+          "derived_from": [],
+          "requires_capabilities": [
+            "perishable"
+          ]
+        },
+        "temperature": {
+          "name": "temperature",
+          "domain": [],
+          "category": "thermal",
+          "applies_to": [
+            "food",
+            "drink",
+            "milk",
+            "juice",
+            "vegetable",
+            "fruit",
+            "egg",
+            "bread",
+            "water"
+          ],
+          "value_type": "number_or_enum",
+          "description": "drives thermal phases and cooking",
+          "derived_from": [],
+          "requires_capabilities": [
+            "temperature_sensitive",
+            "cookable"
+          ]
+        }
+      },
+      "default_states": {
+        "count": 1,
+        "is_rotten": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "wardrobe",
+      "name": "wardrobe",
+      "name_cn": "衣柜",
+      "category": "furniture",
+      "dimensions_cm": {
+        "width": 140.0,
+        "depth": 65.0,
+        "height": 180.0
+      },
+      "capabilities": [
+        "reachable",
+        "openable"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_open": false,
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "washer",
+      "name": "washer",
+      "name_cn": "洗衣机",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 60.0,
+        "depth": 65.0,
+        "height": 85.0
+      },
+      "capabilities": [
+        "switchable",
+        "timed_device",
+        "openable",
+        "cleanable",
+        "containment_blocker",
+        "start_requires_closed",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_on": {
+          "name": "is_on",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "stove",
+            "faucet",
+            "washer",
+            "dishwasher",
+            "light",
+            "tv",
+            "microwave"
+          ],
+          "value_type": "boolean",
+          "description": "starts cycles",
+          "derived_from": [],
+          "requires_capabilities": [
+            "switchable"
+          ]
+        },
+        "is_open": {
+          "name": "is_open",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "door",
+            "cabinet",
+            "fridge",
+            "drawer",
+            "washer",
+            "microwave"
+          ],
+          "value_type": "boolean",
+          "description": "controls access",
+          "derived_from": [],
+          "requires_capabilities": [
+            "openable"
+          ]
+        },
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "is_running": {
+          "name": "is_running",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "washer",
+            "washing_machine",
+            "dryer",
+            "clothesdryer",
+            "microwave",
+            "printer",
+            "coffeemachine",
+            "coffee_machine"
+          ],
+          "value_type": "boolean",
+          "description": "tracks active process",
+          "derived_from": [],
+          "requires_capabilities": [
+            "timed_device"
+          ]
+        },
+        "cycle_remaining": {
+          "name": "cycle_remaining",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "washer",
+            "dishwasher",
+            "microwave"
+          ],
+          "value_type": "number",
+          "description": "tracks cycle completion",
+          "derived_from": [],
+          "requires_capabilities": []
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_open": false,
+        "is_dirty": false,
+        "is_running": false,
+        "cycle_remaining": 0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "washing_machine",
+      "name": "washing machine",
+      "name_cn": "洗衣机",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 60.0,
+        "depth": 65.0,
+        "height": 85.0
+      },
+      "capabilities": [
+        "switchable",
+        "timed_device",
+        "openable",
+        "cleanable",
+        "containment_blocker",
+        "start_requires_closed",
+        "reachable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        },
+        "is_running": {
+          "name": "is_running",
+          "domain": [],
+          "category": "control",
+          "applies_to": [
+            "washer",
+            "washing_machine",
+            "dryer",
+            "clothesdryer",
+            "microwave",
+            "printer",
+            "coffeemachine",
+            "coffee_machine"
+          ],
+          "value_type": "boolean",
+          "description": "tracks active process",
+          "derived_from": [],
+          "requires_capabilities": [
+            "timed_device"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": false,
+        "is_open": false,
+        "is_dirty": false,
+        "is_running": false,
+        "cycle_remaining": 0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "watch",
+      "name": "watch",
+      "name_cn": "手表",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 4.0,
+        "depth": 4.0,
+        "height": 1.0
+      },
+      "capabilities": [
+        "pickable",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "water_dispenser",
+      "name": "water dispenser",
+      "name_cn": "饮水机",
+      "category": "appliance",
+      "dimensions_cm": {
+        "width": 35.0,
+        "depth": 35.0,
+        "height": 110.0
+      },
+      "capabilities": [
+        "fillable",
+        "reachable",
+        "switchable"
+      ],
+      "state_schema": {
+        "is_full": {
+          "name": "is_full",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "basket",
+            "cup",
+            "container"
+          ],
+          "value_type": "boolean",
+          "description": "blocks filling",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        },
+        "fill_level": {
+          "name": "fill_level",
+          "domain": [],
+          "category": "quantity",
+          "applies_to": [
+            "trash_bin",
+            "cup",
+            "container"
+          ],
+          "value_type": "number",
+          "description": "drives is_full",
+          "derived_from": [],
+          "requires_capabilities": [
+            "fillable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_on": true,
+        "is_full": false,
+        "is_dirty": false,
+        "fill_level": 1.0
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "water_refill",
+      "name": "water refill",
+      "name_cn": "水补充物",
+      "category": "personal_item",
+      "dimensions_cm": {
+        "width": 10.0,
+        "depth": 10.0,
+        "height": 20.0
+      },
+      "capabilities": [
+        "pickable"
+      ],
+      "state_schema": {},
+      "default_states": {},
+      "is_active": true
+    },
+    {
+      "semantic_type": "wheelchair",
+      "name": "wheelchair",
+      "name_cn": "轮椅",
+      "category": "medical_supply",
+      "dimensions_cm": {
+        "width": 65.0,
+        "depth": 100.0,
+        "height": 110.0
+      },
+      "capabilities": [
+        "reachable",
+        "pickable",
+        "place_target"
+      ],
+      "state_schema": {},
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    },
+    {
+      "semantic_type": "winebottle",
+      "name": "winebottle",
+      "name_cn": "酒瓶",
+      "category": "container",
+      "dimensions_cm": {
+        "width": 8.0,
+        "depth": 8.0,
+        "height": 30.0
+      },
+      "capabilities": [
+        "pickable",
+        "place_target",
+        "cleanable"
+      ],
+      "state_schema": {
+        "is_dirty": {
+          "name": "is_dirty",
+          "domain": [],
+          "category": "condition",
+          "applies_to": [
+            "plate",
+            "cup",
+            "table",
+            "clothes",
+            "floor",
+            "toilet",
+            "sink"
+          ],
+          "value_type": "boolean",
+          "description": "surface needs cleaning",
+          "derived_from": [],
+          "requires_capabilities": [
+            "cleanable"
+          ]
+        }
+      },
+      "default_states": {
+        "is_dirty": false
+      },
+      "is_active": true
+    }
+  ]
+}
