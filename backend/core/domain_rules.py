@@ -15,6 +15,10 @@ APPLIANCE_CYCLE_STEPS: dict[str, int] = {
     "dryer": 4,
     "printer": 2,
     "toaster": 2,
+    "workbench": 3,
+    "assembly_line": 4,
+    "stove": 3,
+    "elevator": 2,
 }
 
 DRYING_RACK_STEPS = 6
@@ -59,6 +63,12 @@ DUMP_RULES: dict[str, DumpRule] = {
         target_semantics=("sink",),
         requires_non_empty=True,
         effect="empty_fill_level",
+    ),
+    "wateringcan": DumpRule(
+        container_semantic="wateringcan",
+        target_semantics=("plant", "flower", "vase"),
+        requires_non_empty=True,
+        effect="water_plant",
     ),
 }
 

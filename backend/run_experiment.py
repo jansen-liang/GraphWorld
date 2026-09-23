@@ -51,9 +51,9 @@ from backend.experiments.paths import (
 )
 from backend.experiments.tensorboard import TensorBoardWriter
 from backend.runtime.agent import reflect
-from backend.runtime.agent.goal_lifecycle import update_active_goal
+from backend.runtime.agent.goal_lifecycle import active_goal_completed, preempt_goal, update_active_goal
 from backend.runtime.agent.rule_baselines import RULE_AGENT_MODES
-from backend.runtime.action_conflicts import resolve_robot_action_conflicts
+from backend.runtime.action_conflicts import conflict_metrics, resolve_robot_action_conflicts
 from backend.runtime.blocking import finalize_blocking_case_outcomes, update_blocking_cases
 from backend.runtime.engine import Orchestrator
 from backend.runtime.eval import build_matrix_snapshot
@@ -123,6 +123,7 @@ def run_episode(
     orchestrator = Orchestrator(scene)
     memories: dict[str, dict[str, Any] | None] = {robot_id: None for robot_id in robot_ids(robot_count)}
     active_goals: dict[str, dict[str, Any] | None] = {robot_id: None for robot_id in robot_ids(robot_count)}
+    goal_checkpoints: dict[str, list[dict[str, Any]]] = {robot_id: [] for robot_id in robot_ids(robot_count)}
     recent_histories: dict[str, list[dict[str, Any]]] = {robot_id: [] for robot_id in robot_ids(robot_count)}
     recent_score_records: list[dict[str, Any]] = []
     last_record: dict[str, Any] = {}
@@ -179,6 +180,7 @@ def run_episode(
         room_index_map = build_room_index(baseline)
         memories = copy.deepcopy(checkpoint.get("memories") or memories)
         active_goals = copy.deepcopy(checkpoint.get("active_goals") or active_goals)
+        goal_checkpoints = copy.deepcopy(checkpoint.get("goal_checkpoints") or goal_checkpoints)
         recent_histories = copy.deepcopy(checkpoint.get("recent_histories") or recent_histories)
         legacy_records = copy.deepcopy(checkpoint.get("records") or [])
         legacy_replay_steps = copy.deepcopy(checkpoint.get("replay_steps") or [])
@@ -228,7 +230,9 @@ def run_episode(
             recent_score_records=recent_score_records,
             blocking_cases=blocking_cases,
             step=step,
+            goal_checkpoints=goal_checkpoints,
         )
+        requested_conflicts = conflict_metrics(actions)
         actions = resolve_robot_action_conflicts(actions, candidates_by_robot)
         result = orchestrator.step(
             robot_actions=actions,
@@ -252,14 +256,20 @@ def run_episode(
         }
         actions_by_robot = {str(action.get("agent") or ""): action for action in actions}
         for robot_id in robot_ids(robot_count):
-            active_goals[robot_id] = update_active_goal(
-                active_goals.get(robot_id),
+            previous_goal = active_goals.get(robot_id)
+            updated_goal = update_active_goal(
+                previous_goal,
                 current,
                 robot_id,
                 actions_by_robot.get(robot_id, {}),
                 action_results.get(robot_id, {}),
                 step,
             )
+            if previous_goal and updated_goal is None and not active_goal_completed(previous_goal, current):
+                goal_checkpoints.setdefault(robot_id, []).append(
+                    preempt_goal(previous_goal, step, "stale_or_unavailable")
+                )
+            active_goals[robot_id] = updated_goal
         current_snapshot = build_matrix_snapshot(current, expected)
         robot_snapshot = build_matrix_snapshot(result["robot_scene"], expected) if robot_count else current_snapshot
         metrics, cumulative_state_score, cumulative_spatial_score = score_step_metrics(
@@ -273,6 +283,7 @@ def run_episode(
             human_blocking_total=human_blocking_total,
             human_blocking_recovered=human_blocking_recovered,
         )
+        metrics.update(requested_conflicts)
         previous_snapshot = current_snapshot
         primary_action = actions[0] if actions else {}
         action_name = str(primary_action.get("action") or "")
@@ -371,6 +382,7 @@ def run_episode(
                 baseline_scene=baseline,
                 memories=memories,
                 active_goals=active_goals,
+                goal_checkpoints=goal_checkpoints,
                 recent_histories=recent_histories,
                 recent_score_records=recent_score_records,
                 last_record=last_record,

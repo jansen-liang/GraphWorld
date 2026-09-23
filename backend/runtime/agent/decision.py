@@ -492,6 +492,7 @@ def _candidate_rank(
         phase = str(active_goal.get("phase") or "")
         washer = str(active_goal.get("washer") or "")
         washer_button = str(active_goal.get("washer_button") or f"{washer}_button")
+        detergent_pool = str(active_goal.get("detergent_pool") or "")
         drying_rack = str(active_goal.get("drying_rack") or "")
         wardrobe = str(active_goal.get("wardrobe") or "")
         goal_next_room = str(active_goal.get("next_room") or "")
@@ -509,6 +510,28 @@ def _candidate_rank(
             and {goal_robot_room, goal_next_room}.issubset(connected_rooms)
         ):
             return 126
+        if phase == "load_detergent":
+            washer_open = bool((nodes.get(washer) or {}).get("states", {}).get("is_open", False))
+            if not washer_open:
+                if action == "open" and target_id == washer:
+                    return 130
+                if action == "open" and target_parent == washer and target_semantic == "door":
+                    return 129
+                if action == "move" and target_id == washer:
+                    return 128
+                if action == "move" and goal_next_room and target_id == goal_next_room:
+                    return 126
+            elif holding and str((nodes.get(holding) or {}).get("semantic_type") or "") in {"detergent", "laundry_detergent"}:
+                if action == "place" and target_id == washer:
+                    return 130
+                if action == "move" and target_id == washer:
+                    return 128
+            elif action == "dispense" and target_id == detergent_pool:
+                return 130
+            elif action == "move" and target_id == detergent_pool:
+                return 128
+            elif action == "move" and goal_next_room and target_id == goal_next_room:
+                return 126
         if phase == "wash_load":
             if holding == goal_object:
                 if action == "place" and target_id == washer:
@@ -592,6 +615,303 @@ def _candidate_rank(
                     return 127
                 if action == "move" and goal_next_room and target_id == goal_next_room:
                     return 126
+    if active_goal and str(active_goal.get("type") or "") == "skill" and str(active_goal.get("skill") or "") == "dishwash_dishes":
+        goal_object = str(active_goal.get("object") or "")
+        phase = str(active_goal.get("phase") or "")
+        dishwasher = str(active_goal.get("dishwasher") or active_goal.get("target") or "")
+        dishwasher_button = str(active_goal.get("dishwasher_button") or f"{dishwasher}_button")
+        return_target = str(active_goal.get("return_target") or "")
+        goal_next_room = str(active_goal.get("next_room") or "")
+        goal_object_parent = str((nodes.get(goal_object) or {}).get("parent") or active_goal.get("object_parent") or "")
+        goal_object_room = _room_of(goal_object_parent, nodes) if goal_object_parent else str(active_goal.get("object_room") or "")
+        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_semantic = str(target.get("semantic_type") or "").lower()
+        if phase == "load":
+            if holding == goal_object:
+                if action == "place" and target_id == dishwasher:
+                    return 130
+                if action == "open" and target_id == dishwasher:
+                    return 129
+                if action == "open" and target_parent == dishwasher and target_semantic == "door":
+                    return 128
+                if action == "move" and target_id == dishwasher:
+                    return 127
+            else:
+                if action == "pick" and object_id == goal_object:
+                    return 130
+                if action == "move" and target_id == goal_object_parent:
+                    return 128
+                if action == "move" and target_id == goal_object_room:
+                    return 127
+        if phase == "run":
+            if action == "close" and target_id == dishwasher:
+                return 130
+            if action == "close" and target_parent == dishwasher and target_semantic == "door":
+                return 129
+            if action == "press" and target_id in {dishwasher, dishwasher_button}:
+                return 128
+            if action == "move" and target_id in {dishwasher, dishwasher_button}:
+                return 127
+        if phase == "washing_wait" and action == "move" and target_id == dishwasher:
+            return 120
+        if phase == "unload":
+            if holding == goal_object:
+                if action == "place" and target_id == return_target:
+                    return 130
+                if action == "move" and target_id == return_target:
+                    return 128
+            else:
+                if action == "pick" and object_id == goal_object and target_id == dishwasher:
+                    return 130
+                if action == "open" and target_id == dishwasher:
+                    return 129
+                if action == "open" and target_parent == dishwasher and target_semantic == "door":
+                    return 128
+                if action == "move" and target_id == dishwasher:
+                    return 127
+        if action == "move" and goal_next_room and target_id == goal_next_room:
+            return 126
+    if active_goal and str(active_goal.get("type") or "") == "skill" and str(active_goal.get("skill") or "") == "heat_milk":
+        goal_object = str(active_goal.get("object") or "")
+        phase = str(active_goal.get("phase") or "")
+        microwave = str(active_goal.get("microwave") or active_goal.get("target") or "")
+        microwave_button = str(active_goal.get("microwave_button") or f"{microwave}_button")
+        return_target = str(active_goal.get("return_target") or "")
+        goal_object_parent = str((nodes.get(goal_object) or {}).get("parent") or active_goal.get("object_parent") or "")
+        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_semantic = str(target.get("semantic_type") or "").lower()
+        if phase == "load":
+            if holding == goal_object:
+                if action == "place" and target_id == microwave:
+                    return 130
+                if action == "open" and target_id == microwave:
+                    return 129
+                if action == "open" and target_parent == microwave and target_semantic == "door":
+                    return 128
+                if action == "move" and target_id == microwave:
+                    return 127
+            else:
+                if action == "pick" and object_id == goal_object:
+                    return 130
+                if action == "move" and target_id == goal_object_parent:
+                    return 128
+        if phase == "run":
+            if action == "close" and target_id == microwave:
+                return 130
+            if action == "close" and target_parent == microwave and target_semantic == "door":
+                return 129
+            if action == "press" and target_id in {microwave, microwave_button}:
+                return 128
+            if action == "move" and target_id in {microwave, microwave_button}:
+                return 127
+        if phase == "waiting" and action == "move" and target_id == microwave:
+            return 120
+        if phase == "unload":
+            if holding == goal_object:
+                if action == "place" and target_id == return_target:
+                    return 130
+                if action == "move" and target_id == return_target:
+                    return 128
+            else:
+                if action == "pick" and object_id == goal_object and target_id == microwave:
+                    return 130
+                if action == "open" and target_id == microwave:
+                    return 129
+                if action == "open" and target_parent == microwave and target_semantic == "door":
+                    return 128
+                if action == "move" and target_id == microwave:
+                    return 127
+    if active_goal and str(active_goal.get("type") or "") == "skill" and str(active_goal.get("skill") or "") == "cook_egg":
+        egg_id = str(active_goal.get("input_object") or "")
+        output_id = str(active_goal.get("output_id") or "")
+        phase = str(active_goal.get("phase") or "")
+        stove = str(active_goal.get("stove") or active_goal.get("target") or "")
+        stove_button = str(active_goal.get("stove_button") or f"{stove}_button")
+        return_target = str(active_goal.get("return_target") or "")
+        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_semantic = str(target.get("semantic_type") or "").lower()
+        if phase == "prepare":
+            if holding == egg_id:
+                if action == "place" and target_id == stove:
+                    return 130
+                if action == "move" and target_id == stove:
+                    return 128
+            else:
+                if action == "pick" and object_id == egg_id:
+                    return 130
+                if action == "move" and target_id == str((nodes.get(egg_id) or {}).get("parent") or ""):
+                    return 128
+        if phase == "cook":
+            if action == "press" and target_id in {stove, stove_button}:
+                return 130
+            if action == "move" and target_id in {stove, stove_button}:
+                return 128
+        if phase == "waiting" and action == "move" and target_id == stove:
+            return 120
+        if phase == "serve":
+            if holding == output_id:
+                if action == "place" and target_id == return_target:
+                    return 130
+                if action == "move" and target_id == return_target:
+                    return 128
+            else:
+                if action == "pick" and object_id == output_id and target_id == stove:
+                    return 130
+                if action == "open" and target_id == stove:
+                    return 129
+                if action == "open" and target_parent == stove and target_semantic == "door":
+                    return 128
+                if action == "move" and target_id == stove:
+                    return 127
+    if active_goal and str(active_goal.get("type") or "") == "skill" and str(active_goal.get("skill") or "") == "craft_sandwich":
+        bread_id = str(active_goal.get("bread") or "")
+        tomato_id = str(active_goal.get("tomato") or "")
+        output_id = str(active_goal.get("output_id") or "")
+        phase = str(active_goal.get("phase") or "")
+        workbench = str(active_goal.get("workbench") or active_goal.get("target") or "")
+        workbench_button = str(active_goal.get("workbench_button") or f"{workbench}_button")
+        return_target = str(active_goal.get("return_target") or "")
+        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_semantic = str(target.get("semantic_type") or "").lower()
+        if phase == "collect":
+            missing = [item_id for item_id in (bread_id, tomato_id) if str((nodes.get(item_id) or {}).get("parent") or "") != workbench]
+            if holding in missing:
+                if action == "place" and target_id == workbench:
+                    return 130
+                if action == "move" and target_id == workbench:
+                    return 128
+            elif missing:
+                next_item = missing[0]
+                if action == "pick" and object_id == next_item:
+                    return 130
+                if action == "move" and target_id == str((nodes.get(next_item) or {}).get("parent") or ""):
+                    return 128
+        if phase == "craft":
+            if action == "press" and target_id in {workbench, workbench_button}:
+                return 130
+            if action == "move" and target_id in {workbench, workbench_button}:
+                return 128
+        if phase == "waiting" and action == "move" and target_id == workbench:
+            return 120
+        if phase == "serve":
+            if holding == output_id:
+                if action == "place" and target_id == return_target:
+                    return 130
+                if action == "move" and target_id == return_target:
+                    return 128
+            else:
+                if action == "pick" and object_id == output_id and target_id == workbench:
+                    return 130
+                if action == "move" and target_id == workbench:
+                    return 127
+    if active_goal and str(active_goal.get("type") or "") == "skill" and str(active_goal.get("skill") or "") == "assemble_product":
+        component_a = str(active_goal.get("component_a") or "")
+        component_b = str(active_goal.get("component_b") or "")
+        output_id = str(active_goal.get("output_id") or "")
+        phase = str(active_goal.get("phase") or "")
+        line = str(active_goal.get("assembly_line") or active_goal.get("target") or "")
+        line_button = str(active_goal.get("assembly_line_button") or f"{line}_button")
+        return_target = str(active_goal.get("return_target") or "")
+        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        if phase == "collect":
+            missing = [item_id for item_id in (component_a, component_b) if str((nodes.get(item_id) or {}).get("parent") or "") != line]
+            if holding in missing:
+                if action == "place" and target_id == line:
+                    return 130
+                if action == "move" and target_id == line:
+                    return 128
+            elif missing:
+                next_item = missing[0]
+                if action == "pick" and object_id == next_item:
+                    return 130
+                if action == "move" and target_id == str((nodes.get(next_item) or {}).get("parent") or ""):
+                    return 128
+        if phase == "run":
+            if action == "press" and target_id in {line, line_button}:
+                return 130
+            if action == "move" and target_id in {line, line_button}:
+                return 128
+        if phase == "waiting" and action == "move" and target_id == line:
+            return 120
+        if phase == "inspect":
+            if holding == output_id:
+                if action == "place" and target_id == return_target:
+                    return 130
+                if action == "move" and target_id == return_target:
+                    return 128
+            else:
+                if action == "pick" and object_id == output_id and target_id == line:
+                    return 130
+                if action == "move" and target_id == line:
+                    return 127
+    if active_goal and str(active_goal.get("type") or "") == "skill" and str(active_goal.get("skill") or "") == "brew_coffee":
+        cup_id = str(active_goal.get("cup") or "")
+        beans_id = str(active_goal.get("coffee_beans") or "")
+        output_id = str(active_goal.get("output_id") or "")
+        phase = str(active_goal.get("phase") or "")
+        machine = str(active_goal.get("coffee_machine") or active_goal.get("target") or "")
+        machine_button = str(active_goal.get("coffee_machine_button") or f"{machine}_button")
+        return_target = str(active_goal.get("return_target") or "")
+        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_semantic = str(target.get("semantic_type") or "").lower()
+        if phase == "prepare":
+            missing = [item_id for item_id in (cup_id, beans_id) if str((nodes.get(item_id) or {}).get("parent") or "") != machine]
+            if holding in missing:
+                if action == "place" and target_id == machine:
+                    return 130
+                if action == "move" and target_id == machine:
+                    return 128
+            elif missing:
+                next_item = missing[0]
+                if action == "pick" and object_id == next_item:
+                    return 130
+                if action == "move" and target_id == str((nodes.get(next_item) or {}).get("parent") or ""):
+                    return 128
+        if phase == "run":
+            if action == "press" and target_id in {machine, machine_button}:
+                return 130
+            if action == "move" and target_id in {machine, machine_button}:
+                return 128
+        if phase == "waiting" and action == "move" and target_id == machine:
+            return 120
+        if phase == "serve":
+            if holding == cup_id:
+                if action == "place" and target_id == return_target:
+                    return 130
+                if action == "move" and target_id == return_target:
+                    return 128
+            else:
+                if action == "pick" and object_id == cup_id and target_id == machine:
+                    return 130
+                if action == "open" and target_id == machine:
+                    return 129
+                if action == "open" and target_parent == machine and target_semantic == "door":
+                    return 128
+                if action == "move" and target_id == machine:
+                    return 127
+    if active_goal and str(active_goal.get("type") or "") == "skill" and str(active_goal.get("skill") or "") == "print_document":
+        printer = str(active_goal.get("printer") or active_goal.get("target") or "")
+        printer_button = str(active_goal.get("printer_button") or f"{printer}_button")
+        receipt_id = str(active_goal.get("receipt_id") or "")
+        return_target = str(active_goal.get("return_target") or "")
+        phase = str(active_goal.get("phase") or "")
+        goal_next_room = str(active_goal.get("next_room") or "")
+        if phase == "print" and action == "press" and target_id in {printer, printer_button}:
+            return 130
+        if phase == "print" and action == "move" and target_id in {printer, printer_button}:
+            return 128
+        if phase == "collect":
+            if action == "pick" and object_id == receipt_id and target_id == printer:
+                return 130
+            if action == "move" and target_id == printer:
+                return 128
+        if phase == "place":
+            if action == "place" and target_id == return_target:
+                return 130
+            if action == "move" and target_id == return_target:
+                return 128
+        if action == "move" and goal_next_room and target_id == goal_next_room:
+            return 126
     if active_goal and str(active_goal.get("type") or "") == "skill" and str(active_goal.get("skill") or "") in HOSPITAL_RETURN_SKILLS:
         goal_object = str(active_goal.get("object") or "")
         goal_target = str(active_goal.get("target") or "")

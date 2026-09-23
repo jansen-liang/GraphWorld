@@ -6,6 +6,8 @@ from typing import Any, Dict, Iterable, List, Optional
 
 from ..nodes import ControlObject, FixedObject, MovableObject, NodeType
 from ..states import DISCRETE_STATE_SPACE, DiscreteState, state_table_for_object
+from ..composition import composition_for
+from ..placement import footprint_for, interior_spec_for, surface_spec_for
 from .object_model import ObjectFamily, ObjectFamilySpec, PlacementSpec, SystemDependency, infer_family
 
 
@@ -285,6 +287,10 @@ class ObjectTemplate:
             "resource_capacity": deepcopy(self.resource_capacity),
             "max_capacity": self.max_capacity,
             "accepted_families": list(self.accepted_families),
+            "composition": composition_for(self.semantic_type).to_dict(),
+            **(surface_spec_for(self.semantic_type) or {}),
+            **(footprint_for(self.semantic_type) or {}),
+            **(interior_spec_for(self.semantic_type) or {}),
         }
 
     def instantiate(self, node_id: str, *, parent: Optional[str] = None, overrides: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
@@ -295,7 +301,10 @@ class ObjectTemplate:
         }.get(self.node_type, FixedObject)
         kwargs: Dict[str, Any] = {
             "states": deepcopy(self.default_states),
-            "interactive_actions": list(self.interactive_actions),
+            "interactive_actions": _merge_actions(
+                self.interactive_actions,
+                *(capability.actions for capability in self.capabilities),
+            ),
             "parent": parent,
         }
         if cls is ControlObject:
@@ -331,6 +340,18 @@ class ObjectTemplate:
             if capacities:
                 node["resource_capacity"] = capacities
         node["state_schema"] = deepcopy(self.state_schema)
+        surface_spec = surface_spec_for(self.semantic_type)
+        if surface_spec:
+            node.update(surface_spec)
+        footprint = footprint_for(self.semantic_type)
+        if footprint:
+            node.update(footprint)
+        interior = interior_spec_for(self.semantic_type)
+        if interior:
+            node.update(interior)
+        composition = composition_for(self.semantic_type).to_dict()
+        if composition["components"] or composition.get("storage"):
+            node["composition"] = composition
         if overrides:
             for key, value in overrides.items():
                 if key == "states" and isinstance(value, dict):
@@ -379,6 +400,16 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_on": False},
         ["move"],
         "wall",
+        capabilities=(SWITCHABLE, CLEANABLE),
+    ),
+    "fan": ObjectTemplate(
+        "fan",
+        "fan",
+        "风扇",
+        NodeType.FIXED_OBJECT,
+        {"is_on": False, "is_running": False},
+        ["move"],
+        "room",
         capabilities=(SWITCHABLE, CLEANABLE),
     ),
     "rack": ObjectTemplate(
@@ -496,7 +527,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         "衣柜",
         NodeType.FIXED_OBJECT,
         {"is_open": False, "is_dirty": False},
-        ["move", "open", "close"],
+        ["move", "open", "close", "press"],
         "wall",
     ),
     "cabinet": ObjectTemplate(
@@ -576,6 +607,16 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         ["move", "press", "brush"],
         "counter",
     ),
+    "assembly_line": ObjectTemplate(
+        "assembly_line",
+        "assembly line",
+        "装配线",
+        NodeType.FIXED_OBJECT,
+        {"is_on": False, "is_running": False, "cycle_remaining": 0},
+        ["move"],
+        "room",
+        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, PLACE_TARGET),
+    ),
     "washing_machine": ObjectTemplate(
         "washing_machine",
         "washing machine",
@@ -630,7 +671,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         "植物",
         NodeType.MOVABLE_OBJECT,
         {},
-        [],
+        ["move", "dump"],
         "room",
         capabilities=(PICKABLE, PLANT_LIFE),
     ),
@@ -749,6 +790,16 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         ["move"],
         "wall",
         capabilities=(SWITCHABLE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED),
+    ),
+    "elevator": ObjectTemplate(
+        "elevator",
+        "elevator",
+        "电梯",
+        NodeType.FIXED_OBJECT,
+        {"is_open": False},
+        ["move", "open", "close", "press"],
+        "room",
+        capabilities=(OPENABLE,),
     ),
     "dispenser": ObjectTemplate(
         "dispenser",
@@ -907,9 +958,9 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         "打印机",
         NodeType.FIXED_OBJECT,
         {"is_on": False, "is_running": False, "cycle_remaining": 0, "is_dirty": False, "count": 0, "amount": 0},
-        ["move", "press", "brush"],
+        ["move", "press", "brush", "place"],
         "table",
-        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, FINITE_RESOURCE),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, FINITE_RESOURCE, PLACE_TARGET),
         resource_capacity={"count": 100, "amount": 20},
     ),
     "receipt": ObjectTemplate(
@@ -976,6 +1027,15 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         ["pick", "place", "brush"],
         "bathroom",
     ),
+    "wateringcan": ObjectTemplate(
+        "wateringcan",
+        "watering can",
+        "浇水壶",
+        NodeType.MOVABLE_OBJECT,
+        {"has_water": True, "water_level": 100.0},
+        ["pick", "place"],
+        "surface",
+    ),
     "toothbrush": ObjectTemplate(
         "toothbrush",
         "toothbrush",
@@ -1011,7 +1071,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         "vegetable",
         "蔬菜",
         NodeType.MOVABLE_OBJECT,
-        {},
+        {"count": 1},
         [],
         "shelf",
         capabilities=(PICKABLE, PERISHABLE),
@@ -1062,7 +1122,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         "vase",
         "花瓶",
         NodeType.MOVABLE_OBJECT,
-        {"is_dirty": False, "has_water": False},
+        {"is_dirty": False, "has_water": False, "water_level": 0.0},
         [],
         PlacementSpec(mode="surface", capacity=3),
         capabilities=(PICKABLE, PLACE_TARGET, CLEANABLE),
@@ -1142,6 +1202,14 @@ OBJECT_LIBRARY.update({
         rooms=("bedroom", "kitchen", "living_room"), capabilities=(PICKABLE, CLEANABLE)),
     "bread": _candidate_template("bread", "面包", family=ObjectFamily.FOOD,
         rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, PERISHABLE), states={"is_dirty": False}),
+    "tomato": _candidate_template("tomato", "番茄", family=ObjectFamily.FOOD,
+        rooms=("kitchen",), parents=("counter", "table", "refrigerator"), capabilities=(PICKABLE, PERISHABLE), states={"is_dirty": False}),
+    "sandwich": _candidate_template("sandwich", "三明治", family=ObjectFamily.FOOD,
+        rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, PERISHABLE), states={"is_dirty": False}),
+    "workbench": _candidate_template("workbench", "料理台", family=ObjectFamily.APPLIANCE,
+        rooms=("kitchen",), parents=("counter", "table"), node_type=NodeType.FIXED_OBJECT,
+        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, PLACE_TARGET),
+        states={"is_on": False, "is_running": False, "cycle_remaining": 0}),
     "egg": _candidate_template("egg", "鸡蛋", family=ObjectFamily.FOOD,
         rooms=("kitchen",), parents=("counter", "refrigerator", "sink"), capabilities=(PICKABLE, PERISHABLE)),
     "fork": _candidate_template("fork", "叉子", family=ObjectFamily.UTENSIL,
@@ -1158,6 +1226,9 @@ OBJECT_LIBRARY.update({
         rooms=("bathroom",), parents=("floor",), capabilities=(PICKABLE,)),
     "scrubbrush": _candidate_template("scrubbrush", "清洁刷", family=ObjectFamily.CLEANING_TOOL,
         rooms=("bathroom",), parents=("floor",), capabilities=(PICKABLE, CLEANABLE)),
+    "wateringcan": _candidate_template("wateringcan", "浇水壶", family=ObjectFamily.CONTAINER,
+        rooms=("balcony", "kitchen", "living_room"), parents=("floor", "sink", "counter"),
+        capabilities=(PICKABLE, PLACE_TARGET), states={"has_water": True, "water_level": 100.0}),
     "soapbar": _candidate_template("soapbar", "肥皂", family=ObjectFamily.CLEANING_TOOL,
         rooms=("bathroom",), parents=("bathtub", "counter", "sink"), capabilities=(PICKABLE, CLEANABLE)),
     "tissuebox": _candidate_template("tissuebox", "纸巾盒", family=ObjectFamily.CONTAINER,
@@ -1317,6 +1388,7 @@ def get_object_template(name: str) -> Dict[str, Any]:
         "blocks_navigation": spec.get("blocks_navigation"),
         "blocks_containment": spec.get("blocks_containment"),
         "requires_closed_to_start": spec.get("requires_closed_to_start"),
+        "composition": deepcopy(spec.get("composition") or {"components": []}),
     }
 
 
@@ -1339,6 +1411,7 @@ def get_objects_for_room(room_type: str) -> List[str]:
             "button",
             "room_light",
             "air_conditioner",
+            "fan",
             "seat",
             "table",
             "television",
@@ -1352,6 +1425,7 @@ def get_objects_for_room(room_type: str) -> List[str]:
             "button",
             "room_light",
             "air_conditioner",
+            "fan",
             "bed",
             "wardrobe",
             "book",

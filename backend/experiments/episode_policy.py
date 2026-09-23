@@ -13,9 +13,14 @@ from backend.runtime.agent import (
 )
 from backend.runtime.agent.goal_lifecycle import (
     active_goal_claims,
+    active_goal_completed,
     candidate_goal_options,
+    effective_goal_priority,
     goal_conflicts_with_claims,
+    preempt_goal,
     refresh_active_goal_snapshot,
+    resume_goal,
+    start_goal,
 )
 from backend.runtime.agent.maintenance_goals import (
     global_restore_goal,
@@ -42,6 +47,7 @@ def choose_robot_actions(
     recent_score_records: list[dict[str, Any]],
     blocking_cases: list[dict[str, Any]],
     step: int,
+    goal_checkpoints: dict[str, list[dict[str, Any]]] | None = None,
 ) -> tuple[
     list[dict[str, Any]],
     dict[str, list[dict[str, Any]]],
@@ -54,6 +60,7 @@ def choose_robot_actions(
     llm_answers: dict[str, str] = {}
     goal_review_answers: dict[str, str] = {}
     observations: dict[str, dict[str, Any]] = {}
+    goal_checkpoints = goal_checkpoints if goal_checkpoints is not None else {}
     claimed_goal_nodes: set[str] = set()
     for robot_id in robot_ids(robot_count):
         claimed_goal_nodes.update(
@@ -63,9 +70,21 @@ def choose_robot_actions(
             for claim in active_goal_claims(goal)
         )
         if agent_mode != "reactive" and active_goals.get(robot_id) is None:
+            paused = goal_checkpoints.get(robot_id) or []
+            paused = [item for item in paused if isinstance(item, dict)]
+            paused.sort(key=lambda item: (-effective_goal_priority(item, step), int(item.get("preempted_at") or 0), str(item.get("goal_id") or "")))
+            while paused and active_goals.get(robot_id) is None:
+                candidate = paused.pop(0)
+                refreshed = refresh_active_goal_snapshot(candidate, orchestrator.graph.to_scene(), robot_id)
+                if candidate.get("status") == "paused" and not active_goal_completed(refreshed, orchestrator.graph.to_scene()):
+                    active_goals[robot_id] = resume_goal(refreshed, step)
+            goal_checkpoints[robot_id] = paused
+        if agent_mode != "reactive" and active_goals.get(robot_id) is None:
             proposed_goal = global_restore_goal(orchestrator.graph.to_scene(), baseline, robot_id, step)
             if proposed_goal and not goal_conflicts_with_claims(proposed_goal, claimed_goal_nodes):
-                active_goals[robot_id] = refresh_active_goal_snapshot(proposed_goal, orchestrator.graph.to_scene(), robot_id)
+                active_goals[robot_id] = start_goal(
+                    refresh_active_goal_snapshot(proposed_goal, orchestrator.graph.to_scene(), robot_id), step
+                )
         observation = perceive(orchestrator, robot_id)
         observations[robot_id] = observation
         memories[robot_id] = remember(memories.get(robot_id), observation)
@@ -86,7 +105,9 @@ def choose_robot_actions(
                 if proposed_goal and goal_conflicts_with_claims(proposed_goal, claimed_goal_nodes):
                     proposed_goal = None
             if proposed_goal:
-                active_goals[robot_id] = refresh_active_goal_snapshot(proposed_goal, orchestrator.graph.to_scene(), robot_id)
+                active_goals[robot_id] = start_goal(
+                    refresh_active_goal_snapshot(proposed_goal, orchestrator.graph.to_scene(), robot_id), step
+                )
         if use_llm and agent_mode == "goal_review":
             goal_options = candidate_goal_options(
                 orchestrator.graph.to_scene(),
@@ -114,9 +135,16 @@ def choose_robot_actions(
             decision = str(review.get("decision") or "")
             reviewed_task = str(review.get("high_level_task") or "")
             if decision in {"finish", "drop"} or reviewed_task == "maintain_order":
+                current_goal = active_goals.get(robot_id)
+                if current_goal and decision == "drop":
+                    goal_checkpoints.setdefault(robot_id, []).append(preempt_goal(current_goal, step, "agent_dropped_goal"))
                 active_goals[robot_id] = None
             elif decision == "switch":
-                active_goals[robot_id] = goal_options.get(reviewed_task)
+                current_goal = active_goals.get(robot_id)
+                if current_goal:
+                    goal_checkpoints.setdefault(robot_id, []).append(preempt_goal(current_goal, step, "higher_priority_goal"))
+                next_goal = goal_options.get(reviewed_task)
+                active_goals[robot_id] = start_goal(next_goal, step) if next_goal else None
             elif active_goals.get(robot_id):
                 active_goals[robot_id] = refresh_active_goal_snapshot(
                     active_goals[robot_id],

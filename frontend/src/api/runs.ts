@@ -20,10 +20,10 @@ export function getRunCurrent(runId: string) {
   return requestJson<RunCurrentResponse>(`/runs/${runId}/current`);
 }
 
-export function applyAction(runId: string, actionId: string) {
+export function applyAction(runId: string, actionId: string, payload: Record<string, unknown> = {}) {
   return requestJson<RunCurrentResponse>(`/runs/${runId}/actions`, {
     method: "POST",
-    body: JSON.stringify({ action_id: actionId }),
+    body: JSON.stringify({ action_id: actionId, payload }),
   });
 }
 

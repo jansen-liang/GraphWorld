@@ -50,7 +50,7 @@ export function RunDetailPage() {
   }
 
   const actionMutation = useMutation({
-    mutationFn: (actionId: string) => applyAction(runId, actionId),
+    mutationFn: (action: { actionId: string; payload: Record<string, unknown> }) => applyAction(runId, action.actionId, action.payload),
     onSuccess: refresh,
   });
   const advanceMutation = useMutation({
@@ -126,7 +126,10 @@ export function RunDetailPage() {
             <CandidateActionPanel
               actions={state?.candidate_actions ?? []}
               disabled={!canAct || actionMutation.isPending}
-              onSelect={(actionId) => actionMutation.mutate(actionId)}
+              onSelect={(action, selectedPayload) => {
+                const payload = selectedPayload ?? {};
+                actionMutation.mutate({ actionId: action.action_id, payload });
+              }}
             />
           ) : (
             <button className="wide-action" type="button" disabled={!canAdvance || advanceMutation.isPending} onClick={() => advanceMutation.mutate()}>

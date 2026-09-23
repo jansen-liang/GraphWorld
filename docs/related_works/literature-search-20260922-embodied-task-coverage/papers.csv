@@ -1,0 +1,13 @@
+work,persistent_world,visibility_uncertainty,interruption_recovery,human_multi_agent,affordance_graph,replay_contract,implication
+EvoNav-Bench,strong,strong,partial,human_activity,nav-centric,partial,stale-belief evaluation
+LongAct,episode,strong, strong,limited,household,partial,durable goal checkpoints
+NIABench,ongoing,strong,strong,strong,activity,partial,workload and interruption metrics
+PBD-AG,strong,strong,partial,none,graph,strong,belief updates and provenance
+PARTNR,episode,partial,strong,strong,household,partial,coordination conflicts
+Habitat 3.0,cohabiting,strong,strong,strong,simulator,partial,human-flow feasibility
+BEHAVIOR-1K,episode,partial,partial,limited,rich-state,partial,generic predicates
+CALVIN,sequence,low,partial,none,manipulation,strong,replay diagnostics
+LIBERO,curriculum,low,low,none,manipulation,strong,separate learning from service
+GenSim/RoboGen,generated,low,low,none,simulator,partial,authoring not runtime truth
+RoboCasa/Daily Composite Tasks,episode,partial,partial,limited,household,partial,backlog and deadline metrics
+Taskography,static,low,low,none,scene-graph,strong,containment and support facts

@@ -91,11 +91,16 @@ def is_container_door(state: dict[str, Any], door_id: str) -> bool:
 
 
 def container_access_failure(state: dict[str, Any], container_id: str) -> str | None:
-    container = node(state, container_id)
-    if not container or not is_containment_container(container):
-        return None
-    if not is_open(container):
-        return f"container is closed: {container_id}"
+    # Storage slots and attached components inherit access from every host
+    # container above them (slot -> cabinet, drawer -> cabinet, etc.).
+    current_id = str(container_id or "")
+    visited: set[str] = set()
+    while current_id and current_id not in visited:
+        visited.add(current_id)
+        container = node(state, current_id)
+        if container and is_containment_container(container) and not is_open(container):
+            return f"container is closed: {current_id}"
+        current_id = parent_of(state, current_id)
     return None
 
 
@@ -201,6 +206,8 @@ def dump_failures(state: dict[str, Any], actor_id: str, target_id: str) -> list[
         held_states = states(held)
         if float(held_states.get("fill_level") or 0.0) <= 0.0 and not bool(held_states.get("is_full", False)):
             return ["cup is empty"]
+    if held_semantic == "wateringcan" and float(states(held).get("water_level", 100.0 if states(held).get("has_water") else 0.0) or 0.0) <= 0.0:
+        return ["watering can is empty"]
     return []
 
 
@@ -211,6 +218,17 @@ def adjacent_room_failure(state: dict[str, Any], current_room: str, target_room:
         if {source, target} == {current_room, target_room}:
             return None
     return f"target room is not adjacent: {current_room}->{target_room}"
+
+
+def elevator_room_failure(state: dict[str, Any], current_room: str, target_room: str) -> str | None:
+    """Allow a room transition through an open elevator serving both rooms."""
+    for elevator_id, elevator in (state.get("nodes") or {}).items():
+        if semantic(elevator) not in {"elevator", "lift"}:
+            continue
+        served = {str(room_id) for room_id in elevator.get("served_rooms") or elevator.get("transport_rooms") or []}
+        if {current_room, target_room}.issubset(served) and is_open(elevator):
+            return None
+    return f"no open elevator connects: {current_room}->{target_room}"
 
 
 def structural_door_failure(state: dict[str, Any], current_room: str, target_room: str) -> str | None:
@@ -233,6 +251,7 @@ __all__ = [
     "controlled_targets",
     "device_door_failures",
     "dump_failures",
+    "elevator_room_failure",
     "holding",
     "is_container_door",
     "is_containment_container",

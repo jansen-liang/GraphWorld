@@ -4,6 +4,9 @@ from .actions import ACTION_SPECS, ActionSpec, ActionType, action_spec
 from .action_schemas import ACTION_SCHEMAS, ActionContext, ActionSchema, apply_action_schema, validate_action_schema
 from .domain_rules import APPLIANCE_CYCLE_STEPS, DRYING_RACK_STEPS, DUMP_RULES, TRASHABLE_SEMANTICS
 from .edges import EdgeCategory, EdgeType, SpatialRelation
+from .composition import ComponentSpec, CompositionSpec, StorageTopology, composition_for, materialize_compositions, validate_composition_nodes
+from .animation import visual_cues
+from .placement import attach_surface_metadata, floor_collision_failure, footprint_for, normalized_surface_anchor, surface_collision_failure, surface_fit_failure, surface_load_failure, surface_spec_for, volume_load_failure
 from .nodes import (
     CONTROL_OBJECT_TYPES,
     ControlObject,
@@ -67,7 +70,9 @@ from .states import (
     state_definition,
     state_table_for_object,
 )
+from .resources import available_count, can_dispense, dispense_resource, resource_pool, scene_resource_pool_specs
 from .timed_transitions import apply_timed_transitions
+from .transitions import envelope_for_event, transition_id, transition_log
 
 __all__ = [
     "ACTION_SPECS",
@@ -79,6 +84,18 @@ __all__ = [
     "ActionType",
     "CONTROL_OBJECT_TYPES",
     "Capability",
+    "visual_cues",
+    "attach_surface_metadata",
+    "floor_collision_failure",
+    "footprint_for",
+    "surface_collision_failure",
+    "surface_fit_failure",
+    "surface_load_failure",
+    "volume_load_failure",
+    "normalized_surface_anchor",
+    "surface_spec_for",
+    "ComponentSpec",
+    "CompositionSpec",
     "ControlObject",
     "DEFAULT_ROLE",
     "DISCRETE_STATE_SPACE",
@@ -121,12 +138,16 @@ __all__ = [
     "SystemSpec",
     "SystemLayer",
     "SystemStatus",
+    "StorageTopology",
     "SYSTEM_REGISTRY",
     "system_spec",
     "TRASHABLE_SEMANTICS",
     "action_spec",
     "apply_action_schema",
     "apply_timed_transitions",
+    "envelope_for_event",
+    "transition_id",
+    "transition_log",
     "build_object_node",
     "get_default_npcs",
     "get_event_spec",
@@ -142,4 +163,12 @@ __all__ = [
     "planned_activity",
     "schedule_for_role",
     "validate_action_schema",
+    "validate_composition_nodes",
+    "materialize_compositions",
+    "composition_for",
+    "available_count",
+    "can_dispense",
+    "dispense_resource",
+    "resource_pool",
+    "scene_resource_pool_specs",
 ]

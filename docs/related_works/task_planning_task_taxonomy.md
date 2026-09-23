@@ -71,7 +71,7 @@ State 是节点自身的有类型属性。
 | 控制 | `is_open`、`is_on`、`is_pressed`、`is_running` | Boolean | 门、容器、控制器和设备运行状态 | Implemented |
 | 一般条件 | `is_dirty`、`is_wet`、`is_broken`、`is_blocked`、`folded` | Boolean | 清洁、干湿、完整性、阻塞和构型条件 | Implemented |
 | 数量资源 | `cycle_remaining`、`fill_level`、`uses_left`、`count`、`amount`、`capacity` | Number | 计时、液体、使用次数、库存和容量 | Implemented |
-| 水资源 | `has_water` | Number `[0,100]` | 水槽和容器当前水量 | Proposed：当前代码为 Boolean |
+| 水资源 | `water_level` + `has_water` compatibility projection | Number `[0,100]` | 水槽和容器当前水量 | Implemented：旧 Boolean 快照兼容 |
 | 材料与热状态 | `temperature`、`is_cooked`、`is_burnt`、`is_frozen`、`is_boiling` | Number/Enum/Boolean | 加热、冷却和加工结果 | Partial：状态已注册，过程未完整覆盖 |
 | 生命周期 | `is_rotten`、`is_wilted`、`vitality` | Boolean/Number | 食物腐败和植物生命状态 | Implemented |
 | 派生状态 | `is_full` 等 | Boolean | 由数量阈值推导，避免与源数值独立更新 | Partial |
@@ -91,7 +91,7 @@ State 是节点自身的有类型属性。
 | `near` | 主体或物体 | 物体或设备 | 满足局部交互距离 | `move`、`place` | Implemented |
 | `connected` | 房间 | 房间 | 可导航拓扑连接 | 场景生成器 | Implemented |
 | `controls` | 控制器 | 设备或作用区域 | 控制关系 | 场景生成器 | Implemented |
-| `part_of` | 部件 | 复合物体 | 组成关系 | 配方或装配 Rule | Proposed |
+| `component_of` | 部件 | 复合物体 | 组成关系 | Composition materializer / layout validation | Implemented |
 
 `contains` 是 `in` 的反向查询，不作为独立权威边存储。`inside`、`inside_room`、`ontop`、`neighbour` 等历史写法在读入时归一化到核心关系。
 
@@ -142,7 +142,7 @@ Action 是主体可主动选择的最小接口。动作名不绑定对象；参�
 |---|---|---|
 | `connect(actor,part_a,part_b)` | 直接连接、焊接或装配两个兼容部件 | Proposed |
 | `rotate(actor,object,operation)` | 魔方转面、旋转零件或改变离散构型 | Proposed |
-| `consume(actor,resource,target)` | 主体主动消耗有明确目标的资源 | Open |
+| `consume(actor,object)` | 主体主动消耗手中的资源或食物实例 | Implemented：held food/drink instance -> `object_consumed` |
 
 `fill` 不是自由动作。容器装水由位置条件和水龙头操作触发。`discard` 也不需要独立动作；将对象放入垃圾桶或执行 `dump` 后，由领域规则更新其生命周期。
 
@@ -164,9 +164,9 @@ Rule = trigger_action + conditions + immediate_effects
 
 | Rule | 条件 | 即时效果 | 成熟度 |
 |---|---|---|---|
-| 水槽供水 | `controls(faucet,sink)` 且 `open(faucet)` | `sink.has_water=100` | Proposed：当前代码为 Boolean |
-| 水槽停水 | `controls(faucet,sink)` 且 `close(faucet)` | `sink.has_water=0` | Proposed：当前代码为 Boolean |
-| 容器装水 | 容器 `in sink` 且 `sink.has_water>0` | 容器 `has_water=100` | Proposed：当前 Boolean 规则部分支持 |
+| 水槽供水 | `controls(faucet,sink)` 且 `open(faucet)` | `sink.water_level=100` + `has_water=true` | Implemented |
+| 水槽停水 | `controls(faucet,sink)` 且 `close(faucet)` | `sink.water_level=0` + `has_water=false` | Implemented |
+| 容器装水 | 容器 `in sink` 且 `sink.has_water=true` | 容器 `water_level=100` + `has_water=true` | Implemented |
 | 布类浸湿 | 布类 `in sink` 且 `sink.has_water>0` | `is_wet=true` | Partial：当前只在放入水槽时触发 |
 | 垃圾处置 | 对象进入兼容垃圾桶或垃圾站 | 更新位置和处置状态 | Partial |
 | 控制传播 | `controls(button,device)` 且 `press(button)` | 切换设备或启动过程 | Implemented |
@@ -196,7 +196,7 @@ ProcessInstance = process_type + participants + remaining
 | 烘干/晾干 | 湿衣物在烘干机或晾衣架上 | 倒计时结束后 `is_wet=false` | Implemented |
 | 打印 | 打印机有纸和墨并启动 | 消耗资源并生成 `receipt` | Partial |
 | 咖啡制作 | 咖啡机有水、咖啡豆和杯子并启动 | 消耗咖啡豆并生成 `coffee` | Partial |
-| 花瓶耗水 | 花在有水花瓶中 | `has_water` 随时间下降，耗尽后植物活力下降 | Proposed：当前仅有布尔耗尽逻辑 |
+| 花瓶耗水 | 花在有水花瓶中 | 数值 `water_level` 随时间下降，耗尽后植物活力下降 | Implemented；旧 Boolean 花瓶兼容 |
 | 食物腐败 | 易腐食物随时间变化 | 达到阈值后 `is_rotten=true` | Implemented |
 
 过程完成效果可以同时改变多个状态和边。过程不是原子任务，也不是主体动作。
@@ -256,7 +256,7 @@ AND in(plate,cabinet)
 | 标签 | 触发依据 | 典型 Atomic Goal |
 |---|---|---|
 | 清洁 `clean` | 洁净或污染状态变化 | `is_dirty=false` |
-| 制作 `make` | 目标实体生成，或目标复合结构成立 | `exists(hamburger)=true`、`part_of(wire,board)` |
+| 制作 `make` | 目标实体生成，或目标复合结构成立 | `exists(hamburger)=true`、`component_of(wire,board)` |
 | 迁移 `relocate` | 非主体物体的位置、容器、表面或持有关系变化 | `in(plate,cabinet)` |
 | 操作 `operate` | 设备控制、资源量或构型状态变化 | `is_on=true`、`has_water=100`、`configuration=solved` |
 | 交互 `interact` | 主体之间的信息、社会关系或交接结果变化 | `acknowledged(human,robot)` |
@@ -378,7 +378,7 @@ close(faucet) -> sink.has_water: 100 -> 0
 
 ### 7.2 制作汉堡
 
-成熟度：目标语义案例。汉堡对象模板、工作台和通用 Recipe Registry 为 `Proposed`。
+成熟度：目标语义案例。当前已有面包/番茄三明治、工作台和声明式 Recipe Registry；汉堡专用模板仍为 `Proposed`。
 
 配方：
 
@@ -400,22 +400,22 @@ output: hamburger
 exists(hamburger_01)=true
 ```
 
-机器人只执行通用动作：收集输入，将输入放入工作台并启动设备。Recipe Process 校验输入后倒计时，完成时消耗原料、激活输出节点、建立输出位置和 `part_of` 关系。PDDL 编译器可以生成内部 `finish_recipe` 算子，但该算子不是机器人 Action，也不需要新增 `make_hamburger`。
+机器人只执行通用动作：收集输入，将输入放入工作台并启动设备。Recipe Process 校验输入后倒计时，完成时消耗原料、激活输出节点、建立 `component_of` 关系。PDDL 编译器可以生成内部 `finish_recipe` 算子，但该算子不是机器人 Action，也不需要新增 `make_hamburger`。
 
 ## 8. 当前实现覆盖
 
 | 能力 | 当前数量或范围 | 成熟度 | 事实来源 |
 |---|---:|---|---|
-| 对象模板 | 130 | Implemented | `backend/core/assets/object_library.py` |
+| 对象模板 | 137 | Implemented | `backend/core/assets/object_library.py` |
 | 对象语义类型 | 18 个 `ObjectFamily`，部分仍由规则推断 | Partial | `backend/core/assets/object_model.py` |
-| 注册状态 | 25 | Implemented | `backend/core/states.py` |
-| Runtime Action | 10 | Implemented | `backend/core/actions.py`、`action_schemas.py` |
-| Core Task Skill | 12 | Implemented | `backend/core/assets/task_library.py` |
+| 注册状态 | 26 | Implemented | `backend/core/states.py` |
+| Runtime Action | 11 | Implemented | `backend/core/actions.py`、`action_schemas.py` |
+| Core Task Skill | 24 | Implemented | `backend/core/assets/task_library.py` |
 | 空间、容器与控制关系 | 核心关系已注册，仍有历史别名 | Partial | `backend/core/edges.py` |
 | 洗衣、烘干和自然衰减 | tick transition | Implemented | `backend/core/timed_transitions.py` |
-| 打印和咖啡配方 | 2 类数据驱动过程 | Partial | `backend/core/processes.py` |
-| `has_water: 0–100` | 数值水资源 | Proposed | 当前 `states.py` 和 `effects.py` 仍按 Boolean 处理 |
-| 通用 recipe registry | 任意输入、设备、输出和完成效果 | Proposed | 当前仅打印/咖啡专用分支 |
+| 打印、咖啡、制作和烹饪配方 | 6 类设备过程（含工作台、流水线、炉灶） | Partial | `backend/core/processes.py` |
+| `water_level: 0–100` | 数值水资源，兼容 `has_water` | Implemented | `backend/core/states.py`、`effects.py`、`timed_transitions.py` |
+| 通用 recipe registry | 任意输入、设备、输出和完成效果 | Partial | 当前已覆盖打印、咖啡、制作、装配和烹饪；仍需扩展更多领域配方 |
 | 通用 Schema Grounding | 任意任务 schema 到实例 | Proposed | 尚无统一实例化器 |
 | 通用 PDDL 编译 | scene + schema + rules/processes 到 PDDL | Proposed | 当前只有 laundry 专用脚本 |
 | PDDL 已验证任务族 | 1：laundry，已知计划长度 17 | Implemented | `backend/tools/try_laundry_fastdownward.py` |
@@ -428,7 +428,7 @@ exists(hamburger_01)=true
 
 | 优先级 | 问题 | 下一步 | 完成条件 |
 |---|---|---|---|
-| P0 | `has_water` 仍是 Boolean | 将状态定义、对象默认值、Rule、Process 和测试迁移到 `[0,100]` | 水槽、花瓶、喷壶和咖啡机共享数值语义 |
+| P0 | 数值水资源与旧 Boolean 快照的兼容边界 | 保留 `water_level: 0–100` 为规范值，并逐步减少新场景对 `has_water` 的依赖 | 水槽、花瓶、喷壶和咖啡机共享数值语义；旧快照仍可读取 |
 | P0 | 规划语义与 runtime 可能不一致 | 建立统一 Transition IR，供 runtime 和 PDDL compiler 共用 | 同一计划的预测 delta 与重放 delta 一致 |
 | P0 | 通用 schema grounding 缺失 | 实现 query、constraint、goal 的统一绑定器 | 多场景可批量生成 task instance |
 | P1 | Recipe 仍有专用代码分支 | 建立声明式 Recipe Registry 和通用 Process | 新增产品只增加数据和必要能力 |
@@ -441,7 +441,7 @@ exists(hamburger_01)=true
 
 ## 附录 A：完整对象清单
 
-下表以当前 130 个 `OBJECT_LIBRARY` 模板为基础。类型列采用目标语义类型，不保留当前自动推断产生的明显误分类；`has_water` 按目标设计写为数值默认值 `0`，其余状态沿用当前模板。对象表应在后续由代码自动生成。
+下表以当前 137 个 `OBJECT_LIBRARY` 模板为基础。类型列采用目标语义类型，不保留当前自动推断产生的明显误分类；`water_level` 是规范数值，`has_water` 仅作为兼容投影。对象表应在后续由代码自动生成。
 
 | Semantic Type | 名称 | 类型 | 移动性 | 默认状态 |
 |---|---|---|---|---|

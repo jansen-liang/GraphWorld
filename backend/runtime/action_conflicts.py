@@ -17,6 +17,29 @@ def action_conflict_key(action: dict[str, Any]) -> tuple[str, str]:
     return ("", "")
 
 
+def conflict_metrics(actions: list[dict[str, Any]]) -> dict[str, Any]:
+    """Summarize simultaneous robot contention before fallback resolution."""
+    keyed: dict[tuple[str, str], list[dict[str, Any]]] = {}
+    for action in actions:
+        key = action_conflict_key(action)
+        if key[0]:
+            keyed.setdefault(key, []).append(action)
+    conflicts = [items for items in keyed.values() if len(items) > 1]
+    agents = {
+        str(action.get("agent") or "")
+        for items in conflicts
+        for action in items
+        if action.get("agent")
+    }
+    return {
+        "action_conflict_count": sum(len(items) - 1 for items in conflicts),
+        "action_conflict_groups": len(conflicts),
+        "action_conflict_agents": len(agents),
+        "action_conflict_targets": sum(1 for key, items in keyed.items() if len(items) > 1 and key[0] == "target"),
+        "action_conflict_objects": sum(1 for key, items in keyed.items() if len(items) > 1 and key[0] == "object"),
+    }
+
+
 def choose_non_conflicting_action(
     candidates: list[dict[str, Any]],
     blocked_keys: set[tuple[str, str]],

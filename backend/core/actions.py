@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 
 class ActionType(str, Enum):
+    WAIT = "wait"
     MOVE = "move"
     PICK = "pick"
     PLACE = "place"
@@ -15,6 +16,9 @@ class ActionType(str, Enum):
     FOLD = "fold"
     DUMP = "dump"
     REFILL = "refill"
+    DISPENSE = "dispense"
+    RELEASE = "release"
+    CONSUME = "consume"
 
 @dataclass(frozen=True)
 class ActionSpec:
@@ -27,6 +31,15 @@ class ActionSpec:
     effect_summary: tuple[str, ...]
 
 ACTION_SPECS: dict[ActionType, ActionSpec] = {
+    ActionType.WAIT: ActionSpec(
+        action_type=ActionType.WAIT,
+        category="temporal",
+        params=("agent",),
+        description="Advance the world by one step without manipulating an object.",
+        mutates_edges=False,
+        mutates_states=False,
+        effect_summary=("advance timed transitions",),
+    ),
     ActionType.PICK: ActionSpec(
         action_type=ActionType.PICK,
         category="manipulation",
@@ -116,6 +129,33 @@ ACTION_SPECS: dict[ActionType, ActionSpec] = {
         mutates_edges=False,
         mutates_states=True,
         effect_summary=("reset uses_left/count/amount to capacity", "consume compatible supply object"),
+    ),
+    ActionType.DISPENSE: ActionSpec(
+        action_type=ActionType.DISPENSE,
+        category="resource",
+        params=("agent", "target"),
+        description="Dispense one independent item instance from a finite resource pool.",
+        mutates_edges=True,
+        mutates_states=True,
+        effect_summary=("decrement source available_count", "create item instance held by agent"),
+    ),
+    ActionType.RELEASE: ActionSpec(
+        action_type=ActionType.RELEASE,
+        category="manipulation",
+        params=("agent", "object"),
+        description="Release a held object onto the current room floor under gravity.",
+        mutates_edges=True,
+        mutates_states=True,
+        effect_summary=("detach object from agent", "drop object into current room", "break fragile object when drop is unsafe"),
+    ),
+    ActionType.CONSUME: ActionSpec(
+        action_type=ActionType.CONSUME,
+        category="resource",
+        params=("agent", "object"),
+        description="Consume a held food or drink item and remove its independent instance.",
+        mutates_edges=True,
+        mutates_states=True,
+        effect_summary=("require a held consumable", "remove the consumed instance", "emit object_consumed with source provenance"),
     ),
 }
 

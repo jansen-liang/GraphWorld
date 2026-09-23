@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.app.api.routes import auth, health, runs, scenes
+from backend.app.api.routes import auth, health, object_catalog, runs, scenes
 from backend.app.core.config import get_settings
 
 
@@ -25,6 +25,7 @@ def create_app() -> FastAPI:
     app.include_router(health.router, prefix=settings.api_prefix, tags=["health"])
     app.include_router(auth.router, prefix=settings.api_prefix, tags=["auth"])
     app.include_router(scenes.router, prefix=settings.api_prefix, tags=["scenes"])
+    app.include_router(object_catalog.router, prefix=settings.api_prefix, tags=["object-catalog"])
     app.include_router(runs.router, prefix=settings.api_prefix, tags=["runs"])
     return app
 

@@ -480,6 +480,102 @@ core built-in registries / curated external data
     -> immutable SceneVersion snapshot
 ```
 
+## 9. 场景合理性与能力闭环
+
+### 9.1 当前数据审计
+
+对五个基础场景（Home、Office、Hospital、Supermarket、Factory）的原始图统计如下：
+
+| 项目 | 统计 |
+|---|---:|
+| 场景数 | 5 |
+| Edge 总数 | 302 |
+| 出现的 relation | 9 种 |
+| 出现的 category 字符串 | 6 种 |
+| 出现的 edge_type | 7 种 |
+| 出现的 semantic_type | 77 种 |
+
+现有 relation 为 `inside_room`、`contains`、`connected`、`on`、`controls`、`in`、`at`、`near`、`part_of`。问题是 `category` 不是稳定的语义分类：例如 `contains` 同时被标成 `structural`、`physical` 和 `spatial`；`inside_room` 基本都是 `structural`，但 `in/on` 又被拆到了 `containment` 和 `structural`。因此 category 只能作为历史导入字段，不能作为规划器的类型判断。
+
+### 9.2 推荐的 Edge 规范
+
+顶层仍然只有 `Node` 和 `Edge` 两个实体类。Edge 不为每种关系创建 Python 子类，而使用一个稳定的 `kind` 加一个受注册表约束的 `relation`：
+
+| `kind` | 关系示例 | 作用 | 是否改变任务可行性 |
+|---|---|---|---|
+| `spatial` | `at`、`inside`、`on`、`near`、`connected` | 位置、容纳、共墙、可达拓扑 | 是 |
+| `logical` | `part_of`、`linked_to`、`requires` | 组成、依赖、语义关联 | 是 |
+| `control` | `controls`、`powered_by` | 控制器到设备/资源的控制链 | 是 |
+| `task` | `requires`、`achieves`、`decomposes_to` | TaskGraph 中的目标和子任务关系 | 不直接成为 SceneGraph 空间事实 |
+
+`consumes`、`produces`、`transforms` 属于 `logical` kind 的过程关系；它们不另设顶层 Edge 类，避免把 Edge 类型按领域功能无限拆分。
+
+`contains`、`holds`、`adjacent_to` 等反向说法在 API 查询层派生，存储层只保留 canonical 方向，例如 `child --inside--> parent`、`object --held_by--> robot`、`door --connects--> room`。`runtime_seed` 不应继续作为 Edge category；它是导入/初始化元数据，应迁移到 `SceneVersion.initial_state`。
+
+### 9.3 Node 与复合物体
+
+Node 的最小共有字段是：`id`、`node_kind`、`semantic_type`、`states`、`capabilities`、`metadata`。不再用“固定/可移动/控制”承载所有语义；这些是能力和放置约束的组合。
+
+复合物体仍然是一个 Object Node 加组件 Edge，而不是把所有组件压成一个大节点：
+
+```text
+washing_machine_1 --has_part--> washer_door_1
+washing_machine_1 --has_part--> washer_drum_1
+washer_button_1   --controls--> washing_machine_1
+clothes_1         --inside--> washing_machine_1
+```
+
+洗碗机、咖啡机、组装台采用同样结构。组件可以有自己的状态和 footprint，但不能独立成为房间中的第二台设备。设备的可执行能力由 `CapabilitySpec` 声明，生产过程由 `ProcessSpec` 声明：
+
+```python
+ProcessSpec(
+    id="brew_coffee",
+    inputs=("coffee_beans", "water", "cup"),
+    device="coffeemachine",
+    outputs=("coffee",),
+    duration=2,
+    state_effects=("consume coffee_beans", "set cup.has_coffee=True"),
+)
+```
+
+### 9.4 场景合理性检查
+
+场景不是“房间和物体能画出来”就合理，而需要通过四层 validator：
+
+1. 几何层：房间栅格不重叠、连接房间共墙、门在共墙内、物体 footprint 在父空间内且固定物不非法重叠。
+2. 图结构层：每个 `inside/on/part_of/controls` 的端点类型合法；父子关系无环；复合设备组件角色唯一；门有两个房间端点。
+3. 能力层：每个任务引用的动作都有 actor capability、target capability、合法 parent 和容量；设备的启动条件能被满足。
+4. 过程层：每个生产/组装任务都有 `ProcessSpec`，输入节点存在、输出类型可生成、状态效果有 schema，且至少能得到一个可执行 action chain。
+
+发布结果应包含：`supported_task_types`、`unsupported_task_types`、`process_catalog`、`validation_issues` 和每个支持任务的一条验证计划。没有可执行计划的任务只能列为 candidate，不能算作场景支持。
+
+## 10. 2D footprint 规则
+
+当前编辑器使用 `grid_size=0.5m`。房间尺寸按 `RoomTypeSpec` 的面积/长宽比离散化；例如客厅 12×10、卧室 10×8、浴室 6×5、厨房 8×6。物体 footprint 来自语义模板而不是统一默认值：
+
+| 类别 | 示例 | 默认 footprint |
+|---|---|---:|
+| 控制/小型组件 | button、knob、room_light、faucet | 1×1 cell |
+| 小型可移动物 | clothes、book、cup、toolkit | 1×1 cell |
+| 中型设备 | microwave、dishwasher、washing_machine | 2×2 或 2×1 |
+| 大型家具 | bed、sofa、desk、table | 3×2、4×2 等 |
+| 大型结构设备 | refrigerator、machine、shelf | 2×2、3×2 等 |
+
+这些是编辑 footprint，不是视觉模型的精确 CAD 尺寸。模板可以提供 `footprint_cells` 覆盖值；没有覆盖值时才使用语义 family 的默认值。按钮不应占用与桌子相同的空间，也不应因为它有 `move/press` 动作就继承普通固定物体尺寸。
+
+## 11. TaskGraph 与 SceneGraph 的边界
+
+SceneGraph 描述世界事实，TaskGraph 描述目标和分解；不要把任务边直接混进房间/物体的空间图。两者通过 `TaskBinding` 连接：
+
+```text
+SceneGraph: clothes --inside--> washing_machine
+TaskGraph:  wash_and_store --decomposes_to--> wash
+TaskGraph:  wash_and_store --decomposes_to--> dry
+TaskGraph:  wash_and_store --decomposes_to--> fold
+```
+
+任务实例只有在初始场景、能力、ProcessSpec 和 TransitionRule 联合验证后，才标记为 `supported`。这样才能回答“这个场景支持哪些任务、物体如何流转、状态如何变化、设备如何生产/组装”，而不是依据物体名称猜测。
+
 当前 Web 数据库只保存 `Scene`、`SceneVersion`、`SceneNode` 和 `SceneEdge`；房间和物体模板仍在 Python registry 中。建议增加：
 
 ```text

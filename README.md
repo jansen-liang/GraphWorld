@@ -277,7 +277,7 @@ vitality, is_wilted, current_activity
 当前机器人动作：
 
 ```text
-move, pick, place, press, open, close, brush, fold, dump
+move, pick, place, press, open, close, brush, fold, dump, wait
 ```
 
 动作不是任意执行的。每一步先由引擎枚举合法候选，再交给 agent 选择。这样模型不会直接输出非法动作，而是在受限动作空间里做语义决策。
@@ -779,7 +779,7 @@ clean_exam_bed
 动作空间：
 
 ```text
-move, pick, place, press, open, close, brush, fold, dump
+move, pick, place, press, open, close, brush, fold, dump, wait
 ```
 
 重要约束：
@@ -800,15 +800,15 @@ move, pick, place, press, open, close, brush, fold, dump
 5. 人类阻塞恢复率提供了比总分更直接的流程级诊断：reactive 几乎不能恢复 blocking case，而 single_round 和 goal_review 能明显恢复人类活动前置条件。
 6. 当前仍未解决的是稳定全局调度：agent 会被局部可见问题吸引，会中途切换长链任务，也会错过人类事件的恢复窗口。
 
-## Web 前后端本地启动
+## 推荐：启动 Web 场景编辑器
 
-Web 版需要同时启动 PostgreSQL、Redis、后端 API、后台 worker 和前端 Vite。下面命令默认在仓库根目录运行：
+如果你的目标是打开当前的 GraphWorld Web 界面、编辑场景并运行第一人称仿真，只需要按下面这一条路径启动。命令默认在仓库根目录执行：
 
 ```bash
 cd /home/swzz/data/GraphWorld
 ```
 
-第一次启动前，先安装后端和前端依赖：
+第一次启动前安装依赖：
 
 ```bash
 pip install -r requirements-web.txt
@@ -818,39 +818,31 @@ npm install
 cd ..
 ```
 
-如果本机还没有 PostgreSQL 和 Redis 的本地服务二进制，先安装到仓库的 `.gw-services` 目录：
+如果本机还没有 PostgreSQL 和 Redis 的本地服务二进制，执行一次：
 
 ```bash
 conda create -y -p .gw-services postgresql redis
 ```
 
-启动数据库和 Redis：
+启动数据库和 Redis，并导出本次 shell 的连接配置：
 
 ```bash
 scripts/web_services.sh start
+eval "$(scripts/web_services.sh env)"
 ```
 
-这个脚本会使用默认连接地址：
+自动创建/更新数据库表，并写入默认用户和场景：
 
 ```bash
-export GRAPHWORLD_DATABASE_URL='postgresql+psycopg://graphworld:graphworld@127.0.0.1:55432/graphworld'
-export GRAPHWORLD_REDIS_URL='redis://127.0.0.1:56379/0'
-```
-
-然后初始化/更新数据库表，并写入默认用户和场景：
-
-```bash
-export GRAPHWORLD_DATABASE_URL='postgresql+psycopg://graphworld:graphworld@127.0.0.1:55432/graphworld'
-export GRAPHWORLD_REDIS_URL='redis://127.0.0.1:56379/0'
-
 alembic upgrade head
 python scripts/web_seed_users.py
 python scripts/web_seed_scenes.py --force
 ```
 
-启动后端 API：
+然后开两个终端。终端 1 启动 API：
 
 ```bash
+cd /home/swzz/data/GraphWorld
 scripts/web_api.sh
 ```
 
@@ -860,24 +852,15 @@ scripts/web_api.sh
 http://127.0.0.1:8010
 ```
 
-需要异步运行实验任务时，另开一个终端启动 worker：
-
-```bash
-cd /home/swzz/data/GraphWorld
-scripts/web_worker.sh
-```
-
-最后启动前端：
+终端 2 启动前端：
 
 ```bash
 cd /home/swzz/data/GraphWorld/frontend
 npm run dev
 ```
 
-前端默认访问地址：
+打开 `http://127.0.0.1:5173`，默认管理员账号是 `admin`，密码是 `admin123`。
 
-```text
-http://127.0.0.1:5173
-```
+PostgreSQL 是 Web 后端保存用户、场景版本和运行记录所需的存储服务；正常启动不需要手写 SQL。`alembic upgrade head` 是自动数据库迁移命令，不是业务操作。Redis 只在运行异步任务时使用；需要后台 worker 时，再开一个终端执行 `eval "$(scripts/web_services.sh env)"` 后运行 `scripts/web_worker.sh`。
 
-Vite 已经把 `/api` 代理到 `http://127.0.0.1:8010`，所以正常本地开发不需要额外配置前端 API 地址。默认管理员账号是 `admin`，密码是 `admin123`。
+上面的 `backend/run_experiment.py` 命令属于论文/批量实验 CLI，不是 Web 界面的启动方式。

@@ -47,7 +47,7 @@ TEMPLATE_CANDIDATES = frozenset({
     "saltshaker", "plunger", "scrubbrush", "soapbar", "spatula", "spoon", "towel",
     "dresser", "tissuebox", "watch", "newspaper", "bathtub", "bathtubbasin",
     "curtains", "kettle", "showerdoor", "baseballbat", "papertowelroll", "tvstand",
-    "showercurtain", "wateringcan", "ladle", "showerglass", "basketball", "safe",
+    "showercurtain", "ladle", "showerglass", "basketball", "safe",
     "teddybear", "tennisracket", "winebottle", "laundryhamper", "poster", "roomdecor",
     "bottle", "garbagebag", "dumbbell", "dogbed", "footstool", "ottoman", "aluminumfoil",
     "tabletopdecor", "vacuumcleaner", "clothesdryer", "doorframe", "doorway", "toaster",

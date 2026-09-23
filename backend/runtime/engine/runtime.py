@@ -9,6 +9,9 @@ from backend.core.edges import PARENT_RELATIONS, ROOM_CONNECTIVITY_RELATIONS
 from backend.core.assets.npc_library import EventPrecondition, get_event_spec
 from backend.core.states import DISCRETE_STATE_SPACE
 from backend.core.timed_transitions import apply_timed_transitions
+from backend.core.composition import materialize_compositions
+from backend.core.animation import visual_cues
+from backend.core.transitions import transition_log
 from .validator import validate_action
 
 
@@ -30,6 +33,7 @@ def _scene_edges(scene: dict[str, Any]) -> list[dict[str, Any]]:
 
 class SceneGraph:
     def __init__(self, scene: dict[str, Any]):
+        scene = materialize_compositions(copy.deepcopy(scene))
         self.scene_name = str(scene.get("scene_name") or "scene")
         self.nodes = {str(node["id"]): node for node in _scene_nodes(scene) if node.get("id")}
         self._migrate_dynamic_state_fields()
@@ -43,6 +47,7 @@ class SceneGraph:
         self.world_state.setdefault("weather", "sunny")
         self.world_state.setdefault("day_phase", "day")
         self.world_state.setdefault("room_temperature", {})
+        self.world_state.setdefault("room_humidity", {})
         self.world_state.setdefault("natural_change_counters", {})
         self.world_state.setdefault("natural_dirt_enabled", True)
         self.world_state.setdefault("processes", [])
@@ -222,10 +227,21 @@ class SceneGraph:
     def to_scene(self) -> dict[str, Any]:
         self.refresh_indices()
         self.sync_runtime_edges()
+        event_log = self.world_state.get("event_log") or []
+        self.world_state["transition_log"] = transition_log(event_log)
+        visible_nodes = []
+        for node in self.nodes.values():
+            snapshot = copy.deepcopy(node)
+            cues = visual_cues(snapshot)
+            if cues:
+                snapshot["visual_cues"] = cues
+            else:
+                snapshot.pop("visual_cues", None)
+            visible_nodes.append(snapshot)
         return {
             "scene_name": self.scene_name,
             "world_state": copy.deepcopy(self.world_state),
-            "nodes": [copy.deepcopy(node) for node in self.nodes.values()],
+            "nodes": visible_nodes,
             "edges": copy.deepcopy(self.edges),
             "processes": copy.deepcopy(self.world_state.get("processes", [])),
         }
@@ -263,7 +279,9 @@ class RobotActionSystem(System):
             return {"ok": False, "reason": reason}
 
         detail = f"{agent_id} {action_name} {target_id}"
-        if action_name == ActionType.MOVE.value:
+        if action_name == ActionType.WAIT.value:
+            detail = f"{agent_id} waited for one world step"
+        elif action_name == ActionType.MOVE.value:
             detail = f"{agent_id} moved to {target_id}"
         elif action_name == ActionType.PICK.value:
             detail = f"{agent_id} picked {target_id}"
@@ -586,6 +604,7 @@ class Perception:
         self.graph = graph
         self.confidence_horizon = max(1, int(confidence_horizon))
         self.last_seen: dict[str, dict[str, int]] = {}
+        self.last_seen_nodes: dict[str, dict[str, int]] = {}
 
     def visible_room_ids(self, agent_id: str) -> set[str]:
         current_room = self.graph.room_of.get(agent_id, "")
@@ -603,6 +622,27 @@ class Perception:
             visible_rooms.update(str(room_id) for room_id in node.get("connected_rooms") or [] if room_id in self.graph.nodes)
         return visible_rooms
 
+    def hidden_by_closed_container(self, node_id: str) -> bool:
+        current = node_id
+        seen: set[str] = set()
+        while current and current not in seen:
+            seen.add(current)
+            parent_id = self.graph.parent_of.get(current, "")
+            if not parent_id:
+                return False
+            parent = self.graph.node(parent_id)
+            parent_states = parent.get("states") or {}
+            is_container = (
+                str(parent.get("semantic_class") or "") == "container"
+                or bool(parent.get("blocks_containment", False))
+                or str(parent.get("semantic_type") or "") in {"cabinet", "wardrobe", "refrigerator", "fridge", "microwave", "dishwasher", "washer", "washing_machine", "dryer", "clothesdryer"}
+            )
+            child_is_control = str(self.graph.node(current).get("semantic_type") or "") in {"door", "button", "hinge"}
+            if is_container and parent_states.get("is_open") is False and not child_is_control:
+                return True
+            current = parent_id
+        return False
+
     def robot_view(self, agent_id: str = "robot_01") -> dict[str, Any]:
         step = int(self.graph.world_state.get("step") or 0)
         visible_rooms = self.visible_room_ids(agent_id)
@@ -610,6 +650,10 @@ class Perception:
             node_id
             for node_id in self.graph.nodes
             if node_id == agent_id or self.graph.room_of.get(node_id) in visible_rooms or node_id in visible_rooms
+        }
+        visible_ids = {
+            node_id for node_id in visible_ids
+            if node_id in {agent_id, *visible_rooms} or not self.hidden_by_closed_container(node_id)
         }
         for node_id, node in self.graph.nodes.items():
             if str(node.get("door_kind") or "") == "structural" and any(
@@ -623,14 +667,35 @@ class Perception:
             if parent_id in visible_ids and bool((node.get("states") or {}).get("is_open", False)):
                 visible_ids.update(child_id for child_id, child_parent in self.graph.parent_of.items() if child_parent == parent_id)
         seen = self.last_seen.setdefault(agent_id, {})
+        seen_nodes = self.last_seen_nodes.setdefault(agent_id, {})
         for room_id in visible_rooms:
             seen[room_id] = step
+        for node_id in visible_ids:
+            seen_nodes[node_id] = step
         confidence = {}
+        room_status: dict[str, str] = {}
         for node_id, node in self.graph.nodes.items():
             if str(node.get("node_type") or "") != "room":
                 continue
             age = step - seen.get(node_id, -self.confidence_horizon)
             confidence[node_id] = round(max(0.0, 1.0 - (age / self.confidence_horizon)), 4)
+            room_status[node_id] = "visible" if node_id in visible_rooms else (
+                "stale" if node_id in seen else "unknown"
+            )
+        node_status: dict[str, str] = {}
+        last_seen_step_by_node: dict[str, int] = {}
+        for node_id, node in self.graph.nodes.items():
+            if node_id in visible_ids:
+                node_status[node_id] = "visible"
+                last_seen_step_by_node[node_id] = int(seen_nodes[node_id])
+                continue
+            last_seen = seen_nodes.get(node_id)
+            if last_seen is not None:
+                node_status[node_id] = "stale"
+                last_seen_step_by_node[node_id] = int(last_seen)
+                continue
+            node_room = self.graph.room_of.get(node_id, "")
+            node_status[node_id] = "occluded" if node_room in visible_rooms else "unknown"
         visible_edges = [
             copy.deepcopy(edge)
             for edge in self.graph.edges
@@ -661,7 +726,14 @@ class Perception:
                 edge_keys.add(key)
         return {
             "scene_name": self.graph.scene_name,
-            "world_state": {**copy.deepcopy(self.graph.world_state), "visible_rooms": sorted(visible_rooms), "confidence_by_room": confidence},
+            "world_state": {
+                **copy.deepcopy(self.graph.world_state),
+                "visible_rooms": sorted(visible_rooms),
+                "confidence_by_room": confidence,
+                "observation_status_by_node": node_status,
+                "last_seen_step_by_node": last_seen_step_by_node,
+                "observation_status_by_room": room_status,
+            },
             "nodes": [copy.deepcopy(self.graph.nodes[node_id]) for node_id in sorted(visible_ids)],
             "edges": visible_edges,
         }

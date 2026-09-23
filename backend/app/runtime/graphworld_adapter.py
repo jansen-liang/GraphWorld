@@ -4,6 +4,7 @@ import copy
 from typing import Any
 
 from backend.runtime.agent.planning import candidate_actions
+from backend.runtime.camera import camera_spec_for_agent
 from backend.runtime.engine import Orchestrator
 
 from backend.app.runtime.schedule import planned_events_for_step
@@ -68,6 +69,8 @@ def action_id(action: dict[str, Any]) -> str:
         str(action.get("target") or ""),
         str(action.get("object") or ""),
     ]
+    if action.get("destination_room"):
+        parts.append(f"destination={action['destination_room']}")
     return ":".join(parts)
 
 
@@ -82,6 +85,7 @@ def compact_candidate(action: dict[str, Any]) -> CandidateAction:
         legal=bool(action.get("legal", True)),
         preview=str(action.get("reason") or ""),
         payload=copy.deepcopy(action),
+        action_contract=copy.deepcopy(action.get("action_contract") or {}),
     )
 
 
@@ -164,6 +168,36 @@ class GraphWorldAdapter:
             }
         else:
             observation = orchestrator.perception.robot_view(self.agent_id)
+        world_state = observation.setdefault("world_state", {})
+        visible_ids = {
+            str(item.get("id") or "")
+            for item in observation.get("nodes") or []
+            if isinstance(item, dict) and item.get("id")
+        }
+        status_by_node = dict(world_state.get("observation_status_by_node") or {})
+        last_seen = {
+            str(key): int(value)
+            for key, value in (world_state.get("last_seen_step_by_node") or {}).items()
+        }
+        status_by_room = dict(world_state.get("observation_status_by_room") or {})
+        step = int(world_state.get("step") or 0)
+        for node_id, node in orchestrator.graph.nodes.items():
+            if node_id in visible_ids:
+                status_by_node[node_id] = "visible"
+                last_seen.setdefault(node_id, step)
+            elif node_id not in status_by_node:
+                node_room = orchestrator.graph.room_of.get(node_id, "")
+                status_by_node[node_id] = "occluded" if node_room in set(world_state.get("visible_rooms") or []) else "unknown"
+        for node_id, node in orchestrator.graph.nodes.items():
+            if str(node.get("node_type") or "") != "room":
+                continue
+            status_by_room.setdefault(
+                node_id,
+                "visible" if node_id in set(world_state.get("visible_rooms") or []) else "unknown",
+            )
+        world_state["observation_status_by_node"] = status_by_node
+        world_state["last_seen_step_by_node"] = last_seen
+        world_state["observation_status_by_room"] = status_by_room
         return observation
 
     def candidate_payloads(
@@ -189,6 +223,7 @@ class GraphWorldAdapter:
             for item in candidate_actions(orchestrator, observation, self.agent_id)
         ]
         world_state = observation.get("world_state") or {}
+        observation["camera"] = camera_spec_for_agent(observation, self.agent_id)
         return Observation(
             actor_id=self.agent_id,
             step_index=int(world_state.get("step") or 0),
@@ -202,7 +237,20 @@ class GraphWorldAdapter:
                 str(key): float(value)
                 for key, value in (world_state.get("confidence_by_room") or {}).items()
             },
+            observation_status_by_node={
+                str(key): str(value)
+                for key, value in (world_state.get("observation_status_by_node") or {}).items()
+            },
+            last_seen_step_by_node={
+                str(key): int(value)
+                for key, value in (world_state.get("last_seen_step_by_node") or {}).items()
+            },
+            observation_status_by_room={
+                str(key): str(value)
+                for key, value in (world_state.get("observation_status_by_room") or {}).items()
+            },
             candidate_actions=candidates,
+            camera=copy.deepcopy(observation.get("camera") or {}),
         )
 
     def candidate_by_id(

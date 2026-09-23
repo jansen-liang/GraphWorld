@@ -8,6 +8,12 @@ export interface RoomGeometry {
   grid_y: number;
   width_cells: number;
   depth_cells: number;
+  x_cm?: number;
+  y_cm?: number;
+  z_cm?: number;
+  width_cm?: number;
+  depth_cm?: number;
+  height_cm?: number;
 }
 
 export interface DoorPlacement {
@@ -25,6 +31,18 @@ export interface ObjectPlacement {
   width_cells: number;
   depth_cells: number;
   rotation?: number;
+  rotation_x?: number;
+  rotation_y?: number;
+  rotation_z?: number;
+  layout_anchor?: string;
+  placement_mode?: "contained" | "wall_mounted";
+  parent_object_id?: string;
+  x_cm?: number;
+  y_cm?: number;
+  z_cm?: number;
+  width_cm?: number;
+  depth_cm?: number;
+  height_cm?: number;
 }
 
 export interface FloorplanLayout {
@@ -181,14 +199,19 @@ export function FloorplanCanvas({ nodes, edges, layout, selectedId, onSelect, on
     }
     const item = layout.objects[drag.id];
     const room = layout.rooms[item.room_id];
+    const grid_x = Math.max(0, Math.min(room.width_cells - item.width_cells, Math.round(cursor.x - room.grid_x - drag.offsetX)));
+    const grid_y = Math.max(0, Math.min(room.depth_cells - item.depth_cells, Math.round(cursor.y - room.grid_y - drag.offsetY)));
+    const cellCm = Math.round((layout.grid_size || 0.1) * 100);
     onChange({
       ...layout,
       objects: {
         ...layout.objects,
         [drag.id]: {
           ...item,
-          grid_x: Math.max(0, Math.min(room.width_cells - item.width_cells, Math.round(cursor.x - room.grid_x - drag.offsetX))),
-          grid_y: Math.max(0, Math.min(room.depth_cells - item.depth_cells, Math.round(cursor.y - room.grid_y - drag.offsetY))),
+          grid_x,
+          grid_y,
+          x_cm: Math.round((room.x_cm ?? room.grid_x * cellCm) + grid_x * cellCm),
+          y_cm: Math.round((room.y_cm ?? room.grid_y * cellCm) + grid_y * cellCm),
         },
       },
     });

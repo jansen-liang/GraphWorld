@@ -1,6 +1,23 @@
 import { requestJson } from "./client";
 import type { SceneGraphResponse, SceneLayoutValidation, SceneRead, SceneVersionRead } from "../types/api";
 
+export interface ObjectCatalogEntry {
+  semantic_type: string;
+  name: string;
+  name_cn: string;
+  category: string;
+  width_cm: number;
+  depth_cm: number;
+  height_cm: number;
+  capabilities: string[];
+  state_schema: Record<string, unknown>;
+  default_states: Record<string, unknown>;
+}
+
+export function listObjectCatalog() {
+  return requestJson<ObjectCatalogEntry[]>("/object-catalog");
+}
+
 export function listScenes() {
   return requestJson<SceneRead[]>("/scenes");
 }
@@ -29,7 +46,7 @@ export function publishSceneLayout(sceneVersionId: string, sourceJson: Record<st
     method: "POST",
     body: JSON.stringify({
       source_json: sourceJson,
-      description: "Published from the 2D scene builder.",
+      description: "Saved from the scene builder.",
     }),
   });
 }

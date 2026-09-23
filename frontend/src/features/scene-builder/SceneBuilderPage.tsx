@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, Box, Check, CopyPlus, DoorOpen, Save, Warehouse } from "lucide-react";
+import { AlertTriangle, Box, Check, CopyPlus, DoorOpen, Network, PanelsTopLeft, Save, Warehouse } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { getScene, getSceneGraph, listSceneVersions, publishSceneLayout, validateSceneLayout } from "../../api/scenes";
+import { getScene, getSceneGraph, listObjectCatalog, listSceneVersions, publishSceneLayout, validateSceneLayout } from "../../api/scenes";
 import { useAuth } from "../../app/auth";
-import type { SceneLayoutValidation } from "../../types/api";
+import type { InteractionHit, SceneLayoutValidation } from "../../types/api";
 import {
   FloorplanCanvas,
   sharedWall,
@@ -13,6 +13,8 @@ import {
   type ObjectPlacement,
   type RoomGeometry,
 } from "./FloorplanCanvas";
+import { Scene3DCanvas } from "./Scene3DCanvas";
+import { SceneGraphCanvas } from "../scene-graph/SceneGraphCanvas";
 
 type RawNode = Record<string, unknown>;
 type RawEdge = Record<string, unknown>;
@@ -93,6 +95,8 @@ export function SceneBuilderPage() {
   const [selectedId, setSelectedId] = useState("");
   const [templateId, setTemplateId] = useState("");
   const [validation, setValidation] = useState<SceneLayoutValidation | null>(null);
+  const [view, setView] = useState<"2d" | "3d" | "graph">("2d");
+  const [lastInteractionHit, setLastInteractionHit] = useState<InteractionHit | null>(null);
 
   const scene = useQuery({ queryKey: ["scene", sceneId], queryFn: () => getScene(sceneId), enabled: Boolean(sceneId) });
   const versions = useQuery({ queryKey: ["scene-versions", sceneId], queryFn: () => listSceneVersions(sceneId), enabled: Boolean(sceneId) });
@@ -103,6 +107,7 @@ export function SceneBuilderPage() {
     queryFn: () => getSceneGraph(activeVersionId),
     enabled: Boolean(activeVersionId),
   });
+  const objectCatalog = useQuery({ queryKey: ["object-catalog"], queryFn: listObjectCatalog, enabled: auth.isAdmin });
 
   useEffect(() => {
     if (!graph.data) return;
@@ -282,7 +287,7 @@ export function SceneBuilderPage() {
             <Check size={16} aria-hidden /> Validate
           </button>
           <button className="button primary" type="button" onClick={validateThenPublish} disabled={publishMutation.isPending || validateMutation.isPending}>
-            <Save size={16} aria-hidden /> Publish version
+            <Save size={16} aria-hidden /> Save layout
           </button>
         </div>
       </header>
@@ -323,6 +328,11 @@ export function SceneBuilderPage() {
           </div>
 
           <div className="builder-catalog">
+            <div className="catalog-heading"><strong>Object library</strong><small>{objectCatalog.data?.length ?? 0} specifications from PostgreSQL</small></div>
+            <select aria-label="Browse object library" defaultValue="">
+              <option value="">Browse catalog dimensions</option>
+              {(objectCatalog.data ?? []).map((entry) => <option key={entry.semantic_type} value={entry.semantic_type}>{entry.name_cn || entry.name} · {entry.width_cm} x {entry.depth_cm} x {entry.height_cm} cm</option>)}
+            </select>
             <label><span>Add from this scene</span>
               <select value={templateId} onChange={(event) => setTemplateId(event.target.value)}>
                 <option value="">Select object template</option>
@@ -336,7 +346,15 @@ export function SceneBuilderPage() {
         </aside>
 
         <main className="builder-canvas-region">
-          <FloorplanCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} />
+          <div className="builder-view-toolbar" role="tablist" aria-label="Scene view">
+            <button className={view === "2d" ? "active" : ""} type="button" onClick={() => setView("2d")} role="tab" aria-selected={view === "2d"}><PanelsTopLeft size={15} /> 2D</button>
+            <button className={view === "3d" ? "active" : ""} type="button" onClick={() => setView("3d")} role="tab" aria-selected={view === "3d"}><Box size={15} /> 3D</button>
+            <button className={view === "graph" ? "active" : ""} type="button" onClick={() => setView("graph")} role="tab" aria-selected={view === "graph"}><Network size={15} /> Graph</button>
+            {lastInteractionHit && <span className="builder-hit-readout" title="Latest Three.js raycast hit">hit: {lastInteractionHit.node_id}{lastInteractionHit.surface_uv ? ` · UV ${lastInteractionHit.surface_uv.map((value) => value.toFixed(2)).join(",")}` : ""}</span>}
+          </div>
+          {view === "2d" && <FloorplanCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} />}
+          {view === "3d" && <Scene3DCanvas nodes={nodes} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} catalog={objectCatalog.data ?? []} onInteractionHit={setLastInteractionHit} />}
+          {view === "graph" && <div className="builder-graph-stage"><SceneGraphCanvas nodes={nodes} edges={edges} selectedNodeId={selectedId} onSelectNode={setSelectedId} /></div>}
         </main>
 
         <aside className="builder-inspector">
@@ -403,12 +421,50 @@ function ObjectInspector({ node, placement, rooms, onChange, onRoomChange }: {
   onChange: (patch: Partial<ObjectPlacement>) => void;
   onRoomChange: (roomId: string) => void;
 }) {
+  const states = node.states && typeof node.states === "object" ? node.states as Record<string, unknown> : {};
+  const schema = node.state_schema && typeof node.state_schema === "object" ? node.state_schema as Record<string, unknown> : {};
+  const stateEntries = Object.entries(schema).length ? Object.entries(schema) : Object.entries(states).map(([name, value]) => [name, { default_value: value }] as const);
+  const capabilities = Array.isArray(node.capabilities) ? node.capabilities.map(String) : [];
+  const worldX = placement.x_cm ?? placement.grid_x * 10;
+  const worldY = placement.y_cm ?? placement.grid_y * 10;
+  const worldZ = placement.z_cm ?? 0;
+  const length = placement.width_cm ?? placement.width_cells * 10;
+  const width = placement.depth_cm ?? placement.depth_cells * 10;
+  const height = placement.height_cm ?? 80;
+  const attributes = [
+    ["Semantic type", semanticType(node) || "object"],
+    ["Category", text(node.semantic_class || node.category) || "object"],
+    ["Capabilities", capabilities.join(", ") || "None"],
+    ["Size", `${placement.width_cells} x ${placement.depth_cells} cells`],
+  ];
   return <div className="builder-fields">
     <div className="inspector-title"><DoorOpen size={17} /><div><strong>{nodeName(node)}</strong><small>{semanticType(node)} · {nodeType(node)}</small></div></div>
     <label><span>Room</span><select value={placement.room_id} onChange={(event) => onRoomChange(event.target.value)}>{rooms.map((room) => <option key={text(room.id)} value={text(room.id)}>{nodeName(room)}</option>)}</select></label>
-    <div className="field-pair"><NumericField label="Column in room" value={placement.grid_x} onChange={(grid_x) => onChange({ grid_x })} /><NumericField label="Row in room" value={placement.grid_y} onChange={(grid_y) => onChange({ grid_y })} /></div>
-    <div className="field-pair"><NumericField label="Width (cells)" value={placement.width_cells} min={1} onChange={(width_cells) => onChange({ width_cells })} /><NumericField label="Depth (cells)" value={placement.depth_cells} min={1} onChange={(depth_cells) => onChange({ depth_cells })} /></div>
+    <div className="inspector-section-title">World position (m)</div>
+    <div className="field-triplet"><MetricField label="X" value={worldX} onChange={(x_cm) => onChange({ x_cm })} /><MetricField label="Y" value={worldY} onChange={(y_cm) => onChange({ y_cm })} /><MetricField label="Z" value={worldZ} onChange={(z_cm) => onChange({ z_cm })} /></div>
+    <div className="inspector-section-title">Dimensions (m)</div>
+    <div className="field-triplet"><MetricField label="Length" value={length} onChange={(width_cm) => onChange({ width_cm })} /><MetricField label="Width" value={width} onChange={(depth_cm) => onChange({ depth_cm })} /><MetricField label="Height" value={height} onChange={(height_cm) => onChange({ height_cm })} /></div>
+    <div className="inspector-section-title">Attributes</div>
+    <dl className="builder-facts inspector-facts">{attributes.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+    <div className="inspector-section-title">States</div>
+    {stateEntries.length ? <div className="state-list">{stateEntries.map(([name, definition]) => {
+      const detail = definition && typeof definition === "object" ? definition as Record<string, unknown> : {};
+      const current = states[name];
+      const fallback = detail.default_value ?? detail.positive_value ?? current ?? "-";
+      return <div className="state-row" key={name}><span>{name}</span><strong>{formatInspectorValue(current ?? fallback)}</strong><small>default: {formatInspectorValue(fallback)}</small></div>;
+    })}</div> : <div className="builder-readonly"><span>State schema</span><strong>No declared states</strong></div>}
   </div>;
+}
+
+function MetricField({ label, value, onChange }: { label: string; value: number; onChange: (valueCm: number) => void }) {
+  return <label><span>{label}</span><input type="number" min={0} step="0.01" value={(value / 100).toFixed(2)} onChange={(event) => onChange(Math.max(0, Number(event.target.value) * 100 || 0))} /></label>;
+}
+
+function formatInspectorValue(value: unknown): string {
+  if (value === null || value === undefined) return "-";
+  if (typeof value === "boolean") return value ? "true" : "false";
+  if (typeof value === "number") return Number.isInteger(value) ? String(value) : value.toFixed(2);
+  return String(value);
 }
 
 function DoorInspector({ node, placement, nodeById }: {

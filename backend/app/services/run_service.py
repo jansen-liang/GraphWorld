@@ -15,6 +15,7 @@ from backend.app.db.models import Run, RunStep, User
 from backend.app.repositories.run_repo import RunRepository
 from backend.app.repositories.scene_repo import SceneRepository
 from backend.app.runtime.graphworld_adapter import GraphWorldAdapter, action_id
+from backend.runtime.camera import validate_interaction_hit
 from backend.app.runtime.schedule import expected_events, planned_events_for_step
 from backend.app.schemas.action import ActionRequest, ActionResult
 from backend.app.schemas.metrics import MetricPoint, RunMetricsResponse
@@ -194,7 +195,7 @@ class RunService:
             raise InvalidStateError(f"Run {run_id} is not in human control mode")
         if run.status not in {RunStatus.waiting_for_human.value, RunStatus.running.value}:
             raise InvalidStateError(f"Run {run_id} cannot accept actions while status={run.status}")
-        selected = self._candidate_for_current_state(run, request.action_id)
+        selected = self._candidate_for_current_state(run, request.action_id, request.payload)
         return self._apply_selected_action(run, selected, actor_type="human")
 
     def advance_run(self, run_id: str) -> RunCurrentResponse:
@@ -295,7 +296,12 @@ class RunService:
         adapter = GraphWorldAdapter(version.source_json)
         return adapter, adapter.replay_orchestrator(self._selected_actions(run), visibility_mode=run.visibility_mode)
 
-    def _candidate_for_current_state(self, run: Run, selected_action_id: str) -> dict[str, Any]:
+    def _candidate_for_current_state(
+        self,
+        run: Run,
+        selected_action_id: str,
+        payload: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         adapter, orchestrator = self._adapter_and_orchestrator(run)
         selected = adapter.candidate_by_id(
             orchestrator,
@@ -304,6 +310,28 @@ class RunService:
         )
         if selected is None:
             raise InvalidStateError(f"Action is not currently available: {selected_action_id}")
+        # Candidate identity and action arguments come from the server-side
+        # candidate set. Only geometric interaction hints may be supplied by
+        # the client (surface/volume hit points and release anchor).
+        allowed_payload = {
+            key: value
+            for key, value in (payload or {}).items()
+            if key in {"surface_anchor", "surface_point_cm", "volume_anchor", "volume_point_cm", "release_anchor", "interaction_hit", "destination_room", "target_room"}
+        }
+        if "interaction_hit" in allowed_payload:
+            visible_ids = {
+                str(item.get("id") or "")
+                for item in (adapter.runtime_observation(orchestrator, visibility_mode=run.visibility_mode).get("nodes") or [])
+                if isinstance(item, dict) and item.get("id")
+            }
+            failures = validate_interaction_hit(
+                allowed_payload["interaction_hit"],
+                target_id=str(selected.get("target") or ""),
+                visible_node_ids=visible_ids,
+            )
+            if failures:
+                raise InvalidStateError("; ".join(failures))
+        selected.update(allowed_payload)
         return selected
 
     def _choose_agent_action(self, run: Run) -> dict[str, Any]:
@@ -401,15 +429,23 @@ class RunService:
                 node_id = str(node.get("id") or "")
                 if node_id and node_id not in visible_ids:
                     seen_nodes[node_id] = copy.deepcopy(node)
+        status_by_node = dict(observation.observation_status_by_node)
+        last_seen_by_node = dict(observation.last_seen_step_by_node)
+        for node_id, node in seen_nodes.items():
+            node["observation_status"] = status_by_node.get(node_id, "stale")
+            if node_id in last_seen_by_node:
+                node["last_seen_step"] = last_seen_by_node[node_id]
         unknown_rooms = [
             room_id
-            for room_id, confidence in sorted(observation.confidence_by_room.items())
-            if room_id not in observation.visible_rooms and confidence <= 0.0
+            for room_id, status in sorted(observation.observation_status_by_room.items())
+            if status == "unknown"
         ]
         return observation.model_copy(
             update={
                 "memory_nodes": [seen_nodes[node_id] for node_id in sorted(seen_nodes)],
                 "unknown_rooms": unknown_rooms,
+                "observation_status_by_node": status_by_node,
+                "last_seen_step_by_node": last_seen_by_node,
             }
         )
 

@@ -47,6 +47,9 @@ class SpatialRelation(Enum):
     CONTAINS = "contains"
     BELONGS_TO = "belongs_to"
     CONNECTED = "connected"
+    HINGE_OF = "hinge_of"
+    SLIDES_IN = "slides_in"
+    TOUCHING = "touching"
 
     # --- Logical Relations (What?) ---
     CONTROLS = "controls"
@@ -164,6 +167,16 @@ RELATION_SPECS: Dict[str, RelationSpec] = {
         changed_by=("scene_layout", "place"),
         downstream_effects=("supports navigation or local grouping"),
         score_weight=0.4,
+    ),
+    SpatialRelation.TOUCHING.value: RelationSpec(
+        relation=SpatialRelation.TOUCHING.value,
+        source_roles=("agent", "object"),
+        target_roles=("object", "surface", "agent"),
+        positive_when="two entities share a current physical contact point",
+        negative_when="contact ended or is only visually adjacent",
+        changed_by=("pick", "place", "release", "human_event"),
+        downstream_effects=("enables contact-sensitive interaction and transfer"),
+        score_weight=0.5,
     ),
 }
 
@@ -384,7 +397,8 @@ def create_edge(source_id: str, target_id: str, relation: SpatialRelation, **kwa
                       SpatialRelation.ONTOP, SpatialRelation.INSIDE,
                       SpatialRelation.UNDER, SpatialRelation.BESIDE,
                       SpatialRelation.NEAR, SpatialRelation.HELD_BY, SpatialRelation.FAR,
-                      SpatialRelation.CONTAINS}:
+                      SpatialRelation.CONTAINS, SpatialRelation.HINGE_OF,
+                      SpatialRelation.SLIDES_IN, SpatialRelation.TOUCHING}:
         return ObjectEdge(
             source_id=source_id,
             target_id=target_id,

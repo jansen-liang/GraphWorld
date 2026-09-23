@@ -214,7 +214,7 @@ def infer_family(semantic_type: str, node_type: Any, capability_names: set[str])
     key = str(semantic_type).lower()
     if key in {"door", "button", "knob"}:
         return ObjectFamily.STRUCTURAL if key == "door" else ObjectFamily.APPLIANCE
-    if key in {"air_conditioner", "refrigerator", "medicine_fridge", "microwave", "stove", "washer", "washing_machine", "dishwasher", "machine", "printer", "dispenser", "water_dispenser", "hand_sanitizer_dispenser", "faucet", "shower"}:
+    if key in {"air_conditioner", "fan", "refrigerator", "medicine_fridge", "microwave", "stove", "washer", "washing_machine", "dishwasher", "machine", "printer", "dispenser", "water_dispenser", "hand_sanitizer_dispenser", "faucet", "shower"}:
         return ObjectFamily.APPLIANCE
     if key in {"room_light"}:
         return ObjectFamily.LIGHTING

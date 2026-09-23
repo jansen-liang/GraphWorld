@@ -15,6 +15,7 @@ class CandidateAction(BaseModel):
     legal: bool = True
     preview: str = ""
     payload: dict[str, Any] = Field(default_factory=dict)
+    action_contract: dict[str, Any] = Field(default_factory=dict)
 
 
 class ActionRequest(BaseModel):

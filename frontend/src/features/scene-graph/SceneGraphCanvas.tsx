@@ -126,6 +126,13 @@ function parentId(node: RawNode): string {
   return text(payload.parent);
 }
 
+function visualCues(node: RawNode): string[] {
+  const payload = nodePayload(node);
+  return Array.isArray(payload.visual_cues)
+    ? payload.visual_cues.filter((cue): cue is string => typeof cue === "string")
+    : [];
+}
+
 function edgeSource(edge: RawEdge): string {
   return text(edge.source_id || edge.source);
 }
@@ -198,6 +205,13 @@ function buildTopology(nodes: RawNode[], edges: RawEdge[], memoryNodes: RawNode[
     const room = type === "room" || semantic === "room" || category === "room";
     const memory = memoryIds.has(id);
     const parent = parentId(node);
+    const cues = visualCues(node);
+    const broken = cues.includes("broken");
+    const running = cues.includes("running_pulse");
+    const wet = cues.includes("water_droplets");
+    const drying = cues.includes("drying_bubbles");
+    const hot = cues.includes("steam");
+    const falling = cues.includes("falling");
     return {
       id,
       name: nodeLabel(node),
@@ -207,9 +221,9 @@ function buildTopology(nodes: RawNode[], edges: RawEdge[], memoryNodes: RawNode[
         ? Math.max(24, Math.min(34, 22 + Math.sqrt(degree + 1) * 3))
         : Math.max(10, Math.min(24, 10 + Math.sqrt(degree + 1) * 3)),
       itemStyle: {
-        color: nodeColor(category),
-        borderColor: memory ? "#94a3b8" : "#ffffff",
-        borderWidth: memory ? 2 : 1,
+        color: broken ? "#dc2626" : nodeColor(category),
+        borderColor: broken ? "#991b1b" : falling ? "#7c3aed" : running ? "#f59e0b" : hot ? "#ea580c" : drying ? "#ca8a04" : wet ? "#0891b2" : memory ? "#94a3b8" : "#ffffff",
+        borderWidth: broken || falling || running || hot || drying || wet || memory ? 2 : 1,
         opacity: memory ? 0.55 : 1,
       },
       tooltip: {
@@ -219,6 +233,7 @@ function buildTopology(nodes: RawNode[], edges: RawEdge[], memoryNodes: RawNode[
           `type: ${html(type || "-")}`,
           `semantic: ${html(semantic || "-")}`,
           parent ? `parent: ${html(parent)}` : "",
+          cues.length ? `status: ${html(cues.join(", "))}` : "",
           `degree: ${degree}`,
         ]
           .filter(Boolean)

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from backend.app.core.errors import NotFoundError
 from backend.app.repositories.scene_repo import SceneRepository
 from backend.app.runtime.scene_importer import infer_scene_id, import_scene
 from backend.app.runtime.scene_layout import ensure_scene_layout, validate_scene_layout
+from backend.app.db.models import ObjectCatalog
 from backend.app.schemas.graph import GraphEdge, GraphNode, SceneGraphResponse
 from backend.app.schemas.scene import SceneImportRequest, SceneLayoutValidation, ScenePublishRequest, SceneRead, SceneVersionRead
 
@@ -77,9 +79,13 @@ class SceneService:
             raise NotFoundError(f"Scene version not found: {scene_version_id}")
         nodes = self.repo.version_nodes(scene_version_id)
         edges = self.repo.version_edges(scene_version_id)
+        catalog_dimensions = {
+            entry.semantic_type: (entry.width_cm, entry.depth_cm, entry.height_cm)
+            for entry in self.repo.db.scalars(select(ObjectCatalog).where(ObjectCatalog.is_active.is_(True))).all()
+        }
         return SceneGraphResponse(
             scene_version_id=scene_version_id,
-            source_json=ensure_scene_layout(version.source_json),
+            source_json=ensure_scene_layout(version.source_json, catalog_dimensions),
             nodes=[
                 GraphNode(
                     id=node.node_key,

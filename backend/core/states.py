@@ -18,6 +18,7 @@ class DiscreteState(str, Enum):
     IS_FROZEN = "is_frozen"
     IS_FULL = "is_full"
     HAS_WATER = "has_water"
+    WATER_LEVEL = "water_level"
     IS_RUNNING = "is_running"
     USES_LEFT = "uses_left"
     COUNT = "count"
@@ -53,7 +54,7 @@ DISCRETE_STATE_SPACE: tuple[str, ...] = tuple(state.value for state in DiscreteS
 TEMPERATURE_VALUES = frozenset({"cold", "room", "warm", "hot"})
 THERMAL_PHASES = frozenset({"frozen", "cold", "room", "warm", "hot", "boiling", "burning"})
 TEMPERATURE_NUMERIC_RANGE = (-50.0, 300.0)
-NUMERIC_STATES = frozenset({"cycle_remaining", "fill_level", "vitality", "uses_left", "count", "amount", "capacity"})
+NUMERIC_STATES = frozenset({"cycle_remaining", "fill_level", "vitality", "uses_left", "count", "amount", "capacity", "water_level"})
 
 
 @dataclass(frozen=True)
@@ -121,7 +122,12 @@ def normalize_discrete_value(name: str, value: object) -> int | float | str | No
         return str(value).strip().lower()
     if name in NUMERIC_STATES:
         try:
-            return round(float(value), 4) if value is not None else None
+            number = round(float(value), 4) if value is not None else None
+            if number is None:
+                return None
+            if name == DiscreteState.WATER_LEVEL.value:
+                return max(0.0, min(100.0, number))
+            return number
         except (TypeError, ValueError):
             return None
     if value is None:
@@ -143,6 +149,7 @@ STATE_SPECS: dict[str, StateSpec] = {
     "is_full": _spec("is_full", StateCategory.QUANTITY, StateValueType.BOOLEAN, ("trash_bin", "basket", "cup", "container"), False, ("place",), (), ("blocks filling",), ("fillable",)),
     "fill_level": _spec("fill_level", StateCategory.QUANTITY, StateValueType.NUMBER, ("trash_bin", "cup", "container"), 0, ("place",), (), ("drives is_full",), ("fillable",)),
     "has_water": _spec("has_water", StateCategory.QUANTITY, StateValueType.BOOLEAN, ("sink", "vase", "cup", "mug", "bowl", "wateringcan", "spraybottle"), False, ("empty", "consume", "evaporate"), ("open_faucet", "fill", "refill"), ("controls watering and wetting effects",), ("water_container",)),
+    "water_level": _spec("water_level", StateCategory.QUANTITY, StateValueType.NUMBER, ("sink", "vase", "cup", "mug", "bowl", "wateringcan", "spraybottle"), 0, ("empty", "consume", "evaporate"), ("open_faucet", "fill", "refill"), ("continuous water quantity; has_water is its compatibility projection",), ("water_container",)),
     "is_running": _spec("is_running", StateCategory.CONTROL, StateValueType.BOOLEAN, ("washer", "washing_machine", "dryer", "clothesdryer", "microwave", "printer", "coffeemachine", "coffee_machine"), False, ("start",), ("finish",), ("tracks active process",), ("timed_device",)),
     "uses_left": _spec("uses_left", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("consume",), ("refill",), ("finite resource availability",), ("finite_resource",)),
     "count": _spec("count", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("consume",), ("refill",), ("resource inventory",), ("finite_resource",)),

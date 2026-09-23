@@ -67,7 +67,7 @@ temperature, vitality
 核心运行时支持 9 种机器人动作：
 
 ```text
-move, pick, place, press, open, close, brush, fold, dump
+move, pick, place, press, open, close, brush, fold, dump, wait
 ```
 
 场景 JSON 与核心 `ActionType` 现在统一为 9 个可执行动作：`move`、`pick`、`place`、`press`、`open`、`close`、`brush`、`fold`、`dump`。

@@ -15,7 +15,7 @@ from .predicates import (
     semantic,
 )
 from .states import DiscreteState
-from .processes import start_process
+from .processes import RECIPE_SPECS, start_process
 
 
 def move_node(state: dict[str, Any], node_id: str, parent_id: str, relation: str) -> None:
@@ -68,11 +68,23 @@ def close_target(state: dict[str, Any], target_id: str) -> None:
             mutable_states(child)[DiscreteState.IS_OPEN.value] = False
 
 
-def press_target(state: dict[str, Any], target_id: str) -> None:
+def press_target(state: dict[str, Any], target_id: str, payload: dict[str, Any] | None = None) -> None:
     target = node(state, target_id)
     target_states = mutable_states(target)
     target_states[DiscreteState.IS_PRESSED.value] = True
     target_semantic = semantic(target)
+    if target_semantic in {"elevator", "lift"}:
+        destination = str((payload or {}).get("destination_room") or (payload or {}).get("target_room") or "")
+        target["requested_room"] = destination
+        target_states[DiscreteState.IS_OPEN.value] = False
+        target_states[DiscreteState.IS_RUNNING.value] = True
+        target_states[DiscreteState.CYCLE_REMAINING.value] = APPLIANCE_CYCLE_STEPS.get("elevator", 2)
+        state.setdefault("world_state", {}).setdefault("event_log", []).append({
+            "type": "elevator_departed",
+            "elevator_id": str(target_id),
+            "destination_room": destination,
+        })
+        return
     if target_semantic != "printer" and "finite_resource" in {str(cap).lower() for cap in (target.get("capabilities") or [])}:
         for resource_key in (DiscreteState.USES_LEFT.value, DiscreteState.COUNT.value, DiscreteState.AMOUNT.value):
             if resource_key in target_states:
@@ -84,10 +96,11 @@ def press_target(state: dict[str, Any], target_id: str) -> None:
         _set_controlled_sink_water(state, target_id, bool(target_states[DiscreteState.IS_ON.value]))
         return
     if target_semantic in APPLIANCE_CYCLE_STEPS:
+        _consume_appliance_detergent(state, target_id)
         target_states[DiscreteState.IS_ON.value] = True
         target_states[DiscreteState.IS_RUNNING.value] = True
         target_states[DiscreteState.CYCLE_REMAINING.value] = APPLIANCE_CYCLE_STEPS[target_semantic]
-        if target_semantic in {"printer", "coffeemachine", "coffee_machine"}:
+        if target_semantic in RECIPE_SPECS:
             start_process(state, target_id)
     for controlled_id in controlled_targets(state, target_id):
         controlled = node(state, controlled_id)
@@ -95,19 +108,56 @@ def press_target(state: dict[str, Any], target_id: str) -> None:
         controlled_semantic = semantic(controlled)
         duration = APPLIANCE_CYCLE_STEPS.get(controlled_semantic)
         if duration:
+            _consume_appliance_detergent(state, controlled_id)
             controlled_states[DiscreteState.IS_ON.value] = True
             controlled_states[DiscreteState.IS_RUNNING.value] = True
             controlled_states[DiscreteState.CYCLE_REMAINING.value] = duration
-            if controlled_semantic in {"printer", "coffeemachine", "coffee_machine"}:
+            if controlled_semantic in RECIPE_SPECS:
                 start_process(state, controlled_id)
+        if controlled_semantic == "toilet":
+            controlled_states[DiscreteState.IS_DIRTY.value] = False
+        elif controlled_semantic == "door" and str(controlled.get("door_kind") or "") == "structural":
+            controlled_states[DiscreteState.IS_OPEN.value] = True
         elif DiscreteState.IS_ON.value in controlled_states:
             controlled_states[DiscreteState.IS_ON.value] = not bool(controlled_states.get(DiscreteState.IS_ON.value, False))
         if controlled_semantic in {"air_conditioner", "air_conditioning", "aircon"}:
             _apply_air_conditioner_environment(state, controlled_id, bool(controlled_states.get(DiscreteState.IS_ON.value, False)))
+        elif controlled_semantic in {"fan", "ceiling_fan", "ventilator"}:
+            _apply_fan_environment(state, controlled_id, bool(controlled_states.get(DiscreteState.IS_ON.value, False)))
     if target_semantic not in APPLIANCE_CYCLE_STEPS and DiscreteState.IS_ON.value in target_states:
         target_states[DiscreteState.IS_ON.value] = not bool(target_states.get(DiscreteState.IS_ON.value, False))
     if target_semantic in {"air_conditioner", "air_conditioning", "aircon"}:
         _apply_air_conditioner_environment(state, target_id, bool(target_states.get(DiscreteState.IS_ON.value, False)))
+    elif target_semantic in {"fan", "ceiling_fan", "ventilator"}:
+        _apply_fan_environment(state, target_id, bool(target_states.get(DiscreteState.IS_ON.value, False)))
+
+
+def _consume_appliance_detergent(state: dict[str, Any], appliance_id: str) -> None:
+    """Consume one detergent instance loaded into a washer or dishwasher."""
+    appliance_semantic = semantic(node(state, appliance_id))
+    if appliance_semantic not in {"washer", "washing_machine", "dishwasher"}:
+        return
+    accepted = {"dishwasher_detergent"} if appliance_semantic == "dishwasher" else {"detergent", "laundry_detergent"}
+    detergent_id = next(
+        (
+            child_id
+            for child_id in children_of(state, appliance_id)
+            if semantic(node(state, child_id)) in accepted
+        ),
+        None,
+    )
+    if not detergent_id:
+        return
+    state.setdefault("world_state", {}).setdefault("event_log", []).append({
+        "type": "resource_consumed",
+        "source_id": str(node(state, detergent_id).get("resource_instance_of") or ""),
+        "instance_id": str(detergent_id),
+        "device_id": str(appliance_id),
+        "resource_semantic_type": semantic(node(state, detergent_id)),
+    })
+    state.get("nodes", {}).pop(detergent_id, None)
+    state.get("parent_of", {}).pop(detergent_id, None)
+    state.get("relation_of", {}).pop(detergent_id, None)
 
 
 def _apply_air_conditioner_environment(state: dict[str, Any], device_id: str, is_on: bool) -> None:
@@ -122,6 +172,15 @@ def _apply_air_conditioner_environment(state: dict[str, Any], device_id: str, is
     else:
         baseline = str(world.get("temperature") or "comfortable")
         room_temperatures[room_id] = {"comfortable": "room"}.get(baseline, baseline)
+
+
+def _apply_fan_environment(state: dict[str, Any], device_id: str, is_on: bool) -> None:
+    """Fans exchange room air without pretending to cool it directly."""
+    room_id = str(state.get("room_of", {}).get(device_id) or "")
+    if not room_id:
+        return
+    ventilation = state.setdefault("world_state", {}).setdefault("room_ventilation", {})
+    ventilation[room_id] = "active" if is_on else "idle"
 
 
 def brush_target(state: dict[str, Any], target_id: str) -> None:
@@ -142,7 +201,9 @@ def _set_controlled_sink_water(state: dict[str, Any], faucet_id: str, has_water:
     for sink_id in controlled_targets(state, faucet_id):
         sink = node(state, sink_id)
         if semantic(sink) == "sink":
-            mutable_states(sink)["has_water"] = has_water
+            sink_states = mutable_states(sink)
+            sink_states["has_water"] = has_water
+            sink_states["water_level"] = 100.0 if has_water else 0.0
 
 
 def _apply_sink_entry_effect(state: dict[str, Any], object_id: str, sink_id: str) -> None:
@@ -152,8 +213,9 @@ def _apply_sink_entry_effect(state: dict[str, Any], object_id: str, sink_id: str
     item = node(state, object_id)
     item_states = mutable_states(item)
     item_semantic = semantic(item)
-    if item_semantic in {"cup", "mug", "bowl", "vase", "bottle", "winebottle", "pot", "pan", "container", "coffeemachine", "coffee_machine"}:
+    if item_semantic in {"cup", "mug", "bowl", "vase", "bottle", "winebottle", "pot", "pan", "container", "wateringcan", "coffeemachine", "coffee_machine"}:
         item_states["has_water"] = True
+        item_states["water_level"] = 100.0
         item_states["is_full"] = True
     elif item_semantic in {"clothes", "towel", "blanket", "shoes", "paper_towel"}:
         item_states[DiscreteState.IS_WET.value] = True
@@ -196,6 +258,21 @@ def dump_held_container(state: dict[str, Any], actor_id: str, target_id: str) ->
         held_states = mutable_states(held)
         held_states[DiscreteState.FILL_LEVEL.value] = 0.0
         held_states[DiscreteState.IS_FULL.value] = False
+    elif rule.effect == "water_plant":
+        held_states = mutable_states(held)
+        current_level = float(held_states.get(DiscreteState.WATER_LEVEL.value, 100.0 if held_states.get(DiscreteState.HAS_WATER.value) else 0.0) or 0.0)
+        next_level = max(0.0, current_level - 35.0)
+        held_states[DiscreteState.WATER_LEVEL.value] = next_level
+        held_states[DiscreteState.HAS_WATER.value] = next_level > 0.0
+        target_states = mutable_states(node(state, target_id))
+        target_semantic = semantic(node(state, target_id))
+        if target_semantic == "vase":
+            target_states[DiscreteState.HAS_WATER.value] = True
+            target_states[DiscreteState.WATER_LEVEL.value] = 100.0
+            return
+        vitality = float(target_states.get(DiscreteState.VITALITY.value, 0.0) or 0.0)
+        target_states[DiscreteState.VITALITY.value] = min(1.0, round(vitality + 0.35, 4))
+        target_states[DiscreteState.IS_WILTED.value] = False
 
 
 __all__ = [

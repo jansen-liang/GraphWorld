@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from backend.core.actions import ActionType
+from backend.core.actions import ActionType, action_spec
+from backend.core.resources import can_dispense
 from backend.runtime.engine import Orchestrator
 
 
-ACTION_ORDER = tuple(action.value for action in ActionType)
+ACTION_ORDER = tuple(action.value for action in ActionType if action != ActionType.WAIT) + (ActionType.WAIT.value,)
 
 
 def held_object(orchestrator: Orchestrator, agent_id: str = "robot_01") -> str:
@@ -20,20 +21,55 @@ def candidate_payload(
     reason: str,
 ) -> dict[str, Any]:
     validation = orchestrator.robot_actions.validate(action)
-    return {
+    result = {
         **action,
         "reason": reason,
         "legal": validation.ok,
         "validation_failures": list(validation.failures),
     }
+    try:
+        spec = action_spec(str(action.get("action") or ""))
+        result["action_contract"] = {
+            "category": spec.category,
+            "parameters": list(spec.params),
+            "description": spec.description,
+            "mutates_edges": spec.mutates_edges,
+            "mutates_states": spec.mutates_states,
+            "effect_summary": list(spec.effect_summary),
+        }
+    except ValueError:
+        result["action_contract"] = {}
+    return result
 
 
 def candidate_actions(orchestrator: Orchestrator, observation: dict[str, Any], agent_id: str = "robot_01") -> list[dict[str, Any]]:
     graph = orchestrator.graph
     candidates: list[dict[str, Any]] = []
+    wait_candidate = candidate_payload(
+        orchestrator,
+        {"agent": agent_id, "action": "wait"},
+        reason="advance time for a running process or natural transition",
+    )
+    if wait_candidate["legal"]:
+        candidates.append(wait_candidate)
     visible_nodes = [graph.nodes.get(str(item.get("id") or "")) or {} for item in observation.get("nodes") or []]
     visible_ids = {str(node.get("id") or "") for node in visible_nodes if node.get("id")}
     holding = held_object(orchestrator, agent_id)
+    if holding:
+        consume_candidate = candidate_payload(
+            orchestrator,
+            {"agent": agent_id, "action": "consume", "object": holding},
+            reason="consume held food or drink item",
+        )
+        if consume_candidate["legal"]:
+            candidates.append(consume_candidate)
+        candidate = candidate_payload(
+            orchestrator,
+            {"agent": agent_id, "action": "release", "object": holding},
+            reason="release held object onto the floor",
+        )
+        if candidate["legal"]:
+            candidates.append(candidate)
     for room_id in sorted((observation.get("world_state") or {}).get("visible_rooms") or []):
         if room_id and room_id != graph.room_of.get(agent_id):
             candidate = candidate_payload(
@@ -58,7 +94,7 @@ def candidate_actions(orchestrator: Orchestrator, observation: dict[str, Any], a
             if candidate["legal"]:
                 candidates.append(candidate)
         for action_name in ACTION_ORDER:
-            if action_name == "move":
+            if action_name in {"move", "consume"}:
                 continue
             if action_name == "place":
                 if not holding:
@@ -68,6 +104,29 @@ def candidate_actions(orchestrator: Orchestrator, observation: dict[str, Any], a
                 action = {"agent": agent_id, "action": "pick", "target": node_id, "object": node_id}
             else:
                 action = {"agent": agent_id, "action": action_name, "target": node_id}
+            if action_name == "press" and str(item.get("semantic_type") or "").lower() in {"elevator", "lift"}:
+                for destination in item.get("served_rooms") or item.get("transport_rooms") or []:
+                    elevator_action = {**action, "destination_room": str(destination)}
+                    candidate = candidate_payload(orchestrator, elevator_action, reason=f"select elevator floor {destination}")
+                    if candidate["legal"]:
+                        candidates.append(candidate)
+                continue
+            if action_name == "dispense" and can_dispense(item):
+                action = {"agent": agent_id, "action": "dispense", "target": node_id}
+                candidate = candidate_payload(orchestrator, action, reason="dispense one resource instance")
+                if candidate["legal"]:
+                    candidates.append(candidate)
+                continue
+            if action_name == "place":
+                volume_size = item.get("interior_size_cm") or item.get("container_size_cm") or item.get("placement_volume_cm")
+                surface_size = item.get("surface_size_cm") or item.get("support_surface_cm")
+                if volume_size:
+                    action["placement_hint"] = "volume"
+                    action["interior_size_cm"] = list(volume_size) if isinstance(volume_size, (list, tuple)) else volume_size
+                else:
+                    action["placement_hint"] = "surface"
+                    if surface_size:
+                        action["surface_size_cm"] = list(surface_size) if isinstance(surface_size, (list, tuple)) else surface_size
             reason = f"{action_name} visible object"
             if action_name in actions or action_name in {"move", "place"}:
                 if states.get("is_dirty") is True and action_name == "brush":
@@ -77,12 +136,13 @@ def candidate_actions(orchestrator: Orchestrator, observation: dict[str, Any], a
                 candidate = candidate_payload(orchestrator, action, reason=reason)
                 if candidate["legal"]:
                     candidates.append(candidate)
-    deduped: dict[tuple[str, str, str], dict[str, Any]] = {}
+    deduped: dict[tuple[str, str, str, str], dict[str, Any]] = {}
     for candidate in candidates:
         key = (
             str(candidate.get("action") or ""),
             str(candidate.get("target") or ""),
             str(candidate.get("object") or ""),
+            str(candidate.get("destination_room") or candidate.get("target_room") or ""),
         )
         deduped[key] = candidate
     return sorted(

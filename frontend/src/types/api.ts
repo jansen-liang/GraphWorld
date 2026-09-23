@@ -69,6 +69,45 @@ export interface CandidateAction {
   legal: boolean;
   preview: string;
   payload: Record<string, unknown>;
+  action_contract: {
+    category?: string;
+    parameters?: string[];
+    description?: string;
+    mutates_edges?: boolean;
+    mutates_states?: boolean;
+    effect_summary?: string[];
+  };
+}
+
+export interface InteractionHit {
+  node_id: string;
+  surface_uv?: [number, number];
+  volume_uv?: [number, number, number];
+  point_cm?: [number, number, number];
+  normal?: [number, number, number];
+  ray_origin?: [number, number, number];
+  ray_direction?: [number, number, number];
+  distance_m?: number;
+}
+
+export interface FirstPersonCamera {
+  contract_version: number;
+  agent_id: string;
+  room_id: string;
+  eye_height_m: number;
+  fov_deg: number;
+  near_m: number;
+  far_m: number;
+  forward: [number, number, number];
+  up: [number, number, number];
+  viewport_uv: [number, number];
+  origin: [number, number, number];
+  interaction_ray: {
+    screen_uv: [number, number];
+    origin: [number, number, number];
+    direction: [number, number, number];
+    space: string;
+  };
 }
 
 export interface Observation {
@@ -81,7 +120,11 @@ export interface Observation {
   memory_nodes: Record<string, unknown>[];
   unknown_rooms: string[];
   confidence_by_room: Record<string, number>;
+  observation_status_by_node: Record<string, string>;
+  last_seen_step_by_node: Record<string, number>;
+  observation_status_by_room: Record<string, string>;
   candidate_actions: CandidateAction[];
+  camera: FirstPersonCamera;
 }
 
 export interface ActionResult {

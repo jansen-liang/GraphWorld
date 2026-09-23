@@ -4,6 +4,7 @@ import copy
 from typing import Any
 
 from backend.core.assets.npc_library import get_default_npcs
+from backend.core.resources import scene_resource_pool_specs
 from backend.runtime.scene_utils import node, scene_type
 
 
@@ -19,7 +20,16 @@ def add_child(scene: dict[str, Any], parent_id: str, child_id: str) -> None:
 def ensure_node(scene: dict[str, Any], item: dict[str, Any]) -> None:
     existing = node(scene, str(item["id"]))
     if existing:
-        existing.update({key: value for key, value in item.items() if key not in {"child"}})
+        for key, value in item.items():
+            if key in {"child", "resource_pool"}:
+                continue
+            existing[key] = value
+        if isinstance(item.get("resource_pool"), dict):
+            current_pool = existing.setdefault("resource_pool", {})
+            for key, value in item["resource_pool"].items():
+                if key in {"available_count", "dispensed_count", "consumed_count"} and key in current_pool:
+                    continue
+                current_pool[key] = copy.deepcopy(value)
         if item.get("child") is not None:
             existing["child"] = item["child"]
     else:
@@ -88,6 +98,7 @@ def prepare_scene(raw_scene: dict[str, Any], robot_count: int, human_count: int)
     scene["world_state"].setdefault("time_min", 360)
     scene["world_state"].setdefault("minutes_per_step", 10)
     scene["world_state"].setdefault("day", 1)
+    scene["world_state"].setdefault("room_humidity", {})
     if scene_type(scene) in {"home", "supermarket", "office", "factory"}:
         for spec in actor_specs_for_scene(scene, human_count):
             human_id = str(spec["id"])
@@ -196,6 +207,7 @@ def prepare_scene(raw_scene: dict[str, Any], robot_count: int, human_count: int)
                 },
             ]
         )
+    support_nodes.extend(scene_resource_pool_specs(scene_type(scene), scene))
     for item in support_nodes:
         ensure_node(scene, item)
         ensure_edge(scene, str(item["parent"]), str(item["id"]), "in")
