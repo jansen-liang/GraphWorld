@@ -13,7 +13,7 @@ def test_device_and_storage_templates_expose_composition_contracts():
         start_button = next(item for item in composition_for(semantic_type).to_dict()["components"] if item["role"] == "start_button")
         assert start_button["mount_face"] == "top"
     assert toilet["composition"]["components"][0]["role"] == "flush_button"
-    assert cabinet["composition"]["storage"] == {
+    assert {key: cabinet["composition"]["storage"][key] for key in ("kind", "levels", "columns", "depth_cm", "drawer_count", "slot_semantic_type")} == {
         "kind": "mixed",
         "levels": 3,
         "columns": 2,
@@ -83,6 +83,23 @@ def test_door_bearing_storage_templates_materialize_real_access_and_slots():
         slots = [node for node in scene["nodes"] if node.get("component_role") == "storage_slot"]
         assert len(slots) == expected_levels
         assert all(node.get("interior_size_cm") for node in slots)
+
+
+def test_appliance_storage_slots_materialize_capacity_and_required_abilities():
+    expectations = {
+        "washing_machine": (6, ["washable"]),
+        "microwave": (1, ["cookable"]),
+        "dishwasher": (8, ["dishwashable"]),
+        "clothesdryer": (6, ["dryable"]),
+    }
+    for semantic_type, (capacity, abilities) in expectations.items():
+        host = OBJECT_LIBRARY[semantic_type].instantiate(f"{semantic_type}_01")
+        scene = {"nodes": [host], "edges": []}
+        materialize_compositions(scene)
+        slot = next(node for node in scene["nodes"] if node.get("component_role") == "storage_slot")
+        assert slot["max_capacity"] == capacity
+        assert slot["states"]["capacity"] == capacity
+        assert slot["requires_contained_capabilities"] == abilities
 
 
 def test_dresser_is_drawer_storage_not_a_single_block():

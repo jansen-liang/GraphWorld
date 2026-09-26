@@ -956,6 +956,62 @@ pre {
   white-space: nowrap;
 }
 
+.scene3d-status-card {
+  position: absolute;
+  z-index: 5;
+  top: 76px;
+  right: 24px;
+  width: min(320px, calc(100% - 32px));
+  max-height: min(55vh, 420px);
+  overflow: auto;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.97);
+  color: #1e293b;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
+}
+
+.scene3d-status-card header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fff;
+  padding: 11px 12px;
+  font-size: 14px;
+}
+
+.scene3d-status-card header button {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+}
+
+.scene3d-status-card header button:hover { background: #f1f5f9; }
+
+.scene3d-status-card dl {
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr);
+  gap: 9px 10px;
+  margin: 0;
+  padding: 12px;
+  font-size: 12px;
+}
+
+.scene3d-status-card dt { color: #64748b; font-weight: 700; }
+.scene3d-status-card dd { display: grid; gap: 5px; min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.scene3d-status-card dd span { display: flex; justify-content: space-between; gap: 12px; }
+.scene3d-status-card dd b { color: #475569; font-weight: 650; }
+
 .builder-view-toolbar button {
   display: inline-flex;
   align-items: center;

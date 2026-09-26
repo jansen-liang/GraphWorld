@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
-import { Eye, EyeOff, Play, Square, Layers3 } from "lucide-react";
+import { Eye, EyeOff, Play, Square, Layers3, X } from "lucide-react";
 import type { FloorplanLayout } from "./FloorplanCanvas";
 import type { ObjectCatalogEntry } from "../../api/scenes";
 import type { InteractionHit } from "../../types/api";
 import { attachHinge, attachLocalPart, attachPart, attachPrismatic, createComposite, updateComposites, type CompositeObject } from "./compositeRuntime";
+import { resolveLocalInteraction } from "./interactionResolver";
 
 type RawNode = Record<string, unknown>;
 
@@ -85,6 +86,8 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
   const selectRef = useRef(onSelect);
   const changeRef = useRef(onChange);
   const simulationPlaceRef = useRef(onSimulationPlace);
+  const pendingSimulationLayoutRef = useRef<FloorplanLayout | null>(null);
+  const pendingSimulationParentsRef = useRef<Array<{ objectId: string; parentId: string }>>([]);
   const cameraStateRef = useRef<{ position: THREE.Vector3; target: THREE.Vector3 } | null>(null);
   const selectionVisualsRef = useRef(new Map<string, THREE.Object3D>());
   const transformControlsRef = useRef<TransformControls | null>(null);
@@ -98,9 +101,11 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
   const [simulationActive, setSimulationActive] = useState(false);
   const [pointerLocked, setPointerLocked] = useState(false);
   const [heldObjectLabel, setHeldObjectLabel] = useState("");
+  const [statusCardId, setStatusCardId] = useState("");
+  const [runtimeStatusOverrides, setRuntimeStatusOverrides] = useState<Record<string, Record<string, unknown>>>({});
   const [viewMode, setViewMode] = useState<"first" | "third">("first");
   const [layersOpen, setLayersOpen] = useState(false);
-  const [layerVisibility, setLayerVisibility] = useState({ labels: true, ceiling: false, floor: true, objects: true });
+  const [layerVisibility, setLayerVisibility] = useState({ labels: true, ceiling: true, floor: true, objects: true });
   const viewModeRef = useRef(viewMode);
   const handsRef = useRef({ left: false, right: false });
   selectRef.current = onSelect;
@@ -187,6 +192,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     const runtimeOpen = new Map<string, boolean>();
     const runtimeLightState = new Map<string, boolean>();
     const runtimeSinkFill = new Map<string, number>();
+    const runtimeFaucetOpen = new Set<string>();
     const waterMeshes = new Map<string, THREE.Mesh>();
     const runtimeDeviceRunning = new Map<string, boolean>();
     const placedContents = new Map<string, number>();
@@ -200,6 +206,24 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       if (semantic(nodes.find((node) => text(node.id) === source)) === "faucet") {
         faucetsBySink.set(target, [...(faucetsBySink.get(target) ?? []), nodes.find((node) => text(node.id) === source)!]);
       }
+    });
+    // Older scene snapshots contain a standalone switch and target but omit
+    // the logical controls edge. Infer only an unambiguous same-container
+    // binding; explicit edges always remain authoritative.
+    nodes.forEach((sourceNode) => {
+      const sourceId = text(sourceNode.id);
+      const sourceCaps = Array.isArray(sourceNode.capabilities) ? sourceNode.capabilities.map(String) : [];
+      if (!sourceId || controlTargets.has(sourceId) || !sourceCaps.includes("switchable")) return;
+      if (text(sourceNode.node_type) !== "control_object" && semantic(sourceNode) !== "button") return;
+      const parentId = text(sourceNode.parent || sourceNode.parent_id);
+      const candidates = nodes.filter((candidate) => {
+        const candidateId = text(candidate.id);
+        const candidateCaps = Array.isArray(candidate.capabilities) ? candidate.capabilities.map(String) : [];
+        if (!candidateId || candidateId === sourceId || !candidateCaps.includes("switchable")) return false;
+        if (text(candidate.node_type) === "control_object" || semantic(candidate) === "button") return false;
+        return text(candidate.parent || candidate.parent_id) === parentId;
+      });
+      if (candidates.length === 1) controlTargets.set(sourceId, [text(candidates[0].id)]);
     });
     let heldObjectId: string | null = null;
     const heldOriginalPositions = new Map<string, THREE.Vector3>();
@@ -501,25 +525,45 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       if (isOpenFrame) {
         const frameMaterial = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.72 });
         const rail = Math.min(0.045, Math.min(width, depth) * 0.08);
-        const shelfCount = semantic(node) === "drying_rack" ? 2 : 3;
+        const storage = composition?.storage ?? {};
+        const shelfCount = Math.max(1, Number(storage.levels) || (semantic(node) === "drying_rack" ? 3 : 3));
+        const columns = Math.max(1, Number(storage.columns) || 1);
+        const capacity = Number(storage.capacity_per_slot) || Number(node?.max_capacity) || 8;
+        const requiredCapabilities = Array.isArray(storage.accepted_capabilities)
+          ? storage.accepted_capabilities.map(String)
+          : [];
         for (let level = 0; level < shelfCount; level += 1) {
           const levelY = mesh.position.y - height / 2 + (height * (level + 0.5)) / shelfCount;
           const shelfDepth = semantic(node) === "drying_rack" ? depth * 0.82 : depth * 0.72;
           const shelf = new THREE.Mesh(new THREE.BoxGeometry(width * 0.88, rail, shelfDepth), frameMaterial.clone());
           shelf.position.copy(worldPointForHost(x, levelY, z));
           shelf.rotation.y = hostRotation;
-          shelf.userData = { id: objectId, componentId: `${objectId}_shelf_${level + 1}`, componentRole: "storage_slot", capabilities: ["place_target"] };
+          shelf.userData = {
+            id: `${objectId}_slot_l${level + 1}_c1`,
+            hostId: objectId,
+            componentId: `${objectId}_slot_l${level + 1}_c1`,
+            componentRole: "storage_slot",
+            capabilities: ["place_target"],
+            maxCapacity: capacity,
+            requiresContainedCapabilities: requiredCapabilities,
+          };
           scene.add(shelf);
           interactive.push(shelf);
           attachPart(composite, shelf);
         }
-        [-1, 1].forEach((side) => {
-          const post = new THREE.Mesh(new THREE.BoxGeometry(rail, height, rail), frameMaterial.clone());
-          post.position.copy(worldPointForHost(x + side * (width / 2 - rail / 2), mesh.position.y, z - depth * 0.36));
-          post.rotation.y = hostRotation;
-          scene.add(post);
-          attachPart(composite, post);
-        });
+        // An open rack needs a pair of depth-direction uprights for every
+        // column boundary. For n columns this is 2(n + 1) posts, so the
+        // frame remains stable instead of balancing on two front rods.
+        for (let boundary = 0; boundary <= columns; boundary += 1) {
+          const postX = x - width * 0.44 + (width * 0.88 * boundary) / columns;
+          for (const postZ of [z - depth * 0.36, z + depth * 0.36]) {
+            const post = new THREE.Mesh(new THREE.BoxGeometry(rail, height, rail), frameMaterial.clone());
+            post.position.copy(worldPointForHost(postX, mesh.position.y, postZ));
+            post.rotation.y = hostRotation;
+            scene.add(post);
+            attachPart(composite, post);
+          }
+        }
       }
       if (hasFrontCavity || semantic(node) === "sink") {
         const shellMaterial = new THREE.MeshStandardMaterial({ color: CATEGORY_COLORS[objectCategory(node)], roughness: 0.78, metalness: 0.04 });
@@ -586,7 +630,8 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         runtimeLightState.set(objectId, Boolean(states?.is_on));
       }
       if (semantic(node) === "sink") {
-        runtimeSinkFill.set(objectId, Number(states?.fill_level ?? (states?.is_full ? 1 : 0)));
+        const initialFill = Number(states?.fill_level ?? (states?.is_full ? 1 : 0));
+        runtimeSinkFill.set(objectId, THREE.MathUtils.clamp(initialFill > 1 ? initialFill / 100 : initialFill, 0, 1));
         const drain = new THREE.Mesh(
           new THREE.CylinderGeometry(0.045, 0.045, 0.018, 16),
           new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.65, roughness: 0.32 }),
@@ -597,10 +642,10 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         attachLocalPart(composite, drain);
         interactive.push(drain);
         const water = new THREE.Mesh(
-          new THREE.BoxGeometry(width * 0.62, 0.012, depth * 0.5),
+          new THREE.BoxGeometry(width * 0.62, Math.max(0.02, height * 0.45), depth * 0.5),
           new THREE.MeshPhysicalMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.72, roughness: 0.12, metalness: 0.08 }),
         );
-        water.position.set(0, height * 0.05, 0);
+        water.position.set(0, height * 0.275, 0);
         water.userData = { layer: "objects" };
         water.visible = runtimeSinkFill.get(objectId)! > 0;
         mesh.add(water);
@@ -821,9 +866,15 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
             ));
             slot.rotation.y = hostRotation;
             slot.userData = {
-              id: objectId,
+              id: `${objectId}_slot_l${level + 1}_c${column + 1}`,
+              hostId: objectId,
               componentId: `${objectId}_slot_l${level + 1}_c${column + 1}`,
               componentRole: "storage_slot",
+              capabilities: ["place_target"],
+              maxCapacity: Number(storage.capacity_per_slot) || 8,
+              requiresContainedCapabilities: Array.isArray(storage.accepted_capabilities)
+                ? storage.accepted_capabilities.map(String)
+                : [],
             };
             scene.add(slot);
             interactive.push(slot);
@@ -877,7 +928,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           left.position.x = -drawerWidth / 2;
           const right = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, drawerHeight, wallDepth), componentMaterial("drawer"));
           right.position.x = drawerWidth / 2;
-          bottom.userData = { id: componentId, componentId, componentRole: "storage_slot", capabilities: ["place_target"] };
+          bottom.userData = { id: componentId, hostId: objectId, componentId, componentRole: "storage_slot", capabilities: ["place_target"] };
           drawer.add(bottom, front, back, left, right);
           scene.add(drawer);
           interactive.push(front);
@@ -1084,7 +1135,9 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       player: new THREE.Vector3(center.x, 1.6, center.z),
     };
     const cameraDirection = new THREE.Vector3();
-    const handGeometry = new THREE.SphereGeometry(0.11, 16, 12);
+    // Keep the first-person hand marker subtle; it is a visual pose cue, not
+    // the player's collision or grasp volume.
+    const handGeometry = new THREE.SphereGeometry(0.055, 16, 12);
     const handMaterial = new THREE.MeshStandardMaterial({ color: 0xf2b38b, roughness: 0.78 });
     const hands = {
       left: new THREE.Mesh(handGeometry, handMaterial),
@@ -1138,6 +1191,14 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       simulation.active = false;
       simulationActiveRef.current = false;
       simulation.keys.clear();
+      const pendingLayout = pendingSimulationLayoutRef.current;
+      if (pendingLayout) {
+        changeRef.current(pendingLayout);
+        pendingSimulationLayoutRef.current = null;
+      }
+      pendingSimulationParentsRef.current.splice(0).forEach(({ objectId, parentId }) => {
+        simulationPlaceRef.current?.(objectId, parentId);
+      });
       if (heldObjectId) {
         const heldMesh = objectMeshes.get(heldObjectId);
         const original = heldOriginalPositions.get(heldObjectId);
@@ -1168,6 +1229,10 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     };
     simulationControllerRef.current = { start: startSimulation, stop: stopSimulation };
     const onKeyDown = (event: KeyboardEvent) => {
+      if (simulation.active && event.code === "KeyV" && !event.repeat) {
+        setViewMode((mode) => mode === "first" ? "third" : "first");
+        return;
+      }
       if (simulation.active && (event.code === "KeyQ" || event.code === "KeyE")) {
         event.preventDefault();
         if (!event.repeat) {
@@ -1243,44 +1308,63 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       const componentRole = text(hit.object.userData.componentRole);
       const componentId = text(hit.object.userData.componentId);
       const id = String(hit.object.userData.id || "");
-      if (componentRole === "sink_drain") {
+      if (!id) return;
+      const targetNode = nodeById.get(id);
+      const componentNode = componentId ? nodeById.get(componentId) : undefined;
+      const targetCapabilities = [...new Set([...nodeCapabilities(targetNode), ...nodeCapabilities(componentNode)])];
+      const normal = hit.face?.normal?.clone().transformDirection(hit.object.matrixWorld) ?? new THREE.Vector3(0, 1, 0);
+      const controlledIds = controlTargets.get(componentId) ?? controlTargets.get(id) ?? [];
+      const accessOpen = [...runtimeOpen.entries()].some(([accessId, open]) => {
+        if (!open) return false;
+        const accessNode = nodeById.get(accessId);
+        return text(accessNode?.parent) === id || text(accessNode?.parent_id) === id;
+      });
+      const resolution = resolveLocalInteraction({
+        id: componentId || id,
+        capabilities: targetCapabilities,
+        componentRole,
+        isOpen: runtimeOpen.get(componentId || id) ?? Boolean((componentNode?.states as Record<string, unknown> | undefined)?.is_open),
+        hostRunning: runtimeDeviceRunning.get(id) ?? false,
+        startRequiresClosed: Boolean(targetNode?.requires_closed_to_start) || targetCapabilities.includes("start_requires_closed"),
+        accessOpen,
+        pickable: isPickable(id),
+        placeTarget: isPlaceTarget(id, normal) && normal.y > 0.5,
+      }, heldObjectId);
+      if (!resolution.action) return;
+      if (resolution.action === "drain") {
         runtimeSinkFill.set(id, 0);
+        setRuntimeStatusOverrides((current) => ({ ...current, [id]: { fill_level: 0, is_full: false, has_water: false, water_level: 0 } }));
         const water = waterMeshes.get(id);
         if (water) water.visible = false;
         return;
       }
-      if (toggleComponent(hit.object)) return;
-      if (!id) return;
-      const targetNode = nodeById.get(id);
-      if (semantic(targetNode) === "faucet") {
-        (controlTargets.get(id) ?? []).forEach((sinkId) => {
-          if ((runtimeSinkFill.get(sinkId) ?? 0) >= 1) return;
-          runtimeSinkFill.set(sinkId, 1);
-          const water = waterMeshes.get(sinkId);
-          if (water) {
-            water.visible = true;
-            water.scale.set(0.12, 1, 0.12);
-            water.position.y -= 0.035;
-          }
-        });
+      if (resolution.action === "open" || resolution.action === "close") {
+        if (!toggleComponent(hit.object)) runtimeOpen.set(componentId || id, resolution.action === "open");
         return;
       }
-      if (semantic(targetNode) === "button" || componentRole.includes("button") || componentRole.includes("knob")) {
-        const targets = controlTargets.get(componentId) ?? controlTargets.get(id) ?? [];
-        targets.forEach((lightId) => {
-          if (runtimeDeviceRunning.has(lightId)) {
-            const nextRunning = !runtimeDeviceRunning.get(lightId);
-            runtimeDeviceRunning.set(lightId, nextRunning);
-            const device = objectMeshes.get(lightId);
+      if (resolution.action === "press") {
+        const targets = controlledIds.length ? controlledIds : [id];
+        targets.forEach((targetId) => {
+          const controlledNode = nodeById.get(targetId);
+          const capabilities = nodeCapabilities(controlledNode);
+          if (capabilities.includes("water_source_control")) {
+            if (runtimeFaucetOpen.has(targetId)) runtimeFaucetOpen.delete(targetId);
+            else runtimeFaucetOpen.add(targetId);
+            return;
+          }
+          if (capabilities.includes("timed_device") || runtimeDeviceRunning.has(targetId)) {
+            const nextRunning = !runtimeDeviceRunning.get(targetId);
+            runtimeDeviceRunning.set(targetId, nextRunning);
+            const device = objectMeshes.get(targetId);
             if (device?.material instanceof THREE.MeshStandardMaterial) {
               device.material.emissive.set(nextRunning ? 0x0ea5e9 : 0x000000);
               device.material.emissiveIntensity = nextRunning ? 0.45 : 0;
             }
             return;
           }
-          const nextOn = !(runtimeLightState.get(lightId) ?? Boolean((nodeById.get(lightId)?.states as Record<string, unknown> | undefined)?.is_on));
-          runtimeLightState.set(lightId, nextOn);
-          const lamp = objectMeshes.get(lightId);
+          const nextOn = !(runtimeLightState.get(targetId) ?? Boolean((controlledNode?.states as Record<string, unknown> | undefined)?.is_on));
+          runtimeLightState.set(targetId, nextOn);
+          const lamp = objectMeshes.get(targetId);
           lamp?.traverse((part) => {
             if (part instanceof THREE.PointLight) part.intensity = nextOn ? 2.8 : 0;
             if (part === lamp && part instanceof THREE.Mesh && part.material instanceof THREE.MeshStandardMaterial) {
@@ -1291,28 +1375,16 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         });
         return;
       }
-      if (["light", "room_light"].includes(semantic(targetNode))) {
-        const nextOn = !(runtimeLightState.get(id) ?? Boolean((targetNode?.states as Record<string, unknown> | undefined)?.is_on));
-        runtimeLightState.set(id, nextOn);
-        const targetMesh = objectMeshes.get(id);
-        if (targetMesh) targetMesh.traverse((part) => {
-          if (part instanceof THREE.PointLight) part.intensity = nextOn ? 2.2 : 0;
-          if (part === targetMesh && part instanceof THREE.Mesh && part.material instanceof THREE.MeshStandardMaterial) {
-            part.material.emissive.set(nextOn ? 0xffd166 : 0x000000);
-            part.material.emissiveIntensity = nextOn ? 0.85 : 0;
-          }
-        });
-        return;
-      }
-      if (heldObjectId) {
+      if (heldObjectId && resolution.action === "place") {
         if (id === heldObjectId) return;
         const heldMesh = objectMeshes.get(heldObjectId);
-        const normal = hit.face?.normal?.clone().transformDirection(hit.object.matrixWorld) ?? new THREE.Vector3(0, 1, 0);
         if (heldMesh && isPlaceTarget(id, normal) && normal.y > 0.5) {
+          if (hit.distance > 3.5 || hit.point.y > 2.2) return;
           const heldBounds = heldMesh.geometry.boundingBox;
           const halfHeight = heldBounds ? (heldBounds.max.y - heldBounds.min.y) / 2 : 0.05;
           const targetNode = nodeById.get(id);
-          const declaredCapacity = Number(targetNode?.capacity ?? targetNode?.slot_count);
+          const targetMeta = targetNode ?? (hit.object.userData as Record<string, unknown>);
+          const declaredCapacity = Number(targetMeta?.capacity ?? targetMeta?.slot_count ?? targetMeta?.maxCapacity);
           const capacity = id === "__floor__" || !Number.isFinite(declaredCapacity)
             ? Number.POSITIVE_INFINITY
             : declaredCapacity;
@@ -1320,6 +1392,17 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
             text(edge.source_id || edge.source) === id && ["on", "contains", "inside"].includes(text(edge.relation || edge.edge_type)),
           ).length;
           if (alreadyPlaced >= capacity) return;
+          const requiredCapabilities = Array.isArray(targetMeta?.requiresContainedCapabilities)
+            ? targetMeta.requiresContainedCapabilities.map(String).map((value) => value.toLowerCase())
+            : [];
+          if (requiredCapabilities.length) {
+            const heldNode = nodeById.get(heldObjectId);
+            const heldCapabilities = Array.isArray(heldNode?.capabilities)
+              ? heldNode.capabilities.map(String).map((value) => value.toLowerCase())
+              : [];
+            const missing = requiredCapabilities.filter((value) => !heldCapabilities.includes(value));
+            if (missing.length) return;
+          }
           const heldSize = heldBounds?.getSize(new THREE.Vector3()) ?? new THREE.Vector3(0.1, 0.1, 0.1);
           const targetSize = id === "__floor__"
             ? { width: allWidth, depth: allDepth, height: roomHeight }
@@ -1342,7 +1425,10 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
             placeX = THREE.MathUtils.clamp(placeX, heldSize.x / 2, allWidth - heldSize.x / 2);
             placeZ = THREE.MathUtils.clamp(placeZ, heldSize.z / 2, allDepth - heldSize.z / 2);
           }
-          heldMesh.position.set(placeX, surfaceY + Math.max(0.01, halfHeight), placeZ);
+          const supportTop = id === "__floor__" ? 0 : new THREE.Box3().setFromObject(hit.object).max.y;
+          const supportY = Math.max(surfaceY, supportTop);
+          if (supportY > 1.8 || Math.abs(hit.point.y - supportY) > 0.18) return;
+          heldMesh.position.set(placeX, supportY + Math.max(0.01, halfHeight), placeZ);
           const originalRotation = heldOriginalRotations.get(heldObjectId) ?? new THREE.Quaternion();
           heldMesh.quaternion.copy(originalRotation);
           heldMesh.userData.held = false;
@@ -1351,7 +1437,8 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           heldOriginalParents.delete(heldObjectId);
           heldOriginalPositions.delete(heldObjectId);
           heldOriginalRotations.delete(heldObjectId);
-          const currentPlacement = layout.objects[heldObjectId];
+          const baseLayout = pendingSimulationLayoutRef.current ?? layout;
+          const currentPlacement = baseLayout.objects[heldObjectId];
           const objectNode = nodeById.get(heldObjectId);
           const roomId = currentPlacement?.room_id ?? String(objectNode?.room_id || "");
           const room = layout.rooms[roomId];
@@ -1363,7 +1450,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
             const xCm = Math.round((placeX - widthCm / 200) * 100);
             const yCm = Math.round((placeZ - depthCm / 200) * 100);
             const targetParentId = id === "__floor__" ? roomId : id;
-            const nextLayout = structuredClone(layout);
+            const nextLayout = structuredClone(baseLayout);
             nextLayout.objects[heldObjectId] = {
               ...currentPlacement,
               placement_mode: "surface",
@@ -1379,15 +1466,15 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
               rotation_y: normalizeQuarterTurn(heldMesh.rotation.y),
               rotation_z: normalizeQuarterTurn(heldMesh.rotation.z),
             };
-            changeRef.current(nextLayout);
-            simulationPlaceRef.current?.(heldObjectId, targetParentId);
+            pendingSimulationLayoutRef.current = nextLayout;
+            pendingSimulationParentsRef.current.push({ objectId: heldObjectId, parentId: targetParentId });
           }
           heldObjectId = null;
           setHeldObjectLabel("");
         }
         return;
       }
-      if (isPickable(id)) {
+      if (resolution.action === "pick") {
         const mesh = objectMeshes.get(id);
         if (!mesh) return;
         const parentId = text(edges.find((edge) =>
@@ -1441,7 +1528,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       const componentHit = simulation.active
         ? hits.find((candidate) => {
             const role = text(candidate.object.userData.componentRole);
-            return role === "sink_drain" || role === "door" || role.startsWith("drawer") || role.includes("button");
+            return role === "sink_drain" || role === "faucet" || role === "storage_slot" || role === "door" || role.startsWith("drawer") || role.includes("button");
           })
         : undefined;
       const objectHit = hits.find((candidate) => objectMeshes.has(String(candidate.object.userData.id)));
@@ -1453,6 +1540,15 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         return;
       }
       const id = String(hit.object.userData.id);
+      if (simulation.active) {
+        const cardId = String(hit.object.userData.id || "");
+        if (nodeById.has(cardId)) {
+          setStatusCardId(cardId);
+          selectRef.current(cardId);
+        }
+        dragState.hit = true;
+        return;
+      }
       simulationClick(hit);
       if (onInteractionHit) {
         const point = hit.point;
@@ -1563,8 +1659,8 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     let frame = 0;
     const animate = () => {
       const now = performance.now();
+      const delta = Math.min((now - simulation.lastFrame) / 1000, 0.05);
       if (simulation.active) {
-        const delta = Math.min((now - simulation.lastFrame) / 1000, 0.05);
         const forwardAmount = Number(simulation.keys.has("KeyW")) - Number(simulation.keys.has("KeyS"));
         const rightAmount = Number(simulation.keys.has("KeyD")) - Number(simulation.keys.has("KeyA"));
         const length = Math.hypot(forwardAmount, rightAmount) || 1;
@@ -1614,11 +1710,18 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         const handPose = (hand: THREE.Mesh, left: boolean, raised: boolean) => {
           const side = left ? -1 : 1;
           camera.updateMatrixWorld();
-          const target = camera.position.clone()
-            .add(new THREE.Vector3(side * (raised ? 0.3 : 0.22), raised ? -0.05 : -0.2, -0.48).applyQuaternion(camera.quaternion));
+          const target = third
+            ? simulation.player.clone().add(new THREE.Vector3(
+              side * (raised ? 0.34 : 0.26),
+              raised ? 1.35 : 1.05,
+              -0.18,
+            ).applyAxisAngle(new THREE.Vector3(0, 1, 0), simulation.yaw))
+            : camera.position.clone().add(new THREE.Vector3(
+              side * (raised ? 0.3 : 0.22), raised ? -0.05 : -0.2, -0.48,
+            ).applyQuaternion(camera.quaternion));
           hand.position.lerp(target, Math.min(1, delta * 12));
-          hand.quaternion.copy(camera.quaternion);
-          hand.visible = viewModeRef.current === "first";
+          hand.quaternion.copy(third ? new THREE.Quaternion().setFromEuler(new THREE.Euler(0, simulation.yaw, 0)) : camera.quaternion);
+          hand.visible = true;
         };
         handPose(hands.left, true, handsRef.current.left || Boolean(heldObjectId));
         handPose(hands.right, false, handsRef.current.right);
@@ -1632,11 +1735,30 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         const nodeStates = node?.states as Record<string, unknown> | undefined;
         const nodeSemantic = semantic(node);
         if (nodeSemantic === "sink") {
-          const full = (runtimeSinkFill.get(id) ?? 0) > 0;
-          mesh.visible = full;
-          const wave = full ? 1 + Math.sin(time * 2.8) * 0.025 : 0.12;
-          mesh.scale.set(wave, 1, wave);
-          mesh.position.set(base.x, base.y + (full ? Math.sin(time * 2) * 0.004 : -0.035), base.z);
+          const connectedFaucets = faucetsBySink.get(id) ?? [];
+          const flowing = connectedFaucets.some((faucet) => runtimeFaucetOpen.has(text(faucet.id)));
+          let level = runtimeSinkFill.get(id) ?? 0;
+          if (flowing && level < 1) {
+            level = Math.min(1, level + delta * 0.16);
+            runtimeSinkFill.set(id, level);
+            const levelBand = Math.min(6, Math.max(0, Math.ceil(level * 6)));
+            setRuntimeStatusOverrides((current) => ({
+              ...current,
+              [id]: {
+                fill_level: level,
+                is_full: level >= 1,
+                has_water: level > 0,
+                water_level: Math.round(level * 100),
+                water_level_band: levelBand,
+              },
+            }));
+          }
+          const filled = level > 0;
+          mesh.visible = filled;
+          const wave = filled ? 1 + Math.sin(time * 2.8) * 0.012 : 1;
+          mesh.scale.set(wave, Math.max(0.02, level), wave);
+          const waterHeight = dimensionsFor(id).height;
+          mesh.position.set(base.x, filled ? waterHeight * (0.05 + 0.225 * level) + Math.sin(time * 2) * 0.003 : -0.035, base.z);
           return;
         }
         const running = Boolean(nodeStates?.is_running) || (Boolean(nodeStates?.is_on) && ["fan", "ceiling_fan", "ventilator"].includes(nodeSemantic));
@@ -1747,10 +1869,30 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       <div className="scene3d-crosshair" aria-hidden="true" />
       <div className="scene3d-simulation-hint">
         <strong>{viewMode === "first" ? "第一人称仿真" : "第三人称仿真"}</strong>
-        <span>WASD 移动 · 鼠标观察 · Q/E 双手交互 · 左键点击 · Esc 释放鼠标</span>
-        {heldObjectLabel && <span className="scene3d-held-status">手持：{heldObjectLabel} · 点击承载面放置</span>}
+        <span>WASD 移动 · 鼠标观察 · 左键查看状态 · Q/E 交互 · Esc 释放鼠标</span>
+        {heldObjectLabel && <span className="scene3d-held-status">手持：{heldObjectLabel} · 对准承载面按 Q/E 放置</span>}
         {!pointerLocked && <button type="button" onClick={() => simulationControllerRef.current?.start()}>点击继续控制视角</button>}
       </div>
+      {statusCardId && (() => {
+        const node = nodes.find((item) => text(item.id) === statusCardId);
+        if (!node) return null;
+        const states = { ...((node.states && typeof node.states === "object") ? node.states as Record<string, unknown> : {}), ...(runtimeStatusOverrides[statusCardId] ?? {}) };
+        const property = node.property && typeof node.property === "object" ? node.property as Record<string, unknown> : {};
+        const attributes = Object.entries(property).filter(([, value]) => value != null && value !== "" && !(Array.isArray(value) && value.length === 0) && !(typeof value === "object" && !Array.isArray(value) && Object.keys(value as object).length === 0));
+        if (semantic(node)) attributes.unshift(["类型", semantic(node)]);
+        const format = (value: unknown) => Array.isArray(value) ? value.join(", ") : typeof value === "object" && value !== null ? JSON.stringify(value) : String(value);
+        return <section className="scene3d-status-card" aria-label="物体状态">
+          <header><strong>{nodeName(node)}</strong><button type="button" aria-label="关闭状态卡片" title="关闭" onClick={() => setStatusCardId("")}><X size={15} /></button></header>
+          <dl>
+            <dt>属性</dt>
+            <dd>{attributes.length ? attributes.map(([key, value]) => <span key={key}><b>{key}</b>{format(value)}</span>) : <span>无</span>}</dd>
+            <dt>状态</dt>
+            <dd>{Object.keys(states).length ? Object.keys(states).join("、") : "无"}</dd>
+            <dt>状态值</dt>
+            <dd>{Object.entries(states).length ? Object.entries(states).map(([key, value]) => <span key={key}><b>{key}</b>{format(value)}</span>) : "无"}</dd>
+          </dl>
+        </section>;
+      })()}
     </>}
   </div>;
 }

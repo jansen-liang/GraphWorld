@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 from .actions import ActionType
-from .domain_rules import CLOTH_SEMANTICS, DRYING_RACK_STEPS
+from .domain_rules import DRYING_RACK_STEPS
 from .effects import (
     brush_target,
     close_target,
@@ -21,17 +21,21 @@ from .predicates import (
     adjacent_room_failure,
     capacity_place_failures,
     carrying_type_failures,
+    contained_capability_failures,
     container_access_failure,
     controlled_targets,
     device_door_failures,
     elevator_room_failure,
     dump_failures,
     holding,
+    held_objects,
     is_open,
     node,
     node_type,
+    object_capabilities,
     parent_of,
     place_target_failure,
+    process_input_failures,
     requires_closed_to_start,
     room_of,
     same_room,
@@ -179,7 +183,10 @@ def require_object_movable(ctx: ActionContext) -> str | None:
 
 
 def require_hand_empty(ctx: ActionContext) -> str | None:
-    return "agent already holds an object" if holding(ctx.state, ctx.actor_id) else None
+    hand = str((ctx.payload or {}).get("hand") or "right").lower()
+    if hand == "both":
+        return "both hands must be free" if held_objects(ctx.state, ctx.actor_id) else None
+    return f"{hand} hand already holds an object" if holding(ctx.state, ctx.actor_id, hand) else None
 
 
 def require_object_same_room(ctx: ActionContext) -> str | None:
@@ -271,6 +278,12 @@ def require_carrying_type(ctx: ActionContext) -> str | None:
     return "; ".join(failures) if failures else None
 
 
+def require_contained_capabilities(ctx: ActionContext) -> str | None:
+    placed_id = ctx.object_id or holding(ctx.state, ctx.actor_id)
+    failures = contained_capability_failures(ctx.state, placed_id, ctx.target_id)
+    return "; ".join(failures) if failures else None
+
+
 def require_trash_placement(ctx: ActionContext) -> str | None:
     placed_id = ctx.object_id or holding(ctx.state, ctx.actor_id)
     failures = trash_place_failures(ctx.state, placed_id, ctx.target_id)
@@ -287,6 +300,18 @@ def require_open_not_redundant(ctx: ActionContext) -> str | None:
     return f"target is already open: {ctx.target_id}" if is_open(ctx.target) else None
 
 
+def require_open_not_running(ctx: ActionContext) -> str | None:
+    """A running process locks its attached access doors generically."""
+    target = ctx.target
+    if semantic(target) != "door":
+        return None
+    host_id = parent_of(ctx.state, ctx.target_id)
+    host = node(ctx.state, host_id)
+    if host_id and bool(states(host).get("is_running", False)):
+        return f"device is running; door is locked: {ctx.target_id}"
+    return None
+
+
 def require_close_not_redundant(ctx: ActionContext) -> str | None:
     if semantic(ctx.target) == "faucet":
         return None if bool(states(ctx.target).get("is_on", False)) else f"target is already off: {ctx.target_id}"
@@ -294,8 +319,8 @@ def require_close_not_redundant(ctx: ActionContext) -> str | None:
 
 
 def require_brushable(ctx: ActionContext) -> str | None:
-    if semantic(ctx.target) in CLOTH_SEMANTICS:
-        return "cloth must be washed in washer"
+    if "washable" in object_capabilities(ctx.target):
+        return "washable objects must use a compatible washing process"
     if states(ctx.target).get("is_dirty") is not True:
         return f"target does not need brushing: {ctx.target_id}"
     required_tool = str(ctx.target.get("required_tool") or "").strip().lower()
@@ -309,6 +334,11 @@ def require_brushable(ctx: ActionContext) -> str | None:
         uses_left = states(held).get("uses_left")
         if uses_left is not None and float(uses_left or 0) <= 0:
             return f"tool exhausted: {held_id}"
+    held_id = holding(ctx.state, ctx.actor_id)
+    held = node(ctx.state, held_id)
+    held_capabilities = {str(value).lower() for value in (held.get("capabilities") or ())}
+    if "cleaning_tool" in held_capabilities and not bool(states(held).get("is_wet", False)):
+        return "cleaning tool must be wet"
     return None
 
 
@@ -332,6 +362,9 @@ def require_press_ready(ctx: ActionContext) -> str | None:
             return f"resource exhausted: {ctx.target_id}"
     if requires_closed_to_start(ctx.target) and is_open(ctx.target):
         return f"device door must be closed before start: {ctx.target_id}"
+    input_failures = process_input_failures(ctx.state, ctx.target_id)
+    if input_failures:
+        return "; ".join(input_failures)
     if semantic(ctx.target) in RECIPE_SPECS and not process_ready(ctx.state, ctx.target_id):
         return f"process inputs unavailable: {ctx.target_id}"
     credential_failure = access_credential_failure(ctx.state, ctx.actor_id, ctx.target_id)
@@ -357,8 +390,8 @@ def access_credential_failure(state: dict[str, Any], actor_id: str, control_id: 
 
 
 def require_foldable_and_dry(ctx: ActionContext) -> str | None:
-    if semantic(ctx.target) not in CLOTH_SEMANTICS:
-        return "target is not foldable cloth"
+    if "foldable" not in object_capabilities(ctx.target):
+        return "target is not foldable"
     if bool(states(ctx.target).get("is_wet", False)):
         return "wet cloth cannot be folded"
     return None
@@ -375,7 +408,9 @@ def effect_move(ctx: ActionContext) -> None:
 
 
 def effect_pick(ctx: ActionContext) -> None:
-    move_node(ctx.state, ctx.object_id, ctx.actor_id, "held_by")
+    hand = str((ctx.payload or {}).get("hand") or "right").lower()
+    relation = "held_by" if hand in {"right", "primary"} else f"held_by_{hand}"
+    move_node(ctx.state, ctx.object_id, ctx.actor_id, relation)
 
 
 def effect_place(ctx: ActionContext) -> None:
@@ -397,22 +432,12 @@ def effect_place(ctx: ActionContext) -> None:
     # accounting record.
     if loaded_resource:
         return
-    if semantic(ctx.target) == "drying_rack":
+    contained_profile = ctx.target.get("contained_temporal_profile")
+    contained_duration = ctx.target.get("contained_process_duration_steps")
+    if isinstance(contained_profile, dict) and contained_duration:
         placed_states = node(ctx.state, placed_id).setdefault("states", {})
         if bool(placed_states.get("is_wet", False)):
-            weather = str(ctx.state.get("world_state", {}).get("weather") or "sunny").lower()
-            steps = {"sunny": 6, "cloudy": 8, "rainy": 12}.get(weather, DRYING_RACK_STEPS)
-            room_id = str(ctx.state.get("room_of", {}).get(ctx.target_id) or "")
-            humidity_map = ctx.state.get("world_state", {}).get("room_humidity") or {}
-            try:
-                humidity = float(humidity_map.get(room_id, ctx.state.get("world_state", {}).get("humidity", 50.0)))
-            except (TypeError, ValueError):
-                humidity = 50.0
-            if humidity >= 80:
-                steps += 4
-            elif humidity <= 30:
-                steps = max(1, steps - 2)
-            placed_states["cycle_remaining"] = steps
+            placed_states["cycle_remaining"] = max(1, int(contained_duration))
     if semantic(ctx.target) == "trash_bin":
         ctx.target.setdefault("states", {})["is_dirty"] = True
     event: dict[str, Any] = {
@@ -730,6 +755,7 @@ ACTION_SCHEMAS: dict[ActionType, ActionSchema] = {
             require_volume_collision_free,
             require_volume_load,
             require_carrying_type,
+            require_contained_capabilities,
             require_trash_placement,
         ),
         effects=(effect_place,),
@@ -738,7 +764,7 @@ ACTION_SCHEMAS: dict[ActionType, ActionSchema] = {
     ActionType.OPEN: ActionSchema(
         action=ActionType.OPEN,
         parameters=("actor", "target"),
-        preconditions=(require_target_same_room, require_target_supports_action, require_open_not_redundant),
+        preconditions=(require_target_same_room, require_target_supports_action, require_open_not_redundant, require_open_not_running),
         effects=(effect_open,),
         description="Open an openable target.",
     ),

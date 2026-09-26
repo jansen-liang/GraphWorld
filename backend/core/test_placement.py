@@ -153,3 +153,43 @@ def test_place_rejects_interior_overload():
     state["nodes"]["box"]["mass_kg"] = 2
     failures = validate_action_schema(state, {"agent": "robot", "action": "place", "object": "box", "target": "slot"})
     assert any("interior load 2kg exceeds 1kg" in failure for failure in failures)
+
+
+def test_composite_slot_requires_declared_capability():
+    state = _volume_state()
+    state["nodes"]["slot"]["requires_contained_capabilities"] = ["washable"]
+    state["nodes"]["box"]["capabilities"] = ["pickable"]
+    failures = validate_action_schema(state, {"agent": "robot", "action": "place", "object": "box", "target": "slot"})
+    assert any("lacks required containment capability: washable" in failure for failure in failures)
+    state["nodes"]["box"]["capabilities"].append("washable")
+    assert validate_action_schema(state, {"agent": "robot", "action": "place", "object": "box", "target": "slot"}) == ()
+
+
+def test_composite_slots_check_catalog_capabilities_for_real_items():
+    state = _volume_state()
+    state["nodes"]["slot"]["requires_contained_capabilities"] = ["washable"]
+    state["nodes"]["box"].update(semantic_type="clothes", capabilities=None)
+    assert validate_action_schema(state, {"agent": "robot", "action": "place", "object": "box", "target": "slot"}) == ()
+    state["nodes"]["box"].update(semantic_type="toothpaste", capabilities=None)
+    failures = validate_action_schema(state, {"agent": "robot", "action": "place", "object": "box", "target": "slot"})
+    assert any("lacks required containment capability: washable" in failure for failure in failures)
+
+    state["nodes"]["slot"]["requires_contained_capabilities"] = ["cookable"]
+    state["nodes"]["box"].update(semantic_type="milk", capabilities=None)
+    assert validate_action_schema(state, {"agent": "robot", "action": "place", "object": "box", "target": "slot"}) == ()
+    state["nodes"]["box"].update(semantic_type="clothes", capabilities=None)
+    failures = validate_action_schema(state, {"agent": "robot", "action": "place", "object": "box", "target": "slot"})
+    assert any("lacks required containment capability: cookable" in failure for failure in failures)
+
+
+def test_internal_slot_capacity_limits_item_count():
+    state = _volume_state()
+    state["nodes"]["slot"]["max_capacity"] = 1
+    state["nodes"]["existing"] = {
+        "id": "existing", "node_type": "movable_object", "semantic_type": "box",
+        "parent": "slot", "bounds_cm": [5, 5, 5], "states": {},
+    }
+    state["parent_of"]["existing"] = "slot"
+    state["relation_of"]["existing"] = "inside"
+    failures = validate_action_schema(state, {"agent": "robot", "action": "place", "object": "box", "target": "slot"})
+    assert any("target capacity exceeded: slot" in failure for failure in failures)

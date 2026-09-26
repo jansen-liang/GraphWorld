@@ -23,6 +23,15 @@ class ActionRequest(BaseModel):
     payload: dict[str, Any] = Field(default_factory=dict)
 
 
+class InteractionRequest(BaseModel):
+    actor_id: str = "robot_01"
+    input: str = "interact_primary"
+    target_id: str = ""
+    distance_m: float | None = None
+    hit: dict[str, Any] = Field(default_factory=dict)
+    hand: str = "right"
+
+
 class ActionResult(BaseModel):
     ok: bool
     message: str = ""

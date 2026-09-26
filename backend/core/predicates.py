@@ -50,14 +50,54 @@ def children_of(state: dict[str, Any], parent_id: str) -> list[str]:
     return [node_id for node_id, current_parent in state.get("parent_of", {}).items() if current_parent == parent_id]
 
 
-def holding(state: dict[str, Any], actor_id: str) -> str:
+def descendants_of(state: dict[str, Any], parent_id: str) -> list[str]:
+    """Return all nested children, including objects inside storage slots."""
+    result: list[str] = []
+    frontier = [str(parent_id)]
+    while frontier:
+        current = frontier.pop()
+        children = children_of(state, current)
+        result.extend(children)
+        frontier.extend(children)
+    return result
+
+
+def holding(state: dict[str, Any], actor_id: str, hand: str | None = None) -> str:
     actor_id = str(actor_id)
     parent_map = state.get("parent_of", {})
     relation_map = state.get("relation_of", {})
+    normalized_hand = str(hand or "").lower()
+    if not normalized_hand:
+        accepted = {"held_by", "held_by_left", "held_by_both"}
+    elif normalized_hand in {"right", "primary"}:
+        accepted = {"held_by", "held_by_both"}
+    elif normalized_hand == "left":
+        accepted = {"held_by_left", "held_by_both"}
+    else:
+        accepted = {f"held_by_{normalized_hand}"}
     for node_id, current_parent in parent_map.items():
-        if current_parent == actor_id and relation_map.get(node_id) == "held_by":
+        if current_parent == actor_id and relation_map.get(node_id) in accepted:
             return node_id
     return ""
+
+
+def held_objects(state: dict[str, Any], actor_id: str) -> dict[str, str]:
+    """Return occupied hand slots without changing the legacy held_by fact."""
+    result: dict[str, str] = {}
+    parent_map = state.get("parent_of", {})
+    relation_map = state.get("relation_of", {})
+    for node_id, current_parent in parent_map.items():
+        if current_parent != str(actor_id):
+            continue
+        relation = str(relation_map.get(node_id) or "")
+        if relation == "held_by":
+            result.setdefault("right", str(node_id))
+        elif relation == "held_by_both":
+            result.setdefault("left", str(node_id))
+            result.setdefault("right", str(node_id))
+        elif relation.startswith("held_by_"):
+            result.setdefault(relation.removeprefix("held_by_"), str(node_id))
+    return result
 
 
 def same_room(state: dict[str, Any], a: str, b: str) -> bool:
@@ -118,6 +158,77 @@ def capacity_place_failures(state: dict[str, Any], target_id: str) -> list[str]:
     return []
 
 
+def object_capabilities(item: dict[str, Any]) -> set[str]:
+    explicit = item.get("capabilities")
+    if isinstance(explicit, (list, tuple, set)):
+        return {str(capability).lower() for capability in explicit}
+    semantic_type = semantic(item)
+    if not semantic_type:
+        return set()
+    legacy_aliases = {
+        "detergent": {"laundry_detergent"},
+    }
+    if semantic_type in legacy_aliases:
+        return set(legacy_aliases[semantic_type])
+    try:
+        from .assets.object_library import OBJECT_LIBRARY
+
+        template = OBJECT_LIBRARY.get(semantic_type)
+        return {capability.name for capability in template.capabilities} if template else set()
+    except (ImportError, AttributeError):
+        return set()
+
+
+def object_property(item: dict[str, Any], property_name: str, default: Any = None) -> Any:
+    if property_name in item:
+        return item[property_name]
+    try:
+        from .assets.object_library import OBJECT_LIBRARY
+
+        template = OBJECT_LIBRARY.get(semantic(item))
+        return template._property(property_name, default) if template else default
+    except (ImportError, AttributeError):
+        return default
+
+
+def contained_capability_failures(state: dict[str, Any], item_id: str, target_id: str) -> list[str]:
+    """Require declared item abilities demanded by a composite's storage slot."""
+    target = node(state, target_id)
+    required = {str(value).lower() for value in target.get("requires_contained_capabilities") or ()}
+    if not required:
+        return []
+    item = node(state, item_id)
+    available = object_capabilities(item)
+    missing = sorted(required - available)
+    if not missing:
+        return []
+    return [f"{semantic(item) or item_id} lacks required containment capability: {', '.join(missing)}"]
+
+
+def process_input_failures(state: dict[str, Any], device_id: str) -> list[str]:
+    device = node(state, device_id)
+    required = {str(value).lower() for value in device.get("required_process_capabilities") or ()}
+    if not required:
+        return []
+    child_ids = children_of(state, device_id)
+    available: set[str] = set()
+    for child_id in child_ids:
+        child = node(state, child_id)
+        explicit = child.get("capabilities")
+        if isinstance(explicit, (list, tuple, set)):
+            available.update(str(value).lower() for value in explicit)
+        else:
+            try:
+                from .assets.object_library import OBJECT_LIBRARY
+                template = OBJECT_LIBRARY.get(semantic(child))
+                if template:
+                    available.update(capability.name for capability in template.capabilities)
+            except (ImportError, AttributeError):
+                pass
+    missing = sorted(required - available)
+    return [f"process input capability missing: {value}" for value in missing]
+
+
 def carrying_type_failures(state: dict[str, Any], held_id: str, target_id: str) -> list[str]:
     target = node(state, target_id)
     accepted = tuple(target.get("accepted_families") or ())
@@ -143,6 +254,11 @@ def controlled_targets(state: dict[str, Any], control_id: str) -> list[str]:
 
 
 def requires_closed_to_start(item: dict[str, Any]) -> bool:
+    capabilities = {str(value).lower() for value in (item.get("capabilities") or ())}
+    # A timed device opts into the closed-door invariant through capability
+    # metadata.  The semantic-cycle map remains only for legacy scene data.
+    if "timed_device" in capabilities or "process_profile" in capabilities:
+        return bool(item.get("requires_closed_to_start", True))
     return semantic(item) in APPLIANCE_CYCLE_STEPS and bool(item.get("requires_closed_to_start", True))
 
 
@@ -247,17 +363,22 @@ __all__ = [
     "capacity_place_failures",
     "carrying_type_failures",
     "children_of",
+    "descendants_of",
     "container_access_failure",
+    "process_input_failures",
     "controlled_targets",
     "device_door_failures",
     "dump_failures",
     "elevator_room_failure",
     "holding",
+    "held_objects",
     "is_container_door",
     "is_containment_container",
     "is_open",
     "mutable_states",
     "node",
+    "object_capabilities",
+    "object_property",
     "node_type",
     "parent_of",
     "place_target_failure",

@@ -28,6 +28,8 @@ class DiscreteState(str, Enum):
     IS_OPEN = "is_open"
     IS_PRESSED = "is_pressed"
     IS_ROTTEN = "is_rotten"
+    IS_SPOILED = "is_spoiled"
+    FRESHNESS = "freshness"
     IS_WET = "is_wet"
     IS_WILTED = "is_wilted"
     TEMPERATURE = "temperature"
@@ -54,7 +56,7 @@ DISCRETE_STATE_SPACE: tuple[str, ...] = tuple(state.value for state in DiscreteS
 TEMPERATURE_VALUES = frozenset({"cold", "room", "warm", "hot"})
 THERMAL_PHASES = frozenset({"frozen", "cold", "room", "warm", "hot", "boiling", "burning"})
 TEMPERATURE_NUMERIC_RANGE = (-50.0, 300.0)
-NUMERIC_STATES = frozenset({"cycle_remaining", "fill_level", "vitality", "uses_left", "count", "amount", "capacity", "water_level"})
+NUMERIC_STATES = frozenset({"cycle_remaining", "fill_level", "vitality", "freshness", "uses_left", "count", "amount", "capacity", "water_level"})
 
 
 @dataclass(frozen=True)
@@ -146,6 +148,8 @@ STATE_SPECS: dict[str, StateSpec] = {
     "cycle_remaining": _spec("cycle_remaining", StateCategory.QUANTITY, StateValueType.NUMBER, ("washer", "dishwasher", "microwave"), 0, ("press_start",), ("timed_transition",), ("tracks cycle completion",)),
     "is_dirty": _spec("is_dirty", StateCategory.CONDITION, StateValueType.BOOLEAN, ("plate", "cup", "table", "clothes", "floor", "toilet", "sink"), False, ("use", "spill"), ("brush",), ("surface needs cleaning",), ("cleanable",)),
     "is_rotten": _spec("is_rotten", StateCategory.MATERIAL, StateValueType.BOOLEAN, ("food", "milk", "juice", "vegetable", "fruit", "organic_item"), False, ("time_decay",), (), ("dispose or remove",), ("perishable",)),
+    "is_spoiled": _spec("is_spoiled", StateCategory.MATERIAL, StateValueType.BOOLEAN, ("food", "milk", "juice", "vegetable", "fruit", "organic_item"), False, ("time_decay",), ("cooling",), ("intermediate food quality",), ("perishable",)),
+    "freshness": _spec("freshness", StateCategory.LIFE, StateValueType.NUMBER, ("food", "milk", "juice", "vegetable", "fruit", "organic_item"), 100.0, ("time_decay",), ("cooling",), ("continuous food quality",), ("perishable",)),
     "is_full": _spec("is_full", StateCategory.QUANTITY, StateValueType.BOOLEAN, ("trash_bin", "basket", "cup", "container"), False, ("place",), (), ("blocks filling",), ("fillable",)),
     "fill_level": _spec("fill_level", StateCategory.QUANTITY, StateValueType.NUMBER, ("trash_bin", "cup", "container"), 0, ("place",), (), ("drives is_full",), ("fillable",)),
     "has_water": _spec("has_water", StateCategory.QUANTITY, StateValueType.BOOLEAN, ("sink", "vase", "cup", "mug", "bowl", "wateringcan", "spraybottle"), False, ("empty", "consume", "evaporate"), ("open_faucet", "fill", "refill"), ("controls watering and wetting effects",), ("water_container",)),

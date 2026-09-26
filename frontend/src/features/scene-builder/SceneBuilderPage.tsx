@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { getScene, getSceneGraph, listObjectCatalog, listSceneVersions, publishSceneLayout, validateSceneLayout } from "../../api/scenes";
 import { useAuth } from "../../app/auth";
-import type { InteractionHit, SceneLayoutValidation } from "../../types/api";
+import type { SceneLayoutValidation } from "../../types/api";
 import {
   FloorplanCanvas,
   sharedWall,
@@ -96,7 +96,6 @@ export function SceneBuilderPage() {
   const [templateId, setTemplateId] = useState("");
   const [validation, setValidation] = useState<SceneLayoutValidation | null>(null);
   const [view, setView] = useState<"2d" | "3d" | "graph">("2d");
-  const [lastInteractionHit, setLastInteractionHit] = useState<InteractionHit | null>(null);
 
   const scene = useQuery({ queryKey: ["scene", sceneId], queryFn: () => getScene(sceneId), enabled: Boolean(sceneId) });
   const versions = useQuery({ queryKey: ["scene-versions", sceneId], queryFn: () => listSceneVersions(sceneId), enabled: Boolean(sceneId) });
@@ -191,6 +190,49 @@ export function SceneBuilderPage() {
       const next = deepCopy(current);
       const node = next.nodes?.find((entry) => text(entry.id) === objectId);
       if (!node) return current;
+      // Storage slots are materialized by the 3D runtime for scenes that only
+      // declare a composite host. Persist the slot as a real containment
+      // node so the placement survives rerenders and backend validation.
+      if (parentId !== "__floor__" && !next.nodes?.some((entry) => text(entry.id) === parentId)) {
+        const slotMatch = parentId.match(/^(.*)_slot_l(\d+)_c(\d+)$/);
+        if (slotMatch) {
+          const hostId = slotMatch[1];
+          const host = next.nodes?.find((entry) => text(entry.id) === hostId);
+          const storage = host?.composition && typeof host.composition === "object"
+            ? (host.composition as Record<string, unknown>).storage as Record<string, unknown> | undefined
+            : undefined;
+          const levels = Math.max(1, Number(storage?.levels) || 1);
+          const columns = Math.max(1, Number(storage?.columns) || 1);
+          const slot: RawNode = {
+            id: parentId,
+            name: parentId,
+            name_cn: "内部承载槽",
+            node_type: "fixed_object",
+            semantic_type: "storage_slot",
+            parent: hostId,
+            component_of: hostId,
+            component_role: "storage_slot",
+            capabilities: ["place_target"],
+            interactive_actions: ["place"],
+            interior_size_cm: [120 / columns, Number(storage?.depth_cm) || 30, 100 / levels],
+            max_capacity: Number(storage?.capacity_per_slot) || 8,
+            requires_contained_capabilities: Array.isArray(storage?.accepted_capabilities)
+              ? storage?.accepted_capabilities.map(String)
+              : [],
+            states: { capacity: Number(storage?.capacity_per_slot) || 8 },
+          };
+          next.nodes = [...(next.nodes ?? []), slot];
+          next.edges = next.edges ?? [];
+          next.edges.push({
+            category: "physical",
+            relation: "component_of",
+            edge_type: "object_edge",
+            source_id: hostId,
+            target_id: parentId,
+            properties: { component_role: "storage_slot", mount_face: "interior" },
+          });
+        }
+      }
       node.parent = parentId;
       next.nodes = (next.nodes ?? []).map((entry) => {
         if (!Array.isArray(entry.child)) return entry;
@@ -416,10 +458,9 @@ export function SceneBuilderPage() {
             <button className={view === "2d" ? "active" : ""} type="button" onClick={() => setView("2d")} role="tab" aria-selected={view === "2d"}><PanelsTopLeft size={15} /> 2D</button>
             <button className={view === "3d" ? "active" : ""} type="button" onClick={() => setView("3d")} role="tab" aria-selected={view === "3d"}><Box size={15} /> 3D</button>
             <button className={view === "graph" ? "active" : ""} type="button" onClick={() => setView("graph")} role="tab" aria-selected={view === "graph"}><Network size={15} /> Graph</button>
-            {lastInteractionHit && <span className="builder-hit-readout" title="Latest Three.js raycast hit">hit: {lastInteractionHit.node_id}{lastInteractionHit.surface_uv ? ` · UV ${lastInteractionHit.surface_uv.map((value) => value.toFixed(2)).join(",")}` : ""}</span>}
           </div>
           {view === "2d" && <FloorplanCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} />}
-          {view === "3d" && <Scene3DCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} onSimulationPlace={updateSimulationPlacement} catalog={objectCatalog.data ?? []} onInteractionHit={setLastInteractionHit} />}
+          {view === "3d" && <Scene3DCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} onSimulationPlace={updateSimulationPlacement} catalog={objectCatalog.data ?? []} />}
           {view === "graph" && <div className="builder-graph-stage"><SceneGraphCanvas nodes={nodes} edges={edges} selectedNodeId={selectedId} onSelectNode={setSelectedId} /></div>}
         </main>
 

@@ -9,7 +9,7 @@ from backend.app.api.auth import get_current_user
 from backend.app.core.errors import InvalidStateError, NotFoundError
 from backend.app.db.models import User
 from backend.app.db.session import get_db
-from backend.app.schemas.action import ActionRequest
+from backend.app.schemas.action import ActionRequest, InteractionRequest
 from backend.app.schemas.metrics import RunMetricsResponse
 from backend.app.schemas.replay import ReplayResponse, ReplayStepRead
 from backend.app.schemas.run import RunCreate, RunCurrentResponse, RunRead
@@ -64,6 +64,20 @@ def apply_human_action(
 ) -> RunCurrentResponse:
     try:
         return service.apply_human_action(run_id, request)
+    except NotFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    except InvalidStateError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+
+
+@router.post("/runs/{run_id}/interactions", response_model=RunCurrentResponse)
+def apply_human_interaction(
+    run_id: str,
+    request: InteractionRequest,
+    service: RunService = Depends(get_run_service),
+) -> RunCurrentResponse:
+    try:
+        return service.apply_human_interaction(run_id, request)
     except NotFoundError as error:
         raise HTTPException(status_code=404, detail=str(error)) from error
     except InvalidStateError as error:

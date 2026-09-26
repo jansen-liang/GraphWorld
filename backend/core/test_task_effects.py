@@ -1,5 +1,6 @@
 from backend.core.action_schemas import apply_action_schema
 from backend.core.timed_transitions import apply_timed_transitions
+from backend.core.assets.object_library import OBJECT_LIBRARY
 from backend.core.assets.task_library import relevant_skills_for_nodes
 
 
@@ -158,6 +159,49 @@ def test_running_sink_fills_empty_watering_can_when_placed_inside():
     assert apply_action_schema(state, {"agent": "robot", "action": "place", "object": "can", "target": "sink"}) == ()
     assert state["nodes"]["can"]["states"]["water_level"] == 100.0
     assert state["nodes"]["can"]["states"]["has_water"] is True
+    assert state["nodes"]["sink"]["states"]["water_level"] == 0.0
+    assert state["nodes"]["sink"]["states"]["has_water"] is False
+    assert any(event["type"] == "water_transferred" for event in state["world_state"]["event_log"])
+
+
+def test_wettable_tool_consumes_reservoir_water_before_it_can_clean():
+    state = {
+        "nodes": {
+            "robot": {"id": "robot", "node_type": "robot", "parent": "room", "states": {}},
+            "room": {"id": "room", "node_type": "room", "states": {}},
+            "sink": {"id": "sink", "node_type": "fixed_object", "parent": "room", "capabilities": ["water_reservoir", "place_target"], "states": {"has_water": True, "water_level": 25}},
+            "towel": {"id": "towel", "node_type": "movable_object", "parent": "robot", "capabilities": ["pickable", "wettable", "cleaning_tool"], "water_absorption": 10, "states": {"is_wet": False}},
+        },
+        "parent_of": {"robot": "room", "sink": "room", "towel": "robot"},
+        "relation_of": {"robot": "at", "sink": "in", "towel": "held_by"},
+        "room_of": {"robot": "room", "sink": "room", "towel": "room"},
+        "control_edges": [], "room_edges": [], "world_state": {},
+    }
+    assert apply_action_schema(state, {"agent": "robot", "action": "place", "object": "towel", "target": "sink"}) == ()
+    assert state["nodes"]["towel"]["states"]["is_wet"] is True
+    assert state["nodes"]["sink"]["states"]["water_level"] == 15.0
+
+
+def test_cleaning_cloth_template_declares_water_interaction_capability():
+    cloth = OBJECT_LIBRARY["cleaningcloth"].instantiate("cloth", parent="room")
+    assert "cleaning_tool" in cloth["capabilities"]
+    assert "wettable" in cloth["capabilities"]
+
+
+def test_washing_rule_uses_capability_instead_of_semantic_name():
+    state = {
+        "nodes": {
+            "robot": {"id": "robot", "node_type": "robot", "states": {}},
+            "uniform": {
+                "id": "uniform", "semantic_type": "custom_uniform", "node_type": "movable_object",
+                "capabilities": ["washable", "cleanable"], "states": {"is_dirty": True},
+            },
+        },
+        "parent_of": {}, "relation_of": {}, "room_of": {}, "control_edges": [], "world_state": {},
+    }
+    failures = apply_action_schema(state, {"agent": "robot", "action": "brush", "target": "uniform"})
+    assert "washable objects must use a compatible washing process" in failures
+    assert state["nodes"]["uniform"]["states"]["is_dirty"] is True
 
 
 def test_water_plant_skill_is_triggered_by_decay():
@@ -214,6 +258,56 @@ def test_microwave_cycle_heats_child_milk():
     apply_timed_transitions(state, 1)
     apply_timed_transitions(state, 2)
     assert state["nodes"]["milk"]["states"]["temperature"] == "hot"
+
+
+def test_washer_requires_declared_laundry_detergent_input():
+    state = {
+        "nodes": {
+            "room": {"id": "room", "node_type": "room", "states": {}},
+            "robot": {"id": "robot", "node_type": "robot", "parent": "room", "states": {}},
+            "washer": {"id": "washer", "node_type": "fixed_object", "semantic_type": "washer", "parent": "room", "capabilities": ["switchable", "timed_device", "openable", "start_requires_closed"], "required_process_capabilities": ["laundry_detergent"], "interactive_actions": ["press"], "states": {"is_open": False, "is_running": False}},
+            "shirt": {"id": "shirt", "node_type": "movable_object", "semantic_type": "clothes", "parent": "washer", "capabilities": ["pickable", "washable"], "states": {"is_dirty": True}},
+        },
+        "parent_of": {"robot": "room", "washer": "room", "shirt": "washer"},
+        "relation_of": {"shirt": "in"}, "room_of": {"robot": "room", "washer": "room", "shirt": "room"},
+        "control_edges": [], "room_edges": [], "world_state": {},
+    }
+    failures = apply_action_schema(state, {"agent": "robot", "action": "press", "target": "washer"})
+    assert failures == ("process input capability missing: laundry_detergent",)
+    state["nodes"]["detergent"] = {"id": "detergent", "semantic_type": "laundry_detergent", "parent": "washer", "capabilities": ["laundry_detergent"], "states": {}}
+    state["parent_of"]["detergent"] = "washer"
+    assert apply_action_schema(state, {"agent": "robot", "action": "press", "target": "washer"}) == ()
+
+
+def test_washing_process_applies_wetness_before_cleanliness_completion():
+    state = {
+        "nodes": {
+            "room": {"id": "room", "node_type": "room", "states": {}},
+            "robot": {"id": "robot", "node_type": "robot", "parent": "room", "states": {}},
+            "washer": {"id": "washer", "node_type": "fixed_object", "semantic_type": "washer", "parent": "room", "composition": {"storage": {"accepted_capabilities": ["washable"]}}, "required_process_capabilities": ["laundry_detergent"], "interactive_actions": ["press"], "states": {"is_open": False, "is_running": False}},
+            "shirt": {"id": "shirt", "node_type": "movable_object", "semantic_type": "clothes", "parent": "washer", "capabilities": ["washable"], "states": {"is_dirty": True, "is_wet": False}},
+            "detergent": {"id": "detergent", "semantic_type": "laundry_detergent", "parent": "washer", "capabilities": ["laundry_detergent"], "states": {}},
+        },
+        "parent_of": {"robot": "room", "washer": "room", "shirt": "washer", "detergent": "washer"},
+        "relation_of": {"shirt": "in", "detergent": "in"}, "room_of": {"robot": "room", "washer": "room", "shirt": "room", "detergent": "room"},
+        "control_edges": [], "room_edges": [], "world_state": {},
+    }
+    assert apply_action_schema(state, {"agent": "robot", "action": "press", "target": "washer"}) == ()
+    assert state["nodes"]["shirt"]["states"]["is_wet"] is True
+    assert state["nodes"]["shirt"]["states"]["is_dirty"] is True
+
+
+def test_temporal_profile_is_declarative_and_applies_independent_state_effects():
+    from backend.core.temporal import apply_effects, temporal_effects
+
+    item = {"states": {"is_dirty": True, "is_wet": False}, "temporal_profile": {
+        "on_start": [{"capability": "washable", "state": "is_wet", "value": True}],
+        "on_complete": [{"capability": "washable", "state": "is_dirty", "value": False}],
+    }}
+    apply_effects(item, {"washable"}, temporal_effects(item, "start"))
+    assert item["states"] == {"is_dirty": True, "is_wet": True}
+    apply_effects(item, {"washable"}, temporal_effects(item, "complete"))
+    assert item["states"]["is_dirty"] is False
 
 
 def test_access_button_opens_controlled_structural_door():
@@ -580,6 +674,25 @@ def test_numeric_vase_water_depletes_in_steps_before_empty_event():
     assert not any(event["type"] == "water_depleted" for event in state["world_state"].get("event_log", []))
 
 
+def test_faucet_fills_sink_gradually_on_shared_clock():
+    from backend.core.timed_transitions import apply_timed_transitions
+
+    state = {
+        "nodes": {
+            "room": {"id": "room", "node_type": "room", "states": {}},
+            "faucet": {"id": "faucet", "semantic_type": "faucet", "states": {"is_on": True}},
+            "sink": {"id": "sink", "semantic_type": "sink", "states": {"water_level": 0.0, "has_water": False}},
+        },
+        "control_edges": [{"source_id": "faucet", "target_id": "sink", "relation": "controls"}],
+        "parent_of": {"faucet": "room", "sink": "room"}, "room_of": {"faucet": "room", "sink": "room"},
+        "world_state": {},
+    }
+    apply_timed_transitions(state, 0)
+    assert state["nodes"]["sink"]["states"]["water_level"] == 20.0
+    apply_timed_transitions(state, 1)
+    assert state["nodes"]["sink"]["states"]["water_level"] == 40.0
+
+
 def test_humidity_changes_drying_duration_without_changing_default_weather_contract():
     def state_with_humidity(humidity):
         return {
@@ -598,3 +711,21 @@ def test_humidity_changes_drying_duration_without_changing_default_weather_contr
     apply_timed_transitions(humid, 1)
     assert dry["nodes"]["shirt"]["states"]["cycle_remaining"] == 3
     assert humid["nodes"]["shirt"]["states"]["cycle_remaining"] == 9
+
+
+def test_advance_time_is_the_shared_batch_clock():
+    from backend.core.timed_transitions import advance_time
+
+    state = {
+        "nodes": {
+            "room": {"id": "room", "node_type": "room", "states": {}},
+            "vase": {"id": "vase", "semantic_type": "vase", "parent": "room", "states": {"has_water": True, "water_level": 100}},
+            "flower": {"id": "flower", "semantic_type": "flower", "parent": "vase", "states": {"vitality": 1.0, "is_wilted": False}},
+        },
+        "parent_of": {"vase": "room", "flower": "vase"},
+        "room_of": {"vase": "room", "flower": "room"},
+        "world_state": {"step": 4, "natural_change_enabled": True},
+    }
+    advance_time(state, 3)
+    assert state["world_state"]["step"] == 7
+    assert state["world_state"]["time_min"] == 30

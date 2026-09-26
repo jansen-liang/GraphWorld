@@ -2,20 +2,32 @@ from __future__ import annotations
 
 from typing import Any
 
-from .domain_rules import APPLIANCE_CYCLE_STEPS, CLOTH_SEMANTICS, DUMP_RULES, SURFACE_SEMANTICS
+from .domain_rules import APPLIANCE_CYCLE_STEPS, DUMP_RULES, SURFACE_SEMANTICS
 from .predicates import (
     children_of,
+    descendants_of,
     controlled_targets,
     holding,
     is_container_door,
     mutable_states,
     node,
     node_type,
+    object_capabilities,
+    object_property,
     parent_of,
     semantic,
 )
 from .states import DiscreteState
 from .processes import RECIPE_SPECS, start_process
+from .temporal import apply_effects, temporal_effects, profile_duration
+
+
+def _process_duration(item: dict[str, Any]) -> int:
+    """Return the configured cycle length, with legacy semantic fallback."""
+    configured = profile_duration(item)
+    if configured:
+        return configured
+    return int(APPLIANCE_CYCLE_STEPS.get(semantic(item), 0))
 
 
 def move_node(state: dict[str, Any], node_id: str, parent_id: str, relation: str) -> None:
@@ -33,7 +45,7 @@ def move_node(state: dict[str, Any], node_id: str, parent_id: str, relation: str
 def open_target(state: dict[str, Any], target_id: str) -> None:
     target = node(state, target_id)
     target_states = mutable_states(target)
-    if semantic(target) == "faucet":
+    if "water_source_control" in object_capabilities(target):
         target_states[DiscreteState.IS_ON.value] = True
         _set_controlled_sink_water(state, target_id, True)
         return
@@ -52,7 +64,7 @@ def open_target(state: dict[str, Any], target_id: str) -> None:
 def close_target(state: dict[str, Any], target_id: str) -> None:
     target = node(state, target_id)
     target_states = mutable_states(target)
-    if semantic(target) == "faucet":
+    if "water_source_control" in object_capabilities(target):
         target_states[DiscreteState.IS_ON.value] = False
         _set_controlled_sink_water(state, target_id, False)
         return
@@ -91,27 +103,30 @@ def press_target(state: dict[str, Any], target_id: str, payload: dict[str, Any] 
                 remaining = max(0.0, float(target_states.get(resource_key) or 0.0) - 1.0)
                 target_states[resource_key] = int(remaining) if remaining.is_integer() else round(remaining, 4)
                 break
-    if target_semantic == "faucet":
+    if "water_source_control" in object_capabilities(target):
         target_states[DiscreteState.IS_ON.value] = not bool(target_states.get(DiscreteState.IS_ON.value, False))
         _set_controlled_sink_water(state, target_id, bool(target_states[DiscreteState.IS_ON.value]))
         return
-    if target_semantic in APPLIANCE_CYCLE_STEPS:
+    target_duration = _process_duration(target)
+    if target_duration:
         _consume_appliance_detergent(state, target_id)
         target_states[DiscreteState.IS_ON.value] = True
         target_states[DiscreteState.IS_RUNNING.value] = True
-        target_states[DiscreteState.CYCLE_REMAINING.value] = APPLIANCE_CYCLE_STEPS[target_semantic]
+        target_states[DiscreteState.CYCLE_REMAINING.value] = target_duration
+        _apply_process_start_effects(state, target_id)
         if target_semantic in RECIPE_SPECS:
             start_process(state, target_id)
     for controlled_id in controlled_targets(state, target_id):
         controlled = node(state, controlled_id)
         controlled_states = mutable_states(controlled)
         controlled_semantic = semantic(controlled)
-        duration = APPLIANCE_CYCLE_STEPS.get(controlled_semantic)
+        duration = _process_duration(controlled)
         if duration:
             _consume_appliance_detergent(state, controlled_id)
             controlled_states[DiscreteState.IS_ON.value] = True
             controlled_states[DiscreteState.IS_RUNNING.value] = True
             controlled_states[DiscreteState.CYCLE_REMAINING.value] = duration
+            _apply_process_start_effects(state, controlled_id)
             if controlled_semantic in RECIPE_SPECS:
                 start_process(state, controlled_id)
         if controlled_semantic == "toilet":
@@ -120,29 +135,26 @@ def press_target(state: dict[str, Any], target_id: str, payload: dict[str, Any] 
             controlled_states[DiscreteState.IS_OPEN.value] = True
         elif DiscreteState.IS_ON.value in controlled_states:
             controlled_states[DiscreteState.IS_ON.value] = not bool(controlled_states.get(DiscreteState.IS_ON.value, False))
-        if controlled_semantic in {"air_conditioner", "air_conditioning", "aircon"}:
-            _apply_air_conditioner_environment(state, controlled_id, bool(controlled_states.get(DiscreteState.IS_ON.value, False)))
-        elif controlled_semantic in {"fan", "ceiling_fan", "ventilator"}:
-            _apply_fan_environment(state, controlled_id, bool(controlled_states.get(DiscreteState.IS_ON.value, False)))
-    if target_semantic not in APPLIANCE_CYCLE_STEPS and DiscreteState.IS_ON.value in target_states:
+        _apply_environment_effect(state, controlled_id, bool(controlled_states.get(DiscreteState.IS_ON.value, False)))
+    if not target_duration and DiscreteState.IS_ON.value in target_states:
         target_states[DiscreteState.IS_ON.value] = not bool(target_states.get(DiscreteState.IS_ON.value, False))
-    if target_semantic in {"air_conditioner", "air_conditioning", "aircon"}:
-        _apply_air_conditioner_environment(state, target_id, bool(target_states.get(DiscreteState.IS_ON.value, False)))
-    elif target_semantic in {"fan", "ceiling_fan", "ventilator"}:
-        _apply_fan_environment(state, target_id, bool(target_states.get(DiscreteState.IS_ON.value, False)))
+    _apply_environment_effect(state, target_id, bool(target_states.get(DiscreteState.IS_ON.value, False)))
 
 
 def _consume_appliance_detergent(state: dict[str, Any], appliance_id: str) -> None:
-    """Consume one detergent instance loaded into a washer or dishwasher."""
-    appliance_semantic = semantic(node(state, appliance_id))
-    if appliance_semantic not in {"washer", "washing_machine", "dishwasher"}:
+    """Consume one loaded resource matching the device capability contract."""
+    appliance = node(state, appliance_id)
+    required = {
+        str(value).lower()
+        for value in (appliance.get("required_process_capabilities") or object_property(appliance, "required_process_capabilities", ()) or ())
+    }
+    if not required:
         return
-    accepted = {"dishwasher_detergent"} if appliance_semantic == "dishwasher" else {"detergent", "laundry_detergent"}
     detergent_id = next(
         (
             child_id
-            for child_id in children_of(state, appliance_id)
-            if semantic(node(state, child_id)) in accepted
+            for child_id in descendants_of(state, appliance_id)
+            if object_capabilities(node(state, child_id)) & required
         ),
         None,
     )
@@ -158,6 +170,35 @@ def _consume_appliance_detergent(state: dict[str, Any], appliance_id: str) -> No
     state.get("nodes", {}).pop(detergent_id, None)
     state.get("parent_of", {}).pop(detergent_id, None)
     state.get("relation_of", {}).pop(detergent_id, None)
+
+
+def _apply_process_start_effects(state: dict[str, Any], device_id: str) -> None:
+    """Apply only immediate effects declared by contained capabilities.
+
+    Long-running effects remain in the timed transition engine. This keeps
+    state lifecycles independent: washable items become wet immediately, but
+    cleanliness changes only when the process completes.
+    """
+    device = node(state, device_id)
+    composition = device.get("composition") or {}
+    storage = composition.get("storage") if isinstance(composition, dict) else None
+    accepted = storage.get("accepted_capabilities") if isinstance(storage, dict) else None
+    required = {str(value).lower() for value in (device.get("requires_contained_capabilities") or accepted or ())}
+    device_capabilities = {str(value).lower() for value in (device.get("capabilities") or ())}
+    profile = device.get("temporal_profile") or {}
+    if not profile:
+        try:
+            from .assets.object_library import OBJECT_LIBRARY
+            template = OBJECT_LIBRARY.get(semantic(device))
+            if template:
+                profile = template._property("temporal_profile", {})
+        except (ImportError, AttributeError):
+            profile = {}
+    device["temporal_profile"] = profile
+    for child_id in descendants_of(state, device_id):
+        child = node(state, child_id)
+        capabilities = {str(value).lower() for value in (child.get("capabilities") or ())}
+        apply_effects(child, capabilities, temporal_effects({"temporal_profile": profile}, "start"))
 
 
 def _apply_air_conditioner_environment(state: dict[str, Any], device_id: str, is_on: bool) -> None:
@@ -183,9 +224,26 @@ def _apply_fan_environment(state: dict[str, Any], device_id: str, is_on: bool) -
     ventilation[room_id] = "active" if is_on else "idle"
 
 
+def _apply_environment_effect(state: dict[str, Any], device_id: str, is_on: bool) -> None:
+    """Apply a declarative room environment effect from capability metadata."""
+    device = node(state, device_id)
+    effect = object_property(device, "environment_effect", {}) or {}
+    if not isinstance(effect, dict) or not effect.get("channel"):
+        return
+    room_id = str(state.get("room_of", {}).get(device_id) or "")
+    if not room_id:
+        return
+    world = state.setdefault("world_state", {})
+    channel = str(effect["channel"])
+    value = effect.get("active_value") if is_on else effect.get("inactive_value")
+    if value == "baseline":
+        value = {"comfortable": "room"}.get(str(world.get("temperature") or "comfortable"), world.get("temperature", "room"))
+    world.setdefault(f"room_{channel}", {})[room_id] = value
+
+
 def brush_target(state: dict[str, Any], target_id: str) -> None:
     target = node(state, target_id)
-    if semantic(target) in CLOTH_SEMANTICS:
+    if "washable" in object_capabilities(target):
         return
     target_states = mutable_states(target)
     target_states[DiscreteState.IS_DIRTY.value] = False
@@ -197,28 +255,50 @@ def brush_target(state: dict[str, Any], target_id: str) -> None:
 
 
 def _set_controlled_sink_water(state: dict[str, Any], faucet_id: str, has_water: bool) -> None:
-    """A faucet controls a sink's binary water state; no sink volume is modeled."""
+    """A faucet controls flow; the shared clock fills the sink gradually."""
     for sink_id in controlled_targets(state, faucet_id):
         sink = node(state, sink_id)
-        if semantic(sink) == "sink":
+        if "water_reservoir" in object_capabilities(sink):
             sink_states = mutable_states(sink)
-            sink_states["has_water"] = has_water
-            sink_states["water_level"] = 100.0 if has_water else 0.0
+            sink_states["water_flowing"] = has_water
 
 
 def _apply_sink_entry_effect(state: dict[str, Any], object_id: str, sink_id: str) -> None:
     sink = node(state, sink_id)
-    if semantic(sink) != "sink" or not mutable_states(sink).get("has_water", False):
+    sink_capabilities = object_capabilities(sink)
+    if "water_reservoir" not in sink_capabilities:
+        return
+    sink_states = mutable_states(sink)
+    available = float(sink_states.get("water_level") or (100.0 if sink_states.get("has_water") else 0.0))
+    if available <= 0:
         return
     item = node(state, object_id)
     item_states = mutable_states(item)
-    item_semantic = semantic(item)
-    if item_semantic in {"cup", "mug", "bowl", "vase", "bottle", "winebottle", "pot", "pan", "container", "wateringcan", "coffeemachine", "coffee_machine"}:
-        item_states["has_water"] = True
-        item_states["water_level"] = 100.0
-        item_states["is_full"] = True
-    elif item_semantic in {"clothes", "towel", "blanket", "shoes", "paper_towel"}:
+    item_capabilities = object_capabilities(item)
+    transferred = 0.0
+    if "water_container" in item_capabilities:
+        current = float(item_states.get("water_level") or (100.0 if item_states.get("has_water") else 0.0))
+        capacity = max(current, float(item.get("water_capacity") or 100.0))
+        transferred = min(available, max(0.0, capacity - current))
+        next_level = current + transferred
+        item_states["has_water"] = next_level > 0
+        item_states["water_level"] = round(next_level, 2)
+        item_states["is_full"] = next_level >= capacity
+    elif "wettable" in item_capabilities or "washable" in item_capabilities:
+        transferred = min(available, max(0.1, float(item.get("water_absorption") or 10.0)))
         item_states[DiscreteState.IS_WET.value] = True
+    if transferred <= 0:
+        return
+    remaining = max(0.0, available - transferred)
+    sink_states["water_level"] = round(remaining, 2)
+    sink_states["has_water"] = remaining > 0
+    state.setdefault("world_state", {}).setdefault("event_log", []).append({
+        "type": "water_transferred",
+        "source_id": str(sink_id),
+        "target_id": str(object_id),
+        "amount": round(transferred, 2),
+        "remaining": round(remaining, 2),
+    })
 
 
 def fold_target(state: dict[str, Any], target_id: str) -> None:

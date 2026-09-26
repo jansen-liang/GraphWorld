@@ -71,11 +71,26 @@ from .states import (
     state_table_for_object,
 )
 from .resources import available_count, can_dispense, dispense_resource, resource_pool, scene_resource_pool_specs
-from .timed_transitions import apply_timed_transitions
+from .timed_transitions import advance_time, apply_timed_transitions
+from .interaction import InteractionRequest, InteractionResult, ResolvedInteraction, resolve_and_apply_interaction, resolve_interaction
+from .agent import AgentProfile, DEFAULT_AGENT_PROFILE, profile_for_agent
+from .temporal import StateEffect, apply_effects, temporal_effects
 from .transitions import envelope_for_event, transition_id, transition_log
 
 __all__ = [
     "ACTION_SPECS",
+    "advance_time",
+    "InteractionRequest",
+    "InteractionResult",
+    "ResolvedInteraction",
+    "resolve_and_apply_interaction",
+    "resolve_interaction",
+    "AgentProfile",
+    "DEFAULT_AGENT_PROFILE",
+    "profile_for_agent",
+    "StateEffect",
+    "apply_effects",
+    "temporal_effects",
     "ACTION_SCHEMAS",
     "APPLIANCE_CYCLE_STEPS",
     "ActionContext",

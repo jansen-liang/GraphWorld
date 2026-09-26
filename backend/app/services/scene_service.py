@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -8,8 +9,9 @@ from backend.app.repositories.scene_repo import SceneRepository
 from backend.app.runtime.scene_importer import infer_scene_id, import_scene
 from backend.app.runtime.scene_layout import ensure_scene_layout, validate_scene_layout
 from backend.app.db.models import ObjectCatalog
+from backend.core.composition import composition_for, materialize_compositions
 from backend.app.schemas.graph import GraphEdge, GraphNode, SceneGraphResponse
-from backend.app.schemas.scene import SceneImportRequest, SceneLayoutValidation, ScenePublishRequest, SceneRead, SceneVersionRead
+from backend.app.schemas.scene import SceneImportRequest, SceneLayoutGenerated, SceneLayoutGenerateRequest, SceneLayoutValidation, ScenePublishRequest, SceneRead, SceneVersionRead
 
 
 class SceneService:
@@ -79,10 +81,7 @@ class SceneService:
             raise NotFoundError(f"Scene version not found: {scene_version_id}")
         nodes = self.repo.version_nodes(scene_version_id)
         edges = self.repo.version_edges(scene_version_id)
-        catalog_dimensions = {
-            entry.semantic_type: (entry.width_cm, entry.depth_cm, entry.height_cm)
-            for entry in self.repo.db.scalars(select(ObjectCatalog).where(ObjectCatalog.is_active.is_(True))).all()
-        }
+        catalog_dimensions = self._catalog_dimensions()
         return SceneGraphResponse(
             scene_version_id=scene_version_id,
             source_json=ensure_scene_layout(version.source_json, catalog_dimensions),
@@ -105,6 +104,48 @@ class SceneService:
                 for edge in edges
             ],
         )
+
+    def generate_layout(self, scene_version_id: str, request: SceneLayoutGenerateRequest) -> SceneLayoutGenerated:
+        version = self.repo.get_version(scene_version_id)
+        if version is None:
+            raise NotFoundError(f"Scene version not found: {scene_version_id}")
+        source = copy.deepcopy(request.source_json if request.source_json is not None else version.source_json)
+        original_ids = {
+            str(item.get("id") or "") for item in source.get("nodes") or []
+            if isinstance(item, dict) and item.get("id")
+        }
+        if request.regenerate:
+            source.pop("layout", None)
+        if request.materialize_composition:
+            for item in source.get("nodes") or []:
+                if not isinstance(item, dict) or item.get("composition"):
+                    continue
+                semantic_type = str(item.get("semantic_type") or item.get("object_type") or "").lower()
+                declared = composition_for(semantic_type).to_dict()
+                if declared.get("components") or declared.get("storage"):
+                    item["composition"] = declared
+            source = materialize_compositions(source)
+        generated = ensure_scene_layout(source, self._catalog_dimensions())
+        issues = validate_scene_layout(generated)
+        generated_ids = {
+            str(item.get("id") or "") for item in generated.get("nodes") or []
+            if isinstance(item, dict) and item.get("id")
+        }
+        layout = generated.get("layout") or {}
+        return SceneLayoutGenerated(
+            source_json=generated,
+            valid=not issues,
+            issues=issues,
+            generated_room_count=len(layout.get("rooms") or {}),
+            generated_object_count=len(layout.get("objects") or {}),
+            materialized_component_count=len(generated_ids - original_ids),
+        )
+
+    def _catalog_dimensions(self) -> dict[str, tuple[float, float, float]]:
+        return {
+            entry.semantic_type: (entry.width_cm, entry.depth_cm, entry.height_cm)
+            for entry in self.repo.db.scalars(select(ObjectCatalog).where(ObjectCatalog.is_active.is_(True))).all()
+        }
 
     def validate_layout(self, scene_version_id: str, source_json: dict) -> SceneLayoutValidation:
         if self.repo.get_version(scene_version_id) is None:

@@ -8,7 +8,7 @@ from backend.core.action_schemas import apply_action_schema
 from backend.core.edges import PARENT_RELATIONS, ROOM_CONNECTIVITY_RELATIONS
 from backend.core.assets.npc_library import EventPrecondition, get_event_spec
 from backend.core.states import DISCRETE_STATE_SPACE
-from backend.core.timed_transitions import apply_timed_transitions
+from backend.core.timed_transitions import advance_time
 from backend.core.composition import materialize_compositions
 from backend.core.animation import visual_cues
 from backend.core.transitions import transition_log
@@ -195,12 +195,13 @@ class SceneGraph:
 
     def held_by(self, agent_id: str) -> str:
         for node_id, parent_id in self.parent_of.items():
-            if parent_id == agent_id and self.relation_of.get(node_id) == "held_by":
+            relation = str(self.relation_of.get(node_id) or "")
+            if parent_id == agent_id and (relation == "held_by" or relation.startswith("held_by_")):
                 return node_id
         return ""
 
     def sync_runtime_edges(self) -> None:
-        runtime_relations = {"at", "in", "on", "near", "held_by"}
+        runtime_relations = {"at", "in", "on", "near", "held_by", "held_by_left", "held_by_both"}
         self.edges = [
             edge
             for edge in self.edges
@@ -590,10 +591,9 @@ class HumanEventSystem(System):
 
 class EnvironmentSystem(System):
     def advance_time(self) -> list[str]:
-        completed = apply_timed_transitions(self.graph.state_for_rules(), int(self.graph.world_state.get("step") or 0))
+        completed = advance_time(self.graph.state_for_rules(), 1)
         for node_id in completed:
             self.graph.log("timed_transition", f"{node_id} completed")
-        self.graph.world_state["step"] = int(self.graph.world_state.get("step") or 0) + 1
         self.graph.refresh_indices()
         self.graph.sync_runtime_edges()
         return completed

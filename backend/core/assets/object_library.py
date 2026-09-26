@@ -50,8 +50,22 @@ NON_FOOD_CARRYING = Capability(
     actions=("place",),
     properties={"max_capacity": 5, "accepted_families": ("non_food",)},
 )
+WASHABLE = Capability("washable")
+DRYABLE = Capability("dryable")
+WETTABLE = Capability("wettable", states={DiscreteState.IS_WET.value: False}, properties={"water_absorption": 10.0})
+DISHWASHABLE = Capability("dishwashable")
+COOKABLE = Capability("cookable")
 CLEANABLE = Capability("cleanable", states={DiscreteState.IS_DIRTY.value: False}, actions=("brush",))
+CLEANING_TOOL = Capability("cleaning_tool")
 SWITCHABLE = Capability("switchable", states={DiscreteState.IS_ON.value: False}, actions=("press",))
+ROOM_COOLER = Capability(
+    "room_environment_control",
+    properties={"environment_effect": {"channel": "temperature", "active_value": "cold", "inactive_value": "baseline"}},
+)
+ROOM_VENTILATOR = Capability(
+    "room_environment_control",
+    properties={"environment_effect": {"channel": "ventilation", "active_value": "active", "inactive_value": "idle"}},
+)
 OPENABLE = Capability("openable", states={DiscreteState.IS_OPEN.value: False}, actions=("open", "close"))
 FOLDABLE = Capability("foldable", states={DiscreteState.FOLDED.value: True}, actions=("fold",))
 FILLABLE = Capability(
@@ -61,20 +75,59 @@ FILLABLE = Capability(
         DiscreteState.IS_FULL.value: False,
     },
 )
+WATER_CONTAINER = Capability(
+    "water_container",
+    properties={"water_decay": {"interval_steps": 12, "delta": 20.0}},
+)
+WATER_RESERVOIR = Capability(
+    "water_reservoir",
+    states={DiscreteState.HAS_WATER.value: False, DiscreteState.WATER_LEVEL.value: 0.0},
+)
 WATER_SOURCE_CONTROL = Capability("water_source_control", actions=("open", "close"))
 FINITE_RESOURCE = Capability("finite_resource", actions=("press", "refill"), properties={"resource_based": True})
 TIMED_DEVICE = Capability(
     "timed_device",
     states={"is_running": False, "cycle_remaining": 0},
     actions=("press",),
-    properties={"timed_device": True},
+    properties={"timed_device": True, "requires_closed_to_start": True},
 )
+
+# A process is described by data attached to a capability.  The runtime does
+# not need to know the semantic name of the appliance to advance it.
+PROCESS_PROFILE = lambda profile, duration: Capability(
+    "process_profile",
+    properties={"temporal_profile": profile, "process_duration_steps": int(duration)},
+)
+CONTAINED_TEMPORAL_PROFILE = lambda profile, duration: Capability(
+    "contained_temporal_profile",
+    properties={"contained_temporal_profile": profile, "contained_process_duration_steps": int(duration)},
+)
+REQUIRES_LAUNDRY_DETERGENT = Capability(
+    "process_input_requirement",
+    properties={
+        "required_process_capabilities": ("laundry_detergent",),
+        "temporal_profile": {
+            "on_start": [{"capability": "washable", "state": "is_wet", "value": True}],
+            "on_complete": [{"capability": "washable", "state": "is_dirty", "value": False}],
+        },
+    },
+)
+REQUIRES_DISHWASHER_DETERGENT = Capability(
+    "process_input_requirement",
+    properties={"required_process_capabilities": ("dishwasher_detergent",)},
+)
+LAUNDRY_DETERGENT = Capability("laundry_detergent")
+DISHWASHER_DETERGENT = Capability("dishwasher_detergent")
 WORKBENCH = Capability(
     "workbench",
     actions=("press", "place"),
     properties={"workbench": True},
 )
-PERISHABLE = Capability("perishable", states={DiscreteState.IS_ROTTEN.value: False})
+PERISHABLE = Capability(
+    "perishable",
+    states={DiscreteState.IS_ROTTEN.value: False, DiscreteState.IS_SPOILED.value: False, DiscreteState.FRESHNESS.value: 100.0},
+    properties={"natural_profile": {"interval_steps": 144, "spoiled_below": 50.0, "rotten_at": 0.0}},
+)
 PLANT_LIFE = Capability(
     "plant_life",
     states={
@@ -262,6 +315,10 @@ class ObjectTemplate:
     def accepted_families(self) -> tuple[str, ...]:
         return tuple(self._property("accepted_families", ()))
 
+    @property
+    def required_process_capabilities(self) -> tuple[str, ...]:
+        return tuple(self._property("required_process_capabilities", ()))
+
     def to_spec(self) -> Dict[str, Any]:
         return {
             "semantic_type": self.semantic_type,
@@ -287,6 +344,7 @@ class ObjectTemplate:
             "resource_capacity": deepcopy(self.resource_capacity),
             "max_capacity": self.max_capacity,
             "accepted_families": list(self.accepted_families),
+            "required_process_capabilities": list(self.required_process_capabilities),
             "composition": composition_for(self.semantic_type).to_dict(),
             **(surface_spec_for(self.semantic_type) or {}),
             **(footprint_for(self.semantic_type) or {}),
@@ -332,9 +390,17 @@ class ObjectTemplate:
                 node[key] = value
         if self.capabilities:
             node["capabilities"] = [capability.name for capability in self.capabilities]
+            # Preserve declarative capability metadata on the runtime node.
+            # This is what lets generic transitions operate without looking up
+            # a concrete semantic type in the transition engine.
+            for capability in self.capabilities:
+                for key, value in capability.properties.items():
+                    node[key] = deepcopy(value)
         if self.max_capacity is not None:
             node["max_capacity"] = self.max_capacity
             node["accepted_families"] = list(self.accepted_families)
+        if self.required_process_capabilities:
+            node["required_process_capabilities"] = list(self.required_process_capabilities)
         if any(capability.name == "finite_resource" for capability in self.capabilities):
             capacities = self.resource_capacity or {key: value for key, value in self.default_states.items() if key in {"uses_left", "count", "amount"}}
             if capacities:
@@ -400,7 +466,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_on": False},
         ["move"],
         "wall",
-        capabilities=(SWITCHABLE, CLEANABLE),
+        capabilities=(SWITCHABLE, CLEANABLE, ROOM_COOLER),
     ),
     "fan": ObjectTemplate(
         "fan",
@@ -410,7 +476,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_on": False, "is_running": False},
         ["move"],
         "room",
-        capabilities=(SWITCHABLE, CLEANABLE),
+        capabilities=(SWITCHABLE, CLEANABLE, ROOM_VENTILATOR),
     ),
     "rack": ObjectTemplate(
         "rack",
@@ -420,6 +486,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False},
         ["move"],
         "wall",
+        capabilities=(PLACE_TARGET,),
     ),
     "shoe_rack": ObjectTemplate(
         "shoe_rack",
@@ -548,7 +615,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"has_water": False},
         ["move", "dump"],
         PlacementSpec(mode="wall", capacity=1),
-        capabilities=(CLEANABLE, PLACE_TARGET),
+        capabilities=(CLEANABLE, PLACE_TARGET, WATER_RESERVOIR),
     ),
     "faucet": ObjectTemplate(
         "faucet",
@@ -596,7 +663,9 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         ["move"],
         "counter",
-        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED,
+                      PROCESS_PROFILE({"on_complete": [{"capability": "cookable", "state": "temperature", "value": "hot"},
+                                                         {"capability": "cookable", "state": "is_cooked", "value": True}]}, 2)),
     ),
     "stove": ObjectTemplate(
         "stove",
@@ -625,7 +694,10 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         ["move"],
         "wall",
-        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED, REQUIRES_LAUNDRY_DETERGENT,
+                      PROCESS_PROFILE({"on_start": [{"capability": "washable", "state": "is_wet", "value": True},
+                                                    {"capability": "foldable", "state": "folded", "value": False}],
+                                       "on_complete": [{"capability": "washable", "state": "is_dirty", "value": False}]}, 3)),
     ),
     "washer": ObjectTemplate(
         "washer",
@@ -635,7 +707,10 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         ["move"],
         "wall",
-        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED, REQUIRES_LAUNDRY_DETERGENT,
+                      PROCESS_PROFILE({"on_start": [{"capability": "washable", "state": "is_wet", "value": True},
+                                                    {"capability": "foldable", "state": "folded", "value": False}],
+                                       "on_complete": [{"capability": "washable", "state": "is_dirty", "value": False}]}, 3)),
     ),
     "drying_rack": ObjectTemplate(
         "drying_rack",
@@ -645,6 +720,18 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         ["move", "place"],
         "wall",
+        capabilities=(PLACE_TARGET, CONTAINED_TEMPORAL_PROFILE(
+            {
+                "on_complete": [{"capability": "dryable", "state": "is_wet", "value": False}],
+                "event_type": "drying_completed",
+                "duration": {
+                    "default_steps": 6,
+                    "world_value_maps": {"weather": {"sunny": 6, "cloudy": 8, "rainy": 12}},
+                    "room_numeric_adjustments": {
+                        "room_humidity": [{"gte": 80, "delta": 4}, {"lte": 30, "delta": -2}],
+                    },
+                },
+            }, 6)),
     ),
     "television": ObjectTemplate(
         "television",
@@ -683,7 +770,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         [],
         "surface",
-        capabilities=(PICKABLE, CLEANABLE, FILLABLE),
+        capabilities=(PICKABLE, CLEANABLE, FILLABLE, WATER_CONTAINER, DISHWASHABLE),
     ),
     "cup": ObjectTemplate(
         "cup",
@@ -693,7 +780,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {DiscreteState.IS_WET.value: False},
         [],
         "surface",
-        capabilities=(PICKABLE, CLEANABLE, FILLABLE),
+        capabilities=(PICKABLE, CLEANABLE, FILLABLE, WATER_CONTAINER, DISHWASHABLE),
     ),
     "plate": ObjectTemplate(
         "plate",
@@ -703,7 +790,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False},
         ["pick", "place", "brush"],
         "surface",
-        capabilities=(CARRYING,),
+        capabilities=(CARRYING, DISHWASHABLE),
     ),
     "bowl": ObjectTemplate(
         "bowl",
@@ -713,7 +800,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {DiscreteState.IS_WET.value: False},
         [],
         "surface",
-        capabilities=(PICKABLE, CLEANABLE, CARRYING),
+        capabilities=(PICKABLE, CLEANABLE, CARRYING, WATER_CONTAINER, DISHWASHABLE),
     ),
     "book": ObjectTemplate(
         "book",
@@ -741,7 +828,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False, "is_wet": False},
         ["pick", "place"],
         "container",
-        capabilities=(FOLDABLE,),
+        capabilities=(FOLDABLE, WASHABLE, DRYABLE, WETTABLE),
     ),
     "shoes": ObjectTemplate(
         "shoes",
@@ -751,6 +838,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False, "is_wet": False},
         ["pick", "place", "brush"],
         "rack",
+        capabilities=(WASHABLE, DRYABLE, WETTABLE),
     ),
     "box": ObjectTemplate(
         "box",
@@ -789,7 +877,9 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         ["move"],
         "wall",
-        capabilities=(SWITCHABLE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED, REQUIRES_DISHWASHER_DETERGENT,
+                      PROCESS_PROFILE({"on_complete": [{"capability": "dishwashable", "state": "is_dirty", "value": False},
+                                                         {"capability": "dishwashable", "state": "is_wet", "value": False}]}, 3)),
     ),
     "elevator": ObjectTemplate(
         "elevator",
@@ -819,6 +909,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False},
         ["pick", "place"],
         "container",
+        capabilities=(WASHABLE, DRYABLE),
     ),
     "drink": ObjectTemplate(
         "drink",
@@ -828,7 +919,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         [],
         "shelf",
-        capabilities=(PICKABLE, OPENABLE, PERISHABLE),
+        capabilities=(PICKABLE, OPENABLE, PERISHABLE, COOKABLE),
     ),
     "fruit": ObjectTemplate(
         "fruit",
@@ -838,7 +929,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         [],
         "shelf",
-        capabilities=(PICKABLE, PERISHABLE),
+        capabilities=(PICKABLE, PERISHABLE, COOKABLE),
     ),
     "hand_sanitizer_dispenser": ObjectTemplate(
         "hand_sanitizer_dispenser",
@@ -858,7 +949,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         [],
         "container",
-        capabilities=(PICKABLE, OPENABLE, PERISHABLE),
+        capabilities=(PICKABLE, OPENABLE, PERISHABLE, COOKABLE),
     ),
     "knob": ObjectTemplate(
         "knob",
@@ -932,7 +1023,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         [],
         "container",
-        capabilities=(PICKABLE, OPENABLE, PERISHABLE),
+        capabilities=(PICKABLE, OPENABLE, PERISHABLE, COOKABLE),
     ),
     "nurse_uniform": ObjectTemplate(
         "nurse_uniform",
@@ -942,6 +1033,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False},
         ["pick", "place"],
         "container",
+        capabilities=(WASHABLE, DRYABLE),
     ),
     "prescription_sheet": ObjectTemplate(
         "prescription_sheet",
@@ -990,6 +1082,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False},
         ["move", "place"],
         "wall",
+        capabilities=(PLACE_TARGET,),
     ),
     "signboard": ObjectTemplate(
         "signboard",
@@ -1035,6 +1128,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"has_water": True, "water_level": 100.0},
         ["pick", "place"],
         "surface",
+        capabilities=(WATER_CONTAINER,),
     ),
     "toothbrush": ObjectTemplate(
         "toothbrush",
@@ -1125,7 +1219,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False, "has_water": False, "water_level": 0.0},
         [],
         PlacementSpec(mode="surface", capacity=3),
-        capabilities=(PICKABLE, PLACE_TARGET, CLEANABLE),
+        capabilities=(PICKABLE, PLACE_TARGET, CLEANABLE, WATER_CONTAINER),
         family=ObjectFamily.CONTAINER,
     ),
     "mirror": ObjectTemplate(
@@ -1158,7 +1252,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False, "is_wet": False},
         [],
         PlacementSpec(mode="surface", allowed_parents=("towel_holder", "counter", "floor")),
-        capabilities=(PICKABLE, CLEANABLE, FOLDABLE),
+        capabilities=(PICKABLE, CLEANABLE, CLEANING_TOOL, FOLDABLE, WASHABLE, DRYABLE, WETTABLE),
         family=ObjectFamily.CLEANING_TOOL,
     ),
 }
@@ -1194,6 +1288,10 @@ def _candidate_template(
 # First release of dataset candidates whose semantics fit the current action
 # and state space. Objects requiring domain systems remain deferred.
 OBJECT_LIBRARY.update({
+    "food": _candidate_template("food", "食物", family=ObjectFamily.FOOD,
+        rooms=("kitchen",), parents=("counter", "table", "refrigerator"), capabilities=(PICKABLE, PERISHABLE, COOKABLE)),
+    "flower": _candidate_template("flower", "鲜花", family=ObjectFamily.DECORATION,
+        rooms=("living_room", "bedroom"), parents=("vase", "table"), capabilities=(PICKABLE, PLANT_LIFE)),
     "statue": _candidate_template("statue", "雕像", family=ObjectFamily.DECORATION,
         rooms=("bedroom", "kitchen", "living_room"), capabilities=(PICKABLE, CLEANABLE)),
     "keychain": _candidate_template("keychain", "钥匙链", family=ObjectFamily.PERSONAL_ITEM,
@@ -1201,17 +1299,17 @@ OBJECT_LIBRARY.update({
     "cellphone": _candidate_template("cellphone", "手机", family=ObjectFamily.PERSONAL_ITEM,
         rooms=("bedroom", "kitchen", "living_room"), capabilities=(PICKABLE, CLEANABLE)),
     "bread": _candidate_template("bread", "面包", family=ObjectFamily.FOOD,
-        rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, PERISHABLE), states={"is_dirty": False}),
+        rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, PERISHABLE, COOKABLE), states={"is_dirty": False}),
     "tomato": _candidate_template("tomato", "番茄", family=ObjectFamily.FOOD,
-        rooms=("kitchen",), parents=("counter", "table", "refrigerator"), capabilities=(PICKABLE, PERISHABLE), states={"is_dirty": False}),
+        rooms=("kitchen",), parents=("counter", "table", "refrigerator"), capabilities=(PICKABLE, PERISHABLE, COOKABLE), states={"is_dirty": False}),
     "sandwich": _candidate_template("sandwich", "三明治", family=ObjectFamily.FOOD,
-        rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, PERISHABLE), states={"is_dirty": False}),
+        rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, PERISHABLE, COOKABLE), states={"is_dirty": False}),
     "workbench": _candidate_template("workbench", "料理台", family=ObjectFamily.APPLIANCE,
         rooms=("kitchen",), parents=("counter", "table"), node_type=NodeType.FIXED_OBJECT,
         capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, PLACE_TARGET),
         states={"is_on": False, "is_running": False, "cycle_remaining": 0}),
     "egg": _candidate_template("egg", "鸡蛋", family=ObjectFamily.FOOD,
-        rooms=("kitchen",), parents=("counter", "refrigerator", "sink"), capabilities=(PICKABLE, PERISHABLE)),
+        rooms=("kitchen",), parents=("counter", "refrigerator", "sink"), capabilities=(PICKABLE, PERISHABLE, COOKABLE)),
     "fork": _candidate_template("fork", "叉子", family=ObjectFamily.UTENSIL,
         rooms=("kitchen",), parents=("counter", "drawer", "sink", "table"), capabilities=(PICKABLE, CLEANABLE)),
     "spoon": _candidate_template("spoon", "勺子", family=ObjectFamily.UTENSIL,
@@ -1228,7 +1326,7 @@ OBJECT_LIBRARY.update({
         rooms=("bathroom",), parents=("floor",), capabilities=(PICKABLE, CLEANABLE)),
     "wateringcan": _candidate_template("wateringcan", "浇水壶", family=ObjectFamily.CONTAINER,
         rooms=("balcony", "kitchen", "living_room"), parents=("floor", "sink", "counter"),
-        capabilities=(PICKABLE, PLACE_TARGET), states={"has_water": True, "water_level": 100.0}),
+        capabilities=(PICKABLE, PLACE_TARGET, WATER_CONTAINER), states={"has_water": True, "water_level": 100.0}),
     "soapbar": _candidate_template("soapbar", "肥皂", family=ObjectFamily.CLEANING_TOOL,
         rooms=("bathroom",), parents=("bathtub", "counter", "sink"), capabilities=(PICKABLE, CLEANABLE)),
     "tissuebox": _candidate_template("tissuebox", "纸巾盒", family=ObjectFamily.CONTAINER,
@@ -1293,14 +1391,21 @@ OBJECT_LIBRARY.update({
     "coffee": _candidate_template("coffee", "咖啡", family=ObjectFamily.FOOD,
         rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, PERISHABLE), states={"is_dirty": False}),
     "spraybottle": _candidate_template("spraybottle", "喷雾瓶", family=ObjectFamily.CONTAINER,
-        rooms=("bathroom", "kitchen"), parents=("counter", "sink", "table"), capabilities=(PICKABLE, PLACE_TARGET, FINITE_RESOURCE), states={"has_water": False, "uses_left": 0}, resource_capacity={"uses_left": 5}),
+        rooms=("bathroom", "kitchen"), parents=("counter", "sink", "table"), capabilities=(PICKABLE, PLACE_TARGET, WATER_CONTAINER, FINITE_RESOURCE), states={"has_water": False, "water_level": 0.0, "uses_left": 0}, resource_capacity={"uses_left": 5}),
     "soapbottle": _candidate_template("soapbottle", "洗手液", family=ObjectFamily.CONTAINER,
         rooms=("bathroom", "kitchen"), parents=("counter", "sink", "table"), capabilities=(PICKABLE, PLACE_TARGET, FINITE_RESOURCE), states={"amount": 10}, resource_capacity={"amount": 10}),
+    "laundry_detergent": _candidate_template("laundry_detergent", "洗衣液", family=ObjectFamily.CLEANING_TOOL,
+        rooms=("bathroom", "kitchen"), parents=("counter", "sink", "table", "washing_machine", "washer"), capabilities=(PICKABLE, LAUNDRY_DETERGENT)),
+    "dishwasher_detergent": _candidate_template("dishwasher_detergent", "洗碗机洗涤剂", family=ObjectFamily.CLEANING_TOOL,
+        rooms=("kitchen",), parents=("counter", "sink", "table", "dishwasher"), capabilities=(PICKABLE, DISHWASHER_DETERGENT)),
     "clothesdryer": _candidate_template("clothesdryer", "烘干机", family=ObjectFamily.APPLIANCE,
         rooms=("bathroom",), parents=("floor",), node_type=NodeType.FIXED_OBJECT,
-        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, PLACE_TARGET, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED), states={"is_on": False, "is_running": False, "cycle_remaining": 0}, mode="room"),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, PLACE_TARGET, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED,
+                      PROCESS_PROFILE({"on_complete": [{"capability": "dryable", "state": "is_wet", "value": False},
+                                                         {"capability": "foldable", "state": "folded", "value": False}]}, 4)),
+        states={"is_on": False, "is_running": False, "cycle_remaining": 0}, mode="room"),
     "cleaningcloth": _candidate_template("cleaningcloth", "抹布", family=ObjectFamily.CLEANING_TOOL,
-        rooms=("bathroom", "kitchen"), parents=("counter", "sink", "table"), capabilities=(PICKABLE, CLEANABLE), states={"is_dirty": False, "is_wet": False}),
+        rooms=("bathroom", "kitchen"), parents=("counter", "sink", "table"), capabilities=(PICKABLE, CLEANABLE, CLEANING_TOOL, WETTABLE), states={"is_dirty": False, "is_wet": False}),
     "coffee_beans": _candidate_template("coffee_beans", "咖啡豆", family=ObjectFamily.FOOD,
         rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE,)),
     "tissue_refill": _candidate_template("tissue_refill", "纸巾补充包", family=ObjectFamily.PERSONAL_ITEM, rooms=("bathroom", "bedroom")),

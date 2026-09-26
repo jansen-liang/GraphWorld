@@ -12,6 +12,8 @@ from backend.app.db.session import get_db
 from backend.app.schemas.graph import SceneGraphResponse
 from backend.app.schemas.scene import (
     SceneImportRequest,
+    SceneLayoutGenerated,
+    SceneLayoutGenerateRequest,
     SceneLayoutRequest,
     SceneLayoutValidation,
     ScenePublishRequest,
@@ -89,6 +91,20 @@ def validate_scene_layout(
 ) -> SceneLayoutValidation:
     try:
         return service.validate_layout(scene_version_id, request.source_json)
+    except NotFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+
+
+@router.post("/scene-versions/{scene_version_id}/layout/generate", response_model=SceneLayoutGenerated)
+def generate_scene_layout(
+    scene_version_id: str,
+    request: SceneLayoutGenerateRequest,
+    _: User = Depends(require_admin),
+    service: SceneService = Depends(get_scene_service),
+) -> SceneLayoutGenerated:
+    """Materialize composite topology and generate a deterministic layout."""
+    try:
+        return service.generate_layout(scene_version_id, request)
     except NotFoundError as error:
         raise HTTPException(status_code=404, detail=str(error)) from error
 

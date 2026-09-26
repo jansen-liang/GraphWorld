@@ -53,6 +53,20 @@ def test_health_and_scene_import_smoke(monkeypatch, tmp_path):
     assert len(graph.json()["edges"]) == 92
     assert len(graph.json()["source_json"]["layout"]["rooms"]) == 7
 
+    generated = client.post(
+        f"/api/scene-versions/{scene_version_id}/layout/generate",
+        json={"regenerate": True, "materialize_composition": True},
+    )
+    assert generated.status_code == 200
+    generated_payload = generated.json()
+    assert generated_payload["valid"] is True
+    assert generated_payload["generated_room_count"] == 7
+    assert generated_payload["generated_object_count"] > 0
+    assert generated_payload["materialized_component_count"] > 0
+    generated_nodes = {item["id"]: item for item in generated_payload["source_json"]["nodes"]}
+    assert "washer_bathroom_slot_l1_c1" in generated_nodes
+    assert "microwave_kitchen_slot_l1_c1" in generated_nodes
+
     validated = client.post(
         f"/api/scene-versions/{scene_version_id}/layout/validate",
         json={"source_json": graph.json()["source_json"]},
@@ -83,18 +97,48 @@ def test_health_and_scene_import_smoke(monkeypatch, tmp_path):
     assert human_state["candidate_actions"]
 
     run_id = human_state["run"]["id"]
-    action_id = human_state["candidate_actions"][0]["action_id"]
-    stepped = client.post(f"/api/runs/{run_id}/actions", json={"action_id": action_id})
+    visible_pick = next(
+        candidate for candidate in human_state["candidate_actions"]
+        if candidate["action_type"] == "pick"
+    )
+    interacted = client.post(
+        f"/api/runs/{run_id}/interactions",
+        json={
+            "actor_id": "robot_01",
+            "input": "interact_primary",
+            "target_id": visible_pick["object_id"],
+            "distance_m": 1.2,
+            "hit": {
+                "node_id": visible_pick["object_id"],
+                "surface_uv": [0.5, 0.5],
+                "distance_m": 1.2,
+            },
+            "hand": "right",
+        },
+    )
+    assert interacted.status_code == 200
+    assert interacted.json()["run"]["current_step"] == 1
+    assert interacted.json()["latest_action_result"]["ok"] is True
+
+    interaction_steps = client.get(f"/api/runs/{run_id}/steps")
+    selected = interaction_steps.json()[0]["selected_action"]
+    assert selected["action"] == "pick"
+    assert selected["object"] == visible_pick["object_id"]
+    assert selected["interaction_hit"]["node_id"] == visible_pick["object_id"]
+
+    next_action_id = interacted.json()["candidate_actions"][0]["action_id"]
+    stepped = client.post(f"/api/runs/{run_id}/actions", json={"action_id": next_action_id})
     assert stepped.status_code == 200
-    assert stepped.json()["run"]["current_step"] == 1
+    assert stepped.json()["run"]["current_step"] == 2
     assert stepped.json()["latest_action_result"]["ok"] is True
 
     steps = client.get(f"/api/runs/{run_id}/steps")
     assert steps.status_code == 200
-    assert len(steps.json()) == 1
+    assert len(steps.json()) == 2
     replay = client.get(f"/api/runs/{run_id}/replay")
     assert replay.status_code == 200
     assert replay.json()["steps"][0]["step_index"] == 0
+    assert replay.json()["steps"][0]["selected_action"]["action"] == "pick"
     metrics = client.get(f"/api/runs/{run_id}/metrics")
     assert metrics.status_code == 200
     assert metrics.json()["metrics"]

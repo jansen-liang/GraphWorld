@@ -32,6 +32,21 @@ class SceneLayoutRequest(BaseModel):
     source_json: dict[str, Any]
 
 
+class SceneLayoutGenerateRequest(BaseModel):
+    source_json: dict[str, Any] | None = None
+    regenerate: bool = True
+    materialize_composition: bool = True
+
+
+class SceneLayoutGenerated(BaseModel):
+    source_json: dict[str, Any]
+    valid: bool
+    issues: list[str] = Field(default_factory=list)
+    generated_room_count: int = 0
+    generated_object_count: int = 0
+    materialized_component_count: int = 0
+
+
 class SceneLayoutValidation(BaseModel):
     valid: bool
     issues: list[str] = Field(default_factory=list)

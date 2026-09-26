@@ -16,6 +16,7 @@ from backend.app.repositories.run_repo import RunRepository
 from backend.app.repositories.scene_repo import SceneRepository
 from backend.app.runtime.graphworld_adapter import GraphWorldAdapter, action_id
 from backend.runtime.camera import validate_interaction_hit
+from backend.core.interaction import InteractionRequest as CoreInteractionRequest, resolve_interaction
 from backend.app.runtime.schedule import expected_events, planned_events_for_step
 from backend.app.schemas.action import ActionRequest, ActionResult
 from backend.app.schemas.metrics import MetricPoint, RunMetricsResponse
@@ -197,6 +198,22 @@ class RunService:
             raise InvalidStateError(f"Run {run_id} cannot accept actions while status={run.status}")
         selected = self._candidate_for_current_state(run, request.action_id, request.payload)
         return self._apply_selected_action(run, selected, actor_type="human")
+
+    def apply_human_interaction(self, run_id: str, request: Any) -> RunCurrentResponse:
+        """Resolve physical player input before entering canonical actions."""
+        run = self._require_run(run_id)
+        if run.control_mode != ControlMode.human.value:
+            raise InvalidStateError(f"Run {run_id} is not in human control mode")
+        if run.status not in {RunStatus.waiting_for_human.value, RunStatus.running.value}:
+            raise InvalidStateError(f"Run {run_id} cannot accept interactions while status={run.status}")
+        _, orchestrator = self._adapter_and_orchestrator(run)
+        payload = request.model_dump(mode="json") if hasattr(request, "model_dump") else dict(request)
+        resolved = resolve_interaction(orchestrator.graph.state_for_rules(), CoreInteractionRequest.from_dict(payload))
+        if resolved.action is None:
+            raise InvalidStateError("; ".join(resolved.failures))
+        if payload.get("hit"):
+            resolved.action["interaction_hit"] = payload["hit"]
+        return self._apply_selected_action(run, resolved.action, actor_type="human")
 
     def advance_run(self, run_id: str) -> RunCurrentResponse:
         run = self._require_run(run_id)
