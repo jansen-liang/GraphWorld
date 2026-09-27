@@ -1,6 +1,7 @@
+"""Global systems: resource pools and world clock."""
+
 """Finite resource pools and independent item instances."""
 
-from __future__ import annotations
 
 import copy
 from typing import Any
@@ -174,11 +175,8 @@ def dispense_resource(state: dict[str, Any], source_id: str, actor_id: str) -> s
     instance.setdefault("interactive_actions", ["pick", "place"])
     instance["id"] = instance_id
     instance["resource_instance_of"] = str(source_id)
-    instance["parent"] = str(actor_id)
-    instance["runtime_relation"] = "held_by"
     state.setdefault("nodes", {})[instance_id] = instance
-    state.setdefault("parent_of", {})[instance_id] = str(actor_id)
-    state.setdefault("relation_of", {})[instance_id] = "held_by"
+    move_relationship(state, instance_id, str(actor_id), "held_by")
     state.setdefault("world_state", {}).setdefault("event_log", []).append({
         "type": "resource_dispensed",
         "source_id": str(source_id),
@@ -196,3 +194,48 @@ def dispense_resource(state: dict[str, Any], source_id: str, actor_id: str) -> s
 
 
 __all__ = ["SCENE_RESOURCE_POOL_SPECS", "available_count", "can_dispense", "dispense_resource", "resource_pool", "scene_resource_pool_specs"]
+
+"""Finite-resource refill compatibility and state transitions."""
+
+from dataclasses import dataclass
+from typing import Any
+
+
+
+@dataclass(frozen=True)
+class RefillRule:
+    target_semantic: str
+    supply_semantic: str
+    state_key: str
+
+
+REFILL_RULES: tuple[RefillRule, ...] = (
+    RefillRule("tissuebox", "tissue_refill", "count"),
+    RefillRule("soapbottle", "soap_refill", "amount"),
+    RefillRule("spraybottle", "water_refill", "uses_left"),
+    RefillRule("peppershaker", "pepper_refill", "uses_left"),
+    RefillRule("saltshaker", "salt_refill", "uses_left"),
+    RefillRule("toothpaste", "toothpaste_refill", "uses_left"),
+    RefillRule("printer", "paper_pack", "count"),
+    RefillRule("printer", "ink_cartridge", "amount"),
+)
+
+
+def refill_rule(state: dict[str, Any], target_id: str, supply_id: str) -> RefillRule | None:
+    target_semantic = semantic(node(state, target_id))
+    supply_semantic = semantic(node(state, supply_id))
+    return next(
+        (rule for rule in REFILL_RULES if rule.target_semantic == target_semantic and rule.supply_semantic == supply_semantic),
+        None,
+    )
+
+
+__all__ = ["REFILL_RULES", "RefillRule", "refill_rule"]
+
+from .predicates import node, semantic
+from .relationship_ops import move_relationship
+
+def tick(graph: Any, elapsed_steps: int = 1):
+    from .mutation import MutationPipeline
+    from .rules import advance_time
+    return MutationPipeline(graph).run_system(lambda state: advance_time(state, elapsed_steps))

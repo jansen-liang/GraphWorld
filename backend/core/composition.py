@@ -7,6 +7,7 @@ the actual mesh implementation.
 
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -236,13 +237,13 @@ def materialize_compositions(scene: dict[str, Any]) -> dict[str, Any]:
             return
         semantic_type = str(spec.get("semantic_type") or "object")
         node = build_object_node(child_id, semantic_type, parent=host_id)
+        node.pop("parent", None)
         node["node_type"] = str(spec.get("node_type") or node.get("node_type") or "fixed_object")
         node["component_of"] = host_id
         node["component_role"] = role
         node["composition_materialized"] = True
         node["mount_face"] = str(spec.get("mount_face") or "front")
         node["mount_anchor"] = list(spec.get("anchor") or (0.5, 0.5, 0.0))
-        node["runtime_relation"] = "in"
         if semantic_type == "storage_slot":
             # A slot is a real placement volume, not only a visual divider.
             depth = float((composition.get("storage") or {}).get("depth_cm") or 30.0)
@@ -312,6 +313,21 @@ def materialize_compositions(scene: dict[str, Any]) -> dict[str, Any]:
             if isinstance(edge, dict)
         ):
             edges.append(component_edge)
+        if not any(
+            str(edge.get("source_id") or "") == host_id
+            and str(edge.get("target_id") or "") == child_id
+            and str(edge.get("relation") or "") in {"in", "inside"}
+            for edge in edges
+            if isinstance(edge, dict)
+        ):
+            edges.append({
+                "source_id": host_id,
+                "target_id": child_id,
+                "relation": "in",
+                "edge_type": "object_edge",
+                "category": "physical",
+                "properties": {"generated": True},
+            })
         nodes.append(node)
         by_id[child_id] = node
 
@@ -325,6 +341,20 @@ def materialize_compositions(scene: dict[str, Any]) -> dict[str, Any]:
         if host.get("composition_materialized") and host.get("component_of"):
             continue
         composition = host.get("composition") or {}
+        # Old snapshots can carry an earlier partial declaration (for
+        # example, appliance controls without the later storage contract).
+        # Preserve instance-authored components and fill only missing static
+        # structure from the current template.
+        semantic_type = str(host.get("semantic_type") or "")
+        if semantic_type:
+            template = build_object_node("__template__", semantic_type)
+            template_composition = template.get("composition") or {}
+            if not composition and template_composition:
+                composition = deepcopy(template_composition)
+            elif template_composition.get("storage") and not composition.get("storage"):
+                composition = {**composition, "storage": deepcopy(template_composition["storage"])}
+            if composition:
+                host["composition"] = composition
         component_specs = composition.get("components") or []
         for spec in component_specs:
             if not isinstance(spec, dict):

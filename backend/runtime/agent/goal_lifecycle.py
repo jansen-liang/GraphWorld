@@ -5,7 +5,7 @@ import hashlib
 import json
 from typing import Any
 
-from backend.runtime.scene_utils import node, room_of
+from backend.runtime.scene_utils import node, parent_of, room_of
 from backend.runtime.agent.maintenance_goals import (
     HOSPITAL_CLEAN_SKILLS,
     HOSPITAL_RETURN_SKILLS,
@@ -193,7 +193,7 @@ def refresh_active_goal_snapshot(goal: dict[str, Any], scene: dict[str, Any], ro
         updated["trash_bin"] = trash_bin
         updated["garbage_station"] = garbage_station
         updated["target"] = garbage_station
-        trash_bin_home = str(updated.get("trash_bin_home") or (node(scene, trash_bin) or {}).get("parent") or "")
+        trash_bin_home = str(updated.get("trash_bin_home") or parent_of(scene, trash_bin))
         updated["trash_bin_home"] = trash_bin_home
         updated["phase"] = dispose_food_phase(scene, object_id, trash_bin, robot_id, trash_bin_home)
         phase = str(updated.get("phase") or "")
@@ -205,7 +205,7 @@ def refresh_active_goal_snapshot(goal: dict[str, Any], scene: dict[str, Any], ro
         }
         target_id = target_by_phase.get(phase, garbage_station)
         if phase == "collect_food":
-            destination_room_override = room_of(scene, trash_bin) if str(object_node.get("parent") or "") == robot_id else room_of(scene, object_id)
+            destination_room_override = room_of(scene, trash_bin) if parent_of(scene, object_id) == robot_id else room_of(scene, object_id)
         elif phase == "take_bin":
             destination_room_override = room_of(scene, trash_bin)
         elif phase == "dump_bin":
@@ -218,7 +218,7 @@ def refresh_active_goal_snapshot(goal: dict[str, Any], scene: dict[str, Any], ro
         updated["target"] = sink
         updated["phase"] = empty_cup_phase(scene, object_id)
         target_id = sink
-        if str(object_node.get("parent") or "") == robot_id:
+        if parent_of(scene, object_id) == robot_id:
             destination_room_override = room_of(scene, sink)
     if str(updated.get("type") or "") == "skill" and skill == "laundry_clothes":
         washer = str(updated.get("washer") or first_node_by_semantic(scene, {"washer", "washing_machine"}))
@@ -279,7 +279,7 @@ def refresh_active_goal_snapshot(goal: dict[str, Any], scene: dict[str, Any], ro
         updated["return_target"] = return_target
         updated["target"] = stove
         updated["phase"] = cook_egg_phase(scene, stove, output_id, egg_id)
-        target_id = return_target if updated["phase"] == "serve" and output_id and str((node(scene, output_id) or {}).get("parent") or "") == robot_id else stove
+        target_id = return_target if updated["phase"] == "serve" and output_id and parent_of(scene, output_id) == robot_id else stove
     if str(updated.get("type") or "") == "skill" and skill == "craft_sandwich":
         workbench = str(updated.get("workbench") or first_node_by_semantic(scene, {"workbench"}))
         bread_id = str(updated.get("bread") or "")
@@ -303,7 +303,7 @@ def refresh_active_goal_snapshot(goal: dict[str, Any], scene: dict[str, Any], ro
         updated["return_target"] = return_target
         updated["target"] = workbench
         updated["phase"] = craft_sandwich_phase(scene, workbench, bread_id, tomato_id, output_id)
-        target_id = return_target if updated["phase"] == "serve" and output_id and str((node(scene, output_id) or {}).get("parent") or "") == robot_id else workbench
+        target_id = return_target if updated["phase"] == "serve" and output_id and parent_of(scene, output_id) == robot_id else workbench
     if str(updated.get("type") or "") == "skill" and skill == "assemble_product":
         line = str(updated.get("assembly_line") or first_node_by_semantic(scene, {"assembly_line"}))
         component_a = str(updated.get("component_a") or "")
@@ -327,7 +327,7 @@ def refresh_active_goal_snapshot(goal: dict[str, Any], scene: dict[str, Any], ro
         updated["return_target"] = return_target
         updated["target"] = line
         updated["phase"] = assemble_product_phase(scene, line, component_a, component_b, output_id)
-        target_id = return_target if updated["phase"] == "inspect" and output_id and str((node(scene, output_id) or {}).get("parent") or "") == robot_id else line
+        target_id = return_target if updated["phase"] == "inspect" and output_id and parent_of(scene, output_id) == robot_id else line
     if str(updated.get("type") or "") == "skill" and skill == "brew_coffee":
         machine = str(updated.get("coffee_machine") or first_node_by_semantic(scene, {"coffeemachine", "coffee_machine"}))
         cup_id = str(updated.get("cup") or "")
@@ -351,7 +351,7 @@ def refresh_active_goal_snapshot(goal: dict[str, Any], scene: dict[str, Any], ro
         updated["return_target"] = return_target
         updated["target"] = machine
         updated["phase"] = brew_coffee_phase(scene, machine, cup_id, beans_id, output_id)
-        cup_parent = str((node(scene, cup_id) or {}).get("parent") or "")
+        cup_parent = parent_of(scene, cup_id)
         target_id = return_target if updated["phase"] == "serve" and output_id and cup_parent == robot_id else machine
     if str(updated.get("type") or "") == "skill" and skill == "print_document":
         printer = str(updated.get("printer") or first_node_by_semantic(scene, {"printer"}))
@@ -363,7 +363,7 @@ def refresh_active_goal_snapshot(goal: dict[str, Any], scene: dict[str, Any], ro
             item for item in scene.get("nodes") or []
             if isinstance(item, dict)
             and str(item.get("semantic_type") or "") == "receipt"
-            and str(item.get("parent") or "") == printer
+            and parent_of(scene, str(item.get("id") or "")) == printer
         ]
         before = int(updated.get("receipt_count_before") or 0)
         before_ids = {str(item) for item in updated.get("receipt_ids_before") or []}
@@ -373,10 +373,10 @@ def refresh_active_goal_snapshot(goal: dict[str, Any], scene: dict[str, Any], ro
             updated["receipt_id"] = str(new_receipts[-1].get("id") or "")
         receipt_id = str(updated.get("receipt_id") or "")
         receipt_node = node(scene, receipt_id) or {}
-        if receipt_id and str(receipt_node.get("parent") or "") == printer:
+        if receipt_id and parent_of(scene, receipt_id) == printer:
             updated["phase"] = "collect"
             target_id = printer
-        elif receipt_id and str(receipt_node.get("parent") or "") == robot_id:
+        elif receipt_id and parent_of(scene, receipt_id) == robot_id:
             updated["phase"] = "place"
             target_id = return_target
         else:
@@ -385,8 +385,8 @@ def refresh_active_goal_snapshot(goal: dict[str, Any], scene: dict[str, Any], ro
         updated["target"] = target_id
     if str(updated.get("type") or "") == "skill" and skill in HOSPITAL_RETURN_SKILLS:
         target_id = str(updated.get("target") or "")
-        updated["phase"] = "done" if object_node and str(object_node.get("parent") or "") == target_id else "return_item"
-        if str(object_node.get("parent") or "") == robot_id:
+        updated["phase"] = "done" if object_node and parent_of(scene, object_id) == target_id else "return_item"
+        if parent_of(scene, object_id) == robot_id:
             destination_room_override = room_of(scene, target_id)
     if str(updated.get("type") or "") == "skill" and skill in HOSPITAL_CLEAN_SKILLS:
         target_id = str(updated.get("target") or object_id)
@@ -398,10 +398,10 @@ def refresh_active_goal_snapshot(goal: dict[str, Any], scene: dict[str, Any], ro
             else "done"
         )
         destination_room_override = room_of(scene, target_id)
-    updated["object_parent"] = str(object_node.get("parent") or "")
+    updated["object_parent"] = parent_of(scene, object_id)
     updated["object_room"] = room_of(scene, object_id)
     updated["target_room"] = room_of(scene, target_id)
-    updated["robot_parent"] = str(robot_node.get("parent") or "")
+    updated["robot_parent"] = parent_of(scene, robot_id)
     updated["robot_room"] = room_of(scene, robot_id)
     destination_room = destination_room_override or (updated["target_room"] if updated["object_parent"] == robot_id else updated["object_room"])
     updated["next_room"] = next_room_toward(scene, updated["robot_room"], destination_room)
@@ -421,12 +421,13 @@ def active_goal_completed(goal: dict[str, Any] | None, scene: dict[str, Any]) ->
         return False
     if not active_goal_ids_valid(goal, scene):
         return True
-    object_node = node(scene, str(goal.get("object") or "")) or {}
+    object_id = str(goal.get("object") or "")
+    object_node = node(scene, object_id) or {}
     if str(goal.get("type") or "") == "skill" and str(goal.get("skill") or "") == "laundry_clothes":
         states = object_node.get("states") or {}
         return bool(
             object_node
-            and str(object_node.get("parent") or "") == str(goal.get("wardrobe") or goal.get("target") or "")
+            and parent_of(scene, object_id) == str(goal.get("wardrobe") or goal.get("target") or "")
             and states.get("is_dirty") is False
             and states.get("is_wet") is False
             and states.get("folded") is True
@@ -436,44 +437,48 @@ def active_goal_completed(goal: dict[str, Any] | None, scene: dict[str, Any]) ->
         return bool(
             object_node
             and states.get("is_dirty") is not True
-            and str(object_node.get("parent") or "") == str(goal.get("return_target") or goal.get("dishwasher") or "")
+            and parent_of(scene, object_id) == str(goal.get("return_target") or goal.get("dishwasher") or "")
         )
     if str(goal.get("type") or "") == "skill" and str(goal.get("skill") or "") == "heat_milk":
         states = object_node.get("states") or {}
         return bool(
             object_node
             and str(states.get("temperature") or "") == "hot"
-            and str(object_node.get("parent") or "") == str(goal.get("return_target") or "")
+            and parent_of(scene, object_id) == str(goal.get("return_target") or "")
         )
     if str(goal.get("type") or "") == "skill" and str(goal.get("skill") or "") == "cook_egg":
-        output_node = node(scene, str(goal.get("output_id") or "")) or {}
+        output_id = str(goal.get("output_id") or "")
+        output_node = node(scene, output_id) or {}
         return bool(
             output_node
             and str(output_node.get("semantic_type") or "") == "cooked_egg"
-            and str(output_node.get("parent") or "") == str(goal.get("return_target") or "")
+            and parent_of(scene, output_id) == str(goal.get("return_target") or "")
         )
     if str(goal.get("type") or "") == "skill" and str(goal.get("skill") or "") == "craft_sandwich":
-        output_node = node(scene, str(goal.get("output_id") or "")) or {}
+        output_id = str(goal.get("output_id") or "")
+        output_node = node(scene, output_id) or {}
         return bool(
             output_node
             and str(output_node.get("semantic_type") or "") == "sandwich"
-            and str(output_node.get("parent") or "") == str(goal.get("return_target") or "")
+            and parent_of(scene, output_id) == str(goal.get("return_target") or "")
         )
     if str(goal.get("type") or "") == "skill" and str(goal.get("skill") or "") == "assemble_product":
-        output_node = node(scene, str(goal.get("output_id") or "")) or {}
+        output_id = str(goal.get("output_id") or "")
+        output_node = node(scene, output_id) or {}
         return bool(
             output_node
             and str(output_node.get("semantic_type") or "") == "finished_product"
-            and str(output_node.get("parent") or "") == str(goal.get("return_target") or "")
+            and parent_of(scene, output_id) == str(goal.get("return_target") or "")
         )
     if str(goal.get("type") or "") == "skill" and str(goal.get("skill") or "") == "brew_coffee":
-        output_node = node(scene, str(goal.get("output_id") or "")) or {}
+        output_id = str(goal.get("output_id") or "")
+        output_node = node(scene, output_id) or {}
         cup_node = node(scene, str(goal.get("cup") or "")) or {}
         return bool(
             output_node
             and str(output_node.get("semantic_type") or "") == "coffee"
-            and str(output_node.get("parent") or "") == str(goal.get("cup") or "")
-            and str(cup_node.get("parent") or "") == str(goal.get("return_target") or "")
+            and parent_of(scene, output_id) == str(goal.get("cup") or "")
+            and parent_of(scene, str(goal.get("cup") or "")) == str(goal.get("return_target") or "")
         )
     if str(goal.get("type") or "") == "skill" and str(goal.get("skill") or "") == "print_document":
         receipt_id = str(goal.get("receipt_id") or "")
@@ -481,15 +486,15 @@ def active_goal_completed(goal: dict[str, Any] | None, scene: dict[str, Any]) ->
         return bool(
             receipt_node
             and str(receipt_node.get("semantic_type") or "") == "receipt"
-            and str(receipt_node.get("parent") or "") == str(goal.get("return_target") or "")
+            and parent_of(scene, receipt_id) == str(goal.get("return_target") or "")
         )
     if str(goal.get("type") or "") == "skill" and str(goal.get("skill") or "") == "dispose_food":
         states = object_node.get("states") or {}
         trash_bin_node = node(scene, str(goal.get("trash_bin") or "")) or {}
         return bool(
             object_node
-            and str(object_node.get("parent") or "") == str(goal.get("food_home") or "")
-            and str(trash_bin_node.get("parent") or "") == str(goal.get("trash_bin_home") or "")
+            and parent_of(scene, object_id) == str(goal.get("food_home") or "")
+            and parent_of(scene, str(goal.get("trash_bin") or "")) == str(goal.get("trash_bin_home") or "")
             and states.get("is_rotten") is False
             and states.get("is_burnt") is False
         )
@@ -497,12 +502,12 @@ def active_goal_completed(goal: dict[str, Any] | None, scene: dict[str, Any]) ->
         states = object_node.get("states") or {}
         return bool(object_node and float(states.get("fill_level") or 0.0) <= 0.0 and states.get("is_full") is not True)
     if str(goal.get("type") or "") == "skill" and str(goal.get("skill") or "") in HOSPITAL_RETURN_SKILLS:
-        return bool(object_node and str(object_node.get("parent") or "") == str(goal.get("target") or ""))
+        return bool(object_node and parent_of(scene, object_id) == str(goal.get("target") or ""))
     if str(goal.get("type") or "") == "skill" and str(goal.get("skill") or "") in HOSPITAL_CLEAN_SKILLS:
         target_node = node(scene, str(goal.get("target") or goal.get("object") or "")) or {}
         states = target_node.get("states") or {}
         return bool(target_node and states.get("is_dirty") is not True)
-    return bool(object_node and str(object_node.get("parent") or "") == str(goal.get("target") or ""))
+    return bool(object_node and parent_of(scene, object_id) == str(goal.get("target") or ""))
 
 
 def active_goal_claims(goal: dict[str, Any] | None) -> set[str]:

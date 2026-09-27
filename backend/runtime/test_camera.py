@@ -1,4 +1,5 @@
 from backend.runtime.camera import camera_spec_for_agent, validate_interaction_hit
+from backend.core.world_graph import WorldGraph
 
 
 def test_first_person_camera_contract_is_bound_to_agent_room_and_center_ray():
@@ -9,7 +10,7 @@ def test_first_person_camera_contract_is_bound_to_agent_room_and_center_ray():
         ]
     }
 
-    camera = camera_spec_for_agent(scene, "robot_01")
+    camera = camera_spec_for_agent(WorldGraph(scene).to_scene(), "robot_01")
 
     assert camera["contract_version"] == 1
     assert camera["agent_id"] == "robot_01"

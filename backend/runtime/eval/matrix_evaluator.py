@@ -68,13 +68,6 @@ def build_node_relation_matrix(scene: dict[str, Any], node_ids: tuple[str, ...])
     index = {node_id: idx for idx, node_id in enumerate(node_ids)}
     node_types = _node_type_map(scene)
     matrix = [[0 for _ in node_ids] for _ in node_ids]
-    for node in scene_nodes(scene):
-        source = str(node.get("parent") or "")
-        target = str(node.get("id") or "")
-        if not (_is_movable(node_types, source) or _is_movable(node_types, target)):
-            continue
-        if source in index and target in index:
-            matrix[index[source]][index[target]] = 1
     for edge in scene_edges(scene):
         source = str(edge.get("source_id") or "")
         target = str(edge.get("target_id") or "")

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from backend.runtime.scene_utils import node, room_of, scene_type
+from backend.runtime.scene_utils import node, parent_of, room_of, scene_type
 
 CLOTH_SEMANTICS = {"clothes", "towel", "blanket"}
 HOSPITAL_RETURN_SKILLS = {
@@ -41,8 +41,8 @@ def visible_restore_goal(observation: dict[str, Any], baseline: dict[str, Any], 
         initial = baseline_nodes.get(node_id) or {}
         if str(initial.get("node_type") or "") != "movable_object":
             continue
-        current_parent = str(current.get("parent") or "")
-        initial_parent = str(initial.get("parent") or "")
+        current_parent = parent_of(observation, node_id)
+        initial_parent = parent_of(baseline, node_id)
         if not current_parent or not initial_parent or current_parent == initial_parent:
             continue
         current_parent_node = current_nodes.get(current_parent) or {}
@@ -107,12 +107,12 @@ def dispose_food_phase(
     item = node(scene, object_id) or {}
     states = item.get("states") or {}
     if not (states.get("is_rotten") is True or states.get("is_burnt") is True):
-        if trash_bin_id and trash_bin_home and str((node(scene, trash_bin_id) or {}).get("parent") or "") != trash_bin_home:
+        if trash_bin_id and trash_bin_home and parent_of(scene, trash_bin_id) != trash_bin_home:
             return "return_bin"
         return "done"
-    if trash_bin_id and str(item.get("parent") or "") == trash_bin_id:
-        return "dump_bin" if str((node(scene, trash_bin_id) or {}).get("parent") or "") == robot_id else "take_bin"
-    if trash_bin_id and str((node(scene, trash_bin_id) or {}).get("parent") or "") == robot_id:
+    if trash_bin_id and parent_of(scene, object_id) == trash_bin_id:
+        return "dump_bin" if parent_of(scene, trash_bin_id) == robot_id else "take_bin"
+    if trash_bin_id and parent_of(scene, trash_bin_id) == robot_id:
         return "dump_bin"
     return "collect_food"
 
@@ -133,8 +133,8 @@ def make_dispose_food_goal(
         return None
     baseline_bin = node(baseline or {}, trash_bin) or {}
     baseline_food = node(baseline or {}, object_id) or {}
-    trash_bin_home = str(baseline_bin.get("parent") or (node(scene, trash_bin) or {}).get("parent") or "")
-    food_home = str(baseline_food.get("parent") or first_node_by_semantic(scene, {"refrigerator", "fridge"}))
+    trash_bin_home = parent_of(baseline or {}, trash_bin) or parent_of(scene, trash_bin)
+    food_home = parent_of(baseline or {}, object_id) or first_node_by_semantic(scene, {"refrigerator", "fridge"})
     phase = dispose_food_phase(scene, object_id, trash_bin, robot_id, trash_bin_home)
     if phase == "done":
         return None
@@ -223,7 +223,7 @@ def visible_empty_cup_goal(observation: dict[str, Any], scene: dict[str, Any], s
 def laundry_phase(scene: dict[str, Any], object_id: str, washer_id: str = "", wardrobe_id: str = "") -> str:
     item = node(scene, object_id) or {}
     states = item.get("states") or {}
-    parent = str(item.get("parent") or "")
+    parent = parent_of(scene, object_id)
     if washer_id and parent != washer_id and _laundry_detergent_pool(scene, washer_id) and not _laundry_detergent_loaded(scene, washer_id):
         return "load_detergent"
     if states.get("is_dirty") is True:
@@ -248,7 +248,7 @@ def _laundry_detergent_pool(scene: dict[str, Any], washer_id: str) -> str:
             continue
         if str(item.get("semantic_type") or "") not in {"detergent_dispenser", "resource_dispenser"}:
             continue
-        parent = str(item.get("parent") or "")
+        parent = parent_of(scene, str(item.get("id") or ""))
         if parent == washer_id or (room_id and str(item.get("room") or item.get("room_id") or "") == room_id):
             return str(item.get("id") or "")
     return ""
@@ -257,7 +257,7 @@ def _laundry_detergent_pool(scene: dict[str, Any], washer_id: str) -> str:
 def _laundry_detergent_loaded(scene: dict[str, Any], washer_id: str) -> bool:
     return any(
         isinstance(item, dict)
-        and str(item.get("parent") or "") == washer_id
+        and parent_of(scene, str(item.get("id") or "")) == washer_id
         and str(item.get("semantic_type") or "") in {"detergent", "laundry_detergent"}
         for item in scene.get("nodes") or []
     )
@@ -307,7 +307,7 @@ def _dishwasher_return_target(
     baseline: dict[str, Any] | None = None,
 ) -> str:
     """Resolve a stable place target for clean dishes after unloading."""
-    initial_parent = str((node(baseline or {}, object_id) or {}).get("parent") or "")
+    initial_parent = parent_of(baseline or {}, object_id)
     parent_node = node(scene, initial_parent) or {}
     if initial_parent and str(parent_node.get("node_type") or "") != "room":
         actions = {str(action) for action in parent_node.get("interactive_actions") or []}
@@ -329,8 +329,8 @@ def dishwasher_phase(scene: dict[str, Any], object_id: str, dishwasher_id: str, 
     item = node(scene, object_id) or {}
     states = item.get("states") or {}
     if states.get("is_dirty") is not True:
-        return "unload" if str(item.get("parent") or "") == dishwasher_id and return_target else "done"
-    if str(item.get("parent") or "") != dishwasher_id:
+        return "unload" if parent_of(scene, object_id) == dishwasher_id and return_target else "done"
+    if parent_of(scene, object_id) != dishwasher_id:
         return "load"
     dishwasher = node(scene, dishwasher_id) or {}
     return "washing_wait" if bool((dishwasher.get("states") or {}).get("is_running", False)) else "run"
@@ -395,7 +395,7 @@ def _heat_milk_return_target(
     object_id: str,
     baseline: dict[str, Any] | None = None,
 ) -> str:
-    initial_parent = str((node(baseline or {}, object_id) or {}).get("parent") or "")
+    initial_parent = parent_of(baseline or {}, object_id)
     parent_node = node(scene, initial_parent) or {}
     if initial_parent and str(parent_node.get("node_type") or "") != "room":
         actions = {str(action) for action in parent_node.get("interactive_actions") or []}
@@ -417,8 +417,8 @@ def heat_milk_phase(scene: dict[str, Any], object_id: str, microwave_id: str, re
     item = node(scene, object_id) or {}
     states = item.get("states") or {}
     if str(states.get("temperature") or "") not in {"cold", "room"}:
-        return "unload" if str(item.get("parent") or "") == microwave_id and return_target else "done"
-    if str(item.get("parent") or "") != microwave_id:
+        return "unload" if parent_of(scene, object_id) == microwave_id and return_target else "done"
+    if parent_of(scene, object_id) != microwave_id:
         return "load"
     microwave = node(scene, microwave_id) or {}
     return "waiting" if bool((microwave.get("states") or {}).get("is_running", False)) else "run"
@@ -479,7 +479,7 @@ def visible_heat_milk_goal(
 
 
 def _cook_return_target(scene: dict[str, Any], egg_id: str, baseline: dict[str, Any] | None = None) -> str:
-    initial_parent = str((node(baseline or {}, egg_id) or {}).get("parent") or "")
+    initial_parent = parent_of(baseline or {}, egg_id)
     parent_node = node(scene, initial_parent) or {}
     if initial_parent and str(parent_node.get("node_type") or "") != "room":
         actions = {str(action) for action in parent_node.get("interactive_actions") or []}
@@ -503,7 +503,7 @@ def cook_egg_phase(scene: dict[str, Any], stove_id: str, output_id: str = "", eg
     stove = node(scene, stove_id) or {}
     if bool((stove.get("states") or {}).get("is_running", False)):
         return "waiting"
-    if egg_id and str((node(scene, egg_id) or {}).get("parent") or "") == stove_id:
+    if egg_id and parent_of(scene, egg_id) == stove_id:
         return "cook"
     return "prepare"
 
@@ -573,8 +573,8 @@ def craft_sandwich_phase(scene: dict[str, Any], workbench_id: str, bread_id: str
     if bool((workbench.get("states") or {}).get("is_running", False)):
         return "waiting"
     parents = {
-        str((node(scene, bread_id) or {}).get("parent") or ""),
-        str((node(scene, tomato_id) or {}).get("parent") or ""),
+        parent_of(scene, bread_id),
+        parent_of(scene, tomato_id),
     }
     if parents == {workbench_id}:
         return "craft"
@@ -648,8 +648,8 @@ def assemble_product_phase(scene: dict[str, Any], line_id: str, component_a: str
     if bool((line.get("states") or {}).get("is_running", False)):
         return "waiting"
     parents = {
-        str((node(scene, component_a) or {}).get("parent") or ""),
-        str((node(scene, component_b) or {}).get("parent") or ""),
+        parent_of(scene, component_a),
+        parent_of(scene, component_b),
     }
     return "run" if parents == {line_id} else "collect"
 
@@ -690,7 +690,7 @@ def visible_assemble_product_goal(observation: dict[str, Any], scene: dict[str, 
 
 
 def _coffee_return_target(scene: dict[str, Any], cup_id: str) -> str:
-    initial_parent = str((node(scene, cup_id) or {}).get("parent") or "")
+    initial_parent = parent_of(scene, cup_id)
     parent_node = node(scene, initial_parent) or {}
     if initial_parent and str(parent_node.get("node_type") or "") != "room":
         actions = {str(action) for action in parent_node.get("interactive_actions") or []}
@@ -715,8 +715,8 @@ def brew_coffee_phase(scene: dict[str, Any], machine_id: str, cup_id: str, beans
     if bool((machine.get("states") or {}).get("is_running", False)):
         return "waiting"
     parents = {
-        str((node(scene, cup_id) or {}).get("parent") or ""),
-        str((node(scene, beans_id) or {}).get("parent") or ""),
+        parent_of(scene, cup_id),
+        parent_of(scene, beans_id),
     }
     return "run" if parents == {machine_id} else "prepare"
 
@@ -805,14 +805,14 @@ def make_print_goal(
         return None
     receipt_count = sum(
         1 for item in scene.get("nodes") or []
-        if isinstance(item, dict) and str(item.get("semantic_type") or "") == "receipt" and str(item.get("parent") or "") == printer_id
+        if isinstance(item, dict) and str(item.get("semantic_type") or "") == "receipt" and parent_of(scene, str(item.get("id") or "")) == printer_id
     )
     receipt_ids_before = sorted(
         str(item.get("id") or "")
         for item in scene.get("nodes") or []
         if isinstance(item, dict)
         and str(item.get("semantic_type") or "") == "receipt"
-        and str(item.get("parent") or "") == printer_id
+        and parent_of(scene, str(item.get("id") or "")) == printer_id
         and item.get("id")
     )
     return {
@@ -857,12 +857,12 @@ def hospital_skill_for_return_issue(node_id: str, current: dict[str, Any], initi
 def hospital_return_target(scene: dict[str, Any], baseline: dict[str, Any], object_id: str, skill: str) -> str:
     initial = node(baseline, object_id) or {}
     if skill == "clean_medical_waste":
-        return first_node_by_semantic(scene, {"medical_waste_bin"}) or str(initial.get("parent") or "")
+        return first_node_by_semantic(scene, {"medical_waste_bin"}) or parent_of(baseline, object_id)
     if skill == "collect_dirty_linen":
-        return first_node_by_semantic(scene, {"dirty_linen_bin", "linen_bin"}) or str(initial.get("parent") or "")
+        return first_node_by_semantic(scene, {"dirty_linen_bin", "linen_bin"}) or parent_of(baseline, object_id)
     if skill == "restock_clean_sheet":
-        return first_node_by_semantic(scene, {"supply_cabinet"}) or str(initial.get("parent") or "")
-    return str(initial.get("parent") or "")
+        return first_node_by_semantic(scene, {"supply_cabinet"}) or parent_of(baseline, object_id)
+    return parent_of(baseline, object_id)
 
 
 def make_hospital_return_goal(
@@ -930,8 +930,8 @@ def hospital_issue_goal(scene: dict[str, Any], baseline: dict[str, Any], robot_i
         skill = hospital_skill_for_return_issue(node_id, current, initial)
         if not skill:
             continue
-        current_parent = str(current.get("parent") or "")
-        initial_parent = str(initial.get("parent") or "")
+        current_parent = parent_of(scene, node_id)
+        initial_parent = parent_of(baseline, node_id)
         target_id = hospital_return_target(scene, baseline, node_id, skill) or initial_parent
         if not current_parent or not target_id or current_parent == target_id:
             continue
@@ -974,7 +974,7 @@ def global_restore_goal(scene: dict[str, Any], baseline: dict[str, Any], robot_i
         states = current.get("states") or {}
         if not (states.get("is_rotten") is True or states.get("is_burnt") is True):
             continue
-        current_parent = str(current.get("parent") or "")
+        current_parent = parent_of(scene, node_id)
         current_parent_node = node(scene, current_parent) or {}
         if str(current_parent_node.get("node_type") or "") == "human":
             continue
@@ -995,7 +995,7 @@ def global_restore_goal(scene: dict[str, Any], baseline: dict[str, Any], robot_i
         states = current.get("states") or {}
         if not (float(states.get("fill_level") or 0.0) > 0.0 or states.get("is_full") is True):
             continue
-        current_parent = str(current.get("parent") or "")
+        current_parent = parent_of(scene, node_id)
         current_room = room_of(scene, current_parent)
         priority = 10 if current_room == robot_room else 30
         if current_parent == robot_id:
@@ -1013,7 +1013,7 @@ def global_restore_goal(scene: dict[str, Any], baseline: dict[str, Any], robot_i
         states = current.get("states") or {}
         if not (states.get("is_dirty") is True or states.get("is_wet") is True or states.get("folded") is False):
             continue
-        current_parent = str(current.get("parent") or "")
+        current_parent = parent_of(scene, node_id)
         current_parent_node = node(scene, current_parent) or {}
         if str(current_parent_node.get("node_type") or "") == "human":
             continue
@@ -1032,8 +1032,8 @@ def global_restore_goal(scene: dict[str, Any], baseline: dict[str, Any], robot_i
         initial = baseline_nodes.get(node_id) or {}
         if str(initial.get("node_type") or "") != "movable_object":
             continue
-        current_parent = str(current.get("parent") or "")
-        initial_parent = str(initial.get("parent") or "")
+        current_parent = parent_of(scene, node_id)
+        initial_parent = parent_of(baseline, node_id)
         if not current_parent or not initial_parent or current_parent == initial_parent:
             continue
         current_parent_node = node(scene, current_parent) or {}

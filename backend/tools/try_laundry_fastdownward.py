@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from backend.core.nodes import Robot, Room
+from backend.core.model import NodeType, make_node
 from backend.core.assets.object_library import build_object_node
 from backend.runtime.engine import Orchestrator
 
@@ -50,8 +50,8 @@ def expected_plan(scene: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def build_mini_scene() -> dict[str, Any]:
-    room = Room("laundry_room", semantic_type="room", name="laundry room", name_cn="洗衣房").to_dict()
-    robot = Robot("robot_01", parent="laundry_room").to_dict()
+    room = make_node("laundry_room", NodeType.ROOM, semantic_type="room", name="laundry room", name_cn="洗衣房")
+    robot = make_node("robot_01", NodeType.ROBOT, semantic_type="robot", name="robot")
     clothes = build_object_node(
         "dirty_clothes",
         "clothes",
@@ -71,7 +71,7 @@ def build_mini_scene() -> dict[str, Any]:
         "scene_name": "mini_laundry",
         "world_state": {"step": 0, "event_log": []},
         "nodes": [room, robot, clothes, washer, drying_rack, wardrobe],
-        "edges": [],
+        "edges": [{"source_id": "laundry_room", "target_id": "robot_01", "relation": "at"}],
     }
 
 
@@ -84,7 +84,8 @@ def load_scene(path: Path | None) -> dict[str, Any]:
         if not any(str(n.get("node_type") or "") == "robot" for n in scene.get("nodes", [])):
             room_ids = {str(n["id"]) for n in scene.get("nodes", []) if n.get("node_type") == "room"}
             room_id = "bedroom" if "bedroom" in room_ids else next(iter(room_ids), "living_room")
-            scene.setdefault("nodes", []).append(Robot("robot_01", parent=room_id).to_dict())
+            scene.setdefault("nodes", []).append(make_node("robot_01", NodeType.ROBOT, semantic_type="robot"))
+            scene.setdefault("edges", []).append({"source_id": room_id, "target_id": "robot_01", "relation": "at"})
         clothes = next((n for n in scene.get("nodes", []) if n.get("semantic_type") == "clothes"), None)
         if clothes is not None:
             clothes.setdefault("states", {}).update({"is_dirty": True, "is_wet": False, "folded": False})

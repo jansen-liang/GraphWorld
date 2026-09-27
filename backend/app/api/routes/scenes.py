@@ -12,6 +12,9 @@ from backend.app.db.session import get_db
 from backend.app.schemas.graph import SceneGraphResponse
 from backend.app.schemas.scene import (
     SceneImportRequest,
+    SceneInteractionRequest,
+    SceneInteractionResponse,
+    SceneTickRequest,
     SceneLayoutGenerated,
     SceneLayoutGenerateRequest,
     SceneLayoutRequest,
@@ -21,8 +24,25 @@ from backend.app.schemas.scene import (
     SceneVersionRead,
 )
 from backend.app.services.scene_service import SceneService
+from backend.app.services.simulation_service import SimulationService
 
 router = APIRouter()
+
+
+@router.post("/scene-simulation/interactions", response_model=SceneInteractionResponse)
+def simulate_scene_interaction(
+    request: SceneInteractionRequest,
+    _: User = Depends(require_admin),
+) -> SceneInteractionResponse:
+    return SimulationService().interact(request)
+
+
+@router.post("/scene-simulation/ticks", response_model=SceneInteractionResponse)
+def tick_scene_simulation(
+    request: SceneTickRequest,
+    _: User = Depends(require_admin),
+) -> SceneInteractionResponse:
+    return SimulationService().tick(request)
 
 
 def get_scene_service(db: Session = Depends(get_db)) -> Iterator[SceneService]:

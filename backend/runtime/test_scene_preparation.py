@@ -2,6 +2,7 @@ import json
 
 from backend.app.runtime.graphworld_adapter import GraphWorldAdapter
 from backend.runtime.scene_preparation import prepare_scene
+from backend.runtime.scene_utils import parent_of
 
 
 def _home_scene() -> dict:
@@ -15,7 +16,7 @@ def test_home_preparation_adds_idempotent_refrigerated_food_pool():
     pools = [node for node in prepared_again["nodes"] if node.get("id") == "food_pool_fridge_kitchen"]
 
     assert len(pools) == 1
-    assert pools[0]["parent"] == "fridge_kitchen"
+    assert parent_of(prepared_again, "food_pool_fridge_kitchen") == "fridge_kitchen"
     assert pools[0]["resource_pool"]["available_count"] == 6
     assert pools[0]["resource_pool"]["instance"]["states"] == {"is_rotten": False, "is_cooked": False}
     assert prepared["world_state"]["room_humidity"] == {}
@@ -24,10 +25,10 @@ def test_home_preparation_adds_idempotent_refrigerated_food_pool():
 def test_home_preparation_materializes_catalog_resource_pools_only_for_existing_parents():
     prepared = prepare_scene(_home_scene(), robot_count=1, human_count=0)
     by_id = {str(node.get("id")): node for node in prepared["nodes"]}
-    assert by_id["detergent_pool_washer_bathroom"]["parent"] == "washer_bathroom"
+    assert parent_of(prepared, "detergent_pool_washer_bathroom") == "washer_bathroom"
     assert by_id["detergent_pool_washer_bathroom"]["resource_pool"]["available_count"] == 3
     assert by_id["soap_pool_sink_bathroom"]["resource_pool"]["available_count"] == 4
-    assert by_id["detergent_pool_dishwasher_kitchen"]["parent"] == "dishwasher_kitchen"
+    assert parent_of(prepared, "detergent_pool_dishwasher_kitchen") == "dishwasher_kitchen"
     assert by_id["detergent_pool_dishwasher_kitchen"]["resource_pool"]["available_count"] == 3
 
     scene_without_washer = _home_scene()

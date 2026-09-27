@@ -1910,7 +1910,7 @@
       "states": {
         "folded": true,
         "is_wet": false,
-        "is_dirty": false
+        "is_dirty": true
       },
       "name_cn": "衣服",
       "mobility": "movable",
@@ -1937,7 +1937,7 @@
       "states": {
         "folded": true,
         "is_wet": false,
-        "is_dirty": false
+        "is_dirty": true
       },
       "name_cn": "衣服",
       "mobility": "movable",
@@ -1964,7 +1964,7 @@
       "states": {
         "folded": true,
         "is_wet": false,
-        "is_dirty": false
+        "is_dirty": true
       },
       "name_cn": "衣服",
       "mobility": "movable",

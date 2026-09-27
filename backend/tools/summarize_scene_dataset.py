@@ -14,7 +14,7 @@ from backend.core.actions import ActionType
 from backend.core.assets.npc_library import NPC_EVENT_LIBRARY, ROLE_SCHEDULES
 from backend.core.assets.object_library import OBJECT_LIBRARY, resolve_object_key
 from backend.core.assets.room_library import ROOM_LIBRARY
-from backend.core.edges import RELATION_SPECS, SpatialRelation
+from backend.core.model import RELATION_SPECS, SpatialRelation
 from backend.core.states import DISCRETE_STATE_SPACE
 
 

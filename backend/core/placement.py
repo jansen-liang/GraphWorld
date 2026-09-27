@@ -168,7 +168,7 @@ def surface_collision_failure(state: dict[str, Any], item: dict[str, Any], targe
     for other_id, other in (state.get("nodes") or {}).items():
         if not isinstance(other, dict) or str(other_id) == str(item.get("id") or ""):
             continue
-        if str(other.get("parent") or "") != str(target.get("id") or ""):
+        if str((state.get("parent_of") or {}).get(str(other_id)) or "") != str(target.get("id") or ""):
             continue
         if str(other.get("placement_target") or "") != str(target.get("id") or ""):
             continue
@@ -193,7 +193,7 @@ def surface_load_failure(state: dict[str, Any], item: dict[str, Any], target: di
     for other_id, other in (state.get("nodes") or {}).items():
         if str(other_id) == str(item.get("id") or "") or not isinstance(other, dict):
             continue
-        if str(other.get("parent") or "") == str(target.get("id") or ""):
+        if str((state.get("parent_of") or {}).get(str(other_id)) or "") == str(target.get("id") or ""):
             total += _number(other.get("mass_kg") or other.get("weight_kg"), 0.0)
     return f"surface load {total:g}kg exceeds {maximum:g}kg" if total > maximum else None
 
@@ -273,7 +273,7 @@ def volume_collision_failure(state: dict[str, Any], item: dict[str, Any], target
     for other_id, other in (state.get("nodes") or {}).items():
         if not isinstance(other, dict) or str(other_id) == str(item.get("id") or ""):
             continue
-        if str(other.get("parent") or "") != str(target.get("id") or "") or str(other.get("placement_volume_target") or "") != str(target.get("id") or ""):
+        if str((state.get("parent_of") or {}).get(str(other_id)) or "") != str(target.get("id") or "") or str(other.get("placement_volume_target") or "") != str(target.get("id") or ""):
             continue
         other_anchor = other.get("placement_volume_anchor")
         if not isinstance(other_anchor, (list, tuple)) or len(other_anchor) < 3:
@@ -295,8 +295,8 @@ def volume_load_failure(state: dict[str, Any], item: dict[str, Any], target: dic
         return None
     total = _number(item.get("mass_kg") or item.get("weight_kg"), 0.0)
     target_id = str(target.get("id") or "")
-    for other in (state.get("nodes") or {}).values():
-        if not isinstance(other, dict) or str(other.get("parent") or "") != target_id:
+    for other_id, other in (state.get("nodes") or {}).items():
+        if not isinstance(other, dict) or str((state.get("parent_of") or {}).get(str(other_id)) or "") != target_id:
             continue
         if str(other.get("placement_volume_target") or "") != target_id:
             continue

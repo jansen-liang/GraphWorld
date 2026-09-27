@@ -2,11 +2,23 @@ from __future__ import annotations
 
 from typing import Any
 
+from backend.core.model import POSITION_RELATIONS
+
 def node(scene: dict[str, Any], node_id: str) -> dict[str, Any] | None:
     for item in scene.get("nodes") or []:
         if item.get("id") == node_id:
             return item
     return None
+
+
+def parent_of(scene: dict[str, Any], node_id: str) -> str:
+    wanted = str(node_id or "")
+    for edge in reversed(scene.get("edges") or []):
+        if str(edge.get("target_id") or "") != wanted:
+            continue
+        if str(edge.get("relation") or "").lower() in POSITION_RELATIONS:
+            return str(edge.get("source_id") or "")
+    return ""
 
 
 def room_of(scene: dict[str, Any], node_id: str) -> str:
@@ -20,29 +32,18 @@ def room_of(scene: dict[str, Any], node_id: str) -> str:
         node_type = str(item.get("node_type") or "")
         if node_type == "room":
             return current_id
-        current_id = str(item.get("parent") or "")
+        current_id = parent_of(scene, current_id)
     return ""
 
 
 def relation_of(scene: dict[str, Any], node_id: str) -> str:
-    item = node(scene, node_id)
-    if not item:
-        return ""
-    runtime_relation = str(item.get("runtime_relation") or "")
-    if runtime_relation:
-        return runtime_relation
-    parent_id = str(item.get("parent") or "")
-    if not parent_id:
-        return ""
-    for edge in scene.get("edges") or []:
-        if str(edge.get("source_id") or "") != parent_id:
-            continue
+    for edge in reversed(scene.get("edges") or []):
         if str(edge.get("target_id") or "") != str(node_id or ""):
             continue
-        relation = str(edge.get("relation") or "")
-        if relation:
+        relation = str(edge.get("relation") or "").lower()
+        if relation in POSITION_RELATIONS:
             return relation
-    return "in"
+    return ""
 
 
 def scene_type(scene: dict[str, Any]) -> str:

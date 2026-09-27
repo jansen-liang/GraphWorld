@@ -52,6 +52,29 @@ class SceneLayoutValidation(BaseModel):
     issues: list[str] = Field(default_factory=list)
 
 
+class SceneInteractionRequest(BaseModel):
+    source_json: dict[str, Any]
+    actor_id: str = "robot_01"
+    input: str = "interact_primary"
+    target_id: str = ""
+    distance_m: float | None = None
+    hit: dict[str, Any] = Field(default_factory=dict)
+    hand: str = "right"
+
+
+class SceneInteractionResponse(BaseModel):
+    applied: bool
+    action: dict[str, Any] | None = None
+    failures: list[str] = Field(default_factory=list)
+    delta: dict[str, Any] = Field(default_factory=dict)
+    source_json: dict[str, Any]
+
+
+class SceneTickRequest(BaseModel):
+    source_json: dict[str, Any]
+    elapsed_steps: int = Field(default=1, ge=1, le=60)
+
+
 class ScenePublishRequest(BaseModel):
     source_json: dict[str, Any]
     description: str = "Published from the 2D scene builder."

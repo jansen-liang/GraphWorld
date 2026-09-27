@@ -248,7 +248,7 @@ def _add_physical_geometry(source: dict[str, Any], catalog_dimensions: dict[str,
     layout["objects"] = enriched_objects
 
 
-def _room_ancestor(node_id: str, nodes_by_id: dict[str, dict[str, Any]]) -> str | None:
+def _room_ancestor(node_id: str, nodes_by_id: dict[str, dict[str, Any]], parent_of: dict[str, str]) -> str | None:
     seen: set[str] = set()
     current = nodes_by_id.get(node_id)
     while current is not None:
@@ -258,7 +258,7 @@ def _room_ancestor(node_id: str, nodes_by_id: dict[str, dict[str, Any]]) -> str 
         seen.add(current_id)
         if _is_room(current):
             return current_id
-        current = nodes_by_id.get(str(current.get("parent") or ""))
+        current = nodes_by_id.get(parent_of.get(current_id, ""))
     return None
 
 
@@ -345,7 +345,7 @@ def _preferred_object_positions(
     return [(x, y, anchor) for x, y, anchor in anchors if not ((x, y) in seen or seen.add((x, y)))]
 
 
-def _place_objects_in_room(room_id: str, room: dict[str, int], room_node: dict[str, Any], room_objects: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+def _place_objects_in_room(room_id: str, room: dict[str, int], room_node: dict[str, Any], room_objects: list[dict[str, Any]], parent_of: dict[str, str]) -> dict[str, dict[str, Any]]:
     room_semantic = _semantic_type(room_node).lower()
     occupied: list[tuple[int, int, int, int]] = []
     result: dict[str, dict[str, Any]] = {}
@@ -354,7 +354,7 @@ def _place_objects_in_room(room_id: str, room: dict[str, int], room_node: dict[s
         width, depth = _default_object_size_cells(node)
         width = min(width, max(1, room["width_cells"] - 2))
         depth = min(depth, max(1, room["depth_cells"] - 2))
-        parent_id = str(node.get("parent") or "")
+        parent_id = parent_of.get(str(node.get("id") or ""), "")
         parent_placement = result.get(parent_id)
         if parent_placement and parent_id != room_id:
             # Contents, controls, and parts share the parent's footprint. They
@@ -681,6 +681,11 @@ def ensure_scene_layout(source_json: dict[str, Any], catalog_dimensions: dict[st
             if composition["components"] or composition.get("storage"):
                 node["composition"] = composition
     nodes_by_id = {str(node["id"]): node for node in nodes}
+    parent_of = {
+        str(edge.get("target_id") or ""): str(edge.get("source_id") or "")
+        for edge in source.get("edges") or []
+        if isinstance(edge, dict) and str(edge.get("relation") or "") in {"at", "in", "inside", "inside_room", "contains", "on", "near", "held_by", "held_by_left", "held_by_right", "held_by_both"}
+    }
     rooms_nodes = [node for node in nodes if _is_room(node)]
     room_ids = [str(node["id"]) for node in rooms_nodes]
     pairs = _connected_room_pairs(source, set(room_ids))
@@ -699,12 +704,12 @@ def ensure_scene_layout(source_json: dict[str, Any], catalog_dimensions: dict[st
             objects_by_room: dict[str, list[dict[str, Any]]] = defaultdict(list)
             for node in nodes:
                 if _is_placeable(node):
-                    room_id = _room_ancestor(str(node["id"]), nodes_by_id)
+                    room_id = _room_ancestor(str(node["id"]), nodes_by_id, parent_of)
                     if room_id in layout["rooms"]:
                         objects_by_room[room_id].append(node)
             for room_id, room_objects in objects_by_room.items():
                 migrated_objects.update(_place_objects_in_room(
-                    room_id, layout["rooms"][room_id], nodes_by_id[room_id], room_objects,
+                    room_id, layout["rooms"][room_id], nodes_by_id[room_id], room_objects, parent_of,
                 ))
             layout["objects"] = migrated_objects
             layout["object_layout_strategy"] = "semantic_v1"
@@ -720,13 +725,13 @@ def ensure_scene_layout(source_json: dict[str, Any], catalog_dimensions: dict[st
     objects_by_room: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for node in nodes:
         if _is_placeable(node):
-            room_id = _room_ancestor(str(node["id"]), nodes_by_id)
+            room_id = _room_ancestor(str(node["id"]), nodes_by_id, parent_of)
             if room_id in room_layouts:
                 objects_by_room[room_id].append(node)
     for room_id, room_objects in objects_by_room.items():
         room = room_layouts[room_id]
         room_node = nodes_by_id[room_id]
-        object_layouts.update(_place_objects_in_room(room_id, room, room_node, room_objects))
+        object_layouts.update(_place_objects_in_room(room_id, room, room_node, room_objects, parent_of))
 
     source["layout"] = {
         "units": "meter",

@@ -1,5 +1,5 @@
 from backend.core.assets.object_library import OBJECT_LIBRARY
-from backend.core.timed_transitions import advance_time
+from backend.core.rules import advance_time
 
 
 def _state(*items):

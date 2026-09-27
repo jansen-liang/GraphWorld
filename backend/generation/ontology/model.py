@@ -11,7 +11,7 @@ from backend.core.assets.npc_library import NPC_EVENT_LIBRARY
 from backend.core.assets.object_library import OBJECT_LIBRARY
 from backend.core.assets.room_library import ROOM_LIBRARY
 from backend.core.assets.task_library import SKILLS_BY_NAME
-from backend.core.edges import SpatialRelation
+from backend.core.model import SpatialRelation
 from backend.core.states import DISCRETE_STATE_SPACE
 
 

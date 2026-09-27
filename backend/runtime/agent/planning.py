@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from backend.core.actions import ActionType, action_spec
-from backend.core.resources import can_dispense
+from backend.core.system import can_dispense
 from backend.runtime.engine import Orchestrator
 
 

@@ -59,6 +59,19 @@ export interface SceneLayoutValidation {
   issues: string[];
 }
 
+export interface SceneInteractionResponse {
+  applied: boolean;
+  action: Record<string, unknown> | null;
+  failures: string[];
+  delta: {
+    state_changes?: Record<string, unknown>[];
+    edges_added?: Record<string, unknown>[];
+    edges_removed?: Record<string, unknown>[];
+    events?: Record<string, unknown>[];
+  };
+  source_json: Record<string, unknown>;
+}
+
 export interface CandidateAction {
   action_id: string;
   action_type: string;

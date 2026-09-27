@@ -1,6 +1,6 @@
 from backend.core.composition import composition_for, materialize_compositions, validate_composition_nodes
 from backend.core.assets.object_library import OBJECT_LIBRARY
-from backend.core.scenegraph import SceneGraph
+from backend.core.world_graph import WorldGraph
 
 
 def test_device_and_storage_templates_expose_composition_contracts():
@@ -102,6 +102,25 @@ def test_appliance_storage_slots_materialize_capacity_and_required_abilities():
         assert slot["requires_contained_capabilities"] == abilities
 
 
+def test_legacy_partial_appliance_composition_inherits_missing_storage():
+    current = OBJECT_LIBRARY["washer"].instantiate("washer")
+    legacy = {
+        "id": "washer",
+        "node_type": "fixed_object",
+        "semantic_type": "washer",
+        "states": {"is_open": False},
+        "composition": {"components": current["composition"]["components"]},
+    }
+    scene = {"nodes": [legacy], "edges": []}
+
+    materialize_compositions(scene)
+
+    slot = next(node for node in scene["nodes"] if node.get("component_role") == "storage_slot")
+    assert slot["id"] == "washer_slot_l1_c1"
+    assert slot["requires_contained_capabilities"] == ["washable"]
+    assert scene["nodes"][0]["composition"]["storage"]["capacity_per_slot"] == 6
+
+
 def test_dresser_is_drawer_storage_not_a_single_block():
     host = OBJECT_LIBRARY["dresser"].instantiate("dresser_01")
     scene = {"nodes": [host], "edges": []}
@@ -112,7 +131,7 @@ def test_dresser_is_drawer_storage_not_a_single_block():
 
 
 def test_mechanical_relations_round_trip_through_scene_graph():
-    graph = SceneGraph.from_dict({
+    graph = WorldGraph({
         "scene_name": "mechanical",
         "nodes": [{"id": "hinge"}, {"id": "door"}, {"id": "drawer"}, {"id": "cabinet"}],
         "edges": [
@@ -121,7 +140,7 @@ def test_mechanical_relations_round_trip_through_scene_graph():
             {"source_id": "drawer", "target_id": "cabinet", "relation": "touching"},
         ],
     })
-    assert {edge.relation.value for edge in graph.edges} == {"hinge_of", "slides_in", "touching"}
+    assert {edge["relation"] for edge in graph.edges} == {"hinge_of", "slides_in", "touching"}
 
 
 def test_watering_can_template_starts_with_numeric_water_quantity():

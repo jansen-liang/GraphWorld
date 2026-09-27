@@ -1,6 +1,6 @@
-from backend.core.action_schemas import apply_action_schema, validate_action_schema
-from backend.core.resources import available_count
-from backend.core.timed_transitions import apply_timed_transitions
+from backend.core.actions import apply_action_schema, validate_action_schema
+from backend.core.system import available_count
+from backend.core.rules import apply_timed_transitions
 
 
 def _state():
@@ -39,8 +39,10 @@ def test_dispense_creates_independent_held_instances_and_decrements_pool():
     first = state["nodes"]["fridge_milk_pool"]["resource_pool"]
     assert available_count(state["nodes"]["fridge_milk_pool"]) == 1
     instance = state["nodes"]["fridge_milk_pool_milk_1"]
-    assert instance["parent"] == "robot_01"
-    assert instance["runtime_relation"] == "held_by"
+    assert "parent" not in instance
+    assert "runtime_relation" not in instance
+    assert state["parent_of"][instance["id"]] == "robot_01"
+    assert state["relation_of"][instance["id"]] == "held_by"
     assert state["world_state"]["event_log"][0] == {
         "type": "resource_dispensed",
         "source_id": "fridge_milk_pool",

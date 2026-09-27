@@ -1,5 +1,6 @@
 from backend.app.runtime.graphworld_adapter import GraphWorldAdapter, action_id
-from backend.core.action_schemas import apply_action_schema
+from backend.core.actions import apply_action_schema
+from backend.core.world_graph import WorldGraph
 
 
 def _adapter() -> GraphWorldAdapter:
@@ -119,6 +120,7 @@ def test_place_candidate_declares_surface_or_volume_geometry_hint():
 
 def test_laundry_goal_exposes_detergent_loading_phase_when_pool_is_available():
     from backend.runtime.agent.maintenance_goals import make_laundry_goal
+    from backend.core.world_graph import WorldGraph
 
     scene = {"nodes": [
         {"id": "bathroom", "semantic_type": "room", "node_type": "room", "states": {}},
@@ -129,7 +131,7 @@ def test_laundry_goal_exposes_detergent_loading_phase_when_pool_is_available():
         {"id": "drying_rack", "semantic_type": "drying_rack", "parent": "bathroom", "states": {}},
         {"id": "wardrobe", "semantic_type": "wardrobe", "parent": "bedroom", "states": {}},
     ]}
-    goal = make_laundry_goal("cloth", 0, source="test", scene=scene)
+    goal = make_laundry_goal("cloth", 0, source="test", scene=WorldGraph(scene).to_scene())
     assert goal is not None
     assert goal["phase"] == "load_detergent"
     assert goal["detergent_pool"] == "detergent_pool"
@@ -146,15 +148,19 @@ def test_dishwasher_goal_requires_unloading_clean_dish_to_return_surface():
         {"id": "table", "semantic_type": "table", "parent": "kitchen", "interactive_actions": ["place"], "surface_size_cm": [100, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "kitchen", "states": {}},
     ]}
-    baseline = {"nodes": [dict(item) for item in scene["nodes"]]}
+    graph = WorldGraph(scene)
+    scene = graph.to_scene()
+    baseline = WorldGraph(scene).to_scene()
     goal = make_dishwasher_goal("plate", 0, source="test", scene=scene, baseline=baseline)
     assert goal is not None and goal["phase"] == "load"
-    scene["nodes"][2]["parent"] = "dishwasher"
-    scene["nodes"][2]["states"]["is_dirty"] = False
+    graph.move_node("plate", "dishwasher", "in")
+    graph.nodes["plate"]["states"]["is_dirty"] = False
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(goal, scene, "robot_01")
     assert refreshed["phase"] == "unload"
     assert active_goal_completed(goal, scene) is False
-    scene["nodes"][2]["parent"] = "table"
+    graph.move_node("plate", "table", "on")
+    scene = graph.to_scene()
     assert active_goal_completed(goal, scene) is True
 
 
@@ -169,15 +175,19 @@ def test_heat_milk_goal_requires_unloading_hot_item_to_surface():
         {"id": "table", "semantic_type": "table", "parent": "kitchen", "interactive_actions": ["place"], "surface_size_cm": [100, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "kitchen", "states": {}},
     ]}
-    baseline = {"nodes": [dict(item) for item in scene["nodes"]]}
+    graph = WorldGraph(scene)
+    scene = graph.to_scene()
+    baseline = WorldGraph(scene).to_scene()
     goal = make_heat_milk_goal("milk", 0, source="test", scene=scene, baseline=baseline)
     assert goal is not None and goal["phase"] == "load"
-    scene["nodes"][2]["parent"] = "microwave"
-    scene["nodes"][2]["states"]["temperature"] = "hot"
+    graph.move_node("milk", "microwave", "in")
+    graph.nodes["milk"]["states"]["temperature"] = "hot"
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(goal, scene, "robot_01")
     assert refreshed["phase"] == "unload"
     assert active_goal_completed(refreshed, scene) is False
-    scene["nodes"][2]["parent"] = "table"
+    graph.move_node("milk", "table", "on")
+    scene = graph.to_scene()
     assert active_goal_completed(refreshed, scene) is True
 
 
@@ -192,23 +202,31 @@ def test_cook_egg_goal_tracks_spawned_output_and_requires_serving():
         {"id": "table", "semantic_type": "table", "parent": "kitchen", "interactive_actions": ["place"], "surface_size_cm": [100, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "kitchen", "states": {}},
     ]}
-    baseline = {"nodes": [dict(item) for item in scene["nodes"]]}
+    graph = WorldGraph(scene)
+    scene = graph.to_scene()
+    baseline = WorldGraph(scene).to_scene()
     goal = make_cook_egg_goal("egg", 0, source="test", scene=scene, baseline=baseline)
     assert goal is not None and goal["phase"] == "prepare"
-    scene["nodes"][2]["parent"] = "stove"
-    scene["nodes"][1]["states"]["is_running"] = True
+    graph.move_node("egg", "stove", "in")
+    graph.nodes["stove"]["states"]["is_running"] = True
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(goal, scene, "robot_01")
     assert refreshed["phase"] == "waiting"
-    scene["nodes"][1]["states"]["is_running"] = False
-    scene["nodes"][2]["id"] = "removed_egg"
-    scene["nodes"].append({
-        "id": "cooked_egg_3_5", "semantic_type": "cooked_egg", "parent": "stove",
+    graph.nodes["stove"]["states"]["is_running"] = False
+    graph.nodes.pop("egg")
+    graph.parent_of.pop("egg", None)
+    graph.relation_of.pop("egg", None)
+    graph.nodes["cooked_egg_3_5"] = {
+        "id": "cooked_egg_3_5", "node_type": "movable_object", "semantic_type": "cooked_egg",
         "produced_by_device": "stove", "produced_by_recipe": "stove", "produced_at_step": 3, "states": {"is_cooked": True},
-    })
+    }
+    graph.move_node("cooked_egg_3_5", "stove", "in")
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(refreshed, scene, "robot_01")
     assert refreshed["phase"] == "serve"
     assert active_goal_completed(refreshed, scene) is False
-    scene["nodes"][-1]["parent"] = "table"
+    graph.move_node("cooked_egg_3_5", "table", "on")
+    scene = graph.to_scene()
     assert active_goal_completed(refreshed, scene) is True
 
 
@@ -224,21 +242,27 @@ def test_craft_sandwich_goal_collects_inputs_and_serves_spawned_output():
         {"id": "counter", "semantic_type": "counter", "parent": "kitchen", "interactive_actions": ["place"], "surface_size_cm": [120, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "kitchen", "states": {}},
     ]}
+    graph = WorldGraph(scene)
+    scene = graph.to_scene()
     goal = make_craft_sandwich_goal(0, source="test", scene=scene)
     assert goal is not None and goal["phase"] == "collect"
-    scene["nodes"][2]["parent"] = "bench"
-    scene["nodes"][3]["parent"] = "bench"
-    scene["nodes"][1]["states"]["is_running"] = True
+    graph.move_node("bread", "bench", "in")
+    graph.move_node("tomato", "bench", "in")
+    graph.nodes["bench"]["states"]["is_running"] = True
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(goal, scene, "robot_01")
     assert refreshed["phase"] == "waiting"
-    scene["nodes"][1]["states"]["is_running"] = False
-    scene["nodes"].append({
-        "id": "sandwich_4_7", "semantic_type": "sandwich", "parent": "bench",
+    graph.nodes["bench"]["states"]["is_running"] = False
+    graph.nodes["sandwich_4_7"] = {
+        "id": "sandwich_4_7", "node_type": "movable_object", "semantic_type": "sandwich",
         "produced_by_device": "bench", "produced_by_recipe": "workbench", "produced_at_step": 4, "states": {},
-    })
+    }
+    graph.move_node("sandwich_4_7", "bench", "in")
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(refreshed, scene, "robot_01")
     assert refreshed["phase"] == "serve"
-    scene["nodes"][-1]["parent"] = "counter"
+    graph.move_node("sandwich_4_7", "counter", "on")
+    scene = graph.to_scene()
     assert active_goal_completed(refreshed, scene) is True
 
 
@@ -255,21 +279,27 @@ def test_assemble_product_goal_collects_components_and_inspects_output():
         {"id": "inspection", "semantic_type": "inspection_surface", "parent": "factory", "interactive_actions": ["place"], "surface_size_cm": [120, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "factory", "states": {}},
     ], "edges": [{"source_id": "warehouse", "target_id": "factory", "relation": "connected"}]}
+    graph = WorldGraph(scene)
+    scene = graph.to_scene()
     goal = make_assemble_product_goal(0, source="test", scene=scene)
     assert goal is not None and goal["phase"] == "collect"
-    scene["nodes"][2]["parent"] = "line"
-    scene["nodes"][3]["parent"] = "line"
-    scene["nodes"][1]["states"]["is_running"] = True
+    graph.move_node("component_a", "line", "in")
+    graph.move_node("component_b", "line", "in")
+    graph.nodes["line"]["states"]["is_running"] = True
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(goal, scene, "robot_01")
     assert refreshed["phase"] == "waiting"
-    scene["nodes"][1]["states"]["is_running"] = False
-    scene["nodes"].append({
-        "id": "finished_product_4_8", "semantic_type": "finished_product", "parent": "line",
+    graph.nodes["line"]["states"]["is_running"] = False
+    graph.nodes["finished_product_4_8"] = {
+        "id": "finished_product_4_8", "node_type": "movable_object", "semantic_type": "finished_product",
         "produced_by_device": "line", "produced_by_recipe": "assembly_line", "produced_at_step": 4, "states": {},
-    })
+    }
+    graph.move_node("finished_product_4_8", "line", "in")
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(refreshed, scene, "robot_01")
     assert refreshed["phase"] == "inspect"
-    scene["nodes"][-1]["parent"] = "inspection"
+    graph.move_node("finished_product_4_8", "inspection", "on")
+    scene = graph.to_scene()
     assert active_goal_completed(refreshed, scene) is True
 
 
@@ -285,21 +315,27 @@ def test_brew_coffee_goal_keeps_output_inside_served_cup():
         {"id": "table", "semantic_type": "table", "parent": "kitchen", "interactive_actions": ["place"], "surface_size_cm": [100, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "kitchen", "states": {}},
     ]}
+    graph = WorldGraph(scene)
+    scene = graph.to_scene()
     goal = make_brew_coffee_goal(0, source="test", scene=scene)
     assert goal is not None and goal["phase"] == "prepare"
-    scene["nodes"][2]["parent"] = "machine"
-    scene["nodes"][3]["parent"] = "machine"
-    scene["nodes"][1]["states"]["is_running"] = True
+    graph.move_node("cup", "machine", "in")
+    graph.move_node("beans", "machine", "in")
+    graph.nodes["machine"]["states"]["is_running"] = True
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(goal, scene, "robot_01")
     assert refreshed["phase"] == "waiting"
-    scene["nodes"][1]["states"]["is_running"] = False
-    scene["nodes"].append({
-        "id": "coffee_4_8", "semantic_type": "coffee", "parent": "cup",
+    graph.nodes["machine"]["states"]["is_running"] = False
+    graph.nodes["coffee_4_8"] = {
+        "id": "coffee_4_8", "node_type": "movable_object", "semantic_type": "coffee",
         "produced_by_device": "machine", "produced_by_recipe": "coffee_machine", "produced_at_step": 4, "states": {"temperature": "hot"},
-    })
+    }
+    graph.move_node("coffee_4_8", "cup", "in")
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(refreshed, scene, "robot_01")
     assert refreshed["phase"] == "serve"
-    scene["nodes"][2]["parent"] = "table"
+    graph.move_node("cup", "table", "on")
+    scene = graph.to_scene()
     assert active_goal_completed(refreshed, scene) is True
 
 
@@ -313,17 +349,24 @@ def test_print_goal_uses_new_receipt_count_for_completion():
         {"id": "desk", "semantic_type": "desk", "parent": "office", "interactive_actions": ["place"], "surface_size_cm": [120, 60], "states": {}},
         {"id": "old_receipt", "semantic_type": "receipt", "parent": "printer", "states": {}},
     ]}
+    graph = WorldGraph(scene)
+    scene = graph.to_scene()
     goal = make_print_goal("printer", 0, source="test", scene=scene)
     assert goal is not None and goal["receipt_count_before"] == 1
     assert active_goal_completed(goal, scene) is False
-    scene["nodes"].append({"id": "new_receipt", "semantic_type": "receipt", "parent": "printer", "states": {}})
+    graph.nodes["new_receipt"] = {"id": "new_receipt", "node_type": "movable_object", "semantic_type": "receipt", "states": {}}
+    graph.move_node("new_receipt", "printer", "in")
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(goal, scene, "robot_01")
     assert refreshed["phase"] == "collect"
     assert active_goal_completed(refreshed, scene) is False
-    scene["nodes"][-1]["parent"] = "robot_01"
+    graph.nodes["robot_01"] = {"id": "robot_01", "node_type": "robot", "semantic_type": "robot", "states": {}}
+    graph.move_node("new_receipt", "robot_01", "held_by")
+    scene = graph.to_scene()
     refreshed = refresh_active_goal_snapshot(refreshed, scene, "robot_01")
     assert refreshed["phase"] == "place"
-    scene["nodes"][-1]["parent"] = "desk"
+    graph.move_node("new_receipt", "desk", "on")
+    scene = graph.to_scene()
     assert active_goal_completed(refreshed, scene) is True
 
 

@@ -19,6 +19,7 @@ class DiscreteState(str, Enum):
     IS_FULL = "is_full"
     HAS_WATER = "has_water"
     WATER_LEVEL = "water_level"
+    WATER_FLOWING = "water_flowing"
     IS_RUNNING = "is_running"
     USES_LEFT = "uses_left"
     COUNT = "count"
@@ -154,6 +155,7 @@ STATE_SPECS: dict[str, StateSpec] = {
     "fill_level": _spec("fill_level", StateCategory.QUANTITY, StateValueType.NUMBER, ("trash_bin", "cup", "container"), 0, ("place",), (), ("drives is_full",), ("fillable",)),
     "has_water": _spec("has_water", StateCategory.QUANTITY, StateValueType.BOOLEAN, ("sink", "vase", "cup", "mug", "bowl", "wateringcan", "spraybottle"), False, ("empty", "consume", "evaporate"), ("open_faucet", "fill", "refill"), ("controls watering and wetting effects",), ("water_container",)),
     "water_level": _spec("water_level", StateCategory.QUANTITY, StateValueType.NUMBER, ("sink", "vase", "cup", "mug", "bowl", "wateringcan", "spraybottle"), 0, ("empty", "consume", "evaporate"), ("open_faucet", "fill", "refill"), ("continuous water quantity; has_water is its compatibility projection",), ("water_container",)),
+    "water_flowing": _spec("water_flowing", StateCategory.CONTROL, StateValueType.BOOLEAN, ("sink",), False, ("close_faucet",), ("open_faucet",), ("drives sink filling during system ticks",), ("water_reservoir",)),
     "is_running": _spec("is_running", StateCategory.CONTROL, StateValueType.BOOLEAN, ("washer", "washing_machine", "dryer", "clothesdryer", "microwave", "printer", "coffeemachine", "coffee_machine"), False, ("start",), ("finish",), ("tracks active process",), ("timed_device",)),
     "uses_left": _spec("uses_left", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("consume",), ("refill",), ("finite resource availability",), ("finite_resource",)),
     "count": _spec("count", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("consume",), ("refill",), ("resource inventory",), ("finite_resource",)),

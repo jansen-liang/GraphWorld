@@ -4,252 +4,16 @@ import copy
 from typing import Any
 
 from backend.core.actions import ActionType
-from backend.core.action_schemas import apply_action_schema
-from backend.core.edges import PARENT_RELATIONS, ROOM_CONNECTIVITY_RELATIONS
 from backend.core.assets.npc_library import EventPrecondition, get_event_spec
-from backend.core.states import DISCRETE_STATE_SPACE
-from backend.core.timed_transitions import advance_time
+from backend.core.rules import advance_time
 from backend.core.composition import materialize_compositions
-from backend.core.animation import visual_cues
-from backend.core.transitions import transition_log
+from backend.core.world_graph import WorldGraph
+from backend.core.mutation import MutationPipeline
 from .validator import validate_action
 
 
-def _scene_nodes(scene: dict[str, Any]) -> list[dict[str, Any]]:
-    if isinstance(scene.get("nodes"), list):
-        return copy.deepcopy(scene.get("nodes") or [])
-    if isinstance(scene.get("node"), dict):
-        return copy.deepcopy(list((scene.get("node") or {}).values()))
-    return []
-
-
-def _scene_edges(scene: dict[str, Any]) -> list[dict[str, Any]]:
-    if isinstance(scene.get("edges"), list):
-        return copy.deepcopy(scene.get("edges") or [])
-    if isinstance(scene.get("edge"), dict):
-        return copy.deepcopy(list((scene.get("edge") or {}).values()))
-    return []
-
-
-class SceneGraph:
-    def __init__(self, scene: dict[str, Any]):
-        scene = materialize_compositions(copy.deepcopy(scene))
-        self.scene_name = str(scene.get("scene_name") or "scene")
-        self.nodes = {str(node["id"]): node for node in _scene_nodes(scene) if node.get("id")}
-        self._migrate_dynamic_state_fields()
-        self._validate_node_states()
-        self.edges = _scene_edges(scene)
-        self.world_state = copy.deepcopy(scene.get("world_state") or {})
-        self.world_state.setdefault("step", 0)
-        self.world_state.setdefault("event_log", [])
-        self.world_state.setdefault("blocking_cases", [])
-        self.world_state.setdefault("temperature", "comfortable")
-        self.world_state.setdefault("weather", "sunny")
-        self.world_state.setdefault("day_phase", "day")
-        self.world_state.setdefault("room_temperature", {})
-        self.world_state.setdefault("room_humidity", {})
-        self.world_state.setdefault("natural_change_counters", {})
-        self.world_state.setdefault("natural_dirt_enabled", True)
-        self.world_state.setdefault("processes", [])
-        self.refresh_indices()
-
-    def _migrate_dynamic_state_fields(self) -> None:
-        """Normalize legacy scenes without changing non-sink container semantics."""
-        for item in self.nodes.values():
-            if str(item.get("semantic_type") or "") != "sink":
-                continue
-            states = item.setdefault("states", {})
-            if "has_water" not in states:
-                states["has_water"] = bool(float(states.get("fill_level") or 0.0) > 0.0)
-            states.pop("fill_level", None)
-            states.pop("is_full", None)
-
-    def _validate_node_states(self) -> None:
-        allowed = set(DISCRETE_STATE_SPACE)
-        invalid: list[str] = []
-        for node_id, node in sorted(self.nodes.items()):
-            states = node.get("states") or {}
-            for state_name in sorted(set(states) - allowed):
-                invalid.append(f"{node_id}.{state_name}")
-        if invalid:
-            preview = ", ".join(invalid[:20])
-            suffix = "" if len(invalid) <= 20 else f", ... ({len(invalid)} total)"
-            raise ValueError(f"states outside DISCRETE_STATE_SPACE: {preview}{suffix}")
-
-    def refresh_indices(self) -> None:
-        self.parent_of: dict[str, str] = {}
-        self.relation_of: dict[str, str] = {}
-        for node_id, node in self.nodes.items():
-            parent = str(node.get("parent") or "")
-            if parent:
-                self.parent_of[node_id] = parent
-                self.relation_of[node_id] = str(node.get("runtime_relation") or "in")
-        for edge in self.edges:
-            if (edge.get("properties") or {}).get("runtime") is True:
-                continue
-            relation = str(edge.get("relation") or "").lower()
-            source = str(edge.get("source_id") or "")
-            target = str(edge.get("target_id") or "")
-            if relation in PARENT_RELATIONS and source and target and target not in self.parent_of:
-                self.parent_of[target] = source
-                self.relation_of[target] = relation
-        self.room_of = {node_id: self.room_for(node_id) for node_id in self.nodes}
-        self.control_edges = [edge for edge in self.edges if str(edge.get("relation") or "").lower() == "controls"]
-        self.room_edges = [
-            edge
-            for edge in self.edges
-            if str(edge.get("relation") or "").lower() in ROOM_CONNECTIVITY_RELATIONS
-        ]
-
-    def room_for(self, node_id: str) -> str:
-        current = node_id
-        seen: set[str] = set()
-        while current and current not in seen:
-            seen.add(current)
-            node = self.nodes.get(current) or {}
-            if str(node.get("node_type") or "") == "room":
-                return current
-            current = self.parent_of.get(current, "")
-        return ""
-
-    def state_for_rules(self) -> dict[str, Any]:
-        return {
-            "nodes": self.nodes,
-            "edges": self.edges,
-            "world_state": self.world_state,
-            "parent_of": self.parent_of,
-            "relation_of": self.relation_of,
-            "room_of": self.room_of,
-            "control_edges": self.control_edges,
-            "room_edges": self.room_edges,
-            "processes": self.world_state.setdefault("processes", []),
-        }
-
-    def node(self, node_id: str) -> dict[str, Any]:
-        return self.nodes.get(str(node_id)) or {}
-
-    def nodes_by_semantic(self, semantic_type: str, room_id: str = "") -> list[str]:
-        node_ids = []
-        for node_id, node in self.nodes.items():
-            if str(node.get("semantic_type") or "") != semantic_type:
-                continue
-            if room_id and self.room_of.get(node_id) != room_id:
-                continue
-            node_ids.append(node_id)
-        return node_ids
-
-    def adjacent_rooms(self, room_id: str) -> set[str]:
-        adjacent: set[str] = set()
-        for edge in self.room_edges:
-            source = str(edge.get("source_id") or "")
-            target = str(edge.get("target_id") or "")
-            if source == room_id:
-                adjacent.add(target)
-            if target == room_id:
-                adjacent.add(source)
-        return adjacent
-
-    def target_reachable_from_room(self, target_id: str, room_id: str) -> bool:
-        if not room_id:
-            return False
-        if self.room_of.get(target_id) == room_id:
-            return True
-        target = self.node(target_id)
-        return room_id in {str(item) for item in target.get("connected_rooms") or []}
-
-    def has_structural_door_between(self, room_a: str, room_b: str) -> bool:
-        pair = {room_a, room_b}
-        for node in self.nodes.values():
-            if str(node.get("door_kind") or "") != "structural":
-                continue
-            if pair.issubset({str(room_id) for room_id in node.get("connected_rooms") or []}):
-                return True
-        return False
-
-    def log(self, event_type: str, detail: str, **payload: Any) -> None:
-        item = {
-            "step": int(self.world_state.get("step") or 0),
-            "type": event_type,
-            "detail": detail,
-        }
-        item.update(payload)
-        self.world_state.setdefault("event_log", []).append(item)
-
-    def move_node(self, node_id: str, parent_id: str, relation: str) -> None:
-        node = self.nodes.get(node_id)
-        if not node:
-            return
-        node["parent"] = parent_id
-        node["runtime_relation"] = relation
-        self.parent_of[node_id] = parent_id
-        self.relation_of[node_id] = relation
-        self.room_of[node_id] = parent_id if str(self.node(parent_id).get("node_type") or "") == "room" else self.room_for(parent_id)
-
-    def set_node_states(self, node_id: str, **updates: Any) -> None:
-        node = self.nodes.get(node_id)
-        if node:
-            invalid = sorted(set(updates) - set(DISCRETE_STATE_SPACE))
-            if invalid:
-                raise ValueError(f"{node_id} received states outside DISCRETE_STATE_SPACE: {invalid}")
-            node.setdefault("states", {}).update(updates)
-
-    def held_by(self, agent_id: str) -> str:
-        for node_id, parent_id in self.parent_of.items():
-            relation = str(self.relation_of.get(node_id) or "")
-            if parent_id == agent_id and (relation == "held_by" or relation.startswith("held_by_")):
-                return node_id
-        return ""
-
-    def sync_runtime_edges(self) -> None:
-        runtime_relations = {"at", "in", "on", "near", "held_by", "held_by_left", "held_by_both"}
-        self.edges = [
-            edge
-            for edge in self.edges
-            if (edge.get("properties") or {}).get("runtime") is not True
-            and not (
-                str(edge.get("relation") or "").lower() in runtime_relations
-                and str(edge.get("target_id") or "") in self.parent_of
-            )
-        ]
-        for node_id, parent_id in sorted(self.parent_of.items()):
-            if node_id not in self.nodes or parent_id not in self.nodes:
-                continue
-            self.edges.append(
-                {
-                    "source_id": parent_id,
-                    "target_id": node_id,
-                    "relation": self.relation_of.get(node_id, "in"),
-                    "edge_type": "runtime_edge",
-                    "category": "runtime",
-                    "properties": {"runtime": True},
-                }
-            )
-
-    def to_scene(self) -> dict[str, Any]:
-        self.refresh_indices()
-        self.sync_runtime_edges()
-        event_log = self.world_state.get("event_log") or []
-        self.world_state["transition_log"] = transition_log(event_log)
-        visible_nodes = []
-        for node in self.nodes.values():
-            snapshot = copy.deepcopy(node)
-            cues = visual_cues(snapshot)
-            if cues:
-                snapshot["visual_cues"] = cues
-            else:
-                snapshot.pop("visual_cues", None)
-            visible_nodes.append(snapshot)
-        return {
-            "scene_name": self.scene_name,
-            "world_state": copy.deepcopy(self.world_state),
-            "nodes": visible_nodes,
-            "edges": copy.deepcopy(self.edges),
-            "processes": copy.deepcopy(self.world_state.get("processes", [])),
-        }
-
-
 class System:
-    def __init__(self, graph: SceneGraph):
+    def __init__(self, graph: WorldGraph):
         self.graph = graph
 
 
@@ -269,13 +33,11 @@ class RobotActionSystem(System):
             return {"ok": False, "reason": validation.reason}
 
         held_before = str(action.get("object") or self.graph.held_by(agent_id))
-        failures = apply_action_schema(
-            self.graph.state_for_rules(),
-            action,
-            step=int(self.graph.world_state.get("step") or 0),
+        mutation = MutationPipeline(self.graph).apply_action(
+            action, step=int(self.graph.world_state.get("step") or 0)
         )
-        if failures:
-            reason = "; ".join(failures)
+        if not mutation.ok:
+            reason = "; ".join(mutation.failures)
             self.graph.log("robot_action_failed", reason, action=copy.deepcopy(action))
             return {"ok": False, "reason": reason}
 
@@ -289,7 +51,7 @@ class RobotActionSystem(System):
         elif action_name == ActionType.PLACE.value:
             detail = f"{agent_id} placed {held_before} at {target_id}"
         self.graph.log("robot_action", detail, action=copy.deepcopy(action))
-        return {"ok": True}
+        return {"ok": True, "payload": {"delta": mutation.delta.to_dict()}}
 
 
 class HumanEventSystem(System):
@@ -525,7 +287,7 @@ class HumanEventSystem(System):
             return bool(payload.get("period_end", False))
         return True
 
-    def apply_human_event(self, event: str | dict[str, Any]) -> dict[str, Any]:
+    def _apply_human_event(self, event: str | dict[str, Any]) -> dict[str, Any]:
         payload = {"event": event} if isinstance(event, str) else copy.deepcopy(event)
         event_id = str(payload.get("event") or payload.get("activity") or "")
         actor_id = str(payload.get("actor") or payload.get("agent") or "human_resident")
@@ -588,19 +350,28 @@ class HumanEventSystem(System):
             "blocking_cases": blocking_cases,
         }
 
+    def apply_human_event(self, event: str | dict[str, Any]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        delta = MutationPipeline(self.graph).run_system(
+            lambda _state: result.update(self._apply_human_event(event))
+        )
+        result["delta"] = delta.to_dict()
+        return result
+
 
 class EnvironmentSystem(System):
     def advance_time(self) -> list[str]:
-        completed = advance_time(self.graph.state_for_rules(), 1)
+        completed: list[str] = []
+        MutationPipeline(self.graph).run_system(
+            lambda state: completed.extend(advance_time(state, 1))
+        )
         for node_id in completed:
             self.graph.log("timed_transition", f"{node_id} completed")
-        self.graph.refresh_indices()
-        self.graph.sync_runtime_edges()
         return completed
 
 
 class Perception:
-    def __init__(self, graph: SceneGraph, *, confidence_horizon: int = 12):
+    def __init__(self, graph: WorldGraph, *, confidence_horizon: int = 12):
         self.graph = graph
         self.confidence_horizon = max(1, int(confidence_horizon))
         self.last_seen: dict[str, dict[str, int]] = {}
@@ -741,7 +512,7 @@ class Perception:
 
 class Orchestrator:
     def __init__(self, scene: dict[str, Any], *, confidence_horizon: int = 12):
-        self.graph = SceneGraph(scene)
+        self.graph = WorldGraph(materialize_compositions(copy.deepcopy(scene)))
         self.robot_actions = RobotActionSystem(self.graph)
         self.human_events = HumanEventSystem(self.graph)
         self.environment = EnvironmentSystem(self.graph)
@@ -791,7 +562,7 @@ __all__ = [
     "Orchestrator",
     "Perception",
     "RobotActionSystem",
-    "SceneGraph",
+    "WorldGraph",
     "System",
     "run_runtime",
 ]

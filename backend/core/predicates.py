@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from .domain_rules import (
+MOVABLE_NODE_TYPES = frozenset({"movable_object"})
+
+from .rules import (
     APPLIANCE_CYCLE_STEPS,
     BLOCKED_PLACE_TARGET_SEMANTICS,
     CLOTH_SEMANTICS,
@@ -11,9 +13,6 @@ from .domain_rules import (
     PLACE_TARGET_TYPES,
     TRASHABLE_SEMANTICS,
 )
-
-
-MOVABLE_NODE_TYPES = frozenset({"movable_object"})
 
 
 def node(state: dict[str, Any], node_id: str) -> dict[str, Any]:
@@ -42,7 +41,7 @@ def room_of(state: dict[str, Any], node_id: str) -> str:
 
 def parent_of(state: dict[str, Any], node_id: str) -> str:
     node_id = str(node_id)
-    return str(state.get("parent_of", {}).get(node_id) or node(state, node_id).get("parent") or "")
+    return str(state.get("parent_of", {}).get(node_id) or "")
 
 
 def children_of(state: dict[str, Any], parent_id: str) -> list[str]:

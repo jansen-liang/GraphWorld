@@ -4,39 +4,30 @@ import copy
 from typing import Any
 
 from backend.core.assets.npc_library import get_default_npcs
-from backend.core.resources import scene_resource_pool_specs
+from backend.core.system import scene_resource_pool_specs
 from backend.runtime.scene_utils import node, scene_type
 
 
-def add_child(scene: dict[str, Any], parent_id: str, child_id: str) -> None:
-    parent = node(scene, parent_id)
-    if not parent:
-        return
-    children = parent.setdefault("child", [])
-    if child_id not in children:
-        children.append(child_id)
-
-
 def ensure_node(scene: dict[str, Any], item: dict[str, Any]) -> None:
-    existing = node(scene, str(item["id"]))
+    normalized = copy.deepcopy(item)
+    parent_id = str(normalized.pop("parent", "") or "")
+    normalized.pop("child", None)
+    existing = node(scene, str(normalized["id"]))
     if existing:
-        for key, value in item.items():
+        for key, value in normalized.items():
             if key in {"child", "resource_pool"}:
                 continue
             existing[key] = value
-        if isinstance(item.get("resource_pool"), dict):
+        if isinstance(normalized.get("resource_pool"), dict):
             current_pool = existing.setdefault("resource_pool", {})
-            for key, value in item["resource_pool"].items():
+            for key, value in normalized["resource_pool"].items():
                 if key in {"available_count", "dispensed_count", "consumed_count"} and key in current_pool:
                     continue
                 current_pool[key] = copy.deepcopy(value)
-        if item.get("child") is not None:
-            existing["child"] = item["child"]
     else:
-        scene.setdefault("nodes", []).append(item)
-    parent_id = str(item.get("parent") or "")
+        scene.setdefault("nodes", []).append(normalized)
     if parent_id:
-        add_child(scene, parent_id, str(item["id"]))
+        ensure_edge(scene, parent_id, str(normalized["id"]), "at" if normalized.get("node_type") in {"robot", "human"} else "in")
 
 
 def ensure_edge(scene: dict[str, Any], source_id: str, target_id: str, relation: str) -> None:

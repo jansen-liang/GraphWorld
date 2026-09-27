@@ -2,9 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Box, Check, CopyPlus, DoorOpen, Network, PanelsTopLeft, Save, Trash2, Warehouse } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { getScene, getSceneGraph, listObjectCatalog, listSceneVersions, publishSceneLayout, validateSceneLayout } from "../../api/scenes";
+import { getScene, getSceneGraph, listObjectCatalog, listSceneVersions, publishSceneLayout, simulateSceneInteraction, tickSceneSimulation, validateSceneLayout } from "../../api/scenes";
 import { useAuth } from "../../app/auth";
 import type { SceneLayoutValidation } from "../../types/api";
+import type { InteractionHit } from "../../types/api";
 import {
   FloorplanCanvas,
   sharedWall,
@@ -168,6 +169,25 @@ export function SceneBuilderPage() {
       navigate(`/scenes/${sceneId}?version=${published.id}`);
     },
   });
+  const interactionMutation = useMutation({
+    mutationFn: (request: { targetId: string; hand: "left" | "right"; hit: InteractionHit; input?: "interact_primary" | "move" }) => {
+      const actorId = text(nodes.find((node) => ["robot", "human"].includes(nodeType(node)))?.id);
+      return simulateSceneInteraction(draft as Record<string, unknown>, { actorId, ...request });
+    },
+    onSuccess: (result) => {
+      setDraft(result.source_json as SceneSource);
+    },
+  });
+  const tickMutation = useMutation({
+    mutationFn: () => tickSceneSimulation(draft as Record<string, unknown>),
+    onSuccess: (result) => setDraft(result.source_json as SceneSource),
+  });
+  const hasRunningDevice = nodes.some((node) => Boolean((node.states as Record<string, unknown> | undefined)?.is_running));
+  useEffect(() => {
+    if (!hasRunningDevice || tickMutation.isPending) return;
+    const timer = window.setInterval(() => tickMutation.mutate(), 1000);
+    return () => window.clearInterval(timer);
+  }, [hasRunningDevice, tickMutation.isPending]);
 
   function updateLayout(nextLayout: FloorplanLayout) {
     setDraft((current) => (current ? { ...current, layout: reconcileDoors(nextLayout) } : current));
@@ -184,64 +204,13 @@ export function SceneBuilderPage() {
     updateLayout({ ...layout, objects: { ...layout.objects, [objectId]: { ...layout.objects[objectId], ...patch } } });
   }
 
-  const updateSimulationPlacement = useCallback((objectId: string, parentId: string) => {
+  const updatePlacementEdge = useCallback((objectId: string, parentId: string) => {
     setDraft((current) => {
       if (!current) return current;
       const next = deepCopy(current);
-      const node = next.nodes?.find((entry) => text(entry.id) === objectId);
-      if (!node) return current;
-      // Storage slots are materialized by the 3D runtime for scenes that only
-      // declare a composite host. Persist the slot as a real containment
-      // node so the placement survives rerenders and backend validation.
-      if (parentId !== "__floor__" && !next.nodes?.some((entry) => text(entry.id) === parentId)) {
-        const slotMatch = parentId.match(/^(.*)_slot_l(\d+)_c(\d+)$/);
-        if (slotMatch) {
-          const hostId = slotMatch[1];
-          const host = next.nodes?.find((entry) => text(entry.id) === hostId);
-          const storage = host?.composition && typeof host.composition === "object"
-            ? (host.composition as Record<string, unknown>).storage as Record<string, unknown> | undefined
-            : undefined;
-          const levels = Math.max(1, Number(storage?.levels) || 1);
-          const columns = Math.max(1, Number(storage?.columns) || 1);
-          const slot: RawNode = {
-            id: parentId,
-            name: parentId,
-            name_cn: "内部承载槽",
-            node_type: "fixed_object",
-            semantic_type: "storage_slot",
-            parent: hostId,
-            component_of: hostId,
-            component_role: "storage_slot",
-            capabilities: ["place_target"],
-            interactive_actions: ["place"],
-            interior_size_cm: [120 / columns, Number(storage?.depth_cm) || 30, 100 / levels],
-            max_capacity: Number(storage?.capacity_per_slot) || 8,
-            requires_contained_capabilities: Array.isArray(storage?.accepted_capabilities)
-              ? storage?.accepted_capabilities.map(String)
-              : [],
-            states: { capacity: Number(storage?.capacity_per_slot) || 8 },
-          };
-          next.nodes = [...(next.nodes ?? []), slot];
-          next.edges = next.edges ?? [];
-          next.edges.push({
-            category: "physical",
-            relation: "component_of",
-            edge_type: "object_edge",
-            source_id: hostId,
-            target_id: parentId,
-            properties: { component_role: "storage_slot", mount_face: "interior" },
-          });
-        }
-      }
-      node.parent = parentId;
-      next.nodes = (next.nodes ?? []).map((entry) => {
-        if (!Array.isArray(entry.child)) return entry;
-        const child = entry.child.filter((id) => text(id) !== objectId);
-        if (text(entry.id) === parentId) child.push(objectId);
-        return { ...entry, child };
-      });
+      if (!next.nodes?.some((entry) => text(entry.id) === objectId)) return current;
       next.edges = (next.edges ?? []).filter((edge) =>
-        !(["on", "contains", "inside", "inside_room"].includes(text(edge.relation || edge.edge_type))
+        !(["at", "on", "in", "contains", "inside", "inside_room"].includes(text(edge.relation || edge.edge_type))
           && text(edge.target_id || edge.target) === objectId),
       );
       const parentIsRoom = isRoom(next.nodes?.find((entry) => text(entry.id) === parentId) ?? {});
@@ -260,29 +229,12 @@ export function SceneBuilderPage() {
   function placeObjectInRoom(objectId: string, roomId: string) {
     if (!draft || !layout || !layout.objects[objectId] || !layout.rooms[roomId]) return;
     const next = deepCopy(draft);
-    const node = (next.nodes ?? []).find((item) => text(item.id) === objectId);
-    const previousParent = text(node?.parent);
-    if (node) node.parent = roomId;
-    for (const candidate of next.nodes ?? []) {
-      if (!Array.isArray(candidate.child)) continue;
-      const children = candidate.child.filter((child) => text(child) !== objectId);
-      if (text(candidate.id) === roomId && !children.includes(objectId)) children.push(objectId);
-      candidate.child = children;
-    }
-    let replaced = false;
-    next.edges = (next.edges ?? []).map((edge) => {
+    next.edges = (next.edges ?? []).filter((edge) => {
       const target = text(edge.target_id || edge.target);
-      const source = text(edge.source_id || edge.source);
       const relation = text(edge.relation || edge.edge_type);
-      if (target === objectId && source === previousParent && ["inside_room", "on", "in", "inside"].includes(relation)) {
-        replaced = true;
-        return { ...edge, source_id: roomId, target_id: objectId, relation: "inside_room", edge_type: "structural_edge" };
-      }
-      return edge;
+      return !(target === objectId && ["at", "inside_room", "on", "in", "inside", "contains"].includes(relation));
     });
-    if (!replaced) {
-      next.edges.push({ source_id: roomId, target_id: objectId, relation: "inside_room", edge_type: "structural_edge", category: "structural", properties: {} });
-    }
+    next.edges.push({ source_id: roomId, target_id: objectId, relation: "inside_room", edge_type: "structural_edge", category: "structural", properties: {} });
     const item = next.layout!.objects[objectId];
     next.layout!.objects[objectId] = { ...item, room_id: roomId, grid_x: 1, grid_y: 1 };
     setDraft(next);
@@ -297,15 +249,13 @@ export function SceneBuilderPage() {
     const id = uniqueNodeId(next.nodes ?? [], semanticType(template), selectedRoomId);
     const clone = deepCopy(template);
     clone.id = id;
-    clone.parent = selectedRoomId;
-    clone.child = [];
+    delete clone.parent;
+    delete clone.parent_id;
+    delete clone.runtime_relation;
+    delete clone.child;
+    delete clone.inventory;
+    delete clone.component_of;
     (next.nodes ??= []).push(clone);
-    const room = next.nodes.find((node) => text(node.id) === selectedRoomId);
-    if (room) {
-      const children = Array.isArray(room.child) ? [...room.child] : [];
-      children.push(id);
-      room.child = children;
-    }
     (next.edges ??= []).push({
       source_id: selectedRoomId,
       target_id: id,
@@ -334,8 +284,13 @@ export function SceneBuilderPage() {
     const pending = [selectedId];
     while (pending.length) {
       const parentId = pending.pop()!;
-      const parent = nodeById.get(parentId);
-      const children = Array.isArray(parent?.child) ? parent.child.map(text) : [];
+      const children = edges.flatMap((edge) => {
+        const relation = text(edge.relation || edge.edge_type);
+        const source = text(edge.source_id || edge.source);
+        return source === parentId && ["component_of", "part_of"].includes(relation)
+          ? [text(edge.target_id || edge.target)]
+          : [];
+      });
       children.forEach((childId) => {
         if (!removeIds.has(childId)) {
           removeIds.add(childId);
@@ -344,11 +299,7 @@ export function SceneBuilderPage() {
       });
     }
     const next = deepCopy(draft);
-    next.nodes = (next.nodes ?? [])
-      .filter((node) => !removeIds.has(text(node.id)))
-      .map((node) => Array.isArray(node.child)
-        ? { ...node, child: node.child.filter((child) => !removeIds.has(text(child))) }
-        : node);
+    next.nodes = (next.nodes ?? []).filter((node) => !removeIds.has(text(node.id)));
     next.edges = (next.edges ?? []).filter((edge) =>
       !removeIds.has(text(edge.source_id || edge.source))
       && !removeIds.has(text(edge.target_id || edge.target)));
@@ -460,7 +411,7 @@ export function SceneBuilderPage() {
             <button className={view === "graph" ? "active" : ""} type="button" onClick={() => setView("graph")} role="tab" aria-selected={view === "graph"}><Network size={15} /> Graph</button>
           </div>
           {view === "2d" && <FloorplanCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} />}
-          {view === "3d" && <Scene3DCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} onSimulationPlace={updateSimulationPlacement} catalog={objectCatalog.data ?? []} />}
+          {view === "3d" && <Scene3DCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} onPlacementChange={updatePlacementEdge} catalog={objectCatalog.data ?? []} onSimulationInteraction={(request) => interactionMutation.mutate(request)} onSimulationMove={(roomId) => interactionMutation.mutate({ targetId: roomId, hand: "right", hit: { node_id: roomId }, input: "move" })} />}
           {view === "graph" && <div className="builder-graph-stage"><SceneGraphCanvas nodes={nodes} edges={edges} selectedNodeId={selectedId} onSelectNode={setSelectedId} /></div>}
         </main>
 

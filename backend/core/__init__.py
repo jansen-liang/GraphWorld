@@ -1,23 +1,16 @@
 """Static core definitions for scene graph, actions, states, and rules."""
 
-from .actions import ACTION_SPECS, ActionSpec, ActionType, action_spec
-from .action_schemas import ACTION_SCHEMAS, ActionContext, ActionSchema, apply_action_schema, validate_action_schema
-from .domain_rules import APPLIANCE_CYCLE_STEPS, DRYING_RACK_STEPS, DUMP_RULES, TRASHABLE_SEMANTICS
-from .edges import EdgeCategory, EdgeType, SpatialRelation
+from .actions import ACTION_SCHEMAS, ACTION_SPECS, ActionContext, ActionSchema, ActionSpec, ActionType, action_spec, apply_action_schema, validate_action_schema
+from .rules import APPLIANCE_CYCLE_STEPS, DRYING_RACK_STEPS, DUMP_RULES, TRASHABLE_SEMANTICS, advance_time, apply_timed_transitions
+from .model import EdgeCategory, EdgeType, SpatialRelation
 from .composition import ComponentSpec, CompositionSpec, StorageTopology, composition_for, materialize_compositions, validate_composition_nodes
 from .animation import visual_cues
 from .placement import attach_surface_metadata, floor_collision_failure, footprint_for, normalized_surface_anchor, surface_collision_failure, surface_fit_failure, surface_load_failure, surface_spec_for, volume_load_failure
-from .nodes import (
+from .model import (
     CONTROL_OBJECT_TYPES,
-    ControlObject,
-    FixedObject,
-    Floor,
-    Human,
-    MovableObject,
     Node,
     NodeType,
-    Robot,
-    Room,
+    make_node,
     node_type_from_legacy,
 )
 from .assets.npc_library import (
@@ -59,7 +52,7 @@ from .assets.object_model import (
 )
 from .assets.object_priors import ObjectPrior, get_object_prior, load_object_priors
 from .assets.object_catalog import CatalogDisposition, CatalogResolution, resolve_catalog_label
-from .scenegraph import SceneGraph
+from .world_graph import WorldGraph
 from .states import (
     DISCRETE_STATE_SPACE,
     DiscreteState,
@@ -70,9 +63,8 @@ from .states import (
     state_definition,
     state_table_for_object,
 )
-from .resources import available_count, can_dispense, dispense_resource, resource_pool, scene_resource_pool_specs
-from .timed_transitions import advance_time, apply_timed_transitions
-from .interaction import InteractionRequest, InteractionResult, ResolvedInteraction, resolve_and_apply_interaction, resolve_interaction
+from .system import available_count, can_dispense, dispense_resource, resource_pool, scene_resource_pool_specs
+from .interaction import InteractionRequest, ResolvedInteraction, resolve_interaction
 from .agent import AgentProfile, DEFAULT_AGENT_PROFILE, profile_for_agent
 from .temporal import StateEffect, apply_effects, temporal_effects
 from .transitions import envelope_for_event, transition_id, transition_log
@@ -81,9 +73,7 @@ __all__ = [
     "ACTION_SPECS",
     "advance_time",
     "InteractionRequest",
-    "InteractionResult",
     "ResolvedInteraction",
-    "resolve_and_apply_interaction",
     "resolve_interaction",
     "AgentProfile",
     "DEFAULT_AGENT_PROFILE",
@@ -111,7 +101,6 @@ __all__ = [
     "surface_spec_for",
     "ComponentSpec",
     "CompositionSpec",
-    "ControlObject",
     "DEFAULT_ROLE",
     "DISCRETE_STATE_SPACE",
     "DRYING_RACK_STEPS",
@@ -128,15 +117,12 @@ __all__ = [
     "EventEffect",
     "EventPrecondition",
     "EventSpec",
-    "FixedObject",
-    "Floor",
     "HOME_NPC_LIBRARY",
     "HOSPITAL_NPC_LIBRARY",
-    "Human",
-    "MovableObject",
     "NPC_EVENT_LIBRARY",
     "Node",
     "NodeType",
+    "make_node",
     "OBJECT_LIBRARY",
     "ObjectTemplate",
     "ObjectFamily",
@@ -146,7 +132,7 @@ __all__ = [
     "CatalogResolution",
     "PlacementSpec",
     "ROLE_SCHEDULES",
-    "SceneGraph",
+    "WorldGraph",
     "ScheduleEntry",
     "SpatialRelation",
     "SystemDependency",

@@ -1,5 +1,5 @@
-from backend.core.action_schemas import apply_action_schema
-from backend.core.timed_transitions import apply_timed_transitions
+from backend.core.actions import apply_action_schema
+from backend.core.rules import apply_timed_transitions
 from backend.core.assets.object_library import OBJECT_LIBRARY
 from backend.core.assets.task_library import relevant_skills_for_nodes
 
@@ -431,7 +431,7 @@ def test_stove_cooks_egg_into_independent_output():
 
 
 def test_recipe_specs_declare_output_states():
-    from backend.core.processes import RECIPE_SPECS
+    from backend.core.rules import RECIPE_SPECS
 
     assert RECIPE_SPECS["stove"]["output_states"] == {"is_cooked": True, "temperature": "hot"}
     assert RECIPE_SPECS["coffeemachine"]["output_states"] == {"temperature": "hot"}
@@ -504,7 +504,7 @@ def test_dishwash_dishes_skill_is_discovered_for_dirty_loaded_dishes():
 
 
 def test_recipe_uses_numeric_water_level_and_preserves_compatibility_flag():
-    from backend.core.processes import start_process
+    from backend.core.rules import start_process
 
     state = {
         "nodes": {
@@ -611,10 +611,10 @@ def test_elevator_press_runs_then_delivers_robot_and_opens_door():
     assert apply_action_schema(state, {"agent": "robot", "action": "move", "target": "lift"}) == ()
     assert apply_action_schema(state, {"agent": "robot", "action": "press", "target": "lift", "destination_room": "room_b"}) == ()
     assert state["nodes"]["lift"]["states"]["is_running"] is True
-    assert state["nodes"]["robot"]["parent"] == "lift"
+    assert state["parent_of"]["robot"] == "lift"
     for _ in range(2):
         apply_timed_transitions(state, 1)
-    assert state["nodes"]["robot"]["parent"] == "room_b"
+    assert state["parent_of"]["robot"] == "room_b"
     assert state["nodes"]["lift"]["states"]["is_open"] is True
     assert state["nodes"]["lift"].get("requested_room") is None
 
@@ -675,7 +675,7 @@ def test_numeric_vase_water_depletes_in_steps_before_empty_event():
 
 
 def test_faucet_fills_sink_gradually_on_shared_clock():
-    from backend.core.timed_transitions import apply_timed_transitions
+    from backend.core.rules import apply_timed_transitions
 
     state = {
         "nodes": {
@@ -714,7 +714,7 @@ def test_humidity_changes_drying_duration_without_changing_default_weather_contr
 
 
 def test_advance_time_is_the_shared_batch_clock():
-    from backend.core.timed_transitions import advance_time
+    from backend.core.rules import advance_time
 
     state = {
         "nodes": {

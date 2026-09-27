@@ -997,6 +997,11 @@ pre {
 }
 
 .scene3d-status-card header button:hover { background: #f1f5f9; }
+.scene3d-device-progress { padding: 8px 12px 2px; border-bottom: 1px solid #e2e8f0; }
+.scene3d-device-progress-head { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #475569; }
+.scene3d-device-progress-head strong { color: #0f766e; font-variant-numeric: tabular-nums; }
+.scene3d-device-progress-track { height: 6px; margin-top: 6px; margin-bottom: 8px; overflow: hidden; border-radius: 999px; background: #e2e8f0; }
+.scene3d-device-progress-track span { display: block; height: 100%; border-radius: inherit; background: #0f766e; transition: width 120ms linear; }
 
 .scene3d-status-card dl {
   display: grid;

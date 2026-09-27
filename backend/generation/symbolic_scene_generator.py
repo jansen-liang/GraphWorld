@@ -9,7 +9,7 @@ import random
 from typing import Any
 
 from backend.core.assets.object_library import build_object_node
-from backend.core.nodes import Floor, Human, Room
+from backend.core.model import NodeType, make_node
 from backend.core.assets.room_library import room_types_for_scene
 
 
@@ -69,13 +69,13 @@ def generate_scene(domain: str, *, seed: int = 0, optional_rooms: int = 0, npc_c
     for room_type in profile.get("optional", ()):
         if room_type in allowed and len(room_types) < len(profile["required"]) + optional_rooms and rng.random() < 0.8:
             room_types.append(room_type)
-    floor = Floor("floor_1", parent=None).to_dict()
+    floor = make_node("floor_1", NodeType.FLOOR, semantic_type="floor", name="floor")
     nodes: list[dict[str, Any]] = [floor]
     room_ids: list[str] = []
     for index, room_type in enumerate(room_types, 1):
         room_id = f"{room_type}_{index}"
         room_ids.append(room_id)
-        nodes.append(Room(room_id, semantic_type=room_type, name=room_type, name_cn=room_type, parent="floor_1").to_dict())
+        nodes.append(make_node(room_id, NodeType.ROOM, semantic_type=room_type, name=room_type, name_cn=room_type))
     edges: list[dict[str, Any]] = []
     for room_id in room_ids:
         edges.append(_edge("floor_1", room_id, "belongs_to", edge_type="room_floor_edge"))
@@ -108,7 +108,7 @@ def generate_scene(domain: str, *, seed: int = 0, optional_rooms: int = 0, npc_c
             edges.append(_edge(room_id, object_id, "in"))
     for index in range(npc_count):
         room_id = room_ids[index % len(room_ids)]
-        human = Human(f"human_{index + 1}", parent=room_id).to_dict()
+        human = make_node(f"human_{index + 1}", NodeType.HUMAN, semantic_type="human", name="human")
         human["is_npc"] = True
         nodes.append(human)
         edges.append(_edge(room_id, human["id"], "at"))

@@ -4,7 +4,7 @@ from .runtime import (
     Orchestrator,
     Perception,
     RobotActionSystem,
-    SceneGraph,
+    WorldGraph,
     System,
     run_runtime,
 )
@@ -16,7 +16,7 @@ __all__ = [
     "Orchestrator",
     "Perception",
     "RobotActionSystem",
-    "SceneGraph",
+    "WorldGraph",
     "System",
     "ValidationResult",
     "run_runtime",

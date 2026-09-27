@@ -1,5 +1,5 @@
 import { requestJson } from "./client";
-import type { SceneGraphResponse, SceneLayoutValidation, SceneRead, SceneVersionRead } from "../types/api";
+import type { InteractionHit, SceneGraphResponse, SceneInteractionResponse, SceneLayoutValidation, SceneRead, SceneVersionRead } from "../types/api";
 
 export interface ObjectCatalogEntry {
   semantic_type: string;
@@ -48,5 +48,30 @@ export function publishSceneLayout(sceneVersionId: string, sourceJson: Record<st
       source_json: sourceJson,
       description: "Saved from the scene builder.",
     }),
+  });
+}
+
+export function simulateSceneInteraction(
+  sourceJson: Record<string, unknown>,
+  request: { actorId: string; targetId: string; hand: "left" | "right"; hit: InteractionHit; input?: "interact_primary" | "move" },
+) {
+  return requestJson<SceneInteractionResponse>("/scene-simulation/interactions", {
+    method: "POST",
+    body: JSON.stringify({
+      source_json: sourceJson,
+      actor_id: request.actorId,
+      input: request.input ?? "interact_primary",
+      target_id: request.targetId,
+      distance_m: request.hit.distance_m,
+      hit: request.hit,
+      hand: request.hand,
+    }),
+  });
+}
+
+export function tickSceneSimulation(sourceJson: Record<string, unknown>, elapsedSteps = 1) {
+  return requestJson<SceneInteractionResponse>("/scene-simulation/ticks", {
+    method: "POST",
+    body: JSON.stringify({ source_json: sourceJson, elapsed_steps: elapsedSteps }),
   });
 }

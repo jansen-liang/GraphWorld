@@ -1,4 +1,4 @@
-from backend.core.action_schemas import apply_action_schema, validate_action_schema
+from backend.core.actions import apply_action_schema, validate_action_schema
 from backend.core.placement import normalized_surface_anchor
 
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from .predicates import held_objects, holding, is_open, node, object_capabilities, parent_of
+from .predicates import held_objects, holding, is_open, node, object_capabilities, parent_of, supports_action
 from .agent import profile_for_agent
 
 
@@ -38,13 +38,6 @@ class ResolvedInteraction:
     candidates: tuple[str, ...] = ()
 
 
-@dataclass(frozen=True)
-class InteractionResult:
-    action: dict[str, Any] | None
-    failures: tuple[str, ...] = ()
-    applied: bool = False
-
-
 def _can_reach(request: InteractionRequest, actor: dict[str, Any]) -> str | None:
     if request.distance_m is None or request.distance_m <= 0:
         return None
@@ -71,8 +64,12 @@ def resolve_interaction(state: dict[str, Any], request: InteractionRequest | dic
         return ResolvedInteraction(None, (f"unknown agent: {request.actor_id}",))
     if not target:
         return ResolvedInteraction(None, (f"unknown interaction target: {request.target_id}",))
-    if request.input not in {"interact_primary", "interact_secondary", "grab", "release", "use"}:
+    if request.input not in {"interact_primary", "interact_secondary", "grab", "release", "use", "move"}:
         return ResolvedInteraction(None, (f"unsupported interaction input: {request.input}",))
+    if request.input == "move":
+        if str(target.get("node_type") or "") != "room":
+            return ResolvedInteraction(None, (f"move target is not a room: {request.target_id}",))
+        return ResolvedInteraction({"agent": request.actor_id, "action": "move", "target": request.target_id})
     if (failure := _can_reach(request, actor)):
         return ResolvedInteraction(None, (failure,))
 
@@ -91,18 +88,29 @@ def resolve_interaction(state: dict[str, Any], request: InteractionRequest | dic
         action = {"agent": request.actor_id, "action": "release", "object": held_id}
         action.update(_hand_payload(request.hand))
         return ResolvedInteraction(action)
+    if "switchable" in capabilities or "water_source_control" in capabilities:
+        return ResolvedInteraction({"agent": request.actor_id, "action": "press", "target": request.target_id})
+    can_open = "openable" in capabilities or supports_action(target, "open")
+    can_receive = "place_target" in capabilities or "receptacle" in capabilities or target.get("node_type") == "room"
+    if can_open and (str(target.get("semantic_type") or "") == "door" or not can_receive):
+        action_name = "close" if is_open(target) else "open"
+        return ResolvedInteraction({"agent": request.actor_id, "action": action_name, "target": request.target_id})
     if held_id:
-        if "place_target" in capabilities or "receptacle" in capabilities or target.get("node_type") in {"room", "fixed_object"}:
+        if can_receive:
             action = {"agent": request.actor_id, "action": "place", "object": held_id, "target": request.target_id}
             action.update(_hand_payload(request.hand))
             action.update({key: value for key, value in request.hit.items() if key in {"surface_point_cm", "surface_anchor", "volume_anchor", "interaction_hit"}})
+            if request.hit:
+                action["interaction_hit"] = dict(request.hit)
+            if "surface_uv" in request.hit:
+                action["surface_anchor"] = request.hit["surface_uv"]
+            if "volume_uv" in request.hit:
+                action["volume_anchor"] = request.hit["volume_uv"]
             return ResolvedInteraction(action)
         return ResolvedInteraction(None, (f"target cannot receive held object: {request.target_id}",))
-    if "openable" in capabilities:
+    if can_open:
         action_name = "close" if is_open(target) else "open"
         return ResolvedInteraction({"agent": request.actor_id, "action": action_name, "target": request.target_id})
-    if "switchable" in capabilities or "water_source_control" in capabilities:
-        return ResolvedInteraction({"agent": request.actor_id, "action": "press", "target": request.target_id})
     if request.input == "grab" and "pickable" in capabilities:
         action = {"agent": request.actor_id, "action": "pick", "object": request.target_id}
         action.update({"hand": "both"} if "two_hand_required" in capabilities else _hand_payload(request.hand))
@@ -114,17 +122,4 @@ def resolve_interaction(state: dict[str, Any], request: InteractionRequest | dic
     return ResolvedInteraction(None, (f"no affordance for input {request.input}: {request.target_id}",))
 
 
-def resolve_and_apply_interaction(state: dict[str, Any], request: InteractionRequest | dict[str, Any]) -> InteractionResult:
-    """Resolve an input and commit it through the canonical action engine."""
-    resolved = resolve_interaction(state, request)
-    if resolved.action is None:
-        return InteractionResult(None, resolved.failures)
-    from .action_schemas import apply_action_schema
-
-    failures = apply_action_schema(state, resolved.action)
-    if failures:
-        return InteractionResult(resolved.action, tuple(failures))
-    return InteractionResult(resolved.action, (), True)
-
-
-__all__ = ["InteractionRequest", "ResolvedInteraction", "InteractionResult", "resolve_interaction", "resolve_and_apply_interaction"]
+__all__ = ["InteractionRequest", "ResolvedInteraction", "resolve_interaction"]

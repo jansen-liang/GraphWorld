@@ -4,7 +4,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Optional
 
-from ..nodes import ControlObject, FixedObject, MovableObject, NodeType
+from ..model import NodeType, make_node
 from ..states import DISCRETE_STATE_SPACE, DiscreteState, state_table_for_object
 from ..composition import composition_for
 from ..placement import footprint_for, interior_spec_for, surface_spec_for
@@ -352,31 +352,25 @@ class ObjectTemplate:
         }
 
     def instantiate(self, node_id: str, *, parent: Optional[str] = None, overrides: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        cls = {
-            NodeType.FIXED_OBJECT: FixedObject,
-            NodeType.MOVABLE_OBJECT: MovableObject,
-            NodeType.CONTROL_OBJECT: ControlObject,
-        }.get(self.node_type, FixedObject)
-        kwargs: Dict[str, Any] = {
-            "states": deepcopy(self.default_states),
+        attributes: Dict[str, Any] = {
             "interactive_actions": _merge_actions(
                 self.interactive_actions,
                 *(capability.actions for capability in self.capabilities),
             ),
-            "parent": parent,
         }
-        if cls is ControlObject:
-            kwargs.update(
-                {
-                    "door_kind": self.door_kind,
-                    "blocks_visibility": self.blocks_visibility,
-                    "blocks_navigation": self.blocks_navigation,
-                    "blocks_containment": self.blocks_containment,
-                    "requires_closed_to_start": self.requires_closed_to_start,
-                    "parent_device_type": self.parent_device_type,
-                }
-            )
-        node = cls(str(node_id), self.semantic_type, self.name, self.name_cn, **kwargs).to_dict()
+        # Old scene builders still pass parent while their output is converted
+        # to canonical edges by WorldGraph. Runtime nodes drop this field.
+        if parent:
+            attributes["parent"] = str(parent)
+        node = make_node(
+            str(node_id),
+            self.node_type,
+            semantic_type=self.semantic_type,
+            name=self.name,
+            name_cn=self.name_cn,
+            states=deepcopy(self.default_states),
+            **attributes,
+        )
         for key in (
             "door_kind",
             "blocks_visibility",

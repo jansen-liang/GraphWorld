@@ -9,7 +9,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from backend.core.assets.object_library import build_object_node
-from backend.core.nodes import Robot, Room
+from backend.core.model import NodeType, make_node
 from backend.runtime.engine import Orchestrator
 
 
@@ -17,8 +17,8 @@ def make_world(*nodes: dict[str, Any], world_state: dict[str, Any] | None = None
     return Orchestrator(
         {
             "scene_name": "timed_system_validation",
-            "nodes": [Room("room").to_dict(), Robot("robot_01", parent="room").to_dict(), *nodes],
-            "edges": edges or [],
+            "nodes": [make_node("room", NodeType.ROOM), make_node("robot_01", NodeType.ROBOT), *nodes],
+            "edges": [{"source_id": "room", "target_id": "robot_01", "relation": "at"}, *(edges or [])],
             "world_state": world_state or {},
         }
     )

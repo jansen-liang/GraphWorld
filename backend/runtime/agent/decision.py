@@ -6,6 +6,7 @@ import re
 from typing import Any
 
 from backend.core.assets.task_library import relevant_skills_for_nodes
+from backend.core.model import POSITION_RELATIONS
 from backend.runtime.engine import Orchestrator
 from backend.tools.agent import llm_query
 
@@ -119,15 +120,42 @@ def _compact_states(states: dict[str, Any]) -> dict[str, Any]:
     return compact
 
 
+class _RelationshipNode(dict[str, Any]):
+    """Read-only relationship projection used by legacy ranking formulas."""
+
+    def __init__(self, item: dict[str, Any], parent_id: str = "") -> None:
+        super().__init__(item)
+        self._parent_id = parent_id
+
+    def get(self, key: str, default: Any = None) -> Any:
+        if key == "parent":
+            return self._parent_id or default
+        return super().get(key, default)
+
+
+def _indexed_nodes(items: list[dict[str, Any]], edges: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    parent_by_id = {
+        str(edge.get("target_id") or ""): str(edge.get("source_id") or "")
+        for edge in edges
+        if str(edge.get("relation") or "").lower() in POSITION_RELATIONS
+    }
+    return {
+        str(item.get("id") or ""): _RelationshipNode(item, parent_by_id.get(str(item.get("id") or ""), ""))
+        for item in items
+        if item.get("id")
+    }
+
+
 def _node_index(observation: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    return {str(item.get("id") or ""): item for item in observation.get("nodes") or [] if item.get("id")}
+    edges = observation.get("edges") or observation.get("visible_edges") or []
+    return _indexed_nodes(list(observation.get("nodes") or observation.get("visible_nodes") or []), list(edges))
 
 
 def _scene_node_index(scene: dict[str, Any] | None) -> dict[str, dict[str, Any]]:
     if not scene:
         return {}
     nodes = scene.get("nodes") if isinstance(scene.get("nodes"), list) else list((scene.get("node") or {}).values())
-    return {str(item.get("id") or ""): item for item in nodes or [] if item.get("id")}
+    return _indexed_nodes(list(nodes or []), _scene_edges(scene))
 
 
 def _scene_edges(scene: dict[str, Any] | None) -> list[dict[str, Any]]:

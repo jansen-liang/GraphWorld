@@ -3,11 +3,10 @@ from __future__ import annotations
 import copy
 from typing import Any
 
-from backend.runtime.scene_utils import relation_of, room_of
+from backend.runtime.scene_utils import parent_of, relation_of, room_of
 
 def _blocking_targets_satisfied(case: dict[str, Any], scene: dict[str, Any]) -> bool:
     nodes = {str(node.get("id") or ""): node for node in scene.get("nodes") or [] if node.get("id")}
-    parent_of = {str(node.get("id") or ""): str(node.get("parent") or "") for node in scene.get("nodes") or [] if node.get("id")}
     target = str(case.get("target") or "")
     parent = str(case.get("parent") or "")
     states = dict(case.get("states") or {})
@@ -26,7 +25,7 @@ def _blocking_targets_satisfied(case: dict[str, Any], scene: dict[str, Any]) -> 
             return False
         if semantic_types and str(node.get("semantic_type") or "") not in semantic_types:
             return False
-        if parent and parent_of.get(node_id) != parent:
+        if parent and parent_of(scene, node_id) != parent:
             return False
         if room and room_of(scene, node_id) != room:
             return False

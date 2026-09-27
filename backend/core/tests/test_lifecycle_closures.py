@@ -1,7 +1,8 @@
-from backend.core.action_schemas import apply_action_schema
+from backend.core.actions import apply_action_schema
 from backend.core.composition import materialize_compositions
 from backend.core.assets.object_library import OBJECT_LIBRARY
-from backend.core.timed_transitions import advance_time
+from backend.core.rules import advance_time
+from backend.core.world_graph import WorldGraph
 
 
 def _composite_state(host_type: str, item_type: str, *, item_states=None):
@@ -16,15 +17,9 @@ def _composite_state(host_type: str, item_type: str, *, item_states=None):
         "edges": [], "world_state": {},
     }
     materialize_compositions(scene)
-    nodes = {str(node["id"]): node for node in scene["nodes"]}
-    state = {
-        "nodes": nodes,
-        "parent_of": {node_id: str(node.get("parent") or "") for node_id, node in nodes.items() if node.get("parent")},
-        "relation_of": {"robot": "at", "host": "in", "item": "held_by"},
-        "room_of": {node_id: "room" for node_id in nodes},
-        "control_edges": [edge for edge in scene["edges"] if edge.get("relation") == "controls"],
-        "room_edges": [], "world_state": {},
-    }
+    graph = WorldGraph(scene)
+    graph.move_node("item", "robot", "held_by")
+    state = graph.state_for_rules()
     return state, "host_slot_l1_c1"
 
 
@@ -42,22 +37,15 @@ def test_dirty_clothes_washing_closure_uses_relations_capabilities_and_time():
         "world_state": {},
     }
     materialize_compositions(scene)
-    nodes = {str(item["id"]): item for item in scene["nodes"]}
+    graph = WorldGraph(scene)
+    graph.move_node("shirt", "robot", "held_by")
+    state = graph.state_for_rules()
+    nodes = state["nodes"]
     slot_id = "washer_slot_l1_c1"
     assert slot_id in nodes
-    state = {
-        "nodes": nodes,
-        "parent_of": {node_id: str(item.get("parent") or "") for node_id, item in nodes.items() if item.get("parent")},
-        "relation_of": {"shirt": "held_by", "detergent": "in", slot_id: "in", "washer": "in", "robot": "at"},
-        "room_of": {node_id: "room" for node_id in nodes},
-        "control_edges": [], "room_edges": [], "world_state": {},
-    }
     nodes["washer"]["states"]["is_open"] = False
     assert apply_action_schema(state, {"agent": "robot", "action": "open", "target": "washer_door"}) == ()
     assert apply_action_schema(state, {"agent": "robot", "action": "place", "object": "shirt", "target": slot_id}) == ()
-    state["nodes"]["shirt"]["parent"] = slot_id
-    state["parent_of"]["shirt"] = slot_id
-    state["relation_of"]["shirt"] = "in"
     assert apply_action_schema(state, {"agent": "robot", "action": "close", "target": "washer_door"}) == ()
     assert apply_action_schema(state, {"agent": "robot", "action": "press", "target": "washer"}) == ()
     assert state["nodes"]["shirt"]["states"]["is_wet"] is True
