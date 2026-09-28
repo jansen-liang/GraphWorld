@@ -92,7 +92,7 @@ def resolve_interaction(state: dict[str, Any], request: InteractionRequest | dic
         return ResolvedInteraction({"agent": request.actor_id, "action": "press", "target": request.target_id})
     can_open = "openable" in capabilities or supports_action(target, "open")
     can_receive = "place_target" in capabilities or "receptacle" in capabilities or target.get("node_type") == "room"
-    if can_open and (str(target.get("semantic_type") or "") == "door" or not can_receive):
+    if can_open and not can_receive:
         action_name = "close" if is_open(target) else "open"
         return ResolvedInteraction({"agent": request.actor_id, "action": action_name, "target": request.target_id})
     if held_id:

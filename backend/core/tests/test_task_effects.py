@@ -1,4 +1,4 @@
-from backend.core.actions import apply_action_schema
+from backend.core.action import apply_action_schema
 from backend.core.rules import apply_timed_transitions
 from backend.core.assets.object_library import OBJECT_LIBRARY
 from backend.core.assets.task_library import relevant_skills_for_nodes

@@ -9,7 +9,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from backend.core.assets.object_library import build_object_node
-from backend.core.model import NodeType, make_node
+from backend.core.node import NodeType, make_node
 from backend.runtime.engine import Orchestrator
 
 

@@ -1,5 +1,5 @@
-from backend.core.actions import apply_action_schema, validate_action_schema
-from backend.core.system import available_count
+from backend.core.action import apply_action_schema, validate_action_schema
+from backend.core.systems.resource import available_count
 from backend.core.rules import apply_timed_transitions
 
 

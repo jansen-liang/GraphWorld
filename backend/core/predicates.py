@@ -4,15 +4,7 @@ from typing import Any
 
 MOVABLE_NODE_TYPES = frozenset({"movable_object"})
 
-from .rules import (
-    APPLIANCE_CYCLE_STEPS,
-    BLOCKED_PLACE_TARGET_SEMANTICS,
-    CLOTH_SEMANTICS,
-    CONTAINMENT_CONTAINER_SEMANTICS,
-    DUMP_RULES,
-    PLACE_TARGET_TYPES,
-    TRASHABLE_SEMANTICS,
-)
+from .rules.runtime import DUMP_RULES, PLACE_TARGET_TYPES, TRASHABLE_SEMANTICS
 
 
 def node(state: dict[str, Any], node_id: str) -> dict[str, Any]:
@@ -119,7 +111,11 @@ def is_open(item: dict[str, Any]) -> bool:
 
 
 def is_containment_container(item: dict[str, Any]) -> bool:
-    return bool(item.get("blocks_containment")) or semantic(item) in CONTAINMENT_CONTAINER_SEMANTICS
+    return (
+        bool(item.get("blocks_containment"))
+        or "containment_blocker" in object_capabilities(item)
+        or ("is_open" in states(item) and supports_action(item, "place"))
+    )
 
 
 def is_container_door(state: dict[str, Any], door_id: str) -> bool:
@@ -253,12 +249,13 @@ def controlled_targets(state: dict[str, Any], control_id: str) -> list[str]:
 
 
 def requires_closed_to_start(item: dict[str, Any]) -> bool:
+    from .rules.runtime import process_definition
     capabilities = {str(value).lower() for value in (item.get("capabilities") or ())}
     # A timed device opts into the closed-door invariant through capability
     # metadata.  The semantic-cycle map remains only for legacy scene data.
     if "timed_device" in capabilities or "process_profile" in capabilities:
         return bool(item.get("requires_closed_to_start", True))
-    return semantic(item) in APPLIANCE_CYCLE_STEPS and bool(item.get("requires_closed_to_start", True))
+    return bool(process_definition(item)) and bool(item.get("requires_closed_to_start", True))
 
 
 def device_door_failures(state: dict[str, Any], device_ids: list[str]) -> list[str]:
@@ -279,7 +276,13 @@ def place_target_failure(target: dict[str, Any]) -> str | None:
     target_semantic = semantic(target)
     if target_semantic == "trash_bin":
         return None
-    if target_semantic in BLOCKED_PLACE_TARGET_SEMANTICS:
+    if (
+        "place_target" not in object_capabilities(target)
+        and not supports_action(target, "place")
+        and not target.get("surface_size_cm")
+        and not target.get("interior_size_cm")
+        and node_type(target) != "room"
+    ):
         return "place target should be a stable surface, container, room, or trash bin"
     if node_type(target) not in PLACE_TARGET_TYPES:
         return "place target should be a room, fixed object, or trash bin"

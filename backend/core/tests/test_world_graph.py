@@ -1,8 +1,8 @@
-from backend.core.world_graph import WorldGraph
+from backend.core.world import World
 
 
 def test_legacy_parent_is_imported_as_canonical_edge_and_removed_from_node():
-    graph = WorldGraph({
+    graph = World({
         "scene_name": "legacy",
         "nodes": [
             {"id": "room", "node_type": "room", "states": {}},
@@ -18,7 +18,7 @@ def test_legacy_parent_is_imported_as_canonical_edge_and_removed_from_node():
 
 
 def test_relationship_indices_are_rebuilt_from_edges():
-    graph = WorldGraph({
+    graph = World({
         "nodes": [
             {"id": "room", "node_type": "room", "states": {}},
             {"id": "table", "node_type": "fixed_object", "states": {}},
@@ -36,7 +36,7 @@ def test_relationship_indices_are_rebuilt_from_edges():
 
 
 def test_move_replaces_the_only_position_edge_and_round_trips():
-    graph = WorldGraph({
+    graph = World({
         "nodes": [
             {"id": "room", "node_type": "room", "states": {}},
             {"id": "robot", "node_type": "robot", "states": {}},
@@ -57,7 +57,7 @@ def test_move_replaces_the_only_position_edge_and_round_trips():
 
 def test_round_trip_preserves_renderer_metadata():
     layout = {"grid_size": 20, "rooms": {"room": {"grid_x": 0}}}
-    graph = WorldGraph({
+    graph = World({
         "scene_name": "layout",
         "nodes": [{"id": "room", "node_type": "room", "states": {}}],
         "edges": [],

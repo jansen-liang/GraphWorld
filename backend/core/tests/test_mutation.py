@@ -1,9 +1,9 @@
-from backend.core.mutation import MutationPipeline
-from backend.core.world_graph import WorldGraph
+from backend.core.action import ActionExecutor
+from backend.core.world import World
 
 
 def test_action_pipeline_commits_edge_and_returns_delta():
-    graph = WorldGraph({
+    graph = World({
         "nodes": [
             {"id": "room", "node_type": "room", "states": {}},
             {"id": "robot", "node_type": "robot", "states": {}},
@@ -15,7 +15,7 @@ def test_action_pipeline_commits_edge_and_returns_delta():
         ],
     })
 
-    result = MutationPipeline(graph).apply_action({"agent": "robot", "action": "pick", "object": "shirt"})
+    result = ActionExecutor(graph).execute({"agent": "robot", "action": "pick", "object": "shirt"})
 
     assert result.ok is True
     assert graph.parent_of["shirt"] == "robot"

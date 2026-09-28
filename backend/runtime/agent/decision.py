@@ -6,7 +6,7 @@ import re
 from typing import Any
 
 from backend.core.assets.task_library import relevant_skills_for_nodes
-from backend.core.model import POSITION_RELATIONS
+from backend.core.edge import POSITION_RELATIONS
 from backend.runtime.engine import Orchestrator
 from backend.tools.agent import llm_query
 

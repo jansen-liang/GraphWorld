@@ -1,12 +1,12 @@
 """Static core definitions for scene graph, actions, states, and rules."""
 
-from .actions import ACTION_SCHEMAS, ACTION_SPECS, ActionContext, ActionSchema, ActionSpec, ActionType, action_spec, apply_action_schema, validate_action_schema
+from .action import ACTION_SCHEMAS, ACTION_SPECS, Action, ActionContext, ActionSchema, ActionSpec, ActionType, action_spec, apply_action_schema, validate_action_schema
 from .rules import APPLIANCE_CYCLE_STEPS, DRYING_RACK_STEPS, DUMP_RULES, TRASHABLE_SEMANTICS, advance_time, apply_timed_transitions
-from .model import EdgeCategory, EdgeType, SpatialRelation
-from .composition import ComponentSpec, CompositionSpec, StorageTopology, composition_for, materialize_compositions, validate_composition_nodes
+from .edge import EdgeCategory, EdgeType, SpatialRelation
+from .edge import Edge
 from .animation import visual_cues
 from .placement import attach_surface_metadata, floor_collision_failure, footprint_for, normalized_surface_anchor, surface_collision_failure, surface_fit_failure, surface_load_failure, surface_spec_for, volume_load_failure
-from .model import (
+from .node import (
     CONTROL_OBJECT_TYPES,
     Node,
     NodeType,
@@ -52,8 +52,10 @@ from .assets.object_model import (
 )
 from .assets.object_priors import ObjectPrior, get_object_prior, load_object_priors
 from .assets.object_catalog import CatalogDisposition, CatalogResolution, resolve_catalog_label
-from .world_graph import WorldGraph
-from .states import (
+from .world import World
+WorldGraph = World
+from .capability import CAPABILITY_REGISTRY, CapabilityDefinition, capability, capabilities
+from .state import (
     DISCRETE_STATE_SPACE,
     DiscreteState,
     StateCategory,
@@ -63,14 +65,14 @@ from .states import (
     state_definition,
     state_table_for_object,
 )
-from .system import available_count, can_dispense, dispense_resource, resource_pool, scene_resource_pool_specs
+from .systems.resource import available_count, can_dispense, dispense_resource, resource_pool, scene_resource_pool_specs
 from .interaction import InteractionRequest, ResolvedInteraction, resolve_interaction
 from .agent import AgentProfile, DEFAULT_AGENT_PROFILE, profile_for_agent
 from .temporal import StateEffect, apply_effects, temporal_effects
 from .transitions import envelope_for_event, transition_id, transition_log
 
 __all__ = [
-    "ACTION_SPECS",
+    "ACTION_SPECS", "Action",
     "advance_time",
     "InteractionRequest",
     "ResolvedInteraction",
@@ -88,7 +90,7 @@ __all__ = [
     "ActionSpec",
     "ActionType",
     "CONTROL_OBJECT_TYPES",
-    "Capability",
+    "Capability", "CapabilityDefinition", "CAPABILITY_REGISTRY", "capability", "capabilities", "Edge",
     "visual_cues",
     "attach_surface_metadata",
     "floor_collision_failure",
@@ -99,8 +101,6 @@ __all__ = [
     "volume_load_failure",
     "normalized_surface_anchor",
     "surface_spec_for",
-    "ComponentSpec",
-    "CompositionSpec",
     "DEFAULT_ROLE",
     "DISCRETE_STATE_SPACE",
     "DRYING_RACK_STEPS",
@@ -132,14 +132,13 @@ __all__ = [
     "CatalogResolution",
     "PlacementSpec",
     "ROLE_SCHEDULES",
-    "WorldGraph",
+    "World", "WorldGraph",
     "ScheduleEntry",
     "SpatialRelation",
     "SystemDependency",
     "SystemSpec",
     "SystemLayer",
     "SystemStatus",
-    "StorageTopology",
     "SYSTEM_REGISTRY",
     "system_spec",
     "TRASHABLE_SEMANTICS",
@@ -164,9 +163,6 @@ __all__ = [
     "planned_activity",
     "schedule_for_role",
     "validate_action_schema",
-    "validate_composition_nodes",
-    "materialize_compositions",
-    "composition_for",
     "available_count",
     "can_dispense",
     "dispense_resource",

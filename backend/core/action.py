@@ -1,7 +1,12 @@
 ﻿from __future__ import annotations
 
+import copy
 from enum import Enum
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Any, Callable, Mapping
+
+if TYPE_CHECKING:
+    from .world import World
 
 
 class ActionType(str, Enum):
@@ -19,6 +24,35 @@ class ActionType(str, Enum):
     DISPENSE = "dispense"
     RELEASE = "release"
     CONSUME = "consume"
+
+
+@dataclass(frozen=True)
+class Action:
+    """Canonical semantic request independent of a frontend."""
+
+    type: ActionType | str
+    actor: str = ""
+    target: str = ""
+    object_id: str = ""
+    params: Mapping[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        value = dict(self.params)
+        value.update({"action": ActionType(self.type).value, "actor": self.actor, "target": self.target})
+        if self.object_id:
+            value["object"] = self.object_id
+        return {key: item for key, item in value.items() if item not in ("", None)}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> "Action":
+        reserved = {"action", "actor", "agent", "target", "object"}
+        return cls(
+            type=ActionType(str(value.get("action") or "wait")),
+            actor=str(value.get("actor") or value.get("agent") or ""),
+            target=str(value.get("target") or ""),
+            object_id=str(value.get("object") or ""),
+            params={key: item for key, item in value.items() if key not in reserved},
+        )
 
 @dataclass(frozen=True)
 class ActionSpec:
@@ -170,7 +204,14 @@ def action_spec(action_type: ActionType | str) -> ActionSpec:
 # during the migration and intentionally share the same public Action API.
 
 
-from .rules import APPLIANCE_CYCLE_STEPS, DUMP_RULES, SURFACE_SEMANTICS, RECIPE_SPECS, process_ready, start_process
+from .rules import(
+    DUMP_RULES,
+    SURFACE_SEMANTICS,
+    RECIPE_SPECS,
+    process_definition,
+    process_ready,
+    start_process)
+
 from .predicates import (
     children_of,
     descendants_of,
@@ -185,24 +226,25 @@ from .predicates import (
     parent_of,
     semantic,
 )
-from .states import DiscreteState
-from .relationship_ops import move_relationship
+from .state import DiscreteState
+from .world import move_position
 from .temporal import apply_effects, temporal_effects, profile_duration
 
 
 def _process_duration(item: dict[str, Any]) -> int:
-    """Return the configured cycle length, with legacy semantic fallback."""
+    """Return the duration declared by the node's process capability."""
     configured = profile_duration(item)
     if configured:
         return configured
-    return int(APPLIANCE_CYCLE_STEPS.get(semantic(item), 0))
+    definition = process_definition(item)
+    return int(definition.get("duration") or 0)
 
 
 def move_node(state: dict[str, Any], node_id: str, parent_id: str, relation: str) -> None:
     item = node(state, node_id)
     if not item:
         return
-    move_relationship(state, node_id, parent_id, relation)
+    move_position(state, node_id, parent_id, relation)
     parent = node(state, parent_id)
     state.setdefault("room_of", {})[node_id] = parent_id if node_type(parent) == "room" else str(state.get("room_of", {}).get(parent_id) or "")
 
@@ -266,19 +308,19 @@ def press_target(state: dict[str, Any], target_id: str, payload: dict[str, Any] 
     if bool(target_states.get(DiscreteState.IS_RUNNING.value, False)) and "timed_device" in capabilities:
         _stop_timed_device(state, target_id, target_states)
         return
-    if target_semantic in {"elevator", "lift"}:
+    if "transport_device" in capabilities:
         destination = str((payload or {}).get("destination_room") or (payload or {}).get("target_room") or "")
         target["requested_room"] = destination
         target_states[DiscreteState.IS_OPEN.value] = False
         target_states[DiscreteState.IS_RUNNING.value] = True
-        target_states[DiscreteState.CYCLE_REMAINING.value] = APPLIANCE_CYCLE_STEPS.get("elevator", 2)
+        target_states[DiscreteState.CYCLE_REMAINING.value] = int(target.get("transport_duration_steps") or 2)
         state.setdefault("world_state", {}).setdefault("event_log", []).append({
             "type": "elevator_departed",
             "elevator_id": str(target_id),
             "destination_room": destination,
         })
         return
-    if target_semantic != "printer" and "finite_resource" in {str(cap).lower() for cap in (target.get("capabilities") or [])}:
+    if not target.get("accepts_resource_instances") and "finite_resource" in {str(cap).lower() for cap in (target.get("capabilities") or [])}:
         for resource_key in (DiscreteState.USES_LEFT.value, DiscreteState.COUNT.value, DiscreteState.AMOUNT.value):
             if resource_key in target_states:
                 remaining = max(0.0, float(target_states.get(resource_key) or 0.0) - 1.0)
@@ -295,7 +337,7 @@ def press_target(state: dict[str, Any], target_id: str, payload: dict[str, Any] 
         target_states[DiscreteState.IS_RUNNING.value] = True
         target_states[DiscreteState.CYCLE_REMAINING.value] = target_duration
         _apply_process_start_effects(state, target_id)
-        if target_semantic in RECIPE_SPECS:
+        if process_definition(target):
             start_process(state, target_id)
     for controlled_id in controlled_targets(state, target_id):
         controlled = node(state, controlled_id)
@@ -311,11 +353,11 @@ def press_target(state: dict[str, Any], target_id: str, payload: dict[str, Any] 
             controlled_states[DiscreteState.IS_RUNNING.value] = True
             controlled_states[DiscreteState.CYCLE_REMAINING.value] = duration
             _apply_process_start_effects(state, controlled_id)
-            if controlled_semantic in RECIPE_SPECS:
+            if process_definition(controlled):
                 start_process(state, controlled_id)
-        if controlled_semantic == "toilet":
+        if "flushable" in object_capabilities(controlled):
             controlled_states[DiscreteState.IS_DIRTY.value] = False
-        elif controlled_semantic == "door" and str(controlled.get("door_kind") or "") == "structural":
+        elif str(controlled.get("door_kind") or "") == "structural":
             controlled_states[DiscreteState.IS_OPEN.value] = True
         elif DiscreteState.IS_ON.value in controlled_states:
             controlled_states[DiscreteState.IS_ON.value] = not bool(controlled_states.get(DiscreteState.IS_ON.value, False))
@@ -364,8 +406,8 @@ def _apply_process_start_effects(state: dict[str, Any], device_id: str) -> None:
     cleanliness changes only when the process completes.
     """
     device = node(state, device_id)
-    composition = device.get("composition") or {}
-    storage = composition.get("storage") if isinstance(composition, dict) else None
+    structure = device.get("structure") or device.get("composition") or {}
+    storage = structure.get("storage") if isinstance(structure, dict) else None
     accepted = storage.get("accepted_capabilities") if isinstance(storage, dict) else None
     required = {str(value).lower() for value in (device.get("requires_contained_capabilities") or accepted or ())}
     device_capabilities = {str(value).lower() for value in (device.get("capabilities") or ())}
@@ -431,7 +473,7 @@ def brush_target(state: dict[str, Any], target_id: str) -> None:
         return
     target_states = mutable_states(target)
     target_states[DiscreteState.IS_DIRTY.value] = False
-    if semantic(target) in {"sink", "trash_bin", "bin", "basket", "container"}:
+    if "fillable" in object_capabilities(target) or "water_reservoir" in object_capabilities(target):
         if DiscreteState.FILL_LEVEL.value in target_states:
             target_states[DiscreteState.FILL_LEVEL.value] = 0.0
         if DiscreteState.IS_FULL.value in target_states:
@@ -490,7 +532,7 @@ def fold_target(state: dict[str, Any], target_id: str) -> None:
 
 
 def place_relation_for_target(target: dict[str, Any]) -> str:
-    return "on" if semantic(target) in SURFACE_SEMANTICS else "in"
+    return "on" if target.get("surface_size_cm") or target.get("surface") or "surface" in object_capabilities(target) else "in"
 
 
 def dump_held_container(state: dict[str, Any], actor_id: str, target_id: str) -> None:
@@ -510,7 +552,7 @@ def dump_held_container(state: dict[str, Any], actor_id: str, target_id: str) ->
                     (
                         node_id
                         for node_id, item in state.get("nodes", {}).items()
-                        if semantic(item) in {"refrigerator", "fridge"}
+                        if "cold_storage" in object_capabilities(item)
                     ),
                     "",
                 )
@@ -529,8 +571,7 @@ def dump_held_container(state: dict[str, Any], actor_id: str, target_id: str) ->
         held_states[DiscreteState.WATER_LEVEL.value] = next_level
         held_states[DiscreteState.HAS_WATER.value] = next_level > 0.0
         target_states = mutable_states(node(state, target_id))
-        target_semantic = semantic(node(state, target_id))
-        if target_semantic == "vase":
+        if "water_container" in object_capabilities(node(state, target_id)):
             target_states[DiscreteState.HAS_WATER.value] = True
             target_states[DiscreteState.WATER_LEVEL.value] = 100.0
             return
@@ -583,7 +624,7 @@ from .predicates import (
     supports_action,
     trash_place_failures,
 )
-from .system import can_dispense, dispense_resource, refill_rule
+from .systems.resource import can_dispense, dispense_resource, refill_rule
 from .placement import (
     attach_surface_metadata,
     attach_volume_metadata,
@@ -756,18 +797,18 @@ def require_place_target_accessible(ctx: ActionContext) -> str | None:
     # dedicated supply slot, not into its user-facing drum/interior.  Keep
     # this resource-loading path available while the appliance door is closed
     # (legacy scenes and catalog templates model the slot as front-accessible).
-    accepted = DEVICE_RESOURCE_LOADS.get(semantic(ctx.target), frozenset())
-    if semantic(ctx.object) in accepted:
+    accepted = frozenset(str(value) for value in object_property(ctx.target, "required_process_capabilities", ()) or ())
+    if object_capabilities(ctx.object) & accepted:
         return None
     return container_access_failure(ctx.state, ctx.target_id)
 
 
 def require_device_resource_slot(ctx: ActionContext) -> str | None:
-    accepted = DEVICE_RESOURCE_LOADS.get(semantic(ctx.target), frozenset())
-    if semantic(ctx.object) not in accepted:
+    accepted = frozenset(str(value) for value in object_property(ctx.target, "required_process_capabilities", ()) or ())
+    if not object_capabilities(ctx.object) & accepted:
         return None
     for child_id, parent_id in (ctx.state.get("parent_of") or {}).items():
-        if parent_id == ctx.target_id and semantic(node(ctx.state, child_id)) in accepted:
+        if parent_id == ctx.target_id and object_capabilities(node(ctx.state, child_id)) & accepted:
             return f"device resource slot already occupied: {ctx.target_id}"
     return None
 
@@ -831,7 +872,7 @@ def require_target_supports_action(ctx: ActionContext) -> str | None:
 
 
 def require_open_not_redundant(ctx: ActionContext) -> str | None:
-    if semantic(ctx.target) == "faucet":
+    if "water_source_control" in object_capabilities(ctx.target):
         return f"target is already on: {ctx.target_id}" if bool(states(ctx.target).get("is_on", False)) else None
     return f"target is already open: {ctx.target_id}" if is_open(ctx.target) else None
 
@@ -849,7 +890,7 @@ def require_open_not_running(ctx: ActionContext) -> str | None:
 
 
 def require_close_not_redundant(ctx: ActionContext) -> str | None:
-    if semantic(ctx.target) == "faucet":
+    if "water_source_control" in object_capabilities(ctx.target):
         return None if bool(states(ctx.target).get("is_on", False)) else f"target is already off: {ctx.target_id}"
     return None if is_open(ctx.target) else f"target is already closed: {ctx.target_id}"
 
@@ -879,7 +920,7 @@ def require_brushable(ctx: ActionContext) -> str | None:
 
 
 def require_press_ready(ctx: ActionContext) -> str | None:
-    if semantic(ctx.target) in {"elevator", "lift"}:
+    if "transport_device" in object_capabilities(ctx.target):
         destination = str((ctx.payload or {}).get("destination_room") or (ctx.payload or {}).get("target_room") or "")
         served = {str(room_id) for room_id in ctx.target.get("served_rooms") or ctx.target.get("transport_rooms") or []}
         if destination not in served:
@@ -905,7 +946,7 @@ def require_press_ready(ctx: ActionContext) -> str | None:
     input_failures = process_input_failures(ctx.state, ctx.target_id)
     if input_failures:
         return "; ".join(input_failures)
-    if semantic(ctx.target) in RECIPE_SPECS and not process_ready(ctx.state, ctx.target_id):
+    if process_definition(ctx.target) and not process_ready(ctx.state, ctx.target_id):
         return f"process inputs unavailable: {ctx.target_id}"
     credential_failure = access_credential_failure(ctx.state, ctx.actor_id, ctx.target_id)
     if credential_failure:
@@ -943,7 +984,7 @@ def require_dumpable(ctx: ActionContext) -> str | None:
 
 
 def effect_move(ctx: ActionContext) -> None:
-    relation = "at" if node_type(ctx.target) == "room" else ("in" if semantic(ctx.target) in {"elevator", "lift"} else "near")
+    relation = "at" if node_type(ctx.target) == "room" else ("in" if "transport_device" in object_capabilities(ctx.target) else "near")
     move_node(ctx.state, ctx.actor_id, ctx.target_id, relation)
 
 
@@ -955,7 +996,7 @@ def effect_pick(ctx: ActionContext) -> None:
 
 def effect_place(ctx: ActionContext) -> None:
     placed_id = ctx.object_id or holding(ctx.state, ctx.actor_id)
-    if semantic(ctx.target) == "printer" and _load_printer_supply(ctx.state, placed_id, ctx.target_id):
+    if (bool(ctx.target.get("accepts_resource_instances")) or ctx.target.get("resource_capacity")) and _load_printer_supply(ctx.state, placed_id, ctx.target_id):
         return
     relation = place_relation_for_target(ctx.target)
     move_node(ctx.state, placed_id, ctx.target_id, relation)
@@ -978,7 +1019,7 @@ def effect_place(ctx: ActionContext) -> None:
         placed_states = node(ctx.state, placed_id).setdefault("states", {})
         if bool(placed_states.get("is_wet", False)):
             placed_states["cycle_remaining"] = max(1, int(contained_duration))
-    if semantic(ctx.target) == "trash_bin":
+    if bool(ctx.target.get("accepts_trash")):
         ctx.target.setdefault("states", {})["is_dirty"] = True
     event: dict[str, Any] = {
         "type": "object_placed",
@@ -997,17 +1038,19 @@ def effect_place(ctx: ActionContext) -> None:
 def _load_printer_supply(state: dict[str, Any], item_id: str, printer_id: str) -> bool:
     item = node(state, item_id) or {}
     printer = node(state, printer_id) or {}
-    item_semantic = semantic(item)
-    if item_semantic not in {"paper_pack", "ink_cartridge"} or semantic(printer) != "printer":
+    if not printer.get("accepts_resource_instances") and not printer.get("resource_capacity"):
         return False
+    item_semantic = semantic(item)
     item_states = item.get("states") or {}
     printer_states = printer.setdefault("states", {})
-    if item_semantic == "paper_pack":
+    if "count" in item_states:
         amount = float(item_states.get("count", 1) or 0)
         key = "count"
-    else:
+    elif "amount" in item_states:
         amount = float(item_states.get("amount", 1) or 0)
         key = "amount"
+    else:
+        return False
     if amount <= 0:
         return False
     current = float(printer_states.get(key, 0) or 0)
@@ -1037,22 +1080,15 @@ def _load_printer_supply(state: dict[str, Any], item_id: str, printer_id: str) -
     return True
 
 
-DEVICE_RESOURCE_LOADS: dict[str, frozenset[str]] = {
-    "washer": frozenset({"detergent", "laundry_detergent"}),
-    "washing_machine": frozenset({"detergent", "laundry_detergent"}),
-    "dishwasher": frozenset({"detergent", "dishwasher_detergent"}),
-}
-
-
 def _load_device_resource(state: dict[str, Any], item_id: str, device_id: str) -> bool:
     item = node(state, item_id) or {}
     device = node(state, device_id) or {}
-    accepted = DEVICE_RESOURCE_LOADS.get(semantic(device), frozenset())
-    if semantic(item) not in accepted:
+    accepted = frozenset(str(value) for value in object_property(device, "required_process_capabilities", ()) or ())
+    if not object_capabilities(item) & accepted:
         return False
     existing = [
         child_id for child_id, parent_id in (state.get("parent_of") or {}).items()
-        if child_id != item_id and parent_id == device_id and semantic(node(state, child_id)) in accepted
+        if child_id != item_id and parent_id == device_id and object_capabilities(node(state, child_id)) & accepted
     ]
     if existing:
         return False
@@ -1395,9 +1431,114 @@ def apply_action_schema(state: dict[str, Any], action: dict[str, Any], *, step: 
 
 
 __all__ = [
-    "ACTION_SCHEMAS", "ACTION_SPECS", "ActionContext", "ActionSchema", "ActionSpec", "ActionType",
+    "ACTION_SCHEMAS", "ACTION_SPECS", "Action", "ActionContext", "ActionSchema", "ActionSpec", "ActionType",
     "action_spec", "apply_action_schema", "bind_action", "validate_action_schema",
     "brush_target", "close_target", "dump_held_container", "fold_target", "move_node",
     "_apply_sink_entry_effect", "open_target", "place_relation_for_target", "press_target",
+    "ActionExecutor", "ActionResult", "WorldDelta", "WorldTransaction",
 ]
 
+
+@dataclass(frozen=True)
+class WorldDelta:
+    state_changes: tuple[dict[str, Any], ...] = ()
+    edges_added: tuple[dict[str, Any], ...] = ()
+    edges_removed: tuple[dict[str, Any], ...] = ()
+    events: tuple[dict[str, Any], ...] = ()
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "state_changes": copy.deepcopy(list(self.state_changes)),
+            "edges_added": copy.deepcopy(list(self.edges_added)),
+            "edges_removed": copy.deepcopy(list(self.edges_removed)),
+            "events": copy.deepcopy(list(self.events)),
+        }
+
+
+@dataclass(frozen=True)
+class ActionResult:
+    ok: bool
+    failures: tuple[str, ...] = ()
+    delta: WorldDelta = field(default_factory=WorldDelta)
+
+
+def _edge_key(edge: dict[str, Any]) -> tuple[str, str, str]:
+    return (str(edge.get("source_id") or ""), str(edge.get("relation") or ""), str(edge.get("target_id") or ""))
+
+
+class WorldTransaction:
+    """Atomic change boundary used by actions, systems, and rules."""
+
+    def __init__(self, world: "World"):
+        self.world = world
+        self.before = {
+            "nodes": copy.deepcopy(world.nodes),
+            "edges": copy.deepcopy(world.edges),
+            "world_state": copy.deepcopy(world.world_state),
+        }
+        self.closed = False
+
+    def rollback(self) -> None:
+        if self.closed:
+            return
+        self.world.nodes.clear()
+        self.world.nodes.update(copy.deepcopy(self.before["nodes"]))
+        self.world.edges[:] = copy.deepcopy(self.before["edges"])
+        self.world.world_state.clear()
+        self.world.world_state.update(copy.deepcopy(self.before["world_state"]))
+        self.world.refresh_indices()
+        self.closed = True
+
+    def commit(self) -> WorldDelta:
+        if self.closed:
+            raise RuntimeError("transaction is already closed")
+        self.world.commit_relationship_indices()
+        before_nodes = self.before["nodes"]
+        state_changes: list[dict[str, Any]] = []
+        for node_id in sorted(set(before_nodes) | set(self.world.nodes)):
+            old = (before_nodes.get(node_id) or {}).get("states") or {}
+            new = (self.world.nodes.get(node_id) or {}).get("states") or {}
+            for state_name in sorted(set(old) | set(new)):
+                if old.get(state_name) != new.get(state_name):
+                    state_changes.append({"node_id": node_id, "state": state_name, "before": old.get(state_name), "after": new.get(state_name)})
+        before_edges = {_edge_key(edge): edge for edge in self.before["edges"]}
+        after_edges = {_edge_key(edge): copy.deepcopy(edge) for edge in self.world.edges}
+        old_events = self.before["world_state"].get("event_log") or []
+        new_events = self.world.world_state.get("event_log") or []
+        self.closed = True
+        return WorldDelta(
+            state_changes=tuple(state_changes),
+            edges_added=tuple(after_edges[key] for key in sorted(after_edges.keys() - before_edges.keys())),
+            edges_removed=tuple(copy.deepcopy(before_edges[key]) for key in sorted(before_edges.keys() - after_edges.keys())),
+            events=tuple(copy.deepcopy(new_events[len(old_events):])),
+        )
+
+
+class ActionExecutor:
+    """Validate and execute semantic actions against one world."""
+
+    def __init__(self, world: "World"):
+        self.world = world
+
+    def execute(self, action: Action | Mapping[str, Any], *, step: int = 0) -> ActionResult:
+        if isinstance(action, Action):
+            action = action.to_dict()
+        transaction = WorldTransaction(self.world)
+        try:
+            failures = tuple(apply_action_schema(self.world.state_for_rules(), action, step=step))
+            if failures:
+                transaction.rollback()
+                return ActionResult(False, failures)
+            return ActionResult(True, delta=transaction.commit())
+        except Exception:
+            transaction.rollback()
+            raise
+
+    def run(self, operation: Callable[[dict[str, Any]], Any]) -> WorldDelta:
+        transaction = WorldTransaction(self.world)
+        try:
+            operation(self.world.state_for_rules())
+            return transaction.commit()
+        except Exception:
+            transaction.rollback()
+            raise

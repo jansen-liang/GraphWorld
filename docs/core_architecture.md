@@ -14,8 +14,8 @@ GraphWorld 只有一个后端权威世界模型，前端可以有多个适配器
     -> InteractionRequest
     -> InteractionResolver
     -> Action
-    -> MutationPipeline
-    -> WorldGraph（Node + Edge + State）
+    -> World.execute(Action)
+    -> World（Node + Edge + State）
     -> Systems / Rules
     -> WorldSnapshot + WorldDelta
     -> 表现适配器
@@ -42,7 +42,7 @@ Node 保存身份、语义类型、节点类型、能力、几何、结构和当
 运行时不能再把 `parent`、`child`、`inventory` 当作第二套关系真值。
 
 Edge 是值对象，可以验证和分类自身，但不能自己修改图。修改图必须由
-`WorldGraph` 完成，并通过 `MutationPipeline` 提交。
+由 `World` 完成，并通过 `WorldTransaction` 原子提交。
 
 ### Capability
 
@@ -80,12 +80,13 @@ target_temperature
 
 状态只能通过统一变更入口修改。每次修改都要产生 delta，并记录来源。
 
-### Action 和 MutationPipeline
+### Action 和 World
 
 Action 是规范化的语义动作，例如 `open`、`place`、`press`、`pour`、
 `set_temperature`。鼠标和键盘输入不是 Action，而是先解析成 Action。
 
-`MutationPipeline` 是修改世界的唯一公共入口：
+`World.execute(action)` 是修改世界的唯一公共入口。它在内部创建一次
+`WorldTransaction`，完成校验、原子提交和 Delta 生成：
 
 1. 绑定主体、目标、物体和参数；
 2. 检查 ActionSchema 和 Capability；
@@ -94,12 +95,12 @@ Action 是规范化的语义动作，例如 `open`、`place`、`press`、`pour`�
 5. 调用相关 System 或安排 Rule；
 6. 返回 `WorldDelta` 和 transition 事件。
 
-Node 是数据记录，不能实现 `washer.start()` 或 `lamp.turn_on()` 这类设备
-行为。
+Node 是数据记录；`washer.start()` 或 `lamp.turn_on()` 这类领域接口只能
+构造 Action，实际修改仍由 `World.execute()` 完成。
 
-### Composition 和 TemporalRule
+### ObjectTemplate 和 TemporalRule
 
-Composition 描述静态拓扑：
+ObjectTemplate 描述静态拓扑，并在实例化时生成普通 Node 和 Edge：
 
 ```text
 washer
@@ -131,18 +132,47 @@ TimeSystem
 Action 可以触发 System，但 System 也可以由时间、环境或其他 System 触发。
 因此，状态转移不只来自 Action。
 
+### 几何、模板和实例化
+
+物体的“长什么样”和“当前怎么动”必须分开建模，不能把设备几何直接写
+进渲染器或某个设备分支。
+
+```text
+assets/object_library.py   ->  ObjectTemplate（类型、默认几何、默认能力和状态）
+assets/object_templates.py ->  参数化组件声明和实例化
+node.py                    ->  Node 实例的 GeometrySpec、Transform、局部锚点
+placement.py               ->  尺寸、碰撞、容积、承载和放置合法性
+action.py                  ->  move / rotate / open / close 等规范 Action
+world.py                   ->  校验 Action 并提交宿主 Node 的变换或状态 delta
+适配器                      ->  根据快照计算并显示世界变换
+```
+
+例如，洗衣机模板只声明默认外壳、门、按钮、抽屉和洗衣槽的参数；实例化
+时传入 `drawer_count`、`has_detergent_drawer` 等参数，由
+`ObjectTemplate` 生成 `component_of`、`hinge_of`、`slides_in` 等边。门和抽屉
+仍然是独立 Node，但它们的世界变换由宿主变换、局部挂点和关节状态共同
+计算：
+
+```text
+world_transform = host_transform * local_mount_transform * joint_transform
+```
+
+因此，拖动或离散旋转复合物体时，Action 只修改宿主 Node；刚性子件通过
+`component_of` 关系继承变换，不能在前端逐个改世界坐标。门的开合、抽屉
+的行程属于关节状态和表现投影，不属于静态模板拓扑。新增一种设备只应
+新增模板参数、组件声明或能力，不应新增一套移动/旋转实现。
+
 ## 3. `backend/core` 目标目录
 
 ```text
 backend/core/
-  model.py              Node、Edge 和关系值对象
-  world_graph.py        canonical 图存储、查询和修改
-  capabilities.py       Capability 定义和注册表
-  states.py             State 定义和校验
-  actions.py            Action 类型和 ActionSchema 注册表
-  mutation.py           MutationPipeline、StateDelta、EdgeDelta、WorldDelta
+  node.py               Node 实体记录
+  edge.py               Edge 关系记录
+  state.py              State 定义和校验
+  capability.py         Capability 定义和注册入口
+  action.py             Action、ActionExecutor、WorldTransaction
+  world.py              Node + Edge 的唯一运行时世界
   interaction.py        输入意图 -> canonical Action
-  composition.py        静态复合结构和 materialization
   placement.py          几何、容量、承载、容积和碰撞校验
 
   systems/
@@ -187,8 +217,8 @@ graph.remove_node(node_id)
 这些方法负责检查节点是否存在、关系方向、重复边、位置边唯一性和状态
 定义，并在 canonical 数据改变后刷新临时索引。
 
-`relationship_ops.py` 只是旧字典状态迁移期间的兼容辅助层，不是新的架构
-层。新代码不能继续依赖它；迁移完成后应删除它。
+关系修改已收回 `world.py` 的 `World` 与 `move_position` 入口。不存在独立的
+关系修改器层；规则快照也只能通过该入口更新位置边。
 
 ## 5. Systems 和 Rules
 
@@ -314,10 +344,43 @@ affects_temperature(air_conditioner, room)
 静态能力？          -> Capability
 当前事实？          -> State
 用户或 Agent 意图？ -> Action
-静态部件拓扑？      -> Composition
+模板创建结构？       -> Assets / ObjectTemplate
 共享持续效果？      -> System
 条件和状态转移？    -> Rule
 视觉或物理细节？    -> Adapter
 ```
 
 如果一个功能无法归类，应该先补充架构概念，而不是添加局部特判。
+
+
+## 10.总体目录
+backend/core/
+  node.py
+  edge.py
+  state.py
+  capability.py
+  action.py
+  world.py             # Node + Edge 的集合、查询、事务和索引
+
+  systems/
+    liquid.py
+    energy.py
+    lighting.py
+    thermal.py
+    capacity.py
+    time.py
+
+  rules/
+    process.py
+    temporal.py
+    natural.py
+
+  assets/
+    object_library.py
+    object_templates.py
+    object_catalog.py
+    room_library.py
+    task_library.py
+
+旧的复数模块、`mutation.py`、`composition.py` 和关系修改器已移除。新代码
+必须从上述单数模块、`systems`、`rules` 和 `assets` 导入。

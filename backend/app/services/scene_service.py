@@ -9,7 +9,7 @@ from backend.app.repositories.scene_repo import SceneRepository
 from backend.app.runtime.scene_importer import infer_scene_id, import_scene
 from backend.app.runtime.scene_layout import ensure_scene_layout, validate_scene_layout
 from backend.app.db.models import ObjectCatalog
-from backend.core.composition import composition_for, materialize_compositions
+from backend.core.assets.object_templates import structure_for, materialize_templates
 from backend.app.schemas.graph import GraphEdge, GraphNode, SceneGraphResponse
 from backend.app.schemas.scene import SceneImportRequest, SceneLayoutGenerated, SceneLayoutGenerateRequest, SceneLayoutValidation, ScenePublishRequest, SceneRead, SceneVersionRead
 
@@ -82,9 +82,22 @@ class SceneService:
         nodes = self.repo.version_nodes(scene_version_id)
         edges = self.repo.version_edges(scene_version_id)
         catalog_dimensions = self._catalog_dimensions()
+        # Persisted versions keep template declarations compact. Expand them
+        # for every read so the editor and render adapters receive the same
+        # canonical component nodes (doors, drawers, slots, controls).
+        source_json = copy.deepcopy(version.source_json)
+        for item in source_json.get("nodes") or []:
+            if not isinstance(item, dict) or item.get("structure") or item.get("composition"):
+                continue
+            semantic_type = str(item.get("semantic_type") or item.get("object_type") or "").lower()
+            declared = structure_for(semantic_type).to_dict()
+            if declared.get("components") or declared.get("storage"):
+                item["structure"] = declared
+        source_json = materialize_templates(source_json)
+        source_json = ensure_scene_layout(source_json, catalog_dimensions)
         return SceneGraphResponse(
             scene_version_id=scene_version_id,
-            source_json=ensure_scene_layout(version.source_json, catalog_dimensions),
+            source_json=source_json,
             nodes=[
                 GraphNode(
                     id=node.node_key,
@@ -118,13 +131,13 @@ class SceneService:
             source.pop("layout", None)
         if request.materialize_composition:
             for item in source.get("nodes") or []:
-                if not isinstance(item, dict) or item.get("composition"):
+                if not isinstance(item, dict) or item.get("structure") or item.get("composition"):
                     continue
                 semantic_type = str(item.get("semantic_type") or item.get("object_type") or "").lower()
-                declared = composition_for(semantic_type).to_dict()
+                declared = structure_for(semantic_type).to_dict()
                 if declared.get("components") or declared.get("storage"):
-                    item["composition"] = declared
-            source = materialize_compositions(source)
+                    item["structure"] = declared
+            source = materialize_templates(source)
         generated = ensure_scene_layout(source, self._catalog_dimensions())
         issues = validate_scene_layout(generated)
         generated_ids = {

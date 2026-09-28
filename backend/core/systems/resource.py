@@ -176,7 +176,7 @@ def dispense_resource(state: dict[str, Any], source_id: str, actor_id: str) -> s
     instance["id"] = instance_id
     instance["resource_instance_of"] = str(source_id)
     state.setdefault("nodes", {})[instance_id] = instance
-    move_relationship(state, instance_id, str(actor_id), "held_by")
+    move_position(state, instance_id, str(actor_id), "held_by")
     state.setdefault("world_state", {}).setdefault("event_log", []).append({
         "type": "resource_dispensed",
         "source_id": str(source_id),
@@ -232,10 +232,10 @@ def refill_rule(state: dict[str, Any], target_id: str, supply_id: str) -> Refill
 
 __all__ = ["REFILL_RULES", "RefillRule", "refill_rule"]
 
-from .predicates import node, semantic
-from .relationship_ops import move_relationship
+from ..predicates import node, semantic
+from ..world import move_position
 
 def tick(graph: Any, elapsed_steps: int = 1):
-    from .mutation import MutationPipeline
-    from .rules import advance_time
-    return MutationPipeline(graph).run_system(lambda state: advance_time(state, elapsed_steps))
+    from ..action import ActionExecutor
+    from ..rules import advance_time
+    return ActionExecutor(graph).run(lambda state: advance_time(state, elapsed_steps))

@@ -6,8 +6,9 @@ import copy
 from typing import Any, Iterable
 
 from .animation import visual_cues
-from .model import Edge, Node, POSITION_RELATIONS, ROOM_CONNECTIVITY_RELATIONS
-from .states import DISCRETE_STATE_SPACE
+from .edge import Edge, POSITION_RELATIONS, ROOM_CONNECTIVITY_RELATIONS
+from .node import Node
+from .state import DISCRETE_STATE_SPACE
 from .transitions import transition_log
 
 
@@ -19,7 +20,24 @@ def _values(scene: dict[str, Any], plural: str, singular: str) -> list[dict[str,
     return []
 
 
-class WorldGraph:
+def move_position(state: dict[str, Any], node_id: str, parent_id: str, relation: str) -> None:
+    """Move a node through the canonical World graph or its rule snapshot."""
+    graph = state.get("_graph")
+    if graph is not None:
+        graph.move_node(str(node_id), str(parent_id), str(relation))
+        return
+    edges = state.setdefault("edges", [])
+    edges[:] = [
+        edge for edge in edges
+        if not (str(edge.get("target_id") or "") == str(node_id)
+                and str(edge.get("relation") or "").lower() in POSITION_RELATIONS)
+    ]
+    edges.append(Edge(str(parent_id), str(node_id), str(relation), {"canonical": True}).to_dict())
+    state.setdefault("parent_of", {})[str(node_id)] = str(parent_id)
+    state.setdefault("relation_of", {})[str(node_id)] = str(relation)
+
+
+class World:
     """One mutable world graph; relationship indices are disposable caches."""
 
     def __init__(self, scene: dict[str, Any]):
@@ -63,7 +81,8 @@ class WorldGraph:
 
     def _migrate_dynamic_state_fields(self) -> None:
         for item in self.nodes.values():
-            if str(item.get("semantic_type") or "") != "sink":
+            capabilities = {str(value).lower() for value in (item.get("capabilities") or ())}
+            if "water_reservoir" not in capabilities:
                 continue
             states = item.setdefault("states", {})
             if "has_water" not in states:
@@ -220,6 +239,52 @@ class WorldGraph:
         self._replace_position_edge(str(node_id), str(parent_id), str(relation))
         self.refresh_indices()
 
+    def add_edge(self, source_id: str, target_id: str, relation: str, properties: dict[str, Any] | None = None) -> dict[str, Any]:
+        source_id, target_id, relation = str(source_id), str(target_id), str(relation).lower()
+        if source_id not in self.nodes or target_id not in self.nodes:
+            raise KeyError(f"edge endpoints must exist: {source_id}, {target_id}")
+        if relation in POSITION_RELATIONS:
+            self._replace_position_edge(target_id, source_id, relation)
+        elif any(str(edge.get("source_id")) == source_id and str(edge.get("target_id")) == target_id and str(edge.get("relation")) == relation for edge in self.edges):
+            return next(edge for edge in self.edges if str(edge.get("source_id")) == source_id and str(edge.get("target_id")) == target_id and str(edge.get("relation")) == relation)
+        else:
+            self.edges.append(Edge(source_id, target_id, relation, dict(properties or {})).to_dict())
+        self.refresh_indices()
+        return next(edge for edge in self.edges if str(edge.get("source_id")) == source_id and str(edge.get("target_id")) == target_id and str(edge.get("relation")) == relation)
+
+    def remove_edge(self, source_id: str, target_id: str, relation: str) -> bool:
+        before = len(self.edges)
+        self.edges[:] = [edge for edge in self.edges if not (str(edge.get("source_id")) == str(source_id) and str(edge.get("target_id")) == str(target_id) and str(edge.get("relation")) == str(relation).lower())]
+        self.refresh_indices()
+        return len(self.edges) != before
+
+    def replace_position_edge(self, object_id: str, parent_id: str, relation: str) -> None:
+        self._replace_position_edge(str(object_id), str(parent_id), str(relation).lower())
+        self.refresh_indices()
+
+    def set_state(self, node_id: str, state_name: str, value: Any, *, source: str = "world") -> None:
+        if str(node_id) not in self.nodes:
+            raise KeyError(f"unknown node: {node_id}")
+        self.set_node_states(str(node_id), **{str(state_name): copy.deepcopy(value)})
+        self.log("state_changed", f"{node_id}.{state_name} changed", node_id=str(node_id), state=str(state_name), value=copy.deepcopy(value), source=source)
+
+    def spawn_node(self, node: Node | dict[str, Any]) -> dict[str, Any]:
+        record = node.to_dict() if isinstance(node, Node) else copy.deepcopy(node)
+        node_id = str(record.get("id") or "")
+        if not node_id or node_id in self.nodes:
+            raise ValueError(f"node id is missing or already exists: {node_id}")
+        self.nodes[node_id] = record
+        self.refresh_indices()
+        return self.nodes[node_id]
+
+    def remove_node(self, node_id: str) -> None:
+        node_id = str(node_id)
+        if node_id not in self.nodes:
+            return
+        self.nodes.pop(node_id)
+        self.edges[:] = [edge for edge in self.edges if str(edge.get("source_id")) != node_id and str(edge.get("target_id")) != node_id]
+        self.refresh_indices()
+
     def set_node_states(self, node_id: str, **updates: Any) -> None:
         if invalid := sorted(set(updates) - set(DISCRETE_STATE_SPACE)):
             raise ValueError(f"{node_id} received states outside DISCRETE_STATE_SPACE: {invalid}")
@@ -234,6 +299,16 @@ class WorldGraph:
 
     def sync_runtime_edges(self) -> None:
         self.commit_relationship_indices()
+
+    def execute(self, action: dict[str, Any], *, step: int = 0):
+        from .action import ActionExecutor
+
+        return ActionExecutor(self).execute(action, step=step)
+
+    def run(self, operation):
+        from .action import ActionExecutor
+
+        return ActionExecutor(self).run(operation)
 
     def to_scene(self) -> dict[str, Any]:
         self.commit_relationship_indices()
@@ -254,4 +329,4 @@ class WorldGraph:
         }
 
 
-__all__ = ["WorldGraph"]
+__all__ = ["World"]

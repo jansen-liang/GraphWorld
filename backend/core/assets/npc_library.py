@@ -5,7 +5,7 @@ import random
 from dataclasses import dataclass, field, replace
 from typing import Dict, List
 
-from backend.core.states import DISCRETE_STATE_SPACE
+from backend.core.state import DISCRETE_STATE_SPACE
 
 
 HOME_NPC_LIBRARY: List[Dict[str, str]] = [

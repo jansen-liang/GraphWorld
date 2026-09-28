@@ -1,14 +1,14 @@
 """User-visible Home behavior contracts for the simplified world model."""
 
 from backend.core.assets.object_library import OBJECT_LIBRARY
-from backend.core.composition import materialize_compositions
+from backend.core.assets.object_library import materialize
 from backend.core.interaction import resolve_interaction
-from backend.core.mutation import MutationPipeline
+from backend.core.action import ActionExecutor
 from backend.core.rules import advance_time
-from backend.core.world_graph import WorldGraph
+from backend.core.world import World
 
 
-def _home_graph(*objects: dict, edges: list[dict] | None = None) -> WorldGraph:
+def _home_graph(*objects: dict, edges: list[dict] | None = None) -> World:
     scene = {
         "nodes": [
             {"id": "room", "node_type": "room", "semantic_type": "room", "states": {}},
@@ -18,16 +18,16 @@ def _home_graph(*objects: dict, edges: list[dict] | None = None) -> WorldGraph:
         "edges": list(edges or []),
         "world_state": {},
     }
-    materialize_compositions(scene)
-    return WorldGraph(scene)
+    materialize(scene)
+    return World(scene)
 
 
-def _act(graph: WorldGraph, action: dict) -> None:
-    result = MutationPipeline(graph).apply_action(action)
+def _act(graph: World, action: dict) -> None:
+    result = ActionExecutor(graph).execute(action)
     assert result.ok, result.failures
 
 
-def _interact(graph: WorldGraph, target_id: str, *, hand: str = "right", input_name: str = "interact_primary") -> None:
+def _interact(graph: World, target_id: str, *, hand: str = "right", input_name: str = "interact_primary") -> None:
     resolved = resolve_interaction(graph.state_for_rules(), {
         "actor_id": "robot", "target_id": target_id, "hand": hand, "input": input_name,
     })
@@ -35,8 +35,8 @@ def _interact(graph: WorldGraph, target_id: str, *, hand: str = "right", input_n
     _act(graph, resolved.action)
 
 
-def _tick(graph: WorldGraph, steps: int) -> None:
-    MutationPipeline(graph).run_system(lambda state: advance_time(state, steps))
+def _tick(graph: World, steps: int) -> None:
+    ActionExecutor(graph).run(lambda state: advance_time(state, steps))
 
 
 def test_laundry_closure_places_multiple_clothes_and_completes_cycle():

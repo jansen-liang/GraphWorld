@@ -1,6 +1,6 @@
 from backend.app.runtime.graphworld_adapter import GraphWorldAdapter, action_id
-from backend.core.actions import apply_action_schema
-from backend.core.world_graph import WorldGraph
+from backend.core.action import apply_action_schema
+from backend.core.world import World
 
 
 def _adapter() -> GraphWorldAdapter:
@@ -120,7 +120,7 @@ def test_place_candidate_declares_surface_or_volume_geometry_hint():
 
 def test_laundry_goal_exposes_detergent_loading_phase_when_pool_is_available():
     from backend.runtime.agent.maintenance_goals import make_laundry_goal
-    from backend.core.world_graph import WorldGraph
+    from backend.core.world import World
 
     scene = {"nodes": [
         {"id": "bathroom", "semantic_type": "room", "node_type": "room", "states": {}},
@@ -131,7 +131,7 @@ def test_laundry_goal_exposes_detergent_loading_phase_when_pool_is_available():
         {"id": "drying_rack", "semantic_type": "drying_rack", "parent": "bathroom", "states": {}},
         {"id": "wardrobe", "semantic_type": "wardrobe", "parent": "bedroom", "states": {}},
     ]}
-    goal = make_laundry_goal("cloth", 0, source="test", scene=WorldGraph(scene).to_scene())
+    goal = make_laundry_goal("cloth", 0, source="test", scene=World(scene).to_scene())
     assert goal is not None
     assert goal["phase"] == "load_detergent"
     assert goal["detergent_pool"] == "detergent_pool"
@@ -148,9 +148,9 @@ def test_dishwasher_goal_requires_unloading_clean_dish_to_return_surface():
         {"id": "table", "semantic_type": "table", "parent": "kitchen", "interactive_actions": ["place"], "surface_size_cm": [100, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "kitchen", "states": {}},
     ]}
-    graph = WorldGraph(scene)
+    graph = World(scene)
     scene = graph.to_scene()
-    baseline = WorldGraph(scene).to_scene()
+    baseline = World(scene).to_scene()
     goal = make_dishwasher_goal("plate", 0, source="test", scene=scene, baseline=baseline)
     assert goal is not None and goal["phase"] == "load"
     graph.move_node("plate", "dishwasher", "in")
@@ -175,9 +175,9 @@ def test_heat_milk_goal_requires_unloading_hot_item_to_surface():
         {"id": "table", "semantic_type": "table", "parent": "kitchen", "interactive_actions": ["place"], "surface_size_cm": [100, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "kitchen", "states": {}},
     ]}
-    graph = WorldGraph(scene)
+    graph = World(scene)
     scene = graph.to_scene()
-    baseline = WorldGraph(scene).to_scene()
+    baseline = World(scene).to_scene()
     goal = make_heat_milk_goal("milk", 0, source="test", scene=scene, baseline=baseline)
     assert goal is not None and goal["phase"] == "load"
     graph.move_node("milk", "microwave", "in")
@@ -202,9 +202,9 @@ def test_cook_egg_goal_tracks_spawned_output_and_requires_serving():
         {"id": "table", "semantic_type": "table", "parent": "kitchen", "interactive_actions": ["place"], "surface_size_cm": [100, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "kitchen", "states": {}},
     ]}
-    graph = WorldGraph(scene)
+    graph = World(scene)
     scene = graph.to_scene()
-    baseline = WorldGraph(scene).to_scene()
+    baseline = World(scene).to_scene()
     goal = make_cook_egg_goal("egg", 0, source="test", scene=scene, baseline=baseline)
     assert goal is not None and goal["phase"] == "prepare"
     graph.move_node("egg", "stove", "in")
@@ -242,7 +242,7 @@ def test_craft_sandwich_goal_collects_inputs_and_serves_spawned_output():
         {"id": "counter", "semantic_type": "counter", "parent": "kitchen", "interactive_actions": ["place"], "surface_size_cm": [120, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "kitchen", "states": {}},
     ]}
-    graph = WorldGraph(scene)
+    graph = World(scene)
     scene = graph.to_scene()
     goal = make_craft_sandwich_goal(0, source="test", scene=scene)
     assert goal is not None and goal["phase"] == "collect"
@@ -279,7 +279,7 @@ def test_assemble_product_goal_collects_components_and_inspects_output():
         {"id": "inspection", "semantic_type": "inspection_surface", "parent": "factory", "interactive_actions": ["place"], "surface_size_cm": [120, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "factory", "states": {}},
     ], "edges": [{"source_id": "warehouse", "target_id": "factory", "relation": "connected"}]}
-    graph = WorldGraph(scene)
+    graph = World(scene)
     scene = graph.to_scene()
     goal = make_assemble_product_goal(0, source="test", scene=scene)
     assert goal is not None and goal["phase"] == "collect"
@@ -315,7 +315,7 @@ def test_brew_coffee_goal_keeps_output_inside_served_cup():
         {"id": "table", "semantic_type": "table", "parent": "kitchen", "interactive_actions": ["place"], "surface_size_cm": [100, 60], "states": {}},
         {"id": "robot_01", "semantic_type": "robot", "parent": "kitchen", "states": {}},
     ]}
-    graph = WorldGraph(scene)
+    graph = World(scene)
     scene = graph.to_scene()
     goal = make_brew_coffee_goal(0, source="test", scene=scene)
     assert goal is not None and goal["phase"] == "prepare"
@@ -349,7 +349,7 @@ def test_print_goal_uses_new_receipt_count_for_completion():
         {"id": "desk", "semantic_type": "desk", "parent": "office", "interactive_actions": ["place"], "surface_size_cm": [120, 60], "states": {}},
         {"id": "old_receipt", "semantic_type": "receipt", "parent": "printer", "states": {}},
     ]}
-    graph = WorldGraph(scene)
+    graph = World(scene)
     scene = graph.to_scene()
     goal = make_print_goal("printer", 0, source="test", scene=scene)
     assert goal is not None and goal["receipt_count_before"] == 1

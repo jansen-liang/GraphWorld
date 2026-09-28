@@ -6,16 +6,16 @@ import copy
 from typing import Any
 
 from backend.app.schemas.scene import SceneInteractionRequest, SceneInteractionResponse, SceneTickRequest
-from backend.core.composition import materialize_compositions
+from backend.core.assets.object_library import materialize
 from backend.core.interaction import InteractionRequest, resolve_interaction
-from backend.core.mutation import MutationPipeline
+from backend.core.action import ActionExecutor
 from backend.core.rules import advance_time
-from backend.core.world_graph import WorldGraph
+from backend.core.world import World
 
 
 class SimulationService:
     def interact(self, request: SceneInteractionRequest) -> SceneInteractionResponse:
-        graph = WorldGraph(materialize_compositions(copy.deepcopy(request.source_json)))
+        graph = World(materialize(copy.deepcopy(request.source_json)))
         resolved = resolve_interaction(
             graph.state_for_rules(),
             InteractionRequest(
@@ -33,7 +33,7 @@ class SimulationService:
                 failures=list(resolved.failures),
                 source_json=graph.to_scene(),
             )
-        mutation = MutationPipeline(graph).apply_action(
+        mutation = ActionExecutor(graph).execute(
             resolved.action,
             step=int(graph.world_state.get("step") or 0),
         )
@@ -46,9 +46,9 @@ class SimulationService:
         )
 
     def tick(self, request: SceneTickRequest) -> SceneInteractionResponse:
-        graph = WorldGraph(materialize_compositions(copy.deepcopy(request.source_json)))
-        pipeline = MutationPipeline(graph)
-        delta = pipeline.run_system(
+        graph = World(materialize(copy.deepcopy(request.source_json)))
+        executor = ActionExecutor(graph)
+        delta = executor.run(
             lambda state: advance_time(state, request.elapsed_steps)
         )
         return SceneInteractionResponse(

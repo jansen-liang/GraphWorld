@@ -4,14 +4,30 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any, Dict, Iterable, List, Optional
 
-from ..model import NodeType, make_node
-from ..states import DISCRETE_STATE_SPACE, DiscreteState, state_table_for_object
-from ..composition import composition_for
+from ..node import NodeType, make_node
+from ..state import DISCRETE_STATE_SPACE, DiscreteState, state_table_for_object
+from .object_templates import structure_for
 from ..placement import footprint_for, interior_spec_for, surface_spec_for
 from .object_model import ObjectFamily, ObjectFamilySpec, PlacementSpec, SystemDependency, infer_family
 
 
 ALLOWED_STATE_NAMES = frozenset(DISCRETE_STATE_SPACE)
+
+
+PROCESS_DEFINITIONS: dict[str, dict[str, Any]] = {
+    "printer": {"duration": 2, "inputs": (), "output": "receipt", "output_states": {}, "requires_water": False, "preserve": (), "resource_costs": {"count": 1, "amount": 1}},
+    "coffeemachine": {"duration": 2, "inputs": ("coffee_beans", "cup"), "output": "coffee", "output_states": {"temperature": "hot"}, "requires_water": True, "preserve": ("cup",)},
+    "coffee_machine": {"duration": 2, "inputs": ("coffee_beans", "cup"), "output": "coffee", "output_states": {"temperature": "hot"}, "requires_water": True, "preserve": ("cup",)},
+    "workbench": {"duration": 3, "inputs": ("bread", "tomato"), "output": "sandwich", "output_states": {"is_cooked": False, "temperature": "room"}, "requires_water": False, "preserve": ()},
+    "assembly_line": {"duration": 4, "inputs": ("component_a", "component_b"), "output": "finished_product", "output_states": {}, "requires_water": False, "preserve": ()},
+    "stove": {"duration": 3, "inputs": ("egg",), "output": "cooked_egg", "output_states": {"is_cooked": True, "temperature": "hot"}, "requires_water": False, "preserve": ()},
+}
+
+PROCESS_DURATIONS: dict[str, int] = {
+    **{name: int(spec["duration"]) for name, spec in PROCESS_DEFINITIONS.items()},
+    "washer": 3, "washing_machine": 3, "dishwasher": 3, "microwave": 2,
+    "clothesdryer": 4, "dryer": 4, "elevator": 2,
+}
 
 
 @dataclass(frozen=True)
@@ -98,6 +114,10 @@ PROCESS_PROFILE = lambda profile, duration: Capability(
     "process_profile",
     properties={"temporal_profile": profile, "process_duration_steps": int(duration)},
 )
+PROCESS_DEFINITION = lambda definition: Capability(
+    "process_definition",
+    properties={"process_definition": deepcopy(definition)},
+)
 CONTAINED_TEMPORAL_PROFILE = lambda profile, duration: Capability(
     "contained_temporal_profile",
     properties={"contained_temporal_profile": profile, "contained_process_duration_steps": int(duration)},
@@ -155,6 +175,11 @@ START_REQUIRES_CLOSED = Capability(
     properties={"requires_closed_to_start": True},
 )
 DUMPABLE = Capability("dumpable", actions=("dump",))
+FLUSHABLE = Capability("flushable", actions=("press",), properties={"press_effect": "flush"})
+TRANSPORT_DEVICE = Capability("transport_device", actions=("press",), properties={"press_effect": "transport"})
+RESOURCE_RECEIVER = Capability("resource_receiver", actions=("place",), properties={"accepts_resource_instances": True})
+TRASH_RECEIVER = Capability("trash_receiver", properties={"accepts_trash": True})
+COLD_STORAGE = Capability("cold_storage", properties={"stores_perishables": True})
 
 
 ACTION_CAPABILITIES = {
@@ -345,7 +370,7 @@ class ObjectTemplate:
             "max_capacity": self.max_capacity,
             "accepted_families": list(self.accepted_families),
             "required_process_capabilities": list(self.required_process_capabilities),
-            "composition": composition_for(self.semantic_type).to_dict(),
+            "structure": structure_for(self.semantic_type).to_dict(),
             **(surface_spec_for(self.semantic_type) or {}),
             **(footprint_for(self.semantic_type) or {}),
             **(interior_spec_for(self.semantic_type) or {}),
@@ -359,7 +384,7 @@ class ObjectTemplate:
             ),
         }
         # Old scene builders still pass parent while their output is converted
-        # to canonical edges by WorldGraph. Runtime nodes drop this field.
+        # to canonical edges by World. Runtime nodes drop this field.
         if parent:
             attributes["parent"] = str(parent)
         node = make_node(
@@ -409,9 +434,9 @@ class ObjectTemplate:
         interior = interior_spec_for(self.semantic_type)
         if interior:
             node.update(interior)
-        composition = composition_for(self.semantic_type).to_dict()
-        if composition["components"] or composition.get("storage"):
-            node["composition"] = composition
+        structure = structure_for(self.semantic_type).to_dict()
+        if structure["components"] or structure.get("storage"):
+            node["structure"] = structure
         if overrides:
             for key, value in overrides.items():
                 if key == "states" and isinstance(value, dict):
@@ -627,8 +652,9 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         "马桶",
         NodeType.FIXED_OBJECT,
         {"is_dirty": False},
-        ["move", "brush"],
+        ["move", "brush", "press"],
         "wall",
+        capabilities=(FLUSHABLE,),
     ),
     "shower": ObjectTemplate(
         "shower",
@@ -647,7 +673,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         ["move"],
         "wall",
-        capabilities=(OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER),
+        capabilities=(OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, COLD_STORAGE),
     ),
     "microwave": ObjectTemplate(
         "microwave",
@@ -669,6 +695,8 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_on": False, "is_dirty": False},
         ["move", "press", "brush"],
         "counter",
+        capabilities=(SWITCHABLE, TIMED_DEVICE, PLACE_TARGET,
+                      PROCESS_DEFINITION(PROCESS_DEFINITIONS["stove"])),
     ),
     "assembly_line": ObjectTemplate(
         "assembly_line",
@@ -678,7 +706,8 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_on": False, "is_running": False, "cycle_remaining": 0},
         ["move"],
         "room",
-        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, PLACE_TARGET),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, PLACE_TARGET,
+                      PROCESS_DEFINITION(PROCESS_DEFINITIONS["assembly_line"])),
     ),
     "washing_machine": ObjectTemplate(
         "washing_machine",
@@ -883,7 +912,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_open": False},
         ["move", "open", "close", "press"],
         "room",
-        capabilities=(OPENABLE,),
+        capabilities=(OPENABLE, TRANSPORT_DEVICE),
     ),
     "dispenser": ObjectTemplate(
         "dispenser",
@@ -1007,7 +1036,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {},
         ["move"],
         "wall",
-        capabilities=(OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER),
+        capabilities=(OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, COLD_STORAGE),
     ),
     "milk": ObjectTemplate(
         "milk",
@@ -1046,7 +1075,8 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_on": False, "is_running": False, "cycle_remaining": 0, "is_dirty": False, "count": 0, "amount": 0},
         ["move", "press", "brush", "place"],
         "table",
-        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, FINITE_RESOURCE, PLACE_TARGET),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, FINITE_RESOURCE, PLACE_TARGET, RESOURCE_RECEIVER,
+                      PROCESS_DEFINITION(PROCESS_DEFINITIONS["printer"])),
         resource_capacity={"count": 100, "amount": 20},
     ),
     "receipt": ObjectTemplate(
@@ -1076,7 +1106,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False},
         ["move", "place"],
         "wall",
-        capabilities=(PLACE_TARGET,),
+        capabilities=(PLACE_TARGET, TRASH_RECEIVER),
     ),
     "signboard": ObjectTemplate(
         "signboard",
@@ -1152,7 +1182,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         {"is_dirty": False},
         ["pick", "place"],
         "room",
-        capabilities=(PLACE_TARGET,),
+        capabilities=(PLACE_TARGET, TRASH_RECEIVER),
     ),
     "vegetable": ObjectTemplate(
         "vegetable",
@@ -1300,7 +1330,8 @@ OBJECT_LIBRARY.update({
         rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, PERISHABLE, COOKABLE), states={"is_dirty": False}),
     "workbench": _candidate_template("workbench", "料理台", family=ObjectFamily.APPLIANCE,
         rooms=("kitchen",), parents=("counter", "table"), node_type=NodeType.FIXED_OBJECT,
-        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, PLACE_TARGET),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, PLACE_TARGET,
+                      PROCESS_DEFINITION(PROCESS_DEFINITIONS["workbench"])),
         states={"is_on": False, "is_running": False, "cycle_remaining": 0}),
     "egg": _candidate_template("egg", "鸡蛋", family=ObjectFamily.FOOD,
         rooms=("kitchen",), parents=("counter", "refrigerator", "sink"), capabilities=(PICKABLE, PERISHABLE, COOKABLE)),
@@ -1381,7 +1412,8 @@ OBJECT_LIBRARY.update({
         rooms=("bathroom", "bedroom"), parents=("floor",), capabilities=(PICKABLE, PLACE_TARGET, OPENABLE), mode="room"),
     "coffeemachine": _candidate_template("coffeemachine", "咖啡机", family=ObjectFamily.APPLIANCE,
         rooms=("kitchen",), parents=("counter", "table"), node_type=NodeType.FIXED_OBJECT,
-        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, CLEANABLE), states={"is_on": False, "is_running": False, "cycle_remaining": 0}),
+        capabilities=(SWITCHABLE, TIMED_DEVICE, WORKBENCH, CLEANABLE,
+                      PROCESS_DEFINITION(PROCESS_DEFINITIONS["coffeemachine"])), states={"is_on": False, "is_running": False, "cycle_remaining": 0}),
     "coffee": _candidate_template("coffee", "咖啡", family=ObjectFamily.FOOD,
         rooms=("kitchen",), parents=("counter", "table"), capabilities=(PICKABLE, PERISHABLE), states={"is_dirty": False}),
     "spraybottle": _candidate_template("spraybottle", "喷雾瓶", family=ObjectFamily.CONTAINER,
@@ -1487,7 +1519,7 @@ def get_object_template(name: str) -> Dict[str, Any]:
         "blocks_navigation": spec.get("blocks_navigation"),
         "blocks_containment": spec.get("blocks_containment"),
         "requires_closed_to_start": spec.get("requires_closed_to_start"),
-        "composition": deepcopy(spec.get("composition") or {"components": []}),
+        "structure": deepcopy(spec.get("structure") or spec.get("composition") or {"components": []}),
     }
 
 
@@ -1562,3 +1594,21 @@ def get_objects_for_room(room_type: str) -> List[str]:
         ],
     }
     return list(room_map.get(room_type, []))
+
+
+def materialize(scene: dict[str, Any]) -> dict[str, Any]:
+    """Instantiate template declarations into canonical Node + Edge records."""
+    from .object_templates import materialize_templates
+
+    return materialize_templates(scene)
+
+
+def template_for(semantic_type: str) -> ObjectTemplate | None:
+    return OBJECT_LIBRARY.get(str(semantic_type or "").lower())
+
+
+__all__ = [
+    "Capability", "OBJECT_LIBRARY", "ObjectTemplate", "PROCESS_DEFINITIONS", "PROCESS_DURATIONS", "materialize", "template_for",
+    "build_object_node", "get_object_spec", "get_object_template", "get_objects_for_room",
+    "list_available_objects", "list_object_types",
+]

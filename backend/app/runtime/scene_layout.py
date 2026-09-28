@@ -5,8 +5,8 @@ import math
 from collections import defaultdict, deque
 from typing import Any
 
-from backend.core.composition import validate_composition_nodes
-from backend.core.composition import composition_for
+from backend.core.assets.object_templates import validate_templates
+from backend.core.assets.object_templates import structure_for
 
 
 GRID_SIZE_METERS = 0.1
@@ -676,10 +676,10 @@ def ensure_scene_layout(source_json: dict[str, Any], catalog_dimensions: dict[st
     nodes = [node for node in source.get("nodes") or [] if isinstance(node, dict) and node.get("id")]
     for node in nodes:
         semantic_type = str(node.get("semantic_type") or node.get("object_type") or "").lower()
-        if "composition" not in node:
-            composition = composition_for(semantic_type).to_dict()
-            if composition["components"] or composition.get("storage"):
-                node["composition"] = composition
+        if "structure" not in node and "composition" not in node:
+            structure = structure_for(semantic_type).to_dict()
+            if structure["components"] or structure.get("storage"):
+                node["structure"] = structure
     nodes_by_id = {str(node["id"]): node for node in nodes}
     parent_of = {
         str(edge.get("target_id") or ""): str(edge.get("source_id") or "")
@@ -765,7 +765,7 @@ def validate_scene_layout(source_json: dict[str, Any]) -> list[str]:
     if len(nonempty_ids) != len(set(nonempty_ids)):
         issues.append("Node IDs must be unique.")
     nodes_by_id = {str(node.get("id")): node for node in nodes if node.get("id")}
-    issues.extend(validate_composition_nodes(nodes))
+    issues.extend(validate_templates(nodes))
     edges = source_json.get("edges") or []
     edge_issues = _validate_scene_graph_edges(nodes_by_id, edges)
     issues.extend(edge_issues)

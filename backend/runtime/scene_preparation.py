@@ -4,7 +4,7 @@ import copy
 from typing import Any
 
 from backend.core.assets.npc_library import get_default_npcs
-from backend.core.system import scene_resource_pool_specs
+from backend.core.systems.resource import scene_resource_pool_specs
 from backend.runtime.scene_utils import node, scene_type
 
 

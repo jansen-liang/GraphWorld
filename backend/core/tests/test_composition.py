@@ -1,6 +1,6 @@
-from backend.core.composition import composition_for, materialize_compositions, validate_composition_nodes
+from backend.core.assets.object_templates import structure_for, materialize_templates, validate_templates
 from backend.core.assets.object_library import OBJECT_LIBRARY
-from backend.core.world_graph import WorldGraph
+from backend.core.world import World
 
 
 def test_device_and_storage_templates_expose_composition_contracts():
@@ -8,12 +8,12 @@ def test_device_and_storage_templates_expose_composition_contracts():
     toilet = OBJECT_LIBRARY["toilet"].instantiate("toilet_01")
     cabinet = OBJECT_LIBRARY["cabinet"].instantiate("cabinet_01")
 
-    assert {item["role"] for item in washer["composition"]["components"]} == {"hinge", "door", "start_button"}
+    assert {item["role"] for item in washer["structure"]["components"]} == {"hinge", "door", "start_button"}
     for semantic_type in ("washing_machine", "washer", "microwave", "dishwasher", "dryer", "clothesdryer"):
-        start_button = next(item for item in composition_for(semantic_type).to_dict()["components"] if item["role"] == "start_button")
+        start_button = next(item for item in structure_for(semantic_type).to_dict()["components"] if item["role"] == "start_button")
         assert start_button["mount_face"] == "top"
-    assert toilet["composition"]["components"][0]["role"] == "flush_button"
-    assert {key: cabinet["composition"]["storage"][key] for key in ("kind", "levels", "columns", "depth_cm", "drawer_count", "slot_semantic_type")} == {
+    assert toilet["structure"]["components"][0]["role"] == "flush_button"
+    assert {key: cabinet["structure"]["storage"][key] for key in ("kind", "levels", "columns", "depth_cm", "drawer_count", "slot_semantic_type")} == {
         "kind": "mixed",
         "levels": 3,
         "columns": 2,
@@ -22,17 +22,17 @@ def test_device_and_storage_templates_expose_composition_contracts():
         "slot_semantic_type": "storage_slot",
     }
     for semantic_type in ("microwave", "dishwasher"):
-        roles = {item["role"] for item in OBJECT_LIBRARY[semantic_type].instantiate(semantic_type)["composition"]["components"]}
+        roles = {item["role"] for item in OBJECT_LIBRARY[semantic_type].instantiate(semantic_type)["structure"]["components"]}
         assert roles == {"hinge", "door", "start_button"}
-    assert {item["role"] for item in composition_for("clothesdryer").to_dict()["components"]} == {"hinge", "door", "start_button"}
+    assert {item["role"] for item in structure_for("clothesdryer").to_dict()["components"]} == {"hinge", "door", "start_button"}
 
 
 def test_composition_validation_checks_hosts_and_mount_faces():
-    assert validate_composition_nodes([
-        {"id": "washer", "composition": composition_for("washer").to_dict()},
+    assert validate_templates([
+        {"id": "washer", "structure": structure_for("washer").to_dict()},
         {"id": "washer_button", "component_of": "washer", "relation": "controls"},
     ]) == []
-    issues = validate_composition_nodes([
+    issues = validate_templates([
         {"id": "button", "component_of": "missing", "relation": "component_of"},
         {"id": "cabinet", "composition": {"components": [{"role": "bad", "mount_face": "diagonal"}]}},
     ])
@@ -43,7 +43,7 @@ def test_composition_validation_checks_hosts_and_mount_faces():
 def test_materialization_adds_control_and_storage_children_idempotently():
     host = OBJECT_LIBRARY["cabinet"].instantiate("cabinet_01")
     scene = {"nodes": [host], "edges": []}
-    materialize_compositions(scene)
+    materialize_templates(scene)
     first_ids = {node["id"] for node in scene["nodes"]}
     assert "cabinet_01_door" in first_ids
     assert "cabinet_01_drawer_1" in first_ids
@@ -56,17 +56,17 @@ def test_materialization_adds_control_and_storage_children_idempotently():
     assert set(("open", "close", "place")).issubset(drawer["interactive_actions"])
     washer = OBJECT_LIBRARY["washing_machine"].instantiate("washer_01")
     control_scene = {"nodes": [washer], "edges": []}
-    materialize_compositions(control_scene)
+    materialize_templates(control_scene)
     assert any(edge["relation"] == "controls" for edge in control_scene["edges"])
     assert any(node["id"] == "washer_01_hinge" and node["component_role"] == "hinge" for node in control_scene["nodes"])
     assert any(edge["relation"] == "hinge_of" and edge["source_id"] == "washer_01_hinge" and edge["target_id"] == "washer_01_door" for edge in control_scene["edges"])
     assert any(edge["relation"] == "slides_in" and edge["source_id"] == "cabinet_01_drawer_1" and edge["target_id"] == "cabinet_01" for edge in scene["edges"])
-    materialize_compositions(scene)
+    materialize_templates(scene)
     assert {node["id"] for node in scene["nodes"]} == first_ids
     assert sum(edge.get("relation") == "slides_in" for edge in scene["edges"]) == 2
     assert sum(edge.get("relation") == "hinge_of" for edge in scene["edges"]) == 1
     scene["edges"] = [edge for edge in scene["edges"] if edge.get("relation") != "hinge_of"]
-    materialize_compositions(scene)
+    materialize_templates(scene)
     assert sum(edge.get("relation") == "hinge_of" for edge in scene["edges"]) == 1
 
 
@@ -74,7 +74,7 @@ def test_door_bearing_storage_templates_materialize_real_access_and_slots():
     for semantic_type, expected_levels in (("medicine_fridge", 3), ("locker", 4)):
         host = OBJECT_LIBRARY[semantic_type].instantiate(f"{semantic_type}_01")
         scene = {"nodes": [host], "edges": []}
-        materialize_compositions(scene)
+        materialize_templates(scene)
         nodes = {node["id"]: node for node in scene["nodes"]}
         assert f"{semantic_type}_01_hinge" in nodes
         door = nodes[f"{semantic_type}_01_door"]
@@ -95,7 +95,7 @@ def test_appliance_storage_slots_materialize_capacity_and_required_abilities():
     for semantic_type, (capacity, abilities) in expectations.items():
         host = OBJECT_LIBRARY[semantic_type].instantiate(f"{semantic_type}_01")
         scene = {"nodes": [host], "edges": []}
-        materialize_compositions(scene)
+        materialize_templates(scene)
         slot = next(node for node in scene["nodes"] if node.get("component_role") == "storage_slot")
         assert slot["max_capacity"] == capacity
         assert slot["states"]["capacity"] == capacity
@@ -109,29 +109,29 @@ def test_legacy_partial_appliance_composition_inherits_missing_storage():
         "node_type": "fixed_object",
         "semantic_type": "washer",
         "states": {"is_open": False},
-        "composition": {"components": current["composition"]["components"]},
+        "composition": {"components": current["structure"]["components"]},
     }
     scene = {"nodes": [legacy], "edges": []}
 
-    materialize_compositions(scene)
+    materialize_templates(scene)
 
     slot = next(node for node in scene["nodes"] if node.get("component_role") == "storage_slot")
     assert slot["id"] == "washer_slot_l1_c1"
     assert slot["requires_contained_capabilities"] == ["washable"]
-    assert scene["nodes"][0]["composition"]["storage"]["capacity_per_slot"] == 6
+    assert scene["nodes"][0]["structure"]["storage"]["capacity_per_slot"] == 6
 
 
 def test_dresser_is_drawer_storage_not_a_single_block():
     host = OBJECT_LIBRARY["dresser"].instantiate("dresser_01")
     scene = {"nodes": [host], "edges": []}
-    materialize_compositions(scene)
+    materialize_templates(scene)
     drawers = [node for node in scene["nodes"] if node.get("component_role") == "drawer"]
     assert len(drawers) == 3
     assert all({"open", "close", "place"}.issubset(node["interactive_actions"]) for node in drawers)
 
 
 def test_mechanical_relations_round_trip_through_scene_graph():
-    graph = WorldGraph({
+    graph = World({
         "scene_name": "mechanical",
         "nodes": [{"id": "hinge"}, {"id": "door"}, {"id": "drawer"}, {"id": "cabinet"}],
         "edges": [
@@ -156,7 +156,7 @@ def test_vase_template_starts_with_empty_numeric_water_quantity():
 
 
 def test_water_level_normalization_is_bounded():
-    from backend.core.states import normalize_discrete_value
+    from backend.core.state import normalize_discrete_value
 
     assert normalize_discrete_value("water_level", -5) == 0.0
     assert normalize_discrete_value("water_level", 125) == 100.0

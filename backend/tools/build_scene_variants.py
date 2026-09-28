@@ -15,7 +15,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from backend.core.assets.npc_library import ROLE_SCHEDULES, get_default_npcs
-from backend.core.states import DISCRETE_STATE_SPACE
+from backend.core.state import DISCRETE_STATE_SPACE
 
 BASE_SCENES = (
     "simple_home_1f",

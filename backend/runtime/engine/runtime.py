@@ -3,17 +3,17 @@ from __future__ import annotations
 import copy
 from typing import Any
 
-from backend.core.actions import ActionType
+from backend.core.action import ActionType
 from backend.core.assets.npc_library import EventPrecondition, get_event_spec
 from backend.core.rules import advance_time
-from backend.core.composition import materialize_compositions
-from backend.core.world_graph import WorldGraph
-from backend.core.mutation import MutationPipeline
+from backend.core.assets.object_library import materialize
+from backend.core.world import World
+from backend.core.action import ActionExecutor
 from .validator import validate_action
 
 
 class System:
-    def __init__(self, graph: WorldGraph):
+    def __init__(self, graph: World):
         self.graph = graph
 
 
@@ -33,7 +33,7 @@ class RobotActionSystem(System):
             return {"ok": False, "reason": validation.reason}
 
         held_before = str(action.get("object") or self.graph.held_by(agent_id))
-        mutation = MutationPipeline(self.graph).apply_action(
+        mutation = ActionExecutor(self.graph).execute(
             action, step=int(self.graph.world_state.get("step") or 0)
         )
         if not mutation.ok:
@@ -352,7 +352,7 @@ class HumanEventSystem(System):
 
     def apply_human_event(self, event: str | dict[str, Any]) -> dict[str, Any]:
         result: dict[str, Any] = {}
-        delta = MutationPipeline(self.graph).run_system(
+        delta = ActionExecutor(self.graph).run(
             lambda _state: result.update(self._apply_human_event(event))
         )
         result["delta"] = delta.to_dict()
@@ -362,7 +362,7 @@ class HumanEventSystem(System):
 class EnvironmentSystem(System):
     def advance_time(self) -> list[str]:
         completed: list[str] = []
-        MutationPipeline(self.graph).run_system(
+        ActionExecutor(self.graph).run(
             lambda state: completed.extend(advance_time(state, 1))
         )
         for node_id in completed:
@@ -371,7 +371,7 @@ class EnvironmentSystem(System):
 
 
 class Perception:
-    def __init__(self, graph: WorldGraph, *, confidence_horizon: int = 12):
+    def __init__(self, graph: World, *, confidence_horizon: int = 12):
         self.graph = graph
         self.confidence_horizon = max(1, int(confidence_horizon))
         self.last_seen: dict[str, dict[str, int]] = {}
@@ -512,7 +512,7 @@ class Perception:
 
 class Orchestrator:
     def __init__(self, scene: dict[str, Any], *, confidence_horizon: int = 12):
-        self.graph = WorldGraph(materialize_compositions(copy.deepcopy(scene)))
+        self.graph = World(materialize(copy.deepcopy(scene)))
         self.robot_actions = RobotActionSystem(self.graph)
         self.human_events = HumanEventSystem(self.graph)
         self.environment = EnvironmentSystem(self.graph)
@@ -562,7 +562,7 @@ __all__ = [
     "Orchestrator",
     "Perception",
     "RobotActionSystem",
-    "WorldGraph",
+    "World",
     "System",
     "run_runtime",
 ]

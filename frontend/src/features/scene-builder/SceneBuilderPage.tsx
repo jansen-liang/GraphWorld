@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Box, Check, CopyPlus, DoorOpen, Network, PanelsTopLeft, Save, Trash2, Warehouse } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { getScene, getSceneGraph, listObjectCatalog, listSceneVersions, publishSceneLayout, simulateSceneInteraction, tickSceneSimulation, validateSceneLayout } from "../../api/scenes";
 import { useAuth } from "../../app/auth";
@@ -97,6 +97,8 @@ export function SceneBuilderPage() {
   const [templateId, setTemplateId] = useState("");
   const [validation, setValidation] = useState<SceneLayoutValidation | null>(null);
   const [view, setView] = useState<"2d" | "3d" | "graph">("2d");
+  const [simulationActive, setSimulationActive] = useState(false);
+  const pendingSimulationSourceRef = useRef<SceneSource | null>(null);
 
   const scene = useQuery({ queryKey: ["scene", sceneId], queryFn: () => getScene(sceneId), enabled: Boolean(sceneId) });
   const versions = useQuery({ queryKey: ["scene-versions", sceneId], queryFn: () => listSceneVersions(sceneId), enabled: Boolean(sceneId) });
@@ -175,12 +177,34 @@ export function SceneBuilderPage() {
       return simulateSceneInteraction(draft as Record<string, unknown>, { actorId, ...request });
     },
     onSuccess: (result) => {
-      setDraft(result.source_json as SceneSource);
+      const source = result.source_json as SceneSource;
+      if (simulationActive) {
+        const currentById = new Map(nodes.map((node) => [text(node.id), node]));
+        (source.nodes ?? []).forEach((nextNode) => {
+          const current = currentById.get(text(nextNode.id));
+          if (current) Object.assign(current, nextNode);
+        });
+        pendingSimulationSourceRef.current = source;
+      } else {
+        setDraft(source);
+      }
     },
   });
   const tickMutation = useMutation({
     mutationFn: () => tickSceneSimulation(draft as Record<string, unknown>),
-    onSuccess: (result) => setDraft(result.source_json as SceneSource),
+    onSuccess: (result) => {
+      const source = result.source_json as SceneSource;
+      if (simulationActive) {
+        const currentById = new Map(nodes.map((node) => [text(node.id), node]));
+        (source.nodes ?? []).forEach((nextNode) => {
+          const current = currentById.get(text(nextNode.id));
+          if (current) Object.assign(current, nextNode);
+        });
+        pendingSimulationSourceRef.current = source;
+      } else {
+        setDraft(source);
+      }
+    },
   });
   const hasRunningDevice = nodes.some((node) => Boolean((node.states as Record<string, unknown> | undefined)?.is_running));
   useEffect(() => {
@@ -411,7 +435,7 @@ export function SceneBuilderPage() {
             <button className={view === "graph" ? "active" : ""} type="button" onClick={() => setView("graph")} role="tab" aria-selected={view === "graph"}><Network size={15} /> Graph</button>
           </div>
           {view === "2d" && <FloorplanCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} />}
-          {view === "3d" && <Scene3DCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} onPlacementChange={updatePlacementEdge} catalog={objectCatalog.data ?? []} onSimulationInteraction={(request) => interactionMutation.mutate(request)} onSimulationMove={(roomId) => interactionMutation.mutate({ targetId: roomId, hand: "right", hit: { node_id: roomId }, input: "move" })} />}
+          {view === "3d" && <Scene3DCanvas nodes={nodes} edges={edges} layout={layout} selectedId={selectedId} onSelect={setSelectedId} onChange={updateLayout} onPlacementChange={updatePlacementEdge} catalog={objectCatalog.data ?? []} onSimulationInteraction={(request) => interactionMutation.mutate(request)} onSimulationMove={(roomId) => interactionMutation.mutate({ targetId: roomId, hand: "right", hit: { node_id: roomId }, input: "move" })} onSimulationActiveChange={(active) => { setSimulationActive(active); if (!active && pendingSimulationSourceRef.current) { setDraft(pendingSimulationSourceRef.current); pendingSimulationSourceRef.current = null; } }} />}
           {view === "graph" && <div className="builder-graph-stage"><SceneGraphCanvas nodes={nodes} edges={edges} selectedNodeId={selectedId} onSelectNode={setSelectedId} /></div>}
         </main>
 

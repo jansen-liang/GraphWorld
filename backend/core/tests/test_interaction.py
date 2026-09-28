@@ -1,11 +1,11 @@
 from backend.core.agent import profile_for_agent
 from backend.core.interaction import InteractionRequest, resolve_interaction
-from backend.core.mutation import MutationPipeline
-from backend.core.world_graph import WorldGraph
+from backend.core.action import ActionExecutor
+from backend.core.world import World
 
 
 def _graph(*extra_nodes):
-    return WorldGraph({
+    return World({
         "nodes": [
             {"id": "room", "node_type": "room", "states": {}},
             {"id": "robot", "node_type": "robot", "parent": "room", "states": {}},
@@ -26,7 +26,7 @@ def _graph(*extra_nodes):
 def _apply_interaction(graph, request):
     resolved = resolve_interaction(graph.state_for_rules(), request)
     assert resolved.action is not None, resolved.failures
-    return resolved, MutationPipeline(graph).apply_action(resolved.action)
+    return resolved, ActionExecutor(graph).execute(resolved.action)
 
 
 def test_interaction_resolves_open_and_pick_without_exposing_business_input():

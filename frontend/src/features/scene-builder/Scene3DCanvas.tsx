@@ -22,6 +22,7 @@ interface Scene3DCanvasProps {
   onInteractionHit?: (hit: InteractionHit) => void;
   onSimulationInteraction: (request: { targetId: string; hand: "left" | "right"; hit: InteractionHit }) => void;
   onSimulationMove: (roomId: string) => void;
+  onSimulationActiveChange?: (active: boolean) => void;
 }
 
 function text(value: unknown): string {
@@ -82,7 +83,7 @@ function normalizeQuarterTurn(radians: number): number {
 type WallSide = "north" | "east" | "south" | "west";
 const OPPOSITE_WALL: Record<WallSide, WallSide> = { north: "south", east: "west", south: "north", west: "east" };
 
-export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onChange, onPlacementChange, catalog, onInteractionHit, onSimulationInteraction, onSimulationMove }: Scene3DCanvasProps) {
+export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onChange, onPlacementChange, catalog, onInteractionHit, onSimulationInteraction, onSimulationMove, onSimulationActiveChange }: Scene3DCanvasProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const selectRef = useRef(onSelect);
   const changeRef = useRef(onChange);
@@ -91,6 +92,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
   const simulationMoveRef = useRef(onSimulationMove);
   const pendingSimulationLayoutRef = useRef<FloorplanLayout | null>(null);
   const cameraStateRef = useRef<{ position: THREE.Vector3; target: THREE.Vector3 } | null>(null);
+  const simulationStateRef = useRef<{ player: THREE.Vector3; yaw: number; pitch: number; roomId: string } | null>(null);
   const selectionVisualsRef = useRef(new Map<string, THREE.Object3D>());
   const transformControlsRef = useRef<TransformControls | null>(null);
   const rotationControlsRef = useRef<TransformControls | null>(null);
@@ -463,8 +465,9 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           .add(new THREE.Vector3(x, baseHeight + (item.z_cm ?? 0) / 100 + height / 2, z));
       const selected = selectedId === objectId;
       const states = node?.states as Record<string, unknown> | undefined;
-      const composition = node?.composition && typeof node.composition === "object"
-        ? node.composition as { components?: Array<Record<string, unknown>>; storage?: Record<string, unknown> }
+      const structureValue = node?.structure ?? node?.composition;
+      const composition = structureValue && typeof structureValue === "object"
+        ? structureValue as { components?: Array<Record<string, unknown>>; storage?: Record<string, unknown> }
         : null;
       const componentNodes = componentNodesByHost.get(objectId) ?? [];
       const componentNodeForRole = (role: string, index?: number) => componentNodes.find((componentNode) => {
@@ -1172,23 +1175,35 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
 
     const center = new THREE.Vector3(allWidth / 2, 0.8, allDepth / 2);
     const savedCamera = cameraStateRef.current;
-    controls.target.copy(savedCamera?.target ?? center);
+    const initialTarget = savedCamera?.target ?? center;
+    controls.target.copy(initialTarget);
     camera.position.copy(savedCamera?.position ?? new THREE.Vector3(allWidth * 0.95, Math.max(8, allDepth * 0.95), allDepth * 1.15));
-    camera.lookAt(center);
+    camera.lookAt(initialTarget);
     controls.update();
     const editorCamera = {
       position: camera.position.clone(),
       target: controls.target.clone(),
     };
+    const savedSimulation = simulationStateRef.current;
     const simulation = {
-      active: false,
-      yaw: 0,
-      pitch: 0,
+      active: Boolean(savedSimulation),
+      yaw: savedSimulation?.yaw ?? 0,
+      pitch: savedSimulation?.pitch ?? 0,
       keys: new Set<string>(),
       lastFrame: performance.now(),
-      player: new THREE.Vector3(center.x, 1.6, center.z),
-      roomId: actorRoomId,
+      player: savedSimulation?.player.clone() ?? new THREE.Vector3(center.x, 1.6, center.z),
+      roomId: savedSimulation?.roomId ?? actorRoomId,
     };
+    if (simulation.active) {
+      camera.position.copy(simulation.player);
+      camera.rotation.set(simulation.pitch, simulation.yaw, 0, "YXZ");
+      controls.enabled = false;
+      simulationActiveRef.current = true;
+      transformControls.detach();
+      transformControls.getHelper().visible = false;
+      rotationControls.detach();
+      rotationControls.getHelper().visible = false;
+    }
     const cameraDirection = new THREE.Vector3();
     // Keep the first-person hand marker subtle; it is a visual pose cue, not
     // the player's collision or grasp volume.
@@ -1255,6 +1270,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       simulation.roomId = actorRoomId || roomEntries[0]?.[0] || "";
       simulation.active = true;
       simulationActiveRef.current = true;
+      onSimulationActiveChange?.(true);
       controls.enabled = false;
       transformControls.detach();
       transformControls.getHelper().visible = false;
@@ -1267,7 +1283,9 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     const stopSimulation = () => {
       if (!simulation.active) return;
       simulation.active = false;
+      simulationStateRef.current = null;
       simulationActiveRef.current = false;
+      onSimulationActiveChange?.(false);
       simulation.keys.clear();
       const pendingLayout = pendingSimulationLayoutRef.current;
       if (pendingLayout) {
@@ -1303,12 +1321,17 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       if (simulation.active && (event.code === "KeyQ" || event.code === "KeyE")) {
         event.preventDefault();
         if (!event.repeat) {
-          handsRef.current[event.code === "KeyQ" ? "left" : "right"] = true;
+          const hand = event.code === "KeyQ" ? "left" : "right";
+          handsRef.current[hand] = true;
           activeInteractionHand = event.code === "KeyQ" ? "left" : "right";
           pointer.set(0, 0);
           raycaster.setFromCamera(pointer, camera);
           const hit = findSimulationHit();
           if (hit) simulationClick(hit);
+          // Interaction is a click-like action, not a sustained hand pose.
+          // Reset immediately because the async scene update may replace the
+          // canvas before the browser delivers the matching keyup event.
+          handsRef.current[hand] = false;
         }
         return;
       }
@@ -1329,7 +1352,11 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     const onPointerLockChange = () => {
       const locked = document.pointerLockElement === renderer.domElement;
       setPointerLocked(locked);
-      if (!locked) simulation.keys.clear();
+      if (!locked) {
+        simulation.keys.clear();
+        handsRef.current.left = false;
+        handsRef.current.right = false;
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
@@ -1391,7 +1418,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         ?? hits.find((candidate) => candidate.object.userData.simulationSurface);
     }
     function findSimulationHit() {
-      return chooseSimulationHit(raycaster.intersectObjects(interactive, false)
+      return chooseSimulationHit(raycaster.intersectObjects(interactive, true)
         .filter((candidate) => !heldIds.has(String(candidate.object.userData.id || ""))));
     }
     const onPointerDown = (event: PointerEvent) => {
@@ -1420,7 +1447,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       }
 
       if (!simulation.active) renderer.domElement.setPointerCapture(event.pointerId);
-      const hits = raycaster.intersectObjects(interactive, false).filter((candidate) => !heldIds.has(String(candidate.object.userData.id || "")));
+      const hits = raycaster.intersectObjects(interactive, true).filter((candidate) => !heldIds.has(String(candidate.object.userData.id || "")));
       // Prefer the nearest actual object mesh. The floor is only a target in
       // simulation mode; it must never become an editor selection.
       const objectHit = hits.find((candidate) => objectMeshes.has(String(candidate.object.userData.id)));
@@ -1629,13 +1656,23 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           anchor.quaternion.copy(third ? new THREE.Quaternion().setFromEuler(new THREE.Euler(0, simulation.yaw, 0)) : camera.quaternion);
           hand.position.copy(anchor.position);
           hand.quaternion.copy(anchor.quaternion);
-          const shoulder = bodyOrigin.clone().add(new THREE.Vector3(side * 0.22, 0.45, -0.05).applyAxisAngle(new THREE.Vector3(0, 1, 0), simulation.yaw));
+          const shoulder = third
+            ? bodyOrigin.clone().add(new THREE.Vector3(side * 0.22, 0.45, -0.05).applyAxisAngle(new THREE.Vector3(0, 1, 0), simulation.yaw))
+            : camera.position.clone().add(new THREE.Vector3(side * 0.14, -0.16, -0.08).applyQuaternion(camera.quaternion));
           const rod = arms[left ? "left" : "right"];
-          rod.position.copy(shoulder).add(anchor.position).multiplyScalar(0.5);
-          rod.scale.set(1, shoulder.distanceTo(anchor.position), 1);
-          rod.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), anchor.position.clone().sub(shoulder).normalize());
-          hand.visible = true;
-          rod.visible = third || viewModeRef.current === "first";
+          const armVector = anchor.position.clone().sub(shoulder);
+          const armLength = Math.min(0.75, armVector.length());
+          if (armLength > 1e-4) {
+            const armEnd = shoulder.clone().add(armVector.normalize().multiplyScalar(armLength));
+            anchor.position.copy(armEnd);
+            hand.position.copy(armEnd);
+            rod.position.copy(shoulder).add(armEnd).multiplyScalar(0.5);
+            rod.scale.set(1, armLength, 1);
+            rod.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), armEnd.clone().sub(shoulder).normalize());
+          }
+          const pointerLocked = document.pointerLockElement === renderer.domElement;
+          hand.visible = pointerLocked;
+          rod.visible = pointerLocked;
         };
         // Only the hand that owns the held object enters the raised pose.
         // The other hand must stay at its resting joint angle.
@@ -1737,7 +1774,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       frame = requestAnimationFrame(animate);
     };
     animate();
-    return () => { if (simulation.active) { simulation.active = false; simulationActiveRef.current = false; if (document.pointerLockElement === renderer.domElement) document.exitPointerLock(); camera.position.copy(editorCamera.position); controls.target.copy(editorCamera.target); } cameraStateRef.current = { position: camera.position.clone(), target: controls.target.clone() }; simulationControllerRef.current = null; window.removeEventListener("keydown", onKeyDown); window.removeEventListener("keyup", onKeyUp); document.removeEventListener("mousemove", onMouseLook); document.removeEventListener("pointerlockchange", onPointerLockChange); commitTransform(); transformControls.detach(); transformControls.dispose(); transformControlsRef.current = null; rotationControls.detach(); rotationControls.dispose(); rotationControlsRef.current = null; cancelAnimationFrame(frame); observer.disconnect(); renderer.domElement.removeEventListener("pointerdown", onPointerDown); renderer.domElement.removeEventListener("pointermove", onPointerMove); renderer.domElement.removeEventListener("pointerup", onPointerUp); controls.dispose(); renderer.dispose(); sceneRef.current = null; scene.traverse((item) => { if (item instanceof THREE.Mesh) { item.geometry.dispose(); if (Array.isArray(item.material)) item.material.forEach((material) => material.dispose()); else item.material.dispose(); } }); host.replaceChildren(); };
+    return () => { handsRef.current.left = false; handsRef.current.right = false; if (simulation.active) { simulationStateRef.current = { player: simulation.player.clone(), yaw: simulation.yaw, pitch: simulation.pitch, roomId: simulation.roomId }; simulationActiveRef.current = false; if (document.pointerLockElement === renderer.domElement) document.exitPointerLock(); cameraStateRef.current = { position: editorCamera.position.clone(), target: editorCamera.target.clone() }; } else { simulationStateRef.current = null; cameraStateRef.current = { position: camera.position.clone(), target: controls.target.clone() }; } simulationControllerRef.current = null; window.removeEventListener("keydown", onKeyDown); window.removeEventListener("keyup", onKeyUp); document.removeEventListener("mousemove", onMouseLook); document.removeEventListener("pointerlockchange", onPointerLockChange); commitTransform(); transformControls.detach(); transformControls.dispose(); transformControlsRef.current = null; rotationControls.detach(); rotationControls.dispose(); rotationControlsRef.current = null; cancelAnimationFrame(frame); observer.disconnect(); renderer.domElement.removeEventListener("pointerdown", onPointerDown); renderer.domElement.removeEventListener("pointermove", onPointerMove); renderer.domElement.removeEventListener("pointerup", onPointerUp); controls.dispose(); renderer.dispose(); sceneRef.current = null; scene.traverse((item) => { if (item instanceof THREE.Mesh) { item.geometry.dispose(); if (Array.isArray(item.material)) item.material.forEach((material) => material.dispose()); else item.material.dispose(); } }); host.replaceChildren(); };
   }, [layout, nodes, labelsVisible, catalog, onInteractionHit, layerVisibility]);
 
   return <div className="scene3d-stage" aria-label="3D scene editor">

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from backend.core.model import POSITION_RELATIONS
+from backend.core.edge import POSITION_RELATIONS
 
 def node(scene: dict[str, Any], node_id: str) -> dict[str, Any] | None:
     for item in scene.get("nodes") or []:

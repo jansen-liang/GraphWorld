@@ -2,45 +2,26 @@
 
 from dataclasses import dataclass
 
+from ..assets.object_library import PROCESS_DEFINITIONS, PROCESS_DURATIONS
 
-APPLIANCE_CYCLE_STEPS: dict[str, int] = {
-    "washer": 3,
-    "washing_machine": 3,
-    "dishwasher": 3,
-    "microwave": 2,
-    "coffee_machine": 2,
-    "coffee_maker": 2,
-    "coffeemachine": 2,
-    "clothesdryer": 4,
-    "dryer": 4,
-    "printer": 2,
-    "toaster": 2,
-    "workbench": 3,
-    "assembly_line": 4,
-    "stove": 3,
-    "elevator": 2,
-}
+
+APPLIANCE_CYCLE_STEPS: dict[str, int] = PROCESS_DURATIONS
 
 DRYING_RACK_STEPS = 6
 
-CLOTH_SEMANTICS = frozenset({"clothes", "towel", "blanket"})
-TRASHABLE_SEMANTICS = frozenset({"food", "milk", "juice", "vegetable", "fruit", "raw_food", "cooked_food"})
-
-PLACE_TARGET_TYPES = frozenset({"room", "fixed_object"})
-BLOCKED_PLACE_TARGET_SEMANTICS = frozenset({"button", "switch", "door", "light", "display", "tv", "faucet", "knob"})
-SURFACE_SEMANTICS = frozenset({"drying_rack", "rack", "table", "counter", "shelf"})
-CONTAINMENT_CONTAINER_SEMANTICS = frozenset(
-    {
-        "fridge",
-        "refrigerator",
-        "microwave",
-        "washer",
-        "washing_machine",
-        "dishwasher",
-        "cabinet",
-        "drawer",
+TRASHABLE_SEMANTICS = frozenset(
+    {"food",
+      "milk",
+      "juice",
+      "vegetable",
+      "fruit",
+      "raw_food",
+      "cooked_food"
     }
 )
+
+PLACE_TARGET_TYPES = frozenset({"room", "fixed_object"})
+SURFACE_SEMANTICS = frozenset({"drying_rack", "rack", "table", "counter", "shelf"})
 
 
 @dataclass(frozen=True)
@@ -75,9 +56,6 @@ DUMP_RULES: dict[str, DumpRule] = {
 
 __all__ = [
     "APPLIANCE_CYCLE_STEPS",
-    "BLOCKED_PLACE_TARGET_SEMANTICS",
-    "CLOTH_SEMANTICS",
-    "CONTAINMENT_CONTAINER_SEMANTICS",
     "DRYING_RACK_STEPS",
     "DUMP_RULES",
     "DumpRule",
@@ -95,22 +73,36 @@ for recipe inputs; this module only schedules and commits the transition.
 
 from typing import Any
 
-from .assets.object_library import build_object_node
-from .predicates import children_of, mutable_states, node, semantic
-from .relationship_ops import move_relationship
+from ..assets.object_library import build_object_node
+from ..predicates import children_of, mutable_states, node, semantic
+from ..world import move_position
 
-RECIPE_SPECS = {
-    "printer": {"duration": 2, "inputs": (), "output": "receipt", "output_states": {}, "requires_water": False, "preserve": (), "resource_costs": {"count": 1, "amount": 1}},
-    "coffeemachine": {"duration": 2, "inputs": ("coffee_beans", "cup"), "output": "coffee", "output_states": {"temperature": "hot"}, "requires_water": True, "preserve": ("cup",)},
-    "coffee_machine": {"duration": 2, "inputs": ("coffee_beans", "cup"), "output": "coffee", "output_states": {"temperature": "hot"}, "requires_water": True, "preserve": ("cup",)},
-    "workbench": {"duration": 3, "inputs": ("bread", "tomato"), "output": "sandwich", "output_states": {"is_cooked": False, "temperature": "room"}, "requires_water": False, "preserve": ()},
-    # A multi-station-friendly production primitive. Inputs may be delivered
-    # by another station and placed inside the line before starting it.
-    "assembly_line": {"duration": 4, "inputs": ("component_a", "component_b"), "output": "finished_product", "output_states": {}, "requires_water": False, "preserve": ()},
-    "stove": {"duration": 3, "inputs": ("egg",), "output": "cooked_egg", "output_states": {"is_cooked": True, "temperature": "hot"}, "requires_water": False, "preserve": ()},
-}
+RECIPE_SPECS = PROCESS_DEFINITIONS
 
 PROCESS_WATER_COST = 25.0
+
+
+def process_definition(device: dict[str, Any]) -> dict[str, Any]:
+    """Read a process contract from capability materialized node data."""
+    definition = device.get("process_definition")
+    if isinstance(definition, dict):
+        return definition
+    capabilities = device.get("capability_properties") or {}
+    definition = capabilities.get("process_definition") if isinstance(capabilities, dict) else None
+    if isinstance(definition, dict):
+        return definition
+    # Compatibility for older snapshots that contain only semantic_type. The
+    # canonical source remains the template's capability declaration.
+    try:
+        from ..assets.object_library import OBJECT_LIBRARY
+        template = OBJECT_LIBRARY.get(semantic(device))
+        for capability in (template.capabilities if template else ()):
+            definition = capability.properties.get("process_definition")
+            if isinstance(definition, dict):
+                return definition
+    except (ImportError, AttributeError):
+        pass
+    return {}
 
 
 def _water_level(states: dict[str, Any]) -> float:
@@ -132,8 +124,8 @@ def start_process(state: dict[str, Any], device_id: str) -> bool:
     if any(str(p.get("device_id")) == str(device_id) for p in state.get("processes", [])):
         return False
     states = mutable_states(device)
-    if device_semantic in RECIPE_SPECS:
-        spec = RECIPE_SPECS[device_semantic]
+    spec = process_definition(device)
+    if spec:
         if spec.get("requires_water") and _water_level(states) < PROCESS_WATER_COST:
             return False
         for resource_key, cost in (spec.get("resource_costs") or {}).items():
@@ -161,7 +153,7 @@ def start_process(state: dict[str, Any], device_id: str) -> bool:
         "device_id": str(device_id),
         "remaining": duration,
         "output": output,
-        "recipe": str(device_semantic),
+        "recipe": str(spec.get("recipe") or device_semantic),
         "started_step": int(state.setdefault("world_state", {}).get("step", 0) or 0),
     }
     state.setdefault("processes", []).append(process)
@@ -169,7 +161,7 @@ def start_process(state: dict[str, Any], device_id: str) -> bool:
         "type": "process_started",
         "device_id": str(device_id),
         "output": output,
-        "recipe": str(device_semantic),
+        "recipe": str(spec.get("recipe") or device_semantic),
         "duration": duration,
         "input_ids": [child_id for child_id, child_sem in _children_semantics(state, device_id) if child_sem in spec.get("inputs", ())],
     })
@@ -178,9 +170,8 @@ def start_process(state: dict[str, Any], device_id: str) -> bool:
 
 def process_ready(state: dict[str, Any], device_id: str) -> bool:
     device = node(state, device_id)
-    device_semantic = semantic(device)
-    if device_semantic in RECIPE_SPECS:
-        spec = RECIPE_SPECS[device_semantic]
+    spec = process_definition(device)
+    if spec:
         if spec.get("requires_water") and _water_level(device.get("states") or {}) < PROCESS_WATER_COST:
             return False
         states = device.get("states") or {}
@@ -209,7 +200,7 @@ def advance_processes(state: dict[str, Any]) -> list[str]:
         device_states["is_on"] = False
         device_states["is_running"] = False
         output_type = str(process.get("output") or "receipt")
-        spec = RECIPE_SPECS.get(semantic(device), {})
+        spec = process_definition(device)
         preserve = set(spec.get("preserve", ()))
         for child_id, child_semantic in _children_semantics(state, device_id):
             if child_semantic in spec.get("inputs", ()) and child_semantic not in preserve:
@@ -236,7 +227,7 @@ def advance_processes(state: dict[str, Any]) -> list[str]:
         output_states = output.setdefault("states", {})
         output_states.update(dict(spec.get("output_states") or {}))
         state.setdefault("nodes", {})[output_id] = output
-        move_relationship(state, output_id, output_parent, output_relation)
+        move_position(state, output_id, output_parent, output_relation)
         state.setdefault("world_state", {}).setdefault("event_log", []).append({
             "type": "process_completed",
             "device_id": device_id,
@@ -253,14 +244,14 @@ def advance_processes(state: dict[str, Any]) -> list[str]:
     return completed
 
 
-__all__ = ["RECIPE_SPECS", "advance_processes", "process_ready", "start_process"]
+__all__ = ["RECIPE_SPECS", "advance_processes", "process_definition", "process_ready", "start_process"]
 
 from typing import Any
 
-from .predicates import descendants_of, mutable_states, node, object_capabilities, object_property, parent_of, semantic
-from .states import DiscreteState
-from .relationship_ops import move_relationship
-from .temporal import apply_effects, temporal_effects, contained_profile, contextual_duration, profile_duration
+from ..predicates import descendants_of, mutable_states, node, object_capabilities, object_property, parent_of, semantic
+from ..state import DiscreteState
+from ..world import move_position
+from ..temporal import apply_effects, temporal_effects, contained_profile, contextual_duration, profile_duration
 
 
 def _template_property(item: dict[str, Any], property_name: str, default: Any = None) -> Any:
@@ -268,7 +259,7 @@ def _template_property(item: dict[str, Any], property_name: str, default: Any = 
     if value is not None:
         return value
     try:
-        from .assets.object_library import OBJECT_LIBRARY
+        from ..assets.object_library import OBJECT_LIBRARY
         template = OBJECT_LIBRARY.get(semantic(item))
         return template._property(property_name, default) if template else default
     except (ImportError, AttributeError):
@@ -296,26 +287,27 @@ def apply_timed_transitions(state: dict[str, Any], step: int = 0) -> list[str]:
         if bool(item_states.get(DiscreteState.IS_PRESSED.value, False)):
             item_states[DiscreteState.IS_PRESSED.value] = False
         configured_duration = profile_duration(item)
-        if not configured_duration and item_semantic not in APPLIANCE_CYCLE_STEPS:
+        process_duration = int(process_definition(item).get("duration") or 0)
+        if not configured_duration and not process_duration and "transport_device" not in object_capabilities(item):
             continue
         if not bool(item_states.get(DiscreteState.IS_RUNNING.value, item_states.get(DiscreteState.IS_ON.value, False))):
             continue
         item_states[DiscreteState.IS_RUNNING.value] = True
-        remaining = int(item_states.get(DiscreteState.CYCLE_REMAINING.value) or configured_duration or APPLIANCE_CYCLE_STEPS[item_semantic])
+        remaining = int(item_states.get(DiscreteState.CYCLE_REMAINING.value) or configured_duration or process_duration or 2)
         remaining = max(0, remaining - 1)
         item_states[DiscreteState.CYCLE_REMAINING.value] = remaining
         if remaining > 0:
             continue
         item_states[DiscreteState.IS_ON.value] = False
         item_states[DiscreteState.IS_RUNNING.value] = False
-        if item_semantic == "elevator":
+        if "transport_device" in object_capabilities(item):
             destination = str(item.get("requested_room") or "")
             served = {str(room_id) for room_id in item.get("served_rooms") or item.get("transport_rooms") or []}
             if destination and destination in served and destination in state.get("nodes", {}):
                 for child_id, child_parent in list(parent_map.items()):
                     if child_parent != node_id:
                         continue
-                    move_relationship(state, child_id, destination, "at")
+                    move_position(state, child_id, destination, "at")
                     state.setdefault("room_of", {})[child_id] = destination
                 item["current_room"] = destination
             item.pop("requested_room", None)
@@ -333,7 +325,7 @@ def apply_timed_transitions(state: dict[str, Any], step: int = 0) -> list[str]:
             profile = item.get("temporal_profile") or {}
             if not profile:
                 try:
-                    from .assets.object_library import OBJECT_LIBRARY
+                    from ..assets.object_library import OBJECT_LIBRARY
                     template = OBJECT_LIBRARY.get(item_semantic)
                     if template:
                         profile = template._property("temporal_profile", {})
@@ -549,9 +541,7 @@ def _advance_natural_changes(state: dict[str, Any], step: int) -> None:
                 })
             elif states["freshness"] <= float(profile.get("spoiled_below") or 50.0):
                 states["is_spoiled"] = True
-        elif states.get("is_dirty") is False and semantic_type in {
-            "plate", "cup", "mug", "bowl", "table", "counter", "desk", "floor", "sink", "toilet",
-        }:
+        elif states.get("is_dirty") is False and "cleanable" in object_capabilities(item):
             # Dirt accumulation is deliberately slow and opt-out via a world
             # flag, so short planning episodes remain stable by default.
             if world.get("natural_dirt_enabled", False):

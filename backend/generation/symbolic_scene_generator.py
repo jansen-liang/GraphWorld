@@ -9,7 +9,7 @@ import random
 from typing import Any
 
 from backend.core.assets.object_library import build_object_node
-from backend.core.model import NodeType, make_node
+from backend.core.node import NodeType, make_node
 from backend.core.assets.room_library import room_types_for_scene
 
 

@@ -6,13 +6,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
 
-from backend.core.actions import ActionType
+from backend.core.action import ActionType
 from backend.core.assets.npc_library import NPC_EVENT_LIBRARY
 from backend.core.assets.object_library import OBJECT_LIBRARY
 from backend.core.assets.room_library import ROOM_LIBRARY
 from backend.core.assets.task_library import SKILLS_BY_NAME
-from backend.core.model import SpatialRelation
-from backend.core.states import DISCRETE_STATE_SPACE
+from backend.core.edge import SpatialRelation
+from backend.core.state import DISCRETE_STATE_SPACE
 
 
 ROOT = Path(__file__).resolve().parents[3]

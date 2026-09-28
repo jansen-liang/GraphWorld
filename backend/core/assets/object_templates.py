@@ -16,7 +16,7 @@ MOUNT_FACES = frozenset({"front", "back", "left", "right", "top", "bottom", "int
 
 
 @dataclass(frozen=True)
-class ComponentSpec:
+class ComponentTemplate:
     role: str
     semantic_type: str
     node_type: str = "control_object"
@@ -48,7 +48,7 @@ class ComponentSpec:
 
 
 @dataclass(frozen=True)
-class StorageTopology:
+class StorageSpec:
     kind: str = "open"
     levels: int = 1
     columns: int = 1
@@ -78,9 +78,9 @@ class StorageTopology:
 
 
 @dataclass(frozen=True)
-class CompositionSpec:
-    components: tuple[ComponentSpec, ...] = ()
-    storage: StorageTopology | None = None
+class ObjectStructure:
+    components: tuple[ComponentTemplate, ...] = ()
+    storage: StorageSpec | None = None
 
     def to_dict(self) -> dict[str, Any]:
         payload: dict[str, Any] = {"components": [item.to_dict() for item in self.components]}
@@ -89,107 +89,107 @@ class CompositionSpec:
         return payload
 
 
-def _component(role: str, semantic_type: str, *, face: str = "front", anchor: tuple[float, float, float] = (0.5, 0.5, 0.0), node_type: str = "control_object", capabilities: tuple[str, ...] = (), optional: bool = False, repeatable: bool = False) -> ComponentSpec:
-    return ComponentSpec(role, semantic_type, node_type=node_type, mount_face=face, anchor=anchor, capabilities=capabilities, optional=optional, repeatable=repeatable)
+def _component(role: str, semantic_type: str, *, face: str = "front", anchor: tuple[float, float, float] = (0.5, 0.5, 0.0), node_type: str = "control_object", capabilities: tuple[str, ...] = (), optional: bool = False, repeatable: bool = False) -> ComponentTemplate:
+    return ComponentTemplate(role, semantic_type, node_type=node_type, mount_face=face, anchor=anchor, capabilities=capabilities, optional=optional, repeatable=repeatable)
 
 
-DEFAULT_COMPOSITIONS: dict[str, CompositionSpec] = {
-    "rack": CompositionSpec(storage=StorageTopology(kind="shelved", levels=3, columns=1, depth_cm=35.0, capacity_per_slot=6)),
-    "drying_rack": CompositionSpec(storage=StorageTopology(kind="shelved", levels=3, columns=1, depth_cm=45.0, capacity_per_slot=6)),
-    "shoe_rack": CompositionSpec(storage=StorageTopology(kind="shelved", levels=3, columns=2, depth_cm=32.0, capacity_per_slot=4)),
-    "shelf": CompositionSpec(storage=StorageTopology(kind="shelved", levels=4, columns=1, depth_cm=32.0, capacity_per_slot=8)),
-    "washing_machine": CompositionSpec(components=(
+DEFAULT_STRUCTURES: dict[str, ObjectStructure] = {
+    "rack": ObjectStructure(storage=StorageSpec(kind="shelved", levels=3, columns=1, depth_cm=35.0, capacity_per_slot=6)),
+    "drying_rack": ObjectStructure(storage=StorageSpec(kind="shelved", levels=3, columns=1, depth_cm=45.0, capacity_per_slot=6)),
+    "shoe_rack": ObjectStructure(storage=StorageSpec(kind="shelved", levels=3, columns=2, depth_cm=32.0, capacity_per_slot=4)),
+    "shelf": ObjectStructure(storage=StorageSpec(kind="shelved", levels=4, columns=1, depth_cm=32.0, capacity_per_slot=8)),
+    "washing_machine": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.48, 0.0), capabilities=("openable",)),
         _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
-    ), storage=StorageTopology(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=6, accepted_capabilities=("washable",))),
-    "washer": CompositionSpec(components=(
+    ), storage=StorageSpec(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=6, accepted_capabilities=("washable",))),
+    "washer": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.48, 0.0), capabilities=("openable",)),
         _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
-    ), storage=StorageTopology(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=6, accepted_capabilities=("washable",))),
-    "microwave": CompositionSpec(components=(
+    ), storage=StorageSpec(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=6, accepted_capabilities=("washable",))),
+    "microwave": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.5, 0.0), capabilities=("openable",)),
         _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
-    ), storage=StorageTopology(kind="open", levels=1, columns=1, depth_cm=35.0, capacity_per_slot=1, accepted_capabilities=("cookable",))),
-    "dishwasher": CompositionSpec(components=(
+    ), storage=StorageSpec(kind="open", levels=1, columns=1, depth_cm=35.0, capacity_per_slot=1, accepted_capabilities=("cookable",))),
+    "dishwasher": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.5, 0.0), capabilities=("openable",)),
         _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
-    ), storage=StorageTopology(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=8, accepted_capabilities=("dishwashable",))),
-    "dryer": CompositionSpec(components=(
+    ), storage=StorageSpec(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=8, accepted_capabilities=("dishwashable",))),
+    "dryer": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.48, 0.0), capabilities=("openable",)),
         _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
-    ), storage=StorageTopology(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=6, accepted_capabilities=("dryable",))),
-    "clothesdryer": CompositionSpec(components=(
+    ), storage=StorageSpec(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=6, accepted_capabilities=("dryable",))),
+    "clothesdryer": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.48, 0.0), capabilities=("openable",)),
         _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
-    ), storage=StorageTopology(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=6, accepted_capabilities=("dryable",))),
-    "elevator": CompositionSpec(components=(
+    ), storage=StorageSpec(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=6, accepted_capabilities=("dryable",))),
+    "elevator": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.5, 0.5, 0.0), capabilities=("openable",)),
         _component("floor_button", "button", face="interior", anchor=(0.86, 0.45, 0.0), capabilities=("switchable",), optional=True),
     )),
-    "toilet": CompositionSpec(components=(
+    "toilet": ObjectStructure(components=(
         _component("flush_button", "button", face="top", anchor=(0.72, 0.62, 0.0), capabilities=("switchable",)),
     )),
-    "refrigerator": CompositionSpec(components=(
+    "refrigerator": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.95, 0.5, 0.0), capabilities=("openable",)),
         _component("storage_slot", "storage_slot", face="interior", anchor=(0.5, 0.5, 0.5), node_type="fixed_object", capabilities=("place_target",), repeatable=True),
-    ), storage=StorageTopology(kind="shelved", levels=4, columns=1, depth_cm=55.0, capacity_per_slot=8)),
-    "medicine_fridge": CompositionSpec(components=(
+    ), storage=StorageSpec(kind="shelved", levels=4, columns=1, depth_cm=55.0, capacity_per_slot=8)),
+    "medicine_fridge": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.95, 0.5, 0.0), capabilities=("openable",)),
         _component("storage_slot", "storage_slot", face="interior", anchor=(0.5, 0.5, 0.5), node_type="fixed_object", capabilities=("place_target",), repeatable=True),
-    ), storage=StorageTopology(kind="shelved", levels=3, columns=1, depth_cm=30.0, capacity_per_slot=8)),
-    "locker": CompositionSpec(components=(
+    ), storage=StorageSpec(kind="shelved", levels=3, columns=1, depth_cm=30.0, capacity_per_slot=8)),
+    "locker": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
         _component("door", "door", face="front", anchor=(0.95, 0.5, 0.0), capabilities=("openable",)),
         _component("storage_slot", "storage_slot", face="interior", anchor=(0.5, 0.5, 0.5), node_type="fixed_object", capabilities=("place_target",), repeatable=True),
-    ), storage=StorageTopology(kind="shelved", levels=4, columns=1, depth_cm=35.0, capacity_per_slot=8)),
-    "cabinet": CompositionSpec(
+    ), storage=StorageSpec(kind="shelved", levels=4, columns=1, depth_cm=35.0, capacity_per_slot=8)),
+    "cabinet": ObjectStructure(
         components=(
             _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
             _component("door", "door", face="front", anchor=(0.5, 0.5, 0.0), capabilities=("openable",), optional=True),
             _component("storage_slot", "storage_slot", face="interior", anchor=(0.5, 0.5, 0.5), node_type="fixed_object", capabilities=("place_target",), repeatable=True),
         ),
-        storage=StorageTopology(kind="mixed", levels=3, columns=2, depth_cm=35.0, drawer_count=2, capacity_per_slot=8),
+        storage=StorageSpec(kind="mixed", levels=3, columns=2, depth_cm=35.0, drawer_count=2, capacity_per_slot=8),
     ),
-    "wardrobe": CompositionSpec(
+    "wardrobe": ObjectStructure(
         components=(
             _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="fixed_object"),
             _component("door", "door", face="front", anchor=(0.5, 0.5, 0.0), capabilities=("openable",), optional=True),
             _component("storage_slot", "storage_slot", face="interior", anchor=(0.5, 0.5, 0.5), node_type="fixed_object", capabilities=("place_target",), repeatable=True),
         ),
-        storage=StorageTopology(kind="mixed", levels=4, columns=2, depth_cm=55.0, drawer_count=2, capacity_per_slot=8),
+        storage=StorageSpec(kind="mixed", levels=4, columns=2, depth_cm=55.0, drawer_count=2, capacity_per_slot=8),
     ),
-    "dresser": CompositionSpec(
+    "dresser": ObjectStructure(
         components=(
             _component("storage_slot", "storage_slot", face="interior", anchor=(0.5, 0.5, 0.5), node_type="fixed_object", capabilities=("place_target",), repeatable=True),
         ),
-        storage=StorageTopology(kind="drawer", levels=3, columns=1, depth_cm=40.0, drawer_count=3, capacity_per_slot=8),
+        storage=StorageSpec(kind="drawer", levels=3, columns=1, depth_cm=40.0, drawer_count=3, capacity_per_slot=8),
     ),
-    "desk": CompositionSpec(
+    "desk": ObjectStructure(
         components=(
             _component("storage_slot", "storage_slot", face="interior", anchor=(0.5, 0.5, 0.5), node_type="fixed_object", capabilities=("place_target",), repeatable=True),
         ),
-        storage=StorageTopology(kind="mixed", levels=2, columns=1, depth_cm=42.0, drawer_count=2, capacity_per_slot=8),
+        storage=StorageSpec(kind="mixed", levels=2, columns=1, depth_cm=42.0, drawer_count=2, capacity_per_slot=8),
     ),
-    "drawer": CompositionSpec(components=(
+    "drawer": ObjectStructure(components=(
         _component("drawer_slot", "storage_slot", face="interior", anchor=(0.5, 0.5, 0.5), node_type="fixed_object", capabilities=("place_target",)),
     )),
 }
 
 
-def composition_for(semantic_type: str) -> CompositionSpec:
-    return DEFAULT_COMPOSITIONS.get(str(semantic_type or "").lower(), CompositionSpec())
+def structure_for(semantic_type: str) -> ObjectStructure:
+    return DEFAULT_STRUCTURES.get(str(semantic_type or "").lower(), ObjectStructure())
 
 
-def validate_composition_nodes(nodes: list[dict[str, Any]] | dict[str, dict[str, Any]]) -> list[str]:
+def validate_templates(nodes: list[dict[str, Any]] | dict[str, dict[str, Any]]) -> list[str]:
     """Validate declared component references without requiring generated IDs."""
     values = list(nodes.values()) if isinstance(nodes, dict) else nodes
     by_id = {str(item.get("id")): item for item in values if isinstance(item, dict) and item.get("id")}
@@ -198,8 +198,8 @@ def validate_composition_nodes(nodes: list[dict[str, Any]] | dict[str, dict[str,
         if not isinstance(item, dict):
             continue
         node_id = str(item.get("id") or "")
-        composition = item.get("composition") or {}
-        for component in composition.get("components") or []:
+        structure = item.get("structure") or item.get("composition") or {}
+        for component in structure.get("components") or []:
             if not isinstance(component, dict):
                 issues.append(f"{node_id} has an invalid composition component")
                 continue
@@ -214,14 +214,14 @@ def validate_composition_nodes(nodes: list[dict[str, Any]] | dict[str, dict[str,
     return issues
 
 
-def materialize_compositions(scene: dict[str, Any]) -> dict[str, Any]:
-    """Expand declared compositions into runtime child nodes and edges.
+def materialize_templates(scene: dict[str, Any]) -> dict[str, Any]:
+    """Expand declared structures into runtime child nodes and edges.
 
     The operation is idempotent and mutates the supplied scene in place. A
-    composition remains a declaration on the host node; generated children
+    structure remains a declaration on the host node; generated children
     carry ``component_of`` and their local mount metadata for renderers.
     """
-    from .assets.object_library import build_object_node
+    from .object_library import build_object_node
 
     nodes = scene.setdefault("nodes", [])
     if not isinstance(nodes, list):
@@ -241,17 +241,17 @@ def materialize_compositions(scene: dict[str, Any]) -> dict[str, Any]:
         node["node_type"] = str(spec.get("node_type") or node.get("node_type") or "fixed_object")
         node["component_of"] = host_id
         node["component_role"] = role
-        node["composition_materialized"] = True
+        node["structure_materialized"] = True
         node["mount_face"] = str(spec.get("mount_face") or "front")
         node["mount_anchor"] = list(spec.get("anchor") or (0.5, 0.5, 0.0))
         if semantic_type == "storage_slot":
             # A slot is a real placement volume, not only a visual divider.
-            depth = float((composition.get("storage") or {}).get("depth_cm") or 30.0)
-            levels = max(1, int((composition.get("storage") or {}).get("levels") or 1))
-            columns = max(1, int((composition.get("storage") or {}).get("columns") or 1))
+            depth = float((structure.get("storage") or {}).get("depth_cm") or 30.0)
+            levels = max(1, int((structure.get("storage") or {}).get("levels") or 1))
+            columns = max(1, int((structure.get("storage") or {}).get("columns") or 1))
             node["interior_size_cm"] = [120.0 / columns, depth, 100.0 / levels]
             node["volume_grid_cm"] = 1.0
-            storage = composition.get("storage") or {}
+            storage = structure.get("storage") or {}
             node["max_capacity"] = int(storage.get("capacity_per_slot") or 8)
             node["states"]["capacity"] = node["max_capacity"]
             accepted = storage.get("accepted_capabilities") or []
@@ -274,7 +274,7 @@ def materialize_compositions(scene: dict[str, Any]) -> dict[str, Any]:
             node["capabilities"] = ["openable", "place_target"]
             node["interactive_actions"] = ["open", "close", "place"]
             node.setdefault("states", {})["is_open"] = False
-            node["max_capacity"] = int((composition.get("storage") or {}).get("capacity_per_slot") or 8)
+            node["max_capacity"] = int((structure.get("storage") or {}).get("capacity_per_slot") or 8)
             node["states"]["capacity"] = node["max_capacity"]
         if index is not None:
             node["component_index"] = index
@@ -338,9 +338,9 @@ def materialize_compositions(scene: dict[str, Any]) -> dict[str, Any]:
         # Revisit materialized root hosts to repair newly introduced
         # mechanical edges, but never recursively materialize a generated
         # component (for example, a drawer's own storage slot).
-        if host.get("composition_materialized") and host.get("component_of"):
+        if host.get("structure_materialized") and host.get("component_of"):
             continue
-        composition = host.get("composition") or {}
+        structure = host.get("structure") or host.get("composition") or {}
         # Old snapshots can carry an earlier partial declaration (for
         # example, appliance controls without the later storage contract).
         # Preserve instance-authored components and fill only missing static
@@ -348,14 +348,15 @@ def materialize_compositions(scene: dict[str, Any]) -> dict[str, Any]:
         semantic_type = str(host.get("semantic_type") or "")
         if semantic_type:
             template = build_object_node("__template__", semantic_type)
-            template_composition = template.get("composition") or {}
-            if not composition and template_composition:
-                composition = deepcopy(template_composition)
-            elif template_composition.get("storage") and not composition.get("storage"):
-                composition = {**composition, "storage": deepcopy(template_composition["storage"])}
-            if composition:
-                host["composition"] = composition
-        component_specs = composition.get("components") or []
+            template_structure = template.get("structure") or template.get("composition") or {}
+            if not structure and template_structure:
+                structure = deepcopy(template_structure)
+            elif template_structure.get("storage") and not structure.get("storage"):
+                structure = {**structure, "storage": deepcopy(template_structure["storage"])}
+            if structure:
+                host["structure"] = structure
+                host.pop("composition", None)
+        component_specs = structure.get("components") or []
         for spec in component_specs:
             if not isinstance(spec, dict):
                 continue
@@ -365,7 +366,7 @@ def materialize_compositions(scene: dict[str, Any]) -> dict[str, Any]:
             child_id = f"{host_id}_{role}"
             add_child(host_id, child_id, spec, role=role)
 
-        storage = composition.get("storage") or {}
+        storage = structure.get("storage") or {}
         levels = max(1, int(storage.get("levels") or 1))
         columns = max(1, int(storage.get("columns") or 1))
         slot_spec = next((spec for spec in component_specs if isinstance(spec, dict) and spec.get("role") == "storage_slot"), None)
@@ -448,9 +449,10 @@ def materialize_compositions(scene: dict[str, Any]) -> dict[str, Any]:
                     "category": "physical",
                     "properties": {"host_id": host_id},
                 })
-        if composition.get("components") or composition.get("storage"):
-            host["composition_materialized"] = True
+        if structure.get("components") or structure.get("storage"):
+            host["structure_materialized"] = True
+            host.pop("composition_materialized", None)
     return scene
 
 
-__all__ = ["ComponentSpec", "CompositionSpec", "DEFAULT_COMPOSITIONS", "StorageTopology", "composition_for", "materialize_compositions", "validate_composition_nodes"]
+__all__ = ["ComponentTemplate", "ObjectStructure", "DEFAULT_STRUCTURES", "StorageSpec", "structure_for", "materialize_templates", "validate_templates"]

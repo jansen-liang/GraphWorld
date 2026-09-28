@@ -1,8 +1,8 @@
-from backend.core.actions import apply_action_schema
-from backend.core.composition import materialize_compositions
+from backend.core.action import apply_action_schema
+from backend.core.assets.object_library import materialize
 from backend.core.assets.object_library import OBJECT_LIBRARY
 from backend.core.rules import advance_time
-from backend.core.world_graph import WorldGraph
+from backend.core.world import World
 
 
 def _composite_state(host_type: str, item_type: str, *, item_states=None):
@@ -16,8 +16,8 @@ def _composite_state(host_type: str, item_type: str, *, item_states=None):
         ],
         "edges": [], "world_state": {},
     }
-    materialize_compositions(scene)
-    graph = WorldGraph(scene)
+    materialize(scene)
+    graph = World(scene)
     graph.move_node("item", "robot", "held_by")
     state = graph.state_for_rules()
     return state, "host_slot_l1_c1"
@@ -36,8 +36,8 @@ def test_dirty_clothes_washing_closure_uses_relations_capabilities_and_time():
         "edges": [],
         "world_state": {},
     }
-    materialize_compositions(scene)
-    graph = WorldGraph(scene)
+    materialize(scene)
+    graph = World(scene)
     graph.move_node("shirt", "robot", "held_by")
     state = graph.state_for_rules()
     nodes = state["nodes"]

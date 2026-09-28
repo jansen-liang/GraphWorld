@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Optional, Union
 
-from backend.core.states import DISCRETE_STATE_SPACE, normalize_discrete_value
+from backend.core.state import DISCRETE_STATE_SPACE, normalize_discrete_value
 
 
 MatrixValue = Union[int, str, None]
