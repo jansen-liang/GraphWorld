@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT_DIR))
 from backend.app.db.models import ObjectCatalog
 from backend.app.db.session import SessionLocal
 from backend.app.runtime.scene_layout import OBJECT_DIMENSIONS_CM, _object_dimensions_cm
-from backend.core.assets.object_library import OBJECT_LIBRARY
+from backend.generation.assets.object_library import OBJECT_LIBRARY
 
 
 # Catalog-level physical priors. These are object footprints, not grid cells.

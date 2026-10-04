@@ -5,8 +5,9 @@ import json
 import re
 from typing import Any
 
-from backend.core.assets.task_library import relevant_skills_for_nodes
+from backend.generation.assets.task_library import relevant_skills_for_nodes
 from backend.core.edge import POSITION_RELATIONS
+from backend.runtime.domain.queries import is_robot_movable
 from backend.runtime.engine import Orchestrator
 from backend.tools.agent import llm_query
 
@@ -120,17 +121,16 @@ def _compact_states(states: dict[str, Any]) -> dict[str, Any]:
     return compact
 
 
-class _RelationshipNode(dict[str, Any]):
-    """Read-only relationship projection used by legacy ranking formulas."""
+class _NodeIndex(dict[str, dict[str, Any]]):
+    """Node records and their edge-derived positional index."""
 
-    def __init__(self, item: dict[str, Any], parent_id: str = "") -> None:
-        super().__init__(item)
-        self._parent_id = parent_id
+    def __init__(self, nodes: dict[str, dict[str, Any]], parent_by_id: dict[str, str]):
+        super().__init__(nodes)
+        self.parent_by_id = parent_by_id
 
-    def get(self, key: str, default: Any = None) -> Any:
-        if key == "parent":
-            return self._parent_id or default
-        return super().get(key, default)
+
+def _parent_of(nodes: dict[str, dict[str, Any]], node_id: str) -> str:
+    return str(getattr(nodes, "parent_by_id", {}).get(str(node_id), ""))
 
 
 def _indexed_nodes(items: list[dict[str, Any]], edges: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
@@ -139,11 +139,11 @@ def _indexed_nodes(items: list[dict[str, Any]], edges: list[dict[str, Any]]) -> 
         for edge in edges
         if str(edge.get("relation") or "").lower() in POSITION_RELATIONS
     }
-    return {
-        str(item.get("id") or ""): _RelationshipNode(item, parent_by_id.get(str(item.get("id") or ""), ""))
+    return _NodeIndex({
+        str(item.get("id") or ""): dict(item)
         for item in items
         if item.get("id")
-    }
+    }, parent_by_id)
 
 
 def _node_index(observation: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -154,7 +154,7 @@ def _node_index(observation: dict[str, Any]) -> dict[str, dict[str, Any]]:
 def _scene_node_index(scene: dict[str, Any] | None) -> dict[str, dict[str, Any]]:
     if not scene:
         return {}
-    nodes = scene.get("nodes") if isinstance(scene.get("nodes"), list) else list((scene.get("node") or {}).values())
+    nodes = scene.get("nodes") if isinstance(scene.get("nodes"), list) else []
     return _indexed_nodes(list(nodes or []), _scene_edges(scene))
 
 
@@ -163,8 +163,6 @@ def _scene_edges(scene: dict[str, Any] | None) -> list[dict[str, Any]]:
         return []
     if isinstance(scene.get("edges"), list):
         return list(scene.get("edges") or [])
-    if isinstance(scene.get("edge"), dict):
-        return list((scene.get("edge") or {}).values())
     return []
 
 
@@ -176,7 +174,7 @@ def _room_of(node_id: str, nodes: dict[str, dict[str, Any]]) -> str:
         item = nodes.get(current) or {}
         if str(item.get("node_type") or "") == "room":
             return current
-        current = str(item.get("parent") or "")
+        current = _parent_of(nodes, current)
     return ""
 
 
@@ -184,13 +182,13 @@ def _robot_state(observation: dict[str, Any], nodes: dict[str, dict[str, Any]], 
     robot = nodes.get(agent_id) or {}
     holding = ""
     for node_id, item in nodes.items():
-        if str(item.get("parent") or "") == agent_id:
+        if _parent_of(nodes, node_id) == agent_id:
             holding = node_id
             break
     world = observation.get("world_state") or {}
     return {
         "step": world.get("step", 0),
-        "room_or_parent": robot.get("parent", ""),
+        "room_id": _parent_of(nodes, agent_id),
         "holding": holding,
         "visible_rooms": world.get("visible_rooms") or [],
     }
@@ -203,13 +201,13 @@ def _spatial_issues(
 ) -> list[dict[str, Any]]:
     issues = []
     for node_id, item in sorted(nodes.items()):
-        if node_id == agent_id or str(item.get("node_type") or "") == "robot":
+        if node_id == agent_id or str(item.get("node_type") or "") == "agent":
             continue
         initial = initial_nodes.get(node_id) or {}
-        if str(initial.get("node_type") or "") != "movable_object":
+        if not is_robot_movable(initial):
             continue
-        current_parent = str(item.get("parent") or "")
-        initial_parent = str(initial.get("parent") or "")
+        current_parent = _parent_of(nodes, node_id)
+        initial_parent = _parent_of(initial_nodes, node_id)
         if not current_parent or not initial_parent or current_parent == initial_parent:
             continue
         issues.append(
@@ -231,7 +229,7 @@ def _high_level_options(
     agent_id: str,
 ) -> list[str]:
     for node_id, item in sorted(nodes.items()):
-        if str(item.get("parent") or "") != agent_id:
+        if _parent_of(nodes, node_id) != agent_id:
             continue
         states = item.get("states") or {}
         semantic = str(item.get("semantic_type") or node_id)
@@ -243,7 +241,7 @@ def _high_level_options(
             return [f"dispose_food {node_id}"]
         if semantic == "cup" and (float(states.get("fill_level") or 0.0) > 0.0 or states.get("is_full") is True):
             return [f"empty_cup {node_id}"]
-        initial_parent = str((initial_nodes.get(node_id) or {}).get("parent") or "")
+        initial_parent = _parent_of(initial_nodes, node_id)
         if initial_parent and initial_parent != agent_id:
             return [f"restore_initial_position {node_id} -> {initial_parent}"]
 
@@ -251,7 +249,7 @@ def _high_level_options(
     for issue in _spatial_issues(nodes, initial_nodes, agent_id):
         options.append(f"restore_initial_position {issue['id']} -> {issue['initial_parent']}")
     for node_id, item in sorted(nodes.items()):
-        if node_id == agent_id or str(item.get("node_type") or "") == "robot":
+        if node_id == agent_id or str(item.get("node_type") or "") == "agent":
             continue
         states = item.get("states") or {}
         semantic = str(item.get("semantic_type") or node_id)
@@ -309,7 +307,7 @@ def _initial_context(initial_scene: dict[str, Any] | None, observation: dict[str
         if not actions:
             continue
         node_type = str(item.get("node_type") or "")
-        if node_type not in {"fixed_object", "control_object", "room"}:
+        if node_type not in {"object", "room"}:
             continue
         room = _room_of(node_id, initial_nodes)
         if node_id not in visible_rooms and node_id not in target_rooms and room not in relevant_rooms:
@@ -359,7 +357,7 @@ def _compact_nodes(
                 "id": node_id,
                 "semantic_type": item.get("semantic_type"),
                 "node_type": item.get("node_type"),
-                "parent": item.get("parent"),
+                "location_id": _parent_of(nodes, node_id),
                 "max_capacity": item.get("max_capacity", ""),
                 "states": compact_states,
             }
@@ -423,9 +421,9 @@ def _candidate_rank(
         garbage_station = str(active_goal.get("garbage_station") or "")
         goal_next_room = str(active_goal.get("next_room") or "")
         goal_robot_room = str(active_goal.get("robot_room") or "")
-        goal_object_parent = str((nodes.get(goal_object) or {}).get("parent") or active_goal.get("object_parent") or "")
+        goal_object_parent = str(_parent_of(nodes, goal_object) or active_goal.get("object_parent") or "")
         goal_object_room = _room_of(goal_object_parent, nodes) if goal_object_parent else str(active_goal.get("object_room") or "")
-        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_parent = str(_parent_of(nodes, target_id) or "")
         target_semantic = str(target.get("semantic_type") or "").lower()
         connected_rooms = {str(room_id) for room_id in target.get("connected_rooms") or []}
         if (
@@ -488,7 +486,7 @@ def _candidate_rank(
         sink = str(active_goal.get("sink") or active_goal.get("target") or "")
         goal_next_room = str(active_goal.get("next_room") or "")
         goal_robot_room = str(active_goal.get("robot_room") or "")
-        goal_object_parent = str((nodes.get(goal_object) or {}).get("parent") or active_goal.get("object_parent") or "")
+        goal_object_parent = str(_parent_of(nodes, goal_object) or active_goal.get("object_parent") or "")
         goal_object_room = _room_of(goal_object_parent, nodes) if goal_object_parent else str(active_goal.get("object_room") or "")
         connected_rooms = {str(room_id) for room_id in target.get("connected_rooms") or []}
         if (
@@ -525,9 +523,9 @@ def _candidate_rank(
         wardrobe = str(active_goal.get("wardrobe") or "")
         goal_next_room = str(active_goal.get("next_room") or "")
         goal_robot_room = str(active_goal.get("robot_room") or "")
-        goal_object_parent = str((nodes.get(goal_object) or {}).get("parent") or active_goal.get("object_parent") or "")
+        goal_object_parent = str(_parent_of(nodes, goal_object) or active_goal.get("object_parent") or "")
         goal_object_room = _room_of(goal_object_parent, nodes) if goal_object_parent else str(active_goal.get("object_room") or "")
-        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_parent = str(_parent_of(nodes, target_id) or "")
         target_semantic = str(target.get("semantic_type") or "").lower()
         connected_rooms = {str(room_id) for room_id in target.get("connected_rooms") or []}
         if (
@@ -650,9 +648,9 @@ def _candidate_rank(
         dishwasher_button = str(active_goal.get("dishwasher_button") or f"{dishwasher}_button")
         return_target = str(active_goal.get("return_target") or "")
         goal_next_room = str(active_goal.get("next_room") or "")
-        goal_object_parent = str((nodes.get(goal_object) or {}).get("parent") or active_goal.get("object_parent") or "")
+        goal_object_parent = str(_parent_of(nodes, goal_object) or active_goal.get("object_parent") or "")
         goal_object_room = _room_of(goal_object_parent, nodes) if goal_object_parent else str(active_goal.get("object_room") or "")
-        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_parent = str(_parent_of(nodes, target_id) or "")
         target_semantic = str(target.get("semantic_type") or "").lower()
         if phase == "load":
             if holding == goal_object:
@@ -705,8 +703,8 @@ def _candidate_rank(
         microwave = str(active_goal.get("microwave") or active_goal.get("target") or "")
         microwave_button = str(active_goal.get("microwave_button") or f"{microwave}_button")
         return_target = str(active_goal.get("return_target") or "")
-        goal_object_parent = str((nodes.get(goal_object) or {}).get("parent") or active_goal.get("object_parent") or "")
-        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        goal_object_parent = str(_parent_of(nodes, goal_object) or active_goal.get("object_parent") or "")
+        target_parent = str(_parent_of(nodes, target_id) or "")
         target_semantic = str(target.get("semantic_type") or "").lower()
         if phase == "load":
             if holding == goal_object:
@@ -756,7 +754,7 @@ def _candidate_rank(
         stove = str(active_goal.get("stove") or active_goal.get("target") or "")
         stove_button = str(active_goal.get("stove_button") or f"{stove}_button")
         return_target = str(active_goal.get("return_target") or "")
-        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_parent = str(_parent_of(nodes, target_id) or "")
         target_semantic = str(target.get("semantic_type") or "").lower()
         if phase == "prepare":
             if holding == egg_id:
@@ -767,7 +765,7 @@ def _candidate_rank(
             else:
                 if action == "pick" and object_id == egg_id:
                     return 130
-                if action == "move" and target_id == str((nodes.get(egg_id) or {}).get("parent") or ""):
+                if action == "move" and target_id == str(_parent_of(nodes, egg_id) or ""):
                     return 128
         if phase == "cook":
             if action == "press" and target_id in {stove, stove_button}:
@@ -799,10 +797,10 @@ def _candidate_rank(
         workbench = str(active_goal.get("workbench") or active_goal.get("target") or "")
         workbench_button = str(active_goal.get("workbench_button") or f"{workbench}_button")
         return_target = str(active_goal.get("return_target") or "")
-        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_parent = str(_parent_of(nodes, target_id) or "")
         target_semantic = str(target.get("semantic_type") or "").lower()
         if phase == "collect":
-            missing = [item_id for item_id in (bread_id, tomato_id) if str((nodes.get(item_id) or {}).get("parent") or "") != workbench]
+            missing = [item_id for item_id in (bread_id, tomato_id) if str(_parent_of(nodes, item_id) or "") != workbench]
             if holding in missing:
                 if action == "place" and target_id == workbench:
                     return 130
@@ -812,7 +810,7 @@ def _candidate_rank(
                 next_item = missing[0]
                 if action == "pick" and object_id == next_item:
                     return 130
-                if action == "move" and target_id == str((nodes.get(next_item) or {}).get("parent") or ""):
+                if action == "move" and target_id == str(_parent_of(nodes, next_item) or ""):
                     return 128
         if phase == "craft":
             if action == "press" and target_id in {workbench, workbench_button}:
@@ -840,9 +838,9 @@ def _candidate_rank(
         line = str(active_goal.get("assembly_line") or active_goal.get("target") or "")
         line_button = str(active_goal.get("assembly_line_button") or f"{line}_button")
         return_target = str(active_goal.get("return_target") or "")
-        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_parent = str(_parent_of(nodes, target_id) or "")
         if phase == "collect":
-            missing = [item_id for item_id in (component_a, component_b) if str((nodes.get(item_id) or {}).get("parent") or "") != line]
+            missing = [item_id for item_id in (component_a, component_b) if str(_parent_of(nodes, item_id) or "") != line]
             if holding in missing:
                 if action == "place" and target_id == line:
                     return 130
@@ -852,7 +850,7 @@ def _candidate_rank(
                 next_item = missing[0]
                 if action == "pick" and object_id == next_item:
                     return 130
-                if action == "move" and target_id == str((nodes.get(next_item) or {}).get("parent") or ""):
+                if action == "move" and target_id == str(_parent_of(nodes, next_item) or ""):
                     return 128
         if phase == "run":
             if action == "press" and target_id in {line, line_button}:
@@ -880,10 +878,10 @@ def _candidate_rank(
         machine = str(active_goal.get("coffee_machine") or active_goal.get("target") or "")
         machine_button = str(active_goal.get("coffee_machine_button") or f"{machine}_button")
         return_target = str(active_goal.get("return_target") or "")
-        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_parent = str(_parent_of(nodes, target_id) or "")
         target_semantic = str(target.get("semantic_type") or "").lower()
         if phase == "prepare":
-            missing = [item_id for item_id in (cup_id, beans_id) if str((nodes.get(item_id) or {}).get("parent") or "") != machine]
+            missing = [item_id for item_id in (cup_id, beans_id) if str(_parent_of(nodes, item_id) or "") != machine]
             if holding in missing:
                 if action == "place" and target_id == machine:
                     return 130
@@ -893,7 +891,7 @@ def _candidate_rank(
                 next_item = missing[0]
                 if action == "pick" and object_id == next_item:
                     return 130
-                if action == "move" and target_id == str((nodes.get(next_item) or {}).get("parent") or ""):
+                if action == "move" and target_id == str(_parent_of(nodes, next_item) or ""):
                     return 128
         if phase == "run":
             if action == "press" and target_id in {machine, machine_button}:
@@ -945,9 +943,9 @@ def _candidate_rank(
         goal_target = str(active_goal.get("target") or "")
         goal_next_room = str(active_goal.get("next_room") or "")
         goal_robot_room = str(active_goal.get("robot_room") or "")
-        goal_object_parent = str((nodes.get(goal_object) or {}).get("parent") or active_goal.get("object_parent") or "")
+        goal_object_parent = str(_parent_of(nodes, goal_object) or active_goal.get("object_parent") or "")
         goal_object_room = _room_of(goal_object_parent, nodes) if goal_object_parent else str(active_goal.get("object_room") or "")
-        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_parent = str(_parent_of(nodes, target_id) or "")
         target_semantic = str(target.get("semantic_type") or "").lower()
         connected_rooms = {str(room_id) for room_id in target.get("connected_rooms") or []}
         if (
@@ -1005,12 +1003,12 @@ def _candidate_rank(
         goal_object = str(active_goal.get("object") or "")
         goal_target = str(active_goal.get("target") or "")
         goal_target_room = _room_of(goal_target, initial_nodes) if goal_target else ""
-        goal_object_parent = str((nodes.get(goal_object) or {}).get("parent") or active_goal.get("object_parent") or "")
+        goal_object_parent = str(_parent_of(nodes, goal_object) or active_goal.get("object_parent") or "")
         goal_object_room = _room_of(goal_object_parent, nodes) if goal_object_parent else ""
         goal_object_room = goal_object_room or str(active_goal.get("object_room") or "")
         goal_next_room = str(active_goal.get("next_room") or "")
         goal_robot_room = str(active_goal.get("robot_room") or "")
-        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_parent = str(_parent_of(nodes, target_id) or "")
         target_semantic = str(target.get("semantic_type") or "").lower()
         connected_rooms = {str(room_id) for room_id in target.get("connected_rooms") or []}
         if (
@@ -1045,9 +1043,9 @@ def _candidate_rank(
                 return 113
 
     if holding:
-        initial_parent = str((initial_nodes.get(holding) or {}).get("parent") or "")
+        initial_parent = str(_parent_of(initial_nodes, holding) or "")
         initial_room = _room_of(initial_parent, initial_nodes) if initial_parent else ""
-        target_parent = str((nodes.get(target_id) or {}).get("parent") or "")
+        target_parent = str(_parent_of(nodes, target_id) or "")
         target_semantic = str(target.get("semantic_type") or "").lower()
         if action == "place" and target_id == initial_parent:
             return 100
@@ -1101,7 +1099,7 @@ def _ranked_prompt_candidates(
 ) -> list[tuple[int, int, dict[str, Any]]]:
     holding = ""
     for node_id, item in nodes.items():
-        if str(item.get("parent") or "") == agent_id:
+        if str(_parent_of(nodes, node_id) or "") == agent_id:
             holding = node_id
             break
     issues = _spatial_issues(nodes, initial_nodes, agent_id)

@@ -9,13 +9,29 @@
     "weather": "sunny",
     "day_phase": "dawn"
   },
+  "agent": {
+    "id": "robot_01",
+    "name": "robot_01",
+    "type": "agent",
+    "properties": {},
+    "current_room": "entrance",
+    "max_inventory": 2,
+    "state": {}
+  },
+  "variant_profile": "compact_cleaning",
+  "variant_axes": {
+    "topology": "compact",
+    "object_task": "cleaning"
+  },
+  "schema_version": 2,
+  "id_namespace": "editor",
   "nodes": [
     {
       "id": "F1",
       "name": "Floor 1",
       "name_cn": "第 1 层",
       "floor_number": 1,
-      "node_type": "fixed_object",
+      "node_type": "floor",
       "semantic_class": "space",
       "semantic_type": "floor",
       "mobility": "structural",
@@ -26,23 +42,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": null,
-      "child": [
-        "corridor_main",
-        "entrance",
-        "lobby",
-        "outpatient_clinic_1",
-        "outside_home",
-        "pharmacy",
-        "registration",
-        "staff_room",
-        "treatment_room",
-        "waiting_area"
-      ],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "F1"
     },
     {
       "id": "entrance",
@@ -61,21 +65,14 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "button_entrance",
-        "door_entrance",
-        "light_entrance",
-        "sanitizer_entrance",
-        "wheelchair_entrance"
-      ],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {
         "doorways": []
-      }
+      },
+      "editor_id": "entrance"
     },
     {
       "id": "wheelchair_entrance",
@@ -84,7 +81,7 @@
       "states": {
         "is_dirty": false
       },
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "wheelchair",
       "mobility": "movable",
@@ -94,13 +91,15 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "wheelchair_entrance",
+      "capabilities": [
+        "pickable"
+      ]
     },
     {
       "id": "sanitizer_entrance",
@@ -109,7 +108,7 @@
       "states": {
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "hand_sanitizer_dispenser",
       "mobility": "fixed",
@@ -119,12 +118,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "sanitizer_entrance"
     },
     {
       "id": "door_entrance",
@@ -134,7 +132,7 @@
         "is_dirty": false,
         "is_open": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -144,14 +142,13 @@
         "operation": "manual_door"
       },
       "affordance_count": 0,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "move",
         "open",
         "close"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "door_entrance"
     },
     {
       "id": "light_entrance",
@@ -160,7 +157,7 @@
       "states": {
         "is_on": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -170,12 +167,11 @@
         "operation": "button_only"
       },
       "affordance_count": 0,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "light_entrance"
     },
     {
       "id": "button_entrance",
@@ -185,7 +181,7 @@
         "is_on": false,
         "is_pressed": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -195,13 +191,12 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "button_entrance"
     },
     {
       "id": "lobby",
@@ -220,22 +215,14 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "bench_lobby",
-        "button_lobby",
-        "door_lobby",
-        "light_lobby",
-        "prescription_return_lobby",
-        "supply_zone_lobby"
-      ],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {
         "doorways": []
-      }
+      },
+      "editor_id": "lobby"
     },
     {
       "id": "bench_lobby",
@@ -246,7 +233,7 @@
         "fill_level": 0.0,
         "is_full": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "seat",
       "mobility": "fixed",
@@ -256,13 +243,12 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "lobby",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "bench_lobby"
     },
     {
       "id": "prescription_return_lobby",
@@ -271,7 +257,7 @@
       "states": {
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "storage",
       "semantic_type": "prescription_return",
       "mobility": "fixed",
@@ -281,14 +267,13 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "lobby",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {},
-      "max_capacity": 5
+      "max_capacity": 5,
+      "editor_id": "prescription_return_lobby"
     },
     {
       "id": "supply_zone_lobby",
@@ -297,7 +282,7 @@
       "states": {
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "storage",
       "semantic_type": "supply_zone",
       "mobility": "fixed",
@@ -307,14 +292,13 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "lobby",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {},
-      "max_capacity": 5
+      "max_capacity": 5,
+      "editor_id": "supply_zone_lobby"
     },
     {
       "id": "door_lobby",
@@ -324,7 +308,7 @@
         "is_dirty": false,
         "is_open": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -334,14 +318,13 @@
         "operation": "manual_door"
       },
       "affordance_count": 0,
-      "parent": "lobby",
-      "child": [],
       "interactive_actions": [
         "move",
         "open",
         "close"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "door_lobby"
     },
     {
       "id": "light_lobby",
@@ -350,7 +333,7 @@
       "states": {
         "is_on": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -360,12 +343,11 @@
         "operation": "button_only"
       },
       "affordance_count": 0,
-      "parent": "lobby",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "light_lobby"
     },
     {
       "id": "button_lobby",
@@ -375,7 +357,7 @@
         "is_on": false,
         "is_pressed": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -385,13 +367,12 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "lobby",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "button_lobby"
     },
     {
       "id": "registration",
@@ -410,22 +391,14 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "button_registration",
-        "computer_registration",
-        "counter_registration",
-        "door_registration",
-        "light_registration",
-        "printer_registration"
-      ],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {
         "doorways": []
-      }
+      },
+      "editor_id": "registration"
     },
     {
       "id": "counter_registration",
@@ -436,7 +409,7 @@
         "fill_level": 0.0,
         "is_full": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "counter",
       "mobility": "fixed",
@@ -446,16 +419,13 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "registration",
-      "child": [
-        "medical_form_registration"
-      ],
       "interactive_actions": [
         "move",
         "place",
         "brush"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "counter_registration"
     },
     {
       "id": "computer_registration",
@@ -465,7 +435,7 @@
         "is_on": false,
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "computer",
       "mobility": "fixed",
@@ -475,12 +445,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "registration",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "computer_registration"
     },
     {
       "id": "door_registration",
@@ -490,7 +459,7 @@
         "is_dirty": false,
         "is_open": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -500,14 +469,13 @@
         "operation": "manual_door"
       },
       "affordance_count": 0,
-      "parent": "registration",
-      "child": [],
       "interactive_actions": [
         "move",
         "open",
         "close"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "door_registration"
     },
     {
       "id": "light_registration",
@@ -516,7 +484,7 @@
       "states": {
         "is_on": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -526,12 +494,11 @@
         "operation": "button_only"
       },
       "affordance_count": 0,
-      "parent": "registration",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "light_registration"
     },
     {
       "id": "button_registration",
@@ -541,7 +508,7 @@
         "is_on": false,
         "is_pressed": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -551,13 +518,12 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "registration",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "button_registration"
     },
     {
       "id": "waiting_area",
@@ -576,21 +542,14 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "button_waiting_area",
-        "door_waiting_area",
-        "light_waiting_area",
-        "queue_screen_waiting_area",
-        "seats_waiting_area"
-      ],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {
         "doorways": []
-      }
+      },
+      "editor_id": "waiting_area"
     },
     {
       "id": "seats_waiting_area",
@@ -599,7 +558,7 @@
       "states": {
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "seat",
       "mobility": "fixed",
@@ -609,14 +568,13 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "waiting_area",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "brush"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "seats_waiting_area"
     },
     {
       "id": "queue_screen_waiting_area",
@@ -626,7 +584,7 @@
         "is_on": false,
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "display",
       "mobility": "fixed",
@@ -636,12 +594,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "waiting_area",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "queue_screen_waiting_area"
     },
     {
       "id": "door_waiting_area",
@@ -651,7 +608,7 @@
         "is_dirty": false,
         "is_open": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -661,14 +618,13 @@
         "operation": "manual_door"
       },
       "affordance_count": 0,
-      "parent": "waiting_area",
-      "child": [],
       "interactive_actions": [
         "move",
         "open",
         "close"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "door_waiting_area"
     },
     {
       "id": "light_waiting_area",
@@ -677,7 +633,7 @@
       "states": {
         "is_on": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -687,12 +643,11 @@
         "operation": "button_only"
       },
       "affordance_count": 0,
-      "parent": "waiting_area",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "light_waiting_area"
     },
     {
       "id": "button_waiting_area",
@@ -702,7 +657,7 @@
         "is_on": false,
         "is_pressed": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -712,13 +667,12 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "waiting_area",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "button_waiting_area"
     },
     {
       "id": "corridor_main",
@@ -737,20 +691,14 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "button_corridor_main",
-        "door_corridor_main",
-        "light_corridor_main",
-        "trash_bin_corridor_main"
-      ],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {
         "doorways": []
-      }
+      },
+      "editor_id": "corridor_main"
     },
     {
       "id": "trash_bin_corridor_main",
@@ -761,7 +709,7 @@
         "is_full": false,
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "trash_bin",
       "mobility": "fixed",
@@ -771,14 +719,13 @@
         "operation": ""
       },
       "affordance_count": 8,
-      "parent": "corridor_main",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {},
-      "max_capacity": 3
+      "max_capacity": 3,
+      "editor_id": "trash_bin_corridor_main"
     },
     {
       "id": "door_corridor_main",
@@ -788,7 +735,7 @@
         "is_dirty": false,
         "is_open": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -798,14 +745,13 @@
         "operation": "manual_door"
       },
       "affordance_count": 0,
-      "parent": "corridor_main",
-      "child": [],
       "interactive_actions": [
         "move",
         "open",
         "close"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "door_corridor_main"
     },
     {
       "id": "light_corridor_main",
@@ -814,7 +760,7 @@
       "states": {
         "is_on": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -824,12 +770,11 @@
         "operation": "button_only"
       },
       "affordance_count": 0,
-      "parent": "corridor_main",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "light_corridor_main"
     },
     {
       "id": "button_corridor_main",
@@ -839,7 +784,7 @@
         "is_on": false,
         "is_pressed": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -849,13 +794,12 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "corridor_main",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "button_corridor_main"
     },
     {
       "id": "outpatient_clinic_1",
@@ -874,23 +818,14 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "button_outpatient_clinic_1",
-        "computer_clinic_1",
-        "desk_clinic_1",
-        "door_outpatient_clinic_1",
-        "exam_bed_clinic_1",
-        "light_outpatient_clinic_1",
-        "prescription_sheet_clinic_1"
-      ],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {
         "doorways": []
-      }
+      },
+      "editor_id": "outpatient_clinic_1"
     },
     {
       "id": "exam_bed_clinic_1",
@@ -899,7 +834,7 @@
       "states": {
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "bed",
       "mobility": "fixed",
@@ -909,14 +844,13 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "outpatient_clinic_1",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "brush"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "exam_bed_clinic_1"
     },
     {
       "id": "desk_clinic_1",
@@ -927,7 +861,7 @@
         "fill_level": 0.0,
         "is_full": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "desk",
       "mobility": "fixed",
@@ -937,13 +871,12 @@
         "operation": ""
       },
       "affordance_count": 5,
-      "parent": "outpatient_clinic_1",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "desk_clinic_1"
     },
     {
       "id": "door_outpatient_clinic_1",
@@ -953,7 +886,7 @@
         "is_dirty": false,
         "is_open": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -963,14 +896,13 @@
         "operation": "manual_door"
       },
       "affordance_count": 0,
-      "parent": "outpatient_clinic_1",
-      "child": [],
       "interactive_actions": [
         "move",
         "open",
         "close"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "door_outpatient_clinic_1"
     },
     {
       "id": "light_outpatient_clinic_1",
@@ -979,7 +911,7 @@
       "states": {
         "is_on": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -989,12 +921,11 @@
         "operation": "button_only"
       },
       "affordance_count": 0,
-      "parent": "outpatient_clinic_1",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "light_outpatient_clinic_1"
     },
     {
       "id": "button_outpatient_clinic_1",
@@ -1004,7 +935,7 @@
         "is_on": false,
         "is_pressed": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1014,13 +945,12 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "outpatient_clinic_1",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "button_outpatient_clinic_1"
     },
     {
       "id": "treatment_room",
@@ -1039,24 +969,14 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "button_treatment_room",
-        "dirty_linen_bin_treatment_room",
-        "door_treatment_room",
-        "light_treatment_room",
-        "medical_cart_treatment_room",
-        "medical_waste_bin_treatment_room",
-        "supply_cabinet_treatment_room",
-        "treatment_bed_treatment_room"
-      ],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {
         "doorways": []
-      }
+      },
+      "editor_id": "treatment_room"
     },
     {
       "id": "treatment_bed_treatment_room",
@@ -1065,7 +985,7 @@
       "states": {
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "bed",
       "mobility": "fixed",
@@ -1075,16 +995,13 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "treatment_room",
-      "child": [
-        "dirty_sheet_treatment_room"
-      ],
       "interactive_actions": [
         "move",
         "place",
         "brush"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "treatment_bed_treatment_room"
     },
     {
       "id": "door_treatment_room",
@@ -1094,7 +1011,7 @@
         "is_dirty": false,
         "is_open": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -1104,14 +1021,13 @@
         "operation": "manual_door"
       },
       "affordance_count": 0,
-      "parent": "treatment_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "open",
         "close"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "door_treatment_room"
     },
     {
       "id": "light_treatment_room",
@@ -1120,7 +1036,7 @@
       "states": {
         "is_on": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -1130,12 +1046,11 @@
         "operation": "button_only"
       },
       "affordance_count": 0,
-      "parent": "treatment_room",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "light_treatment_room"
     },
     {
       "id": "button_treatment_room",
@@ -1145,7 +1060,7 @@
         "is_on": false,
         "is_pressed": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1155,13 +1070,12 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "treatment_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "button_treatment_room"
     },
     {
       "id": "pharmacy",
@@ -1180,22 +1094,14 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "button_pharmacy",
-        "door_pharmacy",
-        "light_pharmacy",
-        "medicine_box_pharmacy",
-        "medicine_fridge_pharmacy",
-        "shelf_pharmacy"
-      ],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {
         "doorways": []
-      }
+      },
+      "editor_id": "pharmacy"
     },
     {
       "id": "shelf_pharmacy",
@@ -1206,7 +1112,7 @@
         "fill_level": 0.0,
         "is_full": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "shelf",
       "mobility": "fixed",
@@ -1216,13 +1122,12 @@
         "operation": ""
       },
       "affordance_count": 6,
-      "parent": "pharmacy",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "shelf_pharmacy"
     },
     {
       "id": "medicine_box_pharmacy",
@@ -1231,7 +1136,7 @@
       "states": {
         "is_dirty": false
       },
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "medicine_box",
       "mobility": "movable",
@@ -1241,13 +1146,15 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "pharmacy",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "medicine_box_pharmacy",
+      "capabilities": [
+        "pickable"
+      ]
     },
     {
       "id": "door_pharmacy",
@@ -1257,7 +1164,7 @@
         "is_dirty": false,
         "is_open": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -1267,14 +1174,13 @@
         "operation": "manual_door"
       },
       "affordance_count": 0,
-      "parent": "pharmacy",
-      "child": [],
       "interactive_actions": [
         "move",
         "open",
         "close"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "door_pharmacy"
     },
     {
       "id": "light_pharmacy",
@@ -1283,7 +1189,7 @@
       "states": {
         "is_on": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -1293,12 +1199,11 @@
         "operation": "button_only"
       },
       "affordance_count": 0,
-      "parent": "pharmacy",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "light_pharmacy"
     },
     {
       "id": "button_pharmacy",
@@ -1308,7 +1213,7 @@
         "is_on": false,
         "is_pressed": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1318,13 +1223,12 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "pharmacy",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "button_pharmacy"
     },
     {
       "id": "staff_room",
@@ -1343,22 +1247,14 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "button_staff_room",
-        "doctor_coat_staff_room",
-        "door_staff_room",
-        "light_staff_room",
-        "locker_staff_room",
-        "nurse_uniform_staff_room"
-      ],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {
         "doorways": []
-      }
+      },
+      "editor_id": "staff_room"
     },
     {
       "id": "locker_staff_room",
@@ -1368,7 +1264,7 @@
         "is_open": false,
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "locker",
       "mobility": "fixed",
@@ -1378,12 +1274,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "staff_room",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "locker_staff_room"
     },
     {
       "id": "door_staff_room",
@@ -1393,7 +1288,7 @@
         "is_dirty": false,
         "is_open": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -1403,14 +1298,13 @@
         "operation": "manual_door"
       },
       "affordance_count": 0,
-      "parent": "staff_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "open",
         "close"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "door_staff_room"
     },
     {
       "id": "light_staff_room",
@@ -1419,7 +1313,7 @@
       "states": {
         "is_on": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -1429,12 +1323,11 @@
         "operation": "button_only"
       },
       "affordance_count": 0,
-      "parent": "staff_room",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "light_staff_room"
     },
     {
       "id": "button_staff_room",
@@ -1444,7 +1337,7 @@
         "is_on": false,
         "is_pressed": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1454,13 +1347,12 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "staff_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "button_staff_room"
     },
     {
       "id": "printer_registration",
@@ -1470,7 +1362,7 @@
         "is_on": false,
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "printer",
       "mobility": "fixed",
@@ -1480,12 +1372,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "registration",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "printer_registration"
     },
     {
       "id": "computer_clinic_1",
@@ -1495,7 +1386,7 @@
         "is_on": false,
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "computer",
       "mobility": "fixed",
@@ -1505,12 +1396,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "outpatient_clinic_1",
-      "child": [],
       "interactive_actions": [
         "move"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "computer_clinic_1"
     },
     {
       "id": "prescription_sheet_clinic_1",
@@ -1519,7 +1409,7 @@
       "states": {
         "is_dirty": false
       },
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "prescription_sheet",
       "mobility": "movable",
@@ -1529,13 +1419,15 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "outpatient_clinic_1",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "prescription_sheet_clinic_1",
+      "capabilities": [
+        "pickable"
+      ]
     },
     {
       "id": "medical_cart_treatment_room",
@@ -1546,7 +1438,7 @@
         "is_full": false,
         "is_dirty": false
       },
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "medical_cart",
       "mobility": "movable",
@@ -1556,14 +1448,16 @@
         "operation": ""
       },
       "affordance_count": 6,
-      "parent": "treatment_room",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
       ],
       "layout": {},
-      "max_capacity": 5
+      "max_capacity": 5,
+      "editor_id": "medical_cart_treatment_room",
+      "capabilities": [
+        "pickable"
+      ]
     },
     {
       "id": "medicine_fridge_pharmacy",
@@ -1577,7 +1471,7 @@
         "temperature": "cold",
         "is_dirty": false
       },
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "medicine_fridge",
       "mobility": "fixed",
@@ -1587,10 +1481,6 @@
         "operation": ""
       },
       "affordance_count": 10,
-      "parent": "pharmacy",
-      "child": [
-        "refrigerated_medicine_pharmacy"
-      ],
       "interactive_actions": [
         "move",
         "open",
@@ -1598,7 +1488,8 @@
         "place"
       ],
       "layout": {},
-      "max_capacity": 3
+      "max_capacity": 3,
+      "editor_id": "medicine_fridge_pharmacy"
     },
     {
       "id": "refrigerated_medicine_pharmacy",
@@ -1608,7 +1499,7 @@
         "temperature": "cold",
         "is_dirty": false
       },
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "refrigerated_medicine",
       "mobility": "movable",
@@ -1618,13 +1509,15 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "medicine_fridge_pharmacy",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "refrigerated_medicine_pharmacy",
+      "capabilities": [
+        "pickable"
+      ]
     },
     {
       "id": "nurse_uniform_staff_room",
@@ -1633,7 +1526,7 @@
       "states": {
         "is_dirty": false
       },
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "nurse_uniform",
       "mobility": "movable",
@@ -1643,12 +1536,14 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "staff_room",
-      "child": [],
       "interactive_actions": [
         "pick"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "nurse_uniform_staff_room",
+      "capabilities": [
+        "pickable"
+      ]
     },
     {
       "id": "doctor_coat_staff_room",
@@ -1657,7 +1552,7 @@
       "states": {
         "is_dirty": false
       },
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "doctor_coat",
       "mobility": "movable",
@@ -1667,12 +1562,14 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "staff_room",
-      "child": [],
       "interactive_actions": [
         "pick"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "doctor_coat_staff_room",
+      "capabilities": [
+        "pickable"
+      ]
     },
     {
       "id": "outside_home",
@@ -1691,23 +1588,18 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "doctor_1",
-        "nurse_1",
-        "patient_1"
-      ],
       "interactive_actions": [
         "move",
         "place"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "outside_home"
     },
     {
       "id": "patient_1",
       "name": "patient",
       "name_cn": "病人",
-      "node_type": "human",
+      "node_type": "agent",
       "semantic_class": "agent",
       "semantic_type": "human",
       "mobility": "fixed",
@@ -1718,19 +1610,18 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "outside_home",
-      "child": [],
       "interactive_actions": [],
       "layout": {},
       "role": "patient",
       "persona": "hospital_patient",
-      "current_activity": "away"
+      "current_activity": "away",
+      "editor_id": "patient_1"
     },
     {
       "id": "nurse_1",
       "name": "nurse",
       "name_cn": "护士",
-      "node_type": "human",
+      "node_type": "agent",
       "semantic_class": "agent",
       "semantic_type": "human",
       "mobility": "fixed",
@@ -1741,19 +1632,18 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "outside_home",
-      "child": [],
       "interactive_actions": [],
       "layout": {},
       "role": "nurse",
       "persona": "hospital_nurse",
-      "current_activity": "off_shift"
+      "current_activity": "off_shift",
+      "editor_id": "nurse_1"
     },
     {
       "id": "doctor_1",
       "name": "doctor",
       "name_cn": "医生",
-      "node_type": "human",
+      "node_type": "agent",
       "semantic_class": "agent",
       "semantic_type": "human",
       "mobility": "fixed",
@@ -1764,19 +1654,18 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "outside_home",
-      "child": [],
       "interactive_actions": [],
       "layout": {},
       "role": "doctor",
       "persona": "hospital_doctor",
-      "current_activity": "off_shift"
+      "current_activity": "off_shift",
+      "editor_id": "doctor_1"
     },
     {
       "id": "medical_form_registration",
       "name": "medical form",
       "name_cn": "挂号表",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "object",
       "semantic_type": "medical_form",
       "mobility": "movable",
@@ -1789,19 +1678,21 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "counter_registration",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "medical_form_registration",
+      "capabilities": [
+        "pickable"
+      ]
     },
     {
       "id": "used_syringe_treatment_room",
       "name": "used syringe",
       "name_cn": "用过的注射器",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "object",
       "semantic_type": "medical_waste",
       "mobility": "movable",
@@ -1814,19 +1705,21 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "medical_waste_bin_treatment_room",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "used_syringe_treatment_room",
+      "capabilities": [
+        "pickable"
+      ]
     },
     {
       "id": "medical_waste_bin_treatment_room",
       "name": "medical waste bin",
       "name_cn": "医疗垃圾桶",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "object",
       "semantic_type": "medical_waste_bin",
       "mobility": "fixed",
@@ -1841,22 +1734,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "treatment_room",
-      "child": [
-        "used_syringe_treatment_room"
-      ],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {},
-      "max_capacity": 5
+      "max_capacity": 5,
+      "editor_id": "medical_waste_bin_treatment_room"
     },
     {
       "id": "dirty_sheet_treatment_room",
       "name": "dirty bed sheet",
       "name_cn": "脏床单",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "object",
       "semantic_type": "bed_sheet",
       "mobility": "movable",
@@ -1871,20 +1761,22 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "treatment_bed_treatment_room",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "fold"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "dirty_sheet_treatment_room",
+      "capabilities": [
+        "pickable"
+      ]
     },
     {
       "id": "dirty_linen_bin_treatment_room",
       "name": "dirty linen bin",
       "name_cn": "脏布草桶",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "object",
       "semantic_type": "linen_bin",
       "mobility": "fixed",
@@ -1899,20 +1791,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "treatment_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
       ],
       "layout": {},
-      "max_capacity": 3
+      "max_capacity": 3,
+      "editor_id": "dirty_linen_bin_treatment_room"
     },
     {
       "id": "clean_sheet_storage",
       "name": "clean bed sheet",
       "name_cn": "干净床单",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "object",
       "semantic_type": "bed_sheet",
       "mobility": "movable",
@@ -1927,20 +1818,22 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "supply_cabinet_treatment_room",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "fold"
       ],
-      "layout": {}
+      "layout": {},
+      "editor_id": "clean_sheet_storage",
+      "capabilities": [
+        "pickable"
+      ]
     },
     {
       "id": "supply_cabinet_treatment_room",
       "name": "supply cabinet",
       "name_cn": "耗材柜",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "object",
       "semantic_type": "supply_cabinet",
       "mobility": "fixed",
@@ -1954,10 +1847,6 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "treatment_room",
-      "child": [
-        "clean_sheet_storage"
-      ],
       "interactive_actions": [
         "move",
         "open",
@@ -1965,7 +1854,8 @@
         "place"
       ],
       "layout": {},
-      "max_capacity": 4
+      "max_capacity": 4,
+      "editor_id": "supply_cabinet_treatment_room"
     }
   ],
   "edges": [
@@ -2681,20 +2571,5 @@
       "category": "structural",
       "properties": {}
     }
-  ],
-  "agent": {
-    "id": "robot_01",
-    "name": "robot_01",
-    "type": "agent",
-    "properties": {},
-    "current_room": "entrance",
-    "inventory": [],
-    "max_inventory": 2,
-    "state": {}
-  },
-  "variant_profile": "compact_cleaning",
-  "variant_axes": {
-    "topology": "compact",
-    "object_task": "cleaning"
-  }
+  ]
 }

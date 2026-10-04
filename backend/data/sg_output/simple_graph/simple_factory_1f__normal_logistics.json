@@ -7,12 +7,19 @@
     "time_min": 360,
     "minutes_per_step": 10
   },
+  "variant_profile": "normal_logistics",
+  "variant_axes": {
+    "topology": "normal",
+    "object_task": "logistics"
+  },
+  "schema_version": 2,
+  "id_namespace": "editor",
   "nodes": [
     {
       "id": "F1",
       "name": "Floor 1",
       "name_cn": "第 1 层",
-      "node_type": "fixed_object",
+      "node_type": "floor",
       "semantic_class": "space",
       "semantic_type": "floor",
       "mobility": "structural",
@@ -23,21 +30,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": null,
-      "child": [
-        "assembly_line",
-        "break_room",
-        "control_room",
-        "entrance",
-        "outside_home",
-        "restroom",
-        "warehouse",
-        "workshop"
-      ],
       "interactive_actions": [
         "move"
       ],
-      "floor_number": 1
+      "floor_number": 1,
+      "editor_id": "F1"
     },
     {
       "id": "entrance",
@@ -54,15 +51,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "cabinet_entrance",
-        "signboard_entrance"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "entrance"
     },
     {
       "id": "workshop",
@@ -79,17 +72,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "box_workshop_parts",
-        "cart_workshop",
-        "machine_workshop",
-        "table_workshop"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "workshop"
     },
     {
       "id": "assembly_line",
@@ -106,17 +93,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "box_assembly_line_parts",
-        "button_assembly_line",
-        "machine_assembly_line",
-        "machine_assembly_line_aux"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "assembly_line"
     },
     {
       "id": "warehouse",
@@ -133,16 +114,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "cart_warehouse",
-        "finished_product_assembly",
-        "shelf_warehouse"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "warehouse"
     },
     {
       "id": "control_room",
@@ -159,17 +135,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "button_control_room",
-        "cabinet_control_room",
-        "computer_control_room",
-        "display_control_room"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "control_room"
     },
     {
       "id": "break_room",
@@ -186,17 +156,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "fridge_break_room",
-        "seat_break_room",
-        "table_break_room",
-        "water_dispenser_break_room"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "break_room"
     },
     {
       "id": "restroom",
@@ -213,21 +177,17 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "sink_restroom",
-        "toilet_restroom"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "restroom"
     },
     {
       "id": "cabinet_entrance",
       "name": "cabinet",
       "name_cn": "储物柜",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "cabinet",
       "mobility": "fixed",
@@ -242,22 +202,19 @@
         "operation": ""
       },
       "affordance_count": 8,
-      "parent": "entrance",
-      "child": [
-        "safety_gear_entrance"
-      ],
       "interactive_actions": [
         "move",
         "place",
         "open",
         "close"
-      ]
+      ],
+      "editor_id": "cabinet_entrance"
     },
     {
       "id": "signboard_entrance",
       "name": "signboard",
       "name_cn": "安全看板",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "signboard",
       "mobility": "fixed",
@@ -268,17 +225,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "signboard_entrance"
     },
     {
       "id": "table_workshop",
       "name": "table",
       "name_cn": "工作台",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "table",
       "mobility": "fixed",
@@ -293,19 +249,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "workshop",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "table_workshop"
     },
     {
       "id": "machine_workshop",
       "name": "machine",
       "name_cn": "加工机器",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "machine",
       "mobility": "fixed",
@@ -316,17 +271,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "workshop",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "machine_workshop"
     },
     {
       "id": "cart_workshop",
       "name": "cart",
       "name_cn": "工具车",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "cart",
       "mobility": "movable",
@@ -337,17 +291,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "workshop",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "cart_workshop",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "box_workshop_parts",
       "name": "box",
       "name_cn": "零件箱",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "box",
       "mobility": "movable",
@@ -361,18 +317,20 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "workshop",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "box_workshop_parts",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "machine_assembly_line",
       "name": "machine",
       "name_cn": "装配机器",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "machine",
       "mobility": "fixed",
@@ -386,17 +344,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "assembly_line",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "machine_assembly_line"
     },
     {
       "id": "machine_assembly_line_aux",
       "name": "machine",
       "name_cn": "输送设备",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "machine",
       "mobility": "fixed",
@@ -407,17 +364,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "assembly_line",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "machine_assembly_line_aux"
     },
     {
       "id": "box_assembly_line_parts",
       "name": "box",
       "name_cn": "待装配箱",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "box",
       "mobility": "movable",
@@ -431,18 +387,20 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "assembly_line",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "box_assembly_line_parts",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "button_assembly_line",
       "name": "button",
       "name_cn": "启停按钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -456,18 +414,17 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "assembly_line",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
-      ]
+      ],
+      "editor_id": "button_assembly_line"
     },
     {
       "id": "shelf_warehouse",
       "name": "shelf",
       "name_cn": "货架",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "shelf",
       "mobility": "fixed",
@@ -481,21 +438,17 @@
         "operation": ""
       },
       "affordance_count": 6,
-      "parent": "warehouse",
-      "child": [
-        "box_warehouse_1",
-        "box_warehouse_2"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "shelf_warehouse"
     },
     {
       "id": "box_warehouse_1",
       "name": "box",
       "name_cn": "货箱",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "box",
       "mobility": "movable",
@@ -510,18 +463,20 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "shelf_warehouse",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "box_warehouse_1",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "box_warehouse_2",
       "name": "box",
       "name_cn": "货箱",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "box",
       "mobility": "movable",
@@ -536,18 +491,20 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "shelf_warehouse",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "box_warehouse_2",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "cart_warehouse",
       "name": "cart",
       "name_cn": "搬运车",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "cart",
       "mobility": "movable",
@@ -560,17 +517,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "warehouse",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "cart_warehouse",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "computer_control_room",
       "name": "computer",
       "name_cn": "工控电脑",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "computer",
       "mobility": "fixed",
@@ -583,17 +542,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "control_room",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "computer_control_room"
     },
     {
       "id": "display_control_room",
       "name": "display",
       "name_cn": "监控屏",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "display",
       "mobility": "fixed",
@@ -606,17 +564,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "control_room",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "display_control_room"
     },
     {
       "id": "cabinet_control_room",
       "name": "cabinet",
       "name_cn": "资料柜",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "cabinet",
       "mobility": "fixed",
@@ -631,23 +588,19 @@
         "operation": ""
       },
       "affordance_count": 8,
-      "parent": "control_room",
-      "child": [
-        "quality_record_control",
-        "toolkit_workshop"
-      ],
       "interactive_actions": [
         "move",
         "place",
         "open",
         "close"
-      ]
+      ],
+      "editor_id": "cabinet_control_room"
     },
     {
       "id": "button_control_room",
       "name": "button",
       "name_cn": "控制按钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -661,18 +614,17 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "control_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
-      ]
+      ],
+      "editor_id": "button_control_room"
     },
     {
       "id": "table_break_room",
       "name": "table",
       "name_cn": "桌子",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "table",
       "mobility": "fixed",
@@ -687,19 +639,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "break_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "table_break_room"
     },
     {
       "id": "seat_break_room",
       "name": "seat",
       "name_cn": "座椅",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "seat",
       "mobility": "fixed",
@@ -712,19 +663,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "break_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "seat_break_room"
     },
     {
       "id": "water_dispenser_break_room",
       "name": "water dispenser",
       "name_cn": "饮水机",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "water_dispenser",
       "mobility": "fixed",
@@ -737,17 +687,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "break_room",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "water_dispenser_break_room"
     },
     {
       "id": "fridge_break_room",
       "name": "refrigerator",
       "name_cn": "冰箱",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "fridge",
       "mobility": "fixed",
@@ -764,20 +713,19 @@
         "operation": ""
       },
       "affordance_count": 5,
-      "parent": "break_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "open",
         "close"
-      ]
+      ],
+      "editor_id": "fridge_break_room"
     },
     {
       "id": "sink_restroom",
       "name": "sink",
       "name_cn": "洗手池",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "sink",
       "mobility": "fixed",
@@ -792,19 +740,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "restroom",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "sink_restroom"
     },
     {
       "id": "toilet_restroom",
       "name": "toilet",
       "name_cn": "马桶",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "toilet",
       "mobility": "fixed",
@@ -819,12 +766,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "restroom",
-      "child": [],
       "interactive_actions": [
         "move",
         "brush"
-      ]
+      ],
+      "editor_id": "toilet_restroom"
     },
     {
       "id": "outside_home",
@@ -841,18 +787,17 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "F1",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "outside_home"
     },
     {
       "id": "safety_gear_entrance",
       "name": "safety gear",
       "name_cn": "safety gear",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "equipment",
       "semantic_type": "safety_gear",
       "mobility": "movable",
@@ -865,18 +810,20 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "cabinet_entrance",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "safety_gear_entrance",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "finished_product_assembly",
       "name": "finished product",
       "name_cn": "finished product",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "product",
       "semantic_type": "finished_product",
       "mobility": "movable",
@@ -887,18 +834,20 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "warehouse",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "finished_product_assembly",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "quality_record_control",
       "name": "quality record",
       "name_cn": "quality record",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "document",
       "semantic_type": "quality_record",
       "mobility": "movable",
@@ -911,18 +860,20 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "cabinet_control_room",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "quality_record_control",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "toolkit_workshop",
       "name": "toolkit",
       "name_cn": "toolkit",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "toolkit",
       "mobility": "movable",
@@ -935,11 +886,13 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "cabinet_control_room",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "toolkit_workshop",
+      "capabilities": [
+        "pickable"
       ]
     }
   ],
@@ -1288,10 +1241,5 @@
       "category": "containment",
       "properties": {}
     }
-  ],
-  "variant_profile": "normal_logistics",
-  "variant_axes": {
-    "topology": "normal",
-    "object_task": "logistics"
-  }
+  ]
 }

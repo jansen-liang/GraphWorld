@@ -7,6 +7,7 @@
     "dev": "vite --host 127.0.0.1 --port 5173",
     "dev:lan": "vite --host 0.0.0.0 --port 5173",
     "build": "tsc -b && vite build",
+    "test:physics": "node --experimental-strip-types --test tests/*.test.mjs",
     "test:e2e:home": "node e2e/home-behavior.cjs",
     "preview:public": "vite preview --host 127.0.0.1 --port 5173",
     "preview": "vite preview --host 127.0.0.1 --port 4173"
@@ -15,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@dimforge/rapier3d-compat": "^0.21.0",
     "@tanstack/react-query": "^5.100.11",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",

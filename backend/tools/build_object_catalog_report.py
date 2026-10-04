@@ -7,8 +7,8 @@ import json
 from collections import Counter
 from pathlib import Path
 
-from backend.core.assets.object_catalog import resolve_catalog_label
-from backend.core.assets.object_library import OBJECT_LIBRARY
+from backend.generation.assets.object_catalog import resolve_catalog_label
+from backend.generation.assets.object_library import OBJECT_LIBRARY
 
 
 ROOT = Path(__file__).resolve().parents[2]

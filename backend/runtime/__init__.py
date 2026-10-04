@@ -1,35 +1,15 @@
-from __future__ import annotations
+"""Mutable world execution, simulation sessions, and runtime systems.
 
-from typing import Any
+Keep package initialization light so core domain modules can be imported by
+runtime without eagerly starting the simulation engine.
+"""
 
-from .engine import Orchestrator, run_runtime
-from .eval import build_matrix_snapshot, matrix_score
-
-
-def simulate_scene(
-    scene: dict[str, Any],
-    steps: int = 1,
-    *,
-    robot_actions_by_step: list[list[dict[str, Any]]] | None = None,
-    human_events_by_step: list[list[str | dict[str, Any]]] | None = None,
-) -> dict[str, Any]:
-    return run_runtime(
-        scene,
-        steps,
-        robot_actions_by_step=robot_actions_by_step,
-        human_events_by_step=human_events_by_step,
-    )["scene"]
+__all__ = ["advance_time"]
 
 
-def evaluate_scene(
-    scene: dict[str, Any],
-    baseline_scene: dict[str, Any] | None = None,
-    previous_scene: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    current = build_matrix_snapshot(scene)
-    baseline = build_matrix_snapshot(baseline_scene or scene)
-    previous = build_matrix_snapshot(previous_scene) if previous_scene else None
-    return {"world_metrics": matrix_score(current, baseline, previous)}
+def __getattr__(name: str):
+    if name == "advance_time":
+        from .time import advance_time
 
-
-__all__ = ["Orchestrator", "evaluate_scene", "run_runtime", "simulate_scene"]
+        return advance_time
+    raise AttributeError(name)

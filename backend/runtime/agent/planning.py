@@ -3,11 +3,11 @@ from __future__ import annotations
 from typing import Any
 
 from backend.core.action import ActionType, action_spec
-from backend.core.systems.resource import can_dispense
+from backend.runtime.systems.resource import can_dispense
 from backend.runtime.engine import Orchestrator
 
 
-ACTION_ORDER = tuple(action.value for action in ActionType if action != ActionType.WAIT) + (ActionType.WAIT.value,)
+ACTION_ORDER = tuple(action.value for action in ActionType if action not in {ActionType.WAIT, ActionType.RAISE_HAND, ActionType.LOWER_HAND}) + (ActionType.WAIT.value,)
 
 
 def held_object(orchestrator: Orchestrator, agent_id: str = "robot_01") -> str:
@@ -85,7 +85,7 @@ def candidate_actions(orchestrator: Orchestrator, observation: dict[str, Any], a
             continue
         states = item.get("states") or {}
         actions = {str(action).lower() for action in item.get("interactive_actions") or []}
-        if str(item.get("node_type") or "") in {"fixed_object", "control_object"}:
+        if str(item.get("node_type") or "") == "object" and "pickable" not in set(item.get("capabilities") or ()):
             candidate = candidate_payload(
                 orchestrator,
                 {"agent": agent_id, "action": "move", "target": node_id},
@@ -118,15 +118,15 @@ def candidate_actions(orchestrator: Orchestrator, observation: dict[str, Any], a
                     candidates.append(candidate)
                 continue
             if action_name == "place":
-                volume_size = item.get("interior_size_cm") or item.get("container_size_cm") or item.get("placement_volume_cm")
-                surface_size = item.get("surface_size_cm") or item.get("support_surface_cm")
+                volume_size = item.get("interior_spec")
+                surface_spec = item.get("surface_spec") if isinstance(item.get("surface_spec"), dict) else None
                 if volume_size:
                     action["placement_hint"] = "volume"
-                    action["interior_size_cm"] = list(volume_size) if isinstance(volume_size, (list, tuple)) else volume_size
+                    action["interior_spec"] = dict(volume_size) if isinstance(volume_size, dict) else volume_size
                 else:
                     action["placement_hint"] = "surface"
-                    if surface_size:
-                        action["surface_size_cm"] = list(surface_size) if isinstance(surface_size, (list, tuple)) else surface_size
+                    if surface_spec:
+                        action["surface_spec"] = dict(surface_spec)
             reason = f"{action_name} visible object"
             if action_name in actions or action_name in {"move", "place"}:
                 if states.get("is_dirty") is True and action_name == "brush":

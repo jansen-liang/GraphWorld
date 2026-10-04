@@ -37,18 +37,27 @@ async function runApiContracts() {
   const graphResponse = await api.get(`/api/scene-versions/${VERSION_ID}/graph`, { headers });
   assert(graphResponse.ok(), `cannot load ${VERSION_ID}: ${graphResponse.status()} ${await graphResponse.text()}`);
   let scene = (await graphResponse.json()).source_json;
-  const actorId = scene.nodes.find((item) => ["robot", "human"].includes(item.node_type))?.id;
+  const actorId = scene.nodes.find((item) => ["agent", "robot", "human"].includes(item.node_type)
+    || ["agent", "robot", "human"].includes(item.semantic_type))?.id;
   assert(actorId, "v28 has no interactive actor");
+  const started = await api.post("/api/scene-simulation/start", {
+    headers,
+    data: { source_json: scene, actor_id: actorId },
+  });
+  assert(started.ok(), `simulation start failed: ${started.status()} ${await started.text()}`);
+  const startedPayload = await started.json();
+  const simulationId = startedPayload.simulation_id;
+  scene = startedPayload.snapshot;
 
   async function interact(targetId, hand = "right", input = "interact_primary", hit = {}) {
-    const response = await api.post("/api/scene-simulation/interactions", {
+    const response = await api.post("/api/scene-simulation/dispatch", {
       headers,
-      data: { source_json: scene, actor_id: actorId, input, target_id: targetId, hand, hit },
+      data: { simulation_id: simulationId, input, target_id: targetId, hand, hit },
     });
     assert(response.ok(), `interaction HTTP failure for ${targetId}: ${response.status()} ${await response.text()}`);
     const result = await response.json();
     assert(result.applied, `interaction rejected for ${targetId}: ${result.failures.join("; ")}`);
-    scene = result.source_json;
+    scene = result.snapshot;
     return result;
   }
 
@@ -86,14 +95,14 @@ async function runApiContracts() {
   }
 
   async function tick(steps = 1) {
-    const response = await api.post("/api/scene-simulation/ticks", {
+    const response = await api.post("/api/scene-simulation/dispatch", {
       headers,
-      data: { source_json: scene, elapsed_steps: steps },
+      data: { simulation_id: simulationId, input: "tick", elapsed_steps: steps },
     });
     assert(response.ok(), `tick HTTP failure: ${response.status()} ${await response.text()}`);
     const result = await response.json();
     assert(result.applied, `tick rejected: ${result.failures?.join("; ") || "unknown failure"}`);
-    scene = result.source_json;
+    scene = result.snapshot;
     return result;
   }
 
@@ -112,6 +121,8 @@ async function runApiContracts() {
   await interact("faucet_bathroom");
   assert.equal(node(scene, "sink_bathroom").states.water_flowing, false);
 
+  await navigateTo("washer_bathroom");
+  await interact("washer_bathroom_door");
   await navigateTo("clothes_bedroom_1");
   if (!node(scene, "wardrobe_bedroom").states.is_open) await interact("wardrobe_bedroom");
   await interact("clothes_bedroom_1", "right");
@@ -119,8 +130,13 @@ async function runApiContracts() {
   assert.equal(edge(scene, "clothes_bedroom_1").relation, "held_by");
   assert.equal(edge(scene, "clothes_bedroom_2").relation, "held_by_left");
 
+  const occupiedDoor = await api.post("/api/scene-simulation/dispatch", {
+    headers,
+    data: { simulation_id: simulationId, input: "interact_primary", target_id: "washer_bathroom_door", hand: "right" },
+  });
+  assert.equal(occupiedDoor.status(), 200);
+  assert.equal((await occupiedDoor.json()).applied, false, "occupied hands must not open a door");
   await navigateTo("washer_bathroom");
-  await interact("washer_bathroom_door");
   await interact("washer_bathroom_slot_l1_c1", "right", "interact_primary", { volume_uv: [0.25, 0.5, 0.5] });
   await interact("washer_bathroom_slot_l1_c1", "left", "interact_primary", { volume_uv: [0.75, 0.5, 0.5] });
   assert.equal(edge(scene, "clothes_bedroom_1").source_id, "washer_bathroom_slot_l1_c1");
@@ -144,6 +160,9 @@ async function runApiContracts() {
   await interact("entrance", "right", "release");
   assert.equal(edge(scene, "shoes_entrance_1").source_id, "entrance");
   assert.notEqual(edge(scene, "shoes_entrance_1").relation, "held_by");
+
+  const stopped = await api.delete(`/api/scene-simulation/${simulationId}`, { headers });
+  assert.equal(stopped.status(), 204);
 
   await api.dispose();
   return { actorId, nodeCount: scene.nodes.length, edgeCount: scene.edges.length };

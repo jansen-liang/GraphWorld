@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from backend.core.action import validate_action_schema
+from backend.runtime.action_engine import validate_action_schema
 
 
 @dataclass(frozen=True)

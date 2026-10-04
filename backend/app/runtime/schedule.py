@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from backend.core import planned_activity
+from backend.generation.assets.npc_library import planned_activity
 
 
 def planned_event_for_actor(scene: dict[str, Any], actor: dict[str, Any], step: int) -> str:
@@ -32,7 +32,7 @@ def planned_event_for_actor(scene: dict[str, Any], actor: dict[str, Any], step: 
 def planned_events_for_step(scene: dict[str, Any], step: int) -> list[dict[str, Any]]:
     events: list[dict[str, Any]] = []
     for actor in scene.get("nodes") or []:
-        if str(actor.get("node_type") or "") != "human":
+        if str(actor.get("node_type") or "") != "agent" or str(actor.get("semantic_type") or "") not in {"human", "npc"}:
             continue
         actor_id = str(actor.get("id") or "")
         if not actor_id:

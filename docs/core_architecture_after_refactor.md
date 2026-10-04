@@ -9,38 +9,33 @@ UI input -> InteractionRequest -> resolve_interaction
 ```
 
 The browser sends an input or canonical Action request. It does not execute
-world rules locally. The API rebuilds a `WorldGraph`, resolves the input,
-applies one mutation through `MutationPipeline`, and returns the resulting
-`WorldDelta` and authoritative scene snapshot.
+world rules locally. A long-lived `World` resolves the input, applies one
+atomic mutation, and returns the resulting `WorldDelta` and authoritative
+scene snapshot.
 
 ## Backend files
 
 | File | Responsibility |
 | --- | --- |
-| `backend/core/model.py` | Flat `Node` and `Edge` value models. No relationship cache is stored on a node. |
-| `backend/core/world_graph.py` | Mutable graph store and old-scene import adapter. Rebuilds disposable `parent_of`, `room_of`, and control indices from edges. |
-| `backend/core/edges.py` | Relation names and relation metadata. |
-| `backend/core/relationship_ops.py` | Canonical relationship mutation helpers. |
-| `backend/core/composition.py` | Materializes declared appliance parts and storage slots. It fills missing static composition data for old snapshots. |
-| `backend/core/interaction.py` | Converts keyboard/mouse intent into a canonical Action without mutating state. |
-| `backend/core/action_schemas.py` | Action preconditions and direct effects. |
-| `backend/core/mutation.py` | Single Action/Rule/System mutation entry point and `WorldDelta` generation. |
-| `backend/core/effects.py` | Pure domain effects invoked by action schemas. |
-| `backend/core/timed_transitions.py` | Clock-driven rules invoked through `MutationPipeline.run_system`. |
-| `backend/core/processes.py` | Process start/complete bookkeeping for timed devices. |
-| `backend/app/services/simulation_service.py` | Stateless editor-preview API facade. |
-| `backend/app/api/routes/scenes.py` | HTTP endpoints for interactions and ticks. |
-| `backend/core/test_home_behavior_contract.py` | Contracts for laundry, lights, faucet, two hands, placement, and device progress/stop. |
+| `backend/core/node.py`, `edge.py`, `articulation.py` | Canonical graph entities and structure-tree view. |
+| `backend/core/action.py`, `requirement.py`, `effect.py` | Action contracts and declarative preconditions/effects. |
+| `backend/runtime/world/graph.py` | Mutable graph store and disposable relationship indices. |
+| `backend/runtime/action_executor.py` | Atomic action transaction and `WorldDelta` generation. |
+| `backend/runtime/input_adapter.py` | Converts keyboard/mouse intent into a canonical Action without mutating state. |
+| `backend/runtime/time.py`, `process_rules.py` | Clock-driven rules and process transitions. |
+| `backend/app/services/simulation_service.py` | Long-lived simulation session API facade. |
+| `backend/app/api/routes/scenes.py` | HTTP endpoints for session start, dispatch, and stop. |
+| `backend/tests/`, `backend/app/tests/` | Contracts for interaction, placement, processes, and session protocol. |
 | `backend/app/tests/test_simulation_service.py` | API Delta and Action round-trip contracts. |
 
 ## Frontend files
 
 | File | Responsibility |
 | --- | --- |
-| `frontend/src/api/scenes.ts` | Sends interaction/move requests and receives `SceneInteractionResponse`. |
-| `frontend/src/features/scene-builder/SceneBuilderPage.tsx` | Owns draft snapshot and applies returned `source_json`; editor changes write edges. |
-| `frontend/src/features/scene-builder/Scene3DCanvas.tsx` | Projects nodes/edges into Three.js and emits input; it contains no world-rule implementation. |
-| `frontend/src/features/scene-builder/compositeRuntime.ts` | Visual joints and mechanical part projection only. |
+| `frontend/web/src/api/scenes.ts` | Starts and dispatches the long-lived simulation session, receiving snapshots and deltas. |
+| `frontend/web/src/features/scene-builder/SceneBuilderPage.tsx` | Owns draft snapshot and applies returned session deltas; editor changes write edges. |
+| `frontend/web/src/features/scene-builder/Scene3DCanvas.tsx` | Projects nodes/edges into Three.js and emits input; it contains no world-rule implementation. |
+| `frontend/web/src/rendering/partTree.ts` | Visual joints and mechanical part projection only. |
 | `frontend/e2e/home-behavior.cjs` | Reproducible v28 API behavior suite plus browser/WebGL smoke test. |
 
 ## Compatibility boundary

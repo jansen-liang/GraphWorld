@@ -44,7 +44,7 @@ def _node_type_map(scene: dict[str, Any]) -> dict[str, str]:
 
 
 def _is_movable(node_types: dict[str, str], node_id: str) -> bool:
-    return node_types.get(node_id) == "movable_object"
+    return node_types.get(node_id) == "object"
 
 
 def build_state_matrix(

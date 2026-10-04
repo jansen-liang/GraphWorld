@@ -3,8 +3,13 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEFAULT_SERVICES_DIR="$ROOT_DIR/.gw-services"
-if [[ ! -x "$DEFAULT_SERVICES_DIR/bin/postgres" && -n "${CONDA_PREFIX:-}" ]]; then
-  DEFAULT_SERVICES_DIR="$CONDA_PREFIX"
+if [[ ! -x "$DEFAULT_SERVICES_DIR/bin/postgres" ]]; then
+  for candidate in "${CONDA_PREFIX:-}" "/home/swzz/anaconda3/gra"; do
+    if [[ -x "$candidate/bin/postgres" && -x "$candidate/bin/redis-server" ]]; then
+      DEFAULT_SERVICES_DIR="$candidate"
+      break
+    fi
+  done
 fi
 SERVICES_DIR="${GRAPHWORLD_SERVICES_DIR:-$DEFAULT_SERVICES_DIR}"
 PG_DATA="$ROOT_DIR/backend/data/web_pg"

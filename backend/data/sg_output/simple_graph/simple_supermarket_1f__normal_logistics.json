@@ -7,12 +7,19 @@
     "time_min": 360,
     "minutes_per_step": 10
   },
+  "variant_profile": "normal_logistics",
+  "variant_axes": {
+    "topology": "normal",
+    "object_task": "logistics"
+  },
+  "schema_version": 2,
+  "id_namespace": "editor",
   "nodes": [
     {
       "id": "F1",
       "name": "Floor 1",
       "name_cn": "第 1 层",
-      "node_type": "fixed_object",
+      "node_type": "floor",
       "semantic_class": "space",
       "semantic_type": "floor",
       "mobility": "structural",
@@ -23,20 +30,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": null,
-      "child": [
-        "checkout_area",
-        "cold_storage",
-        "entrance",
-        "outside_home",
-        "produce_area",
-        "shelf_area",
-        "staff_room"
-      ],
       "interactive_actions": [
         "move"
       ],
-      "floor_number": 1
+      "floor_number": 1,
+      "editor_id": "F1"
     },
     {
       "id": "entrance",
@@ -53,15 +51,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "cart_entrance",
-        "signboard_entrance"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "entrance"
     },
     {
       "id": "outside_home",
@@ -78,12 +72,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "outside_home"
     },
     {
       "id": "produce_area",
@@ -100,15 +93,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "scale_produce",
-        "shelf_produce"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "produce_area"
     },
     {
       "id": "shelf_area",
@@ -125,16 +114,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "box_shelf_stock",
-        "shelf_dry_goods",
-        "shelf_snacks"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "shelf_area"
     },
     {
       "id": "checkout_area",
@@ -151,18 +135,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "cart_return_checkout",
-        "counter_checkout",
-        "display_checkout",
-        "table_checkout",
-        "trash_bin_checkout"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "checkout_area"
     },
     {
       "id": "cold_storage",
@@ -179,15 +156,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "box_cold_storage",
-        "fridge_cold_storage"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "cold_storage"
     },
     {
       "id": "staff_room",
@@ -204,23 +177,17 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "F1",
-      "child": [
-        "cabinet_staff_room",
-        "receiving_dock_staff_room",
-        "seat_staff_room",
-        "table_staff_room"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "staff_room"
     },
     {
       "id": "signboard_entrance",
       "name": "signboard",
       "name_cn": "导视牌",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "signboard",
       "mobility": "fixed",
@@ -231,17 +198,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "signboard_entrance"
     },
     {
       "id": "cart_entrance",
       "name": "cart",
       "name_cn": "购物车",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "cart",
       "mobility": "movable",
@@ -254,17 +220,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "cart_entrance",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "shelf_produce",
       "name": "shelf",
       "name_cn": "货架",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "shelf",
       "mobility": "fixed",
@@ -278,23 +246,17 @@
         "operation": ""
       },
       "affordance_count": 6,
-      "parent": "produce_area",
-      "child": [
-        "fruit_produce_1",
-        "fruit_produce_2",
-        "vegetable_produce_1",
-        "vegetable_produce_2"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "shelf_produce"
     },
     {
       "id": "vegetable_produce_1",
       "name": "vegetable",
       "name_cn": "蔬菜",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "vegetable",
       "mobility": "movable",
@@ -309,17 +271,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "shelf_produce",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "vegetable_produce_1",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "vegetable_produce_2",
       "name": "vegetable",
       "name_cn": "蔬菜",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "vegetable",
       "mobility": "movable",
@@ -334,17 +298,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "shelf_produce",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "vegetable_produce_2",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "fruit_produce_1",
       "name": "fruit",
       "name_cn": "水果",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "fruit",
       "mobility": "movable",
@@ -359,17 +325,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "shelf_produce",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "fruit_produce_1",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "fruit_produce_2",
       "name": "fruit",
       "name_cn": "水果",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "fruit",
       "mobility": "movable",
@@ -384,17 +352,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "shelf_produce",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "fruit_produce_2",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "scale_produce",
       "name": "machine",
       "name_cn": "称重机",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "machine",
       "mobility": "fixed",
@@ -405,17 +375,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "produce_area",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "scale_produce"
     },
     {
       "id": "shelf_dry_goods",
       "name": "shelf",
       "name_cn": "货架",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "shelf",
       "mobility": "fixed",
@@ -429,21 +398,17 @@
         "operation": ""
       },
       "affordance_count": 6,
-      "parent": "shelf_area",
-      "child": [
-        "drink_shelf_1",
-        "drink_shelf_2"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "shelf_dry_goods"
     },
     {
       "id": "drink_shelf_1",
       "name": "drink",
       "name_cn": "饮料",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "drink",
       "mobility": "movable",
@@ -458,17 +423,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "shelf_dry_goods",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "drink_shelf_1",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "drink_shelf_2",
       "name": "drink",
       "name_cn": "饮料",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "drink",
       "mobility": "movable",
@@ -483,17 +450,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "shelf_dry_goods",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "drink_shelf_2",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "shelf_snacks",
       "name": "shelf",
       "name_cn": "货架",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "shelf",
       "mobility": "fixed",
@@ -507,18 +476,17 @@
         "operation": ""
       },
       "affordance_count": 6,
-      "parent": "shelf_area",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "shelf_snacks"
     },
     {
       "id": "box_shelf_stock",
       "name": "box",
       "name_cn": "补货箱",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "box",
       "mobility": "movable",
@@ -533,18 +501,20 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "shelf_area",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "box_shelf_stock",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "counter_checkout",
       "name": "counter",
       "name_cn": "收银台",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "counter",
       "mobility": "fixed",
@@ -559,19 +529,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "checkout_area",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "counter_checkout"
     },
     {
       "id": "display_checkout",
       "name": "display",
       "name_cn": "显示屏",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "display",
       "mobility": "fixed",
@@ -584,17 +553,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "checkout_area",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "display_checkout"
     },
     {
       "id": "table_checkout",
       "name": "table",
       "name_cn": "打包台",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "table",
       "mobility": "fixed",
@@ -609,19 +577,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "checkout_area",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "table_checkout"
     },
     {
       "id": "trash_bin_checkout",
       "name": "trash bin",
       "name_cn": "垃圾桶",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "trash_bin",
       "mobility": "fixed",
@@ -636,18 +603,17 @@
         "operation": ""
       },
       "affordance_count": 8,
-      "parent": "checkout_area",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "trash_bin_checkout"
     },
     {
       "id": "cart_return_checkout",
       "name": "cart return",
       "name_cn": "购物车回收点",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "cart_return",
       "mobility": "fixed",
@@ -658,19 +624,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "checkout_area",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
       ],
-      "max_capacity": 3
+      "max_capacity": 3,
+      "editor_id": "cart_return_checkout"
     },
     {
       "id": "fridge_cold_storage",
       "name": "refrigerator",
       "name_cn": "冷柜",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "fridge",
       "mobility": "fixed",
@@ -687,25 +652,21 @@
         "operation": ""
       },
       "affordance_count": 10,
-      "parent": "cold_storage",
       "blocks_containment": true,
       "max_capacity": 3,
-      "child": [
-        "juice_cold_storage_1",
-        "milk_cold_storage_1"
-      ],
       "interactive_actions": [
         "move",
         "place",
         "open",
         "close"
-      ]
+      ],
+      "editor_id": "fridge_cold_storage"
     },
     {
       "id": "milk_cold_storage_1",
       "name": "milk",
       "name_cn": "牛奶",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "milk",
       "mobility": "movable",
@@ -720,17 +681,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "fridge_cold_storage",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "milk_cold_storage_1",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "juice_cold_storage_1",
       "name": "juice",
       "name_cn": "果汁",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "juice",
       "mobility": "movable",
@@ -745,17 +708,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "fridge_cold_storage",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "juice_cold_storage_1",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "box_cold_storage",
       "name": "box",
       "name_cn": "周转箱",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "box",
       "mobility": "movable",
@@ -770,18 +735,20 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "cold_storage",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "box_cold_storage",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "table_staff_room",
       "name": "table",
       "name_cn": "桌子",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "table",
       "mobility": "fixed",
@@ -796,18 +763,17 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "staff_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "table_staff_room"
     },
     {
       "id": "seat_staff_room",
       "name": "seat",
       "name_cn": "座椅",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "seat",
       "mobility": "fixed",
@@ -820,18 +786,17 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "staff_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "seat_staff_room"
     },
     {
       "id": "cabinet_staff_room",
       "name": "cabinet",
       "name_cn": "柜子",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "cabinet",
       "mobility": "fixed",
@@ -846,20 +811,19 @@
         "operation": ""
       },
       "affordance_count": 8,
-      "parent": "staff_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "open",
         "close"
-      ]
+      ],
+      "editor_id": "cabinet_staff_room"
     },
     {
       "id": "receiving_dock_staff_room",
       "name": "receiving dock",
       "name_cn": "到货区",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "receiving_dock",
       "mobility": "fixed",
@@ -870,13 +834,12 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "staff_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
       ],
-      "max_capacity": 5
+      "max_capacity": 5,
+      "editor_id": "receiving_dock_staff_room"
     }
   ],
   "edges": [
@@ -1192,10 +1155,5 @@
       "category": "structural",
       "properties": {}
     }
-  ],
-  "variant_profile": "normal_logistics",
-  "variant_axes": {
-    "topology": "normal",
-    "object_task": "logistics"
-  }
+  ]
 }

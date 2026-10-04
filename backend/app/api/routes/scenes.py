@@ -12,9 +12,6 @@ from backend.app.db.session import get_db
 from backend.app.schemas.graph import SceneGraphResponse
 from backend.app.schemas.scene import (
     SceneImportRequest,
-    SceneInteractionRequest,
-    SceneInteractionResponse,
-    SceneTickRequest,
     SceneLayoutGenerated,
     SceneLayoutGenerateRequest,
     SceneLayoutRequest,
@@ -22,27 +19,41 @@ from backend.app.schemas.scene import (
     ScenePublishRequest,
     SceneRead,
     SceneVersionRead,
+    SimulationDispatchRequest,
+    SimulationSessionResponse,
+    SimulationStartRequest,
 )
 from backend.app.services.scene_service import SceneService
-from backend.app.services.simulation_service import SimulationService
+from backend.app.services.simulation_service import simulation_world_service
 
 router = APIRouter()
 
 
-@router.post("/scene-simulation/interactions", response_model=SceneInteractionResponse)
-def simulate_scene_interaction(
-    request: SceneInteractionRequest,
+@router.post("/scene-simulation/start", response_model=SimulationSessionResponse)
+def start_scene_simulation(
+    request: SimulationStartRequest,
     _: User = Depends(require_admin),
-) -> SceneInteractionResponse:
-    return SimulationService().interact(request)
+) -> SimulationSessionResponse:
+    return simulation_world_service.start(request)
 
 
-@router.post("/scene-simulation/ticks", response_model=SceneInteractionResponse)
-def tick_scene_simulation(
-    request: SceneTickRequest,
+@router.post("/scene-simulation/dispatch", response_model=SimulationSessionResponse)
+def dispatch_scene_simulation(
+    request: SimulationDispatchRequest,
     _: User = Depends(require_admin),
-) -> SceneInteractionResponse:
-    return SimulationService().tick(request)
+) -> SimulationSessionResponse:
+    try:
+        return simulation_world_service.dispatch(request)
+    except KeyError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+
+
+@router.delete("/scene-simulation/{simulation_id}", status_code=204)
+def stop_scene_simulation(
+    simulation_id: str,
+    _: User = Depends(require_admin),
+) -> None:
+    simulation_world_service.stop(simulation_id)
 
 
 def get_scene_service(db: Session = Depends(get_db)) -> Iterator[SceneService]:

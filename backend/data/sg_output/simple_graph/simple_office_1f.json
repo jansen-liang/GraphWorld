@@ -7,12 +7,14 @@
     "time_min": 360,
     "minutes_per_step": 10
   },
+  "schema_version": 2,
+  "id_namespace": "editor",
   "nodes": [
     {
       "id": "F1",
       "name": "Floor 1",
       "name_cn": "第 1 层",
-      "node_type": "fixed_object",
+      "node_type": "floor",
       "semantic_class": "space",
       "semantic_type": "floor",
       "mobility": "structural",
@@ -23,14 +25,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": null,
-      "child": [
-        "outside_home"
-      ],
       "interactive_actions": [
         "move"
       ],
-      "floor_number": 1
+      "floor_number": 1,
+      "editor_id": "F1"
     },
     {
       "id": "entrance",
@@ -47,15 +46,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": null,
-      "child": [
-        "signboard_entrance",
-        "plant_entrance"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "entrance"
     },
     {
       "id": "open_office",
@@ -72,16 +67,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": null,
-      "child": [
-        "desk_open_office_1",
-        "desk_open_office_2",
-        "printer_open_office"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "open_office"
     },
     {
       "id": "meeting_room",
@@ -98,16 +88,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": null,
-      "child": [
-        "table_meeting_room",
-        "seat_meeting_room",
-        "display_meeting_room"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "meeting_room"
     },
     {
       "id": "pantry",
@@ -124,17 +109,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": null,
-      "child": [
-        "counter_pantry",
-        "microwave_pantry",
-        "fridge_pantry",
-        "water_dispenser_pantry"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "pantry"
     },
     {
       "id": "manager_office",
@@ -151,16 +130,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": null,
-      "child": [
-        "desk_manager_office",
-        "cabinet_manager_office",
-        "plant_manager_office"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "manager_office"
     },
     {
       "id": "restroom",
@@ -177,21 +151,17 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": null,
-      "child": [
-        "sink_restroom",
-        "toilet_restroom"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "restroom"
     },
     {
       "id": "signboard_entrance",
       "name": "signboard",
       "name_cn": "前台牌",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "signboard",
       "mobility": "fixed",
@@ -202,17 +172,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "signboard_entrance"
     },
     {
       "id": "plant_entrance",
       "name": "plant",
       "name_cn": "绿植",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "plant",
       "mobility": "fixed",
@@ -226,17 +195,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "plant_entrance"
     },
     {
       "id": "desk_open_office_1",
       "name": "desk",
       "name_cn": "办公桌",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "desk",
       "mobility": "fixed",
@@ -251,22 +219,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "open_office",
-      "child": [
-        "computer_open_office_1",
-        "seat_open_office_1"
-      ],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "desk_open_office_1"
     },
     {
       "id": "computer_open_office_1",
       "name": "computer",
       "name_cn": "电脑",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "computer",
       "mobility": "fixed",
@@ -279,17 +243,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "desk_open_office_1",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "computer_open_office_1"
     },
     {
       "id": "seat_open_office_1",
       "name": "seat",
       "name_cn": "办公椅",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "seat",
       "mobility": "fixed",
@@ -302,18 +265,17 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "desk_open_office_1",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "seat_open_office_1"
     },
     {
       "id": "desk_open_office_2",
       "name": "desk",
       "name_cn": "办公桌",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "desk",
       "mobility": "fixed",
@@ -328,22 +290,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "open_office",
-      "child": [
-        "computer_open_office_2",
-        "seat_open_office_2"
-      ],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "desk_open_office_2"
     },
     {
       "id": "computer_open_office_2",
       "name": "computer",
       "name_cn": "电脑",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "computer",
       "mobility": "fixed",
@@ -356,17 +314,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "desk_open_office_2",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "computer_open_office_2"
     },
     {
       "id": "seat_open_office_2",
       "name": "seat",
       "name_cn": "办公椅",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "seat",
       "mobility": "fixed",
@@ -379,18 +336,17 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "desk_open_office_2",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "seat_open_office_2"
     },
     {
       "id": "printer_open_office",
       "name": "printer",
       "name_cn": "打印机",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "printer",
       "mobility": "fixed",
@@ -403,17 +359,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "open_office",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "printer_open_office"
     },
     {
       "id": "table_meeting_room",
       "name": "table",
       "name_cn": "会议桌",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "table",
       "mobility": "fixed",
@@ -428,21 +383,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "meeting_room",
-      "child": [
-        "book_meeting_room"
-      ],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "table_meeting_room"
     },
     {
       "id": "book_meeting_room",
       "name": "book",
       "name_cn": "会议本",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "book",
       "mobility": "movable",
@@ -453,17 +405,19 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "table_meeting_room",
-      "child": [],
       "interactive_actions": [
         "pick"
+      ],
+      "editor_id": "book_meeting_room",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "seat_meeting_room",
       "name": "seat",
       "name_cn": "座椅",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "seat",
       "mobility": "fixed",
@@ -476,19 +430,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "meeting_room",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "seat_meeting_room"
     },
     {
       "id": "display_meeting_room",
       "name": "display",
       "name_cn": "投屏显示器",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "display",
       "mobility": "fixed",
@@ -501,17 +454,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "meeting_room",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "display_meeting_room"
     },
     {
       "id": "counter_pantry",
       "name": "counter",
       "name_cn": "操作台",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "counter",
       "mobility": "fixed",
@@ -525,21 +477,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "pantry",
-      "child": [
-        "cup_pantry"
-      ],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "counter_pantry"
     },
     {
       "id": "cup_pantry",
       "name": "cup",
       "name_cn": "杯子",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "cup",
       "mobility": "movable",
@@ -553,18 +502,20 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "counter_pantry",
-      "child": [],
       "interactive_actions": [
         "pick",
         "brush"
+      ],
+      "editor_id": "cup_pantry",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "microwave_pantry",
       "name": "microwave",
       "name_cn": "微波炉",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "microwave",
       "mobility": "fixed",
@@ -581,17 +532,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "pantry",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "microwave_pantry"
     },
     {
       "id": "fridge_pantry",
       "name": "refrigerator",
       "name_cn": "冰箱",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "fridge",
       "mobility": "fixed",
@@ -608,20 +558,19 @@
         "operation": ""
       },
       "affordance_count": 5,
-      "parent": "pantry",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "open",
         "close"
-      ]
+      ],
+      "editor_id": "fridge_pantry"
     },
     {
       "id": "water_dispenser_pantry",
       "name": "water dispenser",
       "name_cn": "饮水机",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "water_dispenser",
       "mobility": "fixed",
@@ -634,17 +583,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "pantry",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "water_dispenser_pantry"
     },
     {
       "id": "desk_manager_office",
       "name": "desk",
       "name_cn": "办公桌",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "desk",
       "mobility": "fixed",
@@ -659,22 +607,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "manager_office",
-      "child": [
-        "computer_manager_office",
-        "seat_manager_office"
-      ],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "desk_manager_office"
     },
     {
       "id": "computer_manager_office",
       "name": "computer",
       "name_cn": "电脑",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "computer",
       "mobility": "fixed",
@@ -687,17 +631,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "desk_manager_office",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "computer_manager_office"
     },
     {
       "id": "seat_manager_office",
       "name": "seat",
       "name_cn": "椅子",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "seat",
       "mobility": "fixed",
@@ -710,18 +653,17 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "desk_manager_office",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "seat_manager_office"
     },
     {
       "id": "cabinet_manager_office",
       "name": "cabinet",
       "name_cn": "文件柜",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "cabinet",
       "mobility": "fixed",
@@ -736,22 +678,19 @@
         "operation": ""
       },
       "affordance_count": 8,
-      "parent": "manager_office",
-      "child": [
-        "report_open_office"
-      ],
       "interactive_actions": [
         "move",
         "place",
         "open",
         "close"
-      ]
+      ],
+      "editor_id": "cabinet_manager_office"
     },
     {
       "id": "plant_manager_office",
       "name": "plant",
       "name_cn": "绿植",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "plant",
       "mobility": "fixed",
@@ -765,17 +704,16 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "manager_office",
-      "child": [],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "plant_manager_office"
     },
     {
       "id": "sink_restroom",
       "name": "sink",
       "name_cn": "洗手池",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "sink",
       "mobility": "fixed",
@@ -790,19 +728,18 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "restroom",
-      "child": [],
       "interactive_actions": [
         "move",
         "place",
         "brush"
-      ]
+      ],
+      "editor_id": "sink_restroom"
     },
     {
       "id": "toilet_restroom",
       "name": "toilet",
       "name_cn": "马桶",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "toilet",
       "mobility": "fixed",
@@ -817,12 +754,11 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": "restroom",
-      "child": [],
       "interactive_actions": [
         "move",
         "brush"
-      ]
+      ],
+      "editor_id": "toilet_restroom"
     },
     {
       "id": "outside_home",
@@ -839,18 +775,17 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "F1",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "outside_home"
     },
     {
       "id": "report_open_office",
       "name": "report",
       "name_cn": "report",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "document",
       "semantic_type": "report",
       "mobility": "movable",
@@ -861,11 +796,13 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "cabinet_manager_office",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "report_open_office",
+      "capabilities": [
+        "pickable"
       ]
     }
   ],

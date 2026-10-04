@@ -9,4 +9,4 @@
 
 ## 合并原则
 
-只有完成 ontology 映射、动作/状态审计和任务可解性验证的候选，才能合并到 `backend/core/assets`。
+只有完成 ontology 映射、动作/状态审计和任务可解性验证的候选，才能合并到 `backend/generation/assets`。

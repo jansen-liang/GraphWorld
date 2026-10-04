@@ -14,8 +14,12 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from backend.core.node import NodeType, make_node
-from backend.core.assets.object_library import build_object_node
+from backend.core.node import NodeType
+
+
+def create_node(node_id: str, node_type: NodeType, **values):
+    return {"id": node_id, "node_type": node_type.value, "semantic_type": values.get("semantic_type", node_type.value), "name": values.get("name", node_id), "name_cn": values.get("name_cn", ""), "states": {}}
+from backend.generation.assets.object_library import build_object_node
 from backend.runtime.engine import Orchestrator
 
 
@@ -26,7 +30,7 @@ DEFAULT_SCENE = ROOT / "backend" / "data" / "sg_output" / "simple_graph" / "simp
 def expected_plan(scene: dict[str, Any]) -> list[dict[str, Any]]:
     """Build the runtime trace with IDs from the actual scene, not stale fixtures."""
     by_semantic = {str(n.get("semantic_type")): str(n["id"]) for n in scene["nodes"]}
-    robot = next(str(n["id"]) for n in scene["nodes"] if n.get("node_type") == "robot")
+    robot = next(str(n["id"]) for n in scene["nodes"] if n.get("node_type") == NodeType.AGENT.value)
     clothes = by_semantic.get("clothes", "dirty_clothes")
     washer = by_semantic.get("washing_machine", "washing_machine_01")
     rack = by_semantic.get("drying_rack", "drying_rack_01")
@@ -50,28 +54,40 @@ def expected_plan(scene: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def build_mini_scene() -> dict[str, Any]:
-    room = make_node("laundry_room", NodeType.ROOM, semantic_type="room", name="laundry room", name_cn="洗衣房")
-    robot = make_node("robot_01", NodeType.ROBOT, semantic_type="robot", name="robot")
+    room = create_node("laundry_room", NodeType.ROOM, semantic_type="room", name="laundry room", name_cn="洗衣房")
+    robot = create_node("robot_01", NodeType.AGENT, semantic_type="robot", name="robot")
     clothes = build_object_node(
         "dirty_clothes",
         "clothes",
-        parent="laundry_room",
+        host_id="laundry_room",
         overrides={"states": {"is_dirty": True, "is_wet": False, "folded": False}},
     )
-    washer = build_object_node("washing_machine_01", "washing_machine", parent="laundry_room")
+    washer = build_object_node("washing_machine_01", "washing_machine", host_id="laundry_room")
     # This deliberately uses the semantic type expected by timed drying rules.
     drying_rack = build_object_node(
         "drying_rack_01",
         "rack",
-        parent="laundry_room",
+        host_id="laundry_room",
         overrides={"semantic_type": "drying_rack", "name": "drying rack", "name_cn": "晾衣架"},
     )
-    wardrobe = build_object_node("wardrobe_01", "wardrobe", parent="laundry_room")
+    wardrobe = build_object_node("wardrobe_01", "wardrobe", host_id="laundry_room")
+    nodes = [room, robot, clothes, washer, drying_rack, wardrobe]
+    edges = [{"source_id": "laundry_room", "target_id": "robot_01", "relation": "at"}]
+    for item in nodes:
+        host_id = str(item.pop("host_id", "") or "")
+        if host_id:
+            edges.append({
+                "source_id": host_id,
+                "target_id": str(item["id"]),
+                "relation": "at" if item.get("node_type") == NodeType.AGENT.value else "in",
+            })
     return {
         "scene_name": "mini_laundry",
+        "schema_version": 2,
+        "id_namespace": "editor",
         "world_state": {"step": 0, "event_log": []},
-        "nodes": [room, robot, clothes, washer, drying_rack, wardrobe],
-        "edges": [{"source_id": "laundry_room", "target_id": "robot_01", "relation": "at"}],
+        "nodes": nodes,
+        "edges": edges,
     }
 
 
@@ -81,10 +97,10 @@ def load_scene(path: Path | None) -> dict[str, Any]:
         # Existing generated home graphs intentionally contain no robot.  For
         # symbolic solvability validation, add a temporary actor in memory and
         # seed one laundry item as dirty/unfolded; the source JSON is untouched.
-        if not any(str(n.get("node_type") or "") == "robot" for n in scene.get("nodes", [])):
+        if not any(str(n.get("node_type") or "") == NodeType.AGENT.value for n in scene.get("nodes", [])):
             room_ids = {str(n["id"]) for n in scene.get("nodes", []) if n.get("node_type") == "room"}
             room_id = "bedroom" if "bedroom" in room_ids else next(iter(room_ids), "living_room")
-            scene.setdefault("nodes", []).append(make_node("robot_01", NodeType.ROBOT, semantic_type="robot"))
+            scene.setdefault("nodes", []).append(create_node("robot_01", NodeType.AGENT, semantic_type="robot"))
             scene.setdefault("edges", []).append({"source_id": room_id, "target_id": "robot_01", "relation": "at"})
         clothes = next((n for n in scene.get("nodes", []) if n.get("semantic_type") == "clothes"), None)
         if clothes is not None:
@@ -213,18 +229,24 @@ def write_pddl(scene: dict[str, Any], out_dir: Path) -> tuple[Path, Path]:
         encoding="utf-8",
     )
     objects: dict[str, list[str]] = {"robot": [], "room": [], "fixed_object": [], "movable_object": []}
+    parent_by_id = {str(edge.get("target_id") or ""): str(edge.get("source_id") or "") for edge in scene.get("edges") or [] if str(edge.get("relation") or "") in {"at", "in", "inside", "inside_room", "on", "near", "held_by"}}
     init = []
     for node in scene["nodes"]:
         node_id = str(node["id"])
         node_type = str(node.get("node_type") or "")
         semantic = str(node.get("semantic_type") or "")
-        if node_type in objects:
-            objects[node_type].append(pddl_name(node_id))
-        parent = str(node.get("parent") or "")
-        if node_type == "robot":
+        capabilities = {str(value) for value in node.get("capabilities") or []}
+        if node_type == NodeType.AGENT.value:
+            objects["robot"].append(pddl_name(node_id))
+        elif node_type == NodeType.ROOM.value:
+            objects["room"].append(pddl_name(node_id))
+        elif node_type == NodeType.OBJECT.value:
+            objects["movable_object" if "pickable" in capabilities else "fixed_object"].append(pddl_name(node_id))
+        parent = parent_by_id.get(node_id, "")
+        if node_type == NodeType.AGENT.value:
             init.append(f"(at {pddl_name(node_id)} {pddl_name(parent)})")
             init.append(f"(handempty {pddl_name(node_id)})")
-        elif node_type == "movable_object":
+        elif node_type == NodeType.OBJECT.value and "pickable" in capabilities:
             init.append(f"(in {pddl_name(node_id)} {pddl_name(parent)})")
             states = node.get("states") or {}
             if states.get("is_dirty"):
@@ -239,7 +261,7 @@ def write_pddl(scene: dict[str, Any], out_dir: Path) -> tuple[Path, Path]:
             init.append(f"(drying-rack {pddl_name(node_id)})")
         elif semantic in {"wardrobe", "cabinet"}:
             init.append(f"(wardrobe {pddl_name(node_id)})")
-        if node_type == "fixed_object" and node.get("blocks_containment"):
+        if node_type == NodeType.OBJECT.value and node.get("blocks_containment"):
             init.append(f"(container {pddl_name(node_id)})")
     clothes_object = next((pddl_name(str(node["id"])) for node in scene["nodes"] if str(node.get("semantic_type")) == "clothes"), "dirty-clothes")
     wardrobe_object = next((pddl_name(str(node["id"])) for node in scene["nodes"] if str(node.get("semantic_type")) in {"wardrobe", "cabinet"}), "wardrobe-01")
@@ -339,12 +361,13 @@ def replay_runtime(scene: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def summarize_scene(scene: dict[str, Any]) -> list[dict[str, Any]]:
+    parent_by_id = {str(edge.get("target_id") or ""): str(edge.get("source_id") or "") for edge in scene.get("edges") or [] if str(edge.get("relation") or "") in {"at", "in", "inside", "inside_room", "on", "near", "held_by"}}
     return [
         {
             "id": node["id"],
             "semantic_type": node.get("semantic_type"),
             "node_type": node.get("node_type"),
-            "parent": node.get("parent"),
+            "location_id": parent_by_id.get(str(node["id"]), ""),
             "states": node.get("states"),
             "interactive_actions": node.get("interactive_actions"),
         }

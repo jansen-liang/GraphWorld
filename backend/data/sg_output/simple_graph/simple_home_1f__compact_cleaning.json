@@ -7,12 +7,19 @@
     "time_min": 360,
     "minutes_per_step": 10
   },
+  "variant_profile": "compact_cleaning",
+  "variant_axes": {
+    "topology": "compact",
+    "object_task": "cleaning"
+  },
+  "schema_version": 2,
+  "id_namespace": "editor",
   "nodes": [
     {
       "id": "F1",
       "name": "Floor 1",
       "name_cn": "第 1 层",
-      "node_type": "fixed_object",
+      "node_type": "floor",
       "semantic_class": "space",
       "semantic_type": "floor",
       "mobility": "structural",
@@ -23,18 +30,9 @@
         "operation": ""
       },
       "affordance_count": 0,
-      "parent": null,
-      "child": [
-        "balcony",
-        "bathroom",
-        "bedroom",
-        "entrance",
-        "kitchen",
-        "living_room",
-        "outside_home"
-      ],
       "interactive_actions": [],
-      "floor_number": 1
+      "floor_number": 1,
+      "editor_id": "F1"
     },
     {
       "id": "entrance",
@@ -51,18 +49,11 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "F1",
-      "child": [
-        "bench_entrance",
-        "button_entrance",
-        "door_entrance",
-        "light_entrance",
-        "shoe_rack_entrance"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "entrance"
     },
     {
       "id": "living_room",
@@ -79,20 +70,11 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "F1",
-      "child": [
-        "button_living_room",
-        "coffee_table_living_room",
-        "door_living_room",
-        "light_living_room",
-        "sofa_living_room",
-        "trash_bin_living_room",
-        "tv_living_room"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "living_room"
     },
     {
       "id": "kitchen",
@@ -109,23 +91,11 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "F1",
-      "child": [
-        "button_kitchen",
-        "counter_kitchen",
-        "dishwasher_kitchen",
-        "door_kitchen",
-        "faucet_kitchen",
-        "fridge_kitchen",
-        "light_kitchen",
-        "microwave_kitchen",
-        "sink_kitchen",
-        "stove_kitchen"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "kitchen"
     },
     {
       "id": "bedroom",
@@ -142,19 +112,11 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "F1",
-      "child": [
-        "bed_bedroom",
-        "button_bedroom",
-        "desk_bedroom",
-        "door_bedroom",
-        "light_bedroom",
-        "wardrobe_bedroom"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "bedroom"
     },
     {
       "id": "bathroom",
@@ -171,21 +133,11 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "F1",
-      "child": [
-        "button_bathroom",
-        "door_bathroom",
-        "faucet_bathroom",
-        "light_bathroom",
-        "sink_bathroom",
-        "toilet_bathroom",
-        "toilet_brush_bathroom",
-        "washer_bathroom"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "bathroom"
     },
     {
       "id": "balcony",
@@ -202,25 +154,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "F1",
-      "child": [
-        "button_balcony",
-        "chair_balcony",
-        "door_balcony",
-        "drying_rack_balcony",
-        "light_balcony",
-        "plant_balcony"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "balcony"
     },
     {
       "id": "shoe_rack_entrance",
       "name": "rack",
       "name_cn": "架子",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "rack",
       "mobility": "fixed",
@@ -233,21 +177,16 @@
         "operation": ""
       },
       "affordance_count": 1,
-      "parent": "entrance",
-      "child": [
-        "shoes_entrance_1",
-        "shoes_entrance_2",
-        "shoes_entrance_3"
-      ],
       "interactive_actions": [
         "move"
-      ]
+      ],
+      "editor_id": "shoe_rack_entrance"
     },
     {
       "id": "shoes_entrance_1",
       "name": "shoes",
       "name_cn": "鞋",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "shoes",
       "mobility": "movable",
@@ -261,19 +200,21 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "shoe_rack_entrance",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "brush"
+      ],
+      "editor_id": "shoes_entrance_1",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "shoes_entrance_2",
       "name": "shoes",
       "name_cn": "鞋",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "shoes",
       "mobility": "movable",
@@ -287,19 +228,21 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "shoe_rack_entrance",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "brush"
+      ],
+      "editor_id": "shoes_entrance_2",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "shoes_entrance_3",
       "name": "shoes",
       "name_cn": "鞋",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "shoes",
       "mobility": "movable",
@@ -313,19 +256,21 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "shoe_rack_entrance",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "brush"
+      ],
+      "editor_id": "shoes_entrance_3",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "bench_entrance",
       "name": "seat",
       "name_cn": "座椅",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "seat",
       "mobility": "fixed",
@@ -338,19 +283,18 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "brush",
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "bench_entrance"
     },
     {
       "id": "sofa_living_room",
       "name": "sofa",
       "name_cn": "沙发",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "sofa",
       "mobility": "fixed",
@@ -363,19 +307,18 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "living_room",
-      "child": [],
       "interactive_actions": [
         "brush",
         "place",
         "move"
-      ]
+      ],
+      "editor_id": "sofa_living_room"
     },
     {
       "id": "coffee_table_living_room",
       "name": "table",
       "name_cn": "桌子",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "table",
       "mobility": "fixed",
@@ -388,19 +331,18 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "living_room",
-      "child": [],
       "interactive_actions": [
         "brush",
         "place",
         "move"
-      ]
+      ],
+      "editor_id": "coffee_table_living_room"
     },
     {
       "id": "tv_living_room",
       "name": "display",
       "name_cn": "显示屏",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "display",
       "mobility": "fixed",
@@ -414,19 +356,18 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "living_room",
-      "child": [],
       "interactive_actions": [
         "press",
         "brush",
         "move"
-      ]
+      ],
+      "editor_id": "tv_living_room"
     },
     {
       "id": "counter_kitchen",
       "name": "counter",
       "name_cn": "操作台",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "counter",
       "mobility": "fixed",
@@ -439,19 +380,18 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "kitchen",
-      "child": [],
       "interactive_actions": [
         "brush",
         "place",
         "move"
-      ]
+      ],
+      "editor_id": "counter_kitchen"
     },
     {
       "id": "sink_kitchen",
       "name": "sink",
       "name_cn": "洗手池",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "sink",
       "mobility": "fixed",
@@ -466,19 +406,18 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "kitchen",
-      "child": [],
       "interactive_actions": [
         "brush",
         "place",
         "move"
-      ]
+      ],
+      "editor_id": "sink_kitchen"
     },
     {
       "id": "faucet_kitchen",
       "name": "faucet",
       "name_cn": "水龙头",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "faucet",
       "mobility": "fixed",
@@ -492,18 +431,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "kitchen",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "faucet_kitchen"
     },
     {
       "id": "fridge_kitchen",
       "name": "refrigerator",
       "name_cn": "冰箱",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "refrigerator",
       "mobility": "fixed",
@@ -517,27 +455,20 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "kitchen",
-      "child": [
-        "door_fridge_kitchen",
-        "food_living_room",
-        "juice_fridge_kitchen",
-        "milk_fridge_kitchen",
-        "vegetables_fridge_kitchen"
-      ],
       "interactive_actions": [
         "open",
         "close",
         "brush",
         "move"
       ],
-      "blocks_containment": true
+      "blocks_containment": true,
+      "editor_id": "fridge_kitchen"
     },
     {
       "id": "milk_fridge_kitchen",
       "name": "milk",
       "name_cn": "牛奶",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "milk",
       "mobility": "movable",
@@ -554,20 +485,22 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "fridge_kitchen",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "open",
         "close"
+      ],
+      "editor_id": "milk_fridge_kitchen",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "juice_fridge_kitchen",
       "name": "juice",
       "name_cn": "果汁",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "juice",
       "mobility": "movable",
@@ -584,20 +517,22 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "fridge_kitchen",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "open",
         "close"
+      ],
+      "editor_id": "juice_fridge_kitchen",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "vegetables_fridge_kitchen",
       "name": "vegetable",
       "name_cn": "蔬菜",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "vegetable",
       "mobility": "movable",
@@ -613,18 +548,20 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "fridge_kitchen",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "vegetables_fridge_kitchen",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "dishwasher_kitchen",
       "name": "dishwasher",
       "name_cn": "洗碗机",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "dishwasher",
       "mobility": "fixed",
@@ -640,14 +577,6 @@
         "operation": "button_and_door"
       },
       "affordance_count": 5,
-      "parent": "kitchen",
-      "child": [
-        "bowls_dishwasher_kitchen",
-        "cup_living_room",
-        "dishwasher_kitchen_button",
-        "dishwasher_kitchen_door",
-        "plate_living_room"
-      ],
       "interactive_actions": [
         "press",
         "open",
@@ -656,13 +585,14 @@
         "move"
       ],
       "blocks_containment": true,
-      "requires_closed_to_start": true
+      "requires_closed_to_start": true,
+      "editor_id": "dishwasher_kitchen"
     },
     {
       "id": "bowls_dishwasher_kitchen",
       "name": "bowl",
       "name_cn": "碗",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "bowl",
       "mobility": "movable",
@@ -676,19 +606,21 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "dishwasher_kitchen",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "brush"
+      ],
+      "editor_id": "bowls_dishwasher_kitchen",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "microwave_kitchen",
       "name": "microwave",
       "name_cn": "微波炉",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "microwave",
       "mobility": "fixed",
@@ -704,11 +636,6 @@
         "operation": "button_and_door"
       },
       "affordance_count": 5,
-      "parent": "kitchen",
-      "child": [
-        "microwave_kitchen_button",
-        "microwave_kitchen_door"
-      ],
       "interactive_actions": [
         "press",
         "open",
@@ -717,13 +644,14 @@
         "move"
       ],
       "blocks_containment": true,
-      "requires_closed_to_start": true
+      "requires_closed_to_start": true,
+      "editor_id": "microwave_kitchen"
     },
     {
       "id": "stove_kitchen",
       "name": "stove",
       "name_cn": "炉灶",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "stove",
       "mobility": "fixed",
@@ -737,21 +665,18 @@
         "operation": "knob_only"
       },
       "affordance_count": 3,
-      "parent": "kitchen",
-      "child": [
-        "stove_kitchen_knob"
-      ],
       "interactive_actions": [
         "move",
         "press",
         "brush"
-      ]
+      ],
+      "editor_id": "stove_kitchen"
     },
     {
       "id": "bed_bedroom",
       "name": "bed",
       "name_cn": "床",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "bed",
       "mobility": "fixed",
@@ -764,18 +689,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "bedroom",
-      "child": [],
       "interactive_actions": [
         "brush",
         "move"
-      ]
+      ],
+      "editor_id": "bed_bedroom"
     },
     {
       "id": "wardrobe_bedroom",
       "name": "cabinet",
       "name_cn": "柜子",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "cabinet",
       "mobility": "fixed",
@@ -789,13 +713,6 @@
         "operation": ""
       },
       "affordance_count": 5,
-      "parent": "bedroom",
-      "child": [
-        "clothes_bedroom_1",
-        "clothes_bedroom_2",
-        "clothes_bedroom_3",
-        "wardrobe_bedroom_door"
-      ],
       "interactive_actions": [
         "open",
         "close",
@@ -803,13 +720,14 @@
         "place",
         "move"
       ],
-      "blocks_containment": true
+      "blocks_containment": true,
+      "editor_id": "wardrobe_bedroom"
     },
     {
       "id": "wardrobe_bedroom_door",
       "name": "door",
       "name_cn": "门",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -825,8 +743,6 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "wardrobe_bedroom",
-      "child": [],
       "interactive_actions": [
         "open",
         "close",
@@ -834,13 +750,14 @@
       ],
       "door_kind": "structural",
       "blocks_visibility": true,
-      "blocks_navigation": true
+      "blocks_navigation": true,
+      "editor_id": "wardrobe_bedroom_door"
     },
     {
       "id": "clothes_bedroom_1",
       "name": "clothes",
       "name_cn": "衣服",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "clothes",
       "mobility": "movable",
@@ -855,19 +772,21 @@
         "operation": ""
       },
       "affordance_count": 4,
-      "parent": "wardrobe_bedroom",
-      "child": [],
       "interactive_actions": [
         "fold",
         "pick",
         "place"
+      ],
+      "editor_id": "clothes_bedroom_1",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "clothes_bedroom_2",
       "name": "clothes",
       "name_cn": "衣服",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "clothes",
       "mobility": "movable",
@@ -882,19 +801,21 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "wardrobe_bedroom",
-      "child": [],
       "interactive_actions": [
         "fold",
         "pick",
         "place"
+      ],
+      "editor_id": "clothes_bedroom_2",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "clothes_bedroom_3",
       "name": "clothes",
       "name_cn": "衣服",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "clothes",
       "mobility": "movable",
@@ -909,19 +830,21 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "wardrobe_bedroom",
-      "child": [],
       "interactive_actions": [
         "fold",
         "pick",
         "place"
+      ],
+      "editor_id": "clothes_bedroom_3",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "desk_bedroom",
       "name": "desk",
       "name_cn": "书桌",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "desk",
       "mobility": "fixed",
@@ -934,22 +857,18 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "bedroom",
-      "child": [
-        "book_stack_bedroom",
-        "desk_drawer_bedroom"
-      ],
       "interactive_actions": [
         "brush",
         "place",
         "move"
-      ]
+      ],
+      "editor_id": "desk_bedroom"
     },
     {
       "id": "desk_drawer_bedroom",
       "name": "drawer",
       "name_cn": "抽屉",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "drawer",
       "mobility": "fixed",
@@ -963,10 +882,6 @@
         "operation": ""
       },
       "affordance_count": 5,
-      "parent": "desk_bedroom",
-      "child": [
-        "stationery_set_bedroom"
-      ],
       "interactive_actions": [
         "open",
         "close",
@@ -974,13 +889,14 @@
         "place",
         "move"
       ],
-      "blocks_containment": true
+      "blocks_containment": true,
+      "editor_id": "desk_drawer_bedroom"
     },
     {
       "id": "stationery_set_bedroom",
       "name": "stationery",
       "name_cn": "文具套装",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "stationery",
       "mobility": "movable",
@@ -993,18 +909,20 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "desk_drawer_bedroom",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "stationery_set_bedroom",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "book_stack_bedroom",
       "name": "book",
       "name_cn": "书",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "book",
       "mobility": "movable",
@@ -1017,18 +935,20 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "desk_bedroom",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "book_stack_bedroom",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "sink_bathroom",
       "name": "sink",
       "name_cn": "洗手池",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "sink",
       "mobility": "fixed",
@@ -1043,23 +963,18 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "bathroom",
-      "child": [
-        "cup_bathroom",
-        "toothbrush_bathroom",
-        "toothpaste_bathroom"
-      ],
       "interactive_actions": [
         "brush",
         "place",
         "move"
-      ]
+      ],
+      "editor_id": "sink_bathroom"
     },
     {
       "id": "faucet_bathroom",
       "name": "faucet",
       "name_cn": "水龙头",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "faucet",
       "mobility": "fixed",
@@ -1073,18 +988,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "bathroom",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "faucet_bathroom"
     },
     {
       "id": "toilet_bathroom",
       "name": "toilet",
       "name_cn": "马桶",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "toilet",
       "mobility": "fixed",
@@ -1097,18 +1011,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "bathroom",
-      "child": [],
       "interactive_actions": [
         "move",
         "brush"
-      ]
+      ],
+      "editor_id": "toilet_bathroom"
     },
     {
       "id": "toilet_brush_bathroom",
       "name": "toilet brush",
       "name_cn": "马桶刷",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "tool",
       "semantic_type": "toilet_brush",
       "mobility": "movable",
@@ -1121,19 +1034,21 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "bathroom",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "brush"
+      ],
+      "editor_id": "toilet_brush_bathroom",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "washer_bathroom",
       "name": "washer",
       "name_cn": "洗衣机",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "washer",
       "mobility": "fixed",
@@ -1149,11 +1064,6 @@
         "operation": "button_and_door"
       },
       "affordance_count": 5,
-      "parent": "bathroom",
-      "child": [
-        "washer_bathroom_button",
-        "washer_bathroom_door"
-      ],
       "interactive_actions": [
         "press",
         "open",
@@ -1162,13 +1072,14 @@
         "move"
       ],
       "blocks_containment": true,
-      "requires_closed_to_start": true
+      "requires_closed_to_start": true,
+      "editor_id": "washer_bathroom"
     },
     {
       "id": "plant_balcony",
       "name": "plant",
       "name_cn": "盆栽",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "plant",
       "mobility": "fixed",
@@ -1184,19 +1095,18 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "balcony",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "move"
-      ]
+      ],
+      "editor_id": "plant_balcony"
     },
     {
       "id": "chair_balcony",
       "name": "chair",
       "name_cn": "椅子",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "chair",
       "mobility": "movable",
@@ -1209,19 +1119,21 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "balcony",
-      "child": [],
       "interactive_actions": [
         "brush",
         "place",
         "move"
+      ],
+      "editor_id": "chair_balcony",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "drying_rack_balcony",
       "name": "drying rack",
       "name_cn": "晾衣架",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "furniture",
       "semantic_type": "drying_rack",
       "mobility": "fixed",
@@ -1234,19 +1146,18 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "balcony",
-      "child": [],
       "interactive_actions": [
         "move",
         "place"
       ],
-      "max_capacity": 3
+      "max_capacity": 3,
+      "editor_id": "drying_rack_balcony"
     },
     {
       "id": "toothbrush_bathroom",
       "name": "toothbrush",
       "name_cn": "牙刷",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "toothbrush",
       "mobility": "movable",
@@ -1259,19 +1170,21 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "sink_bathroom",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "brush"
+      ],
+      "editor_id": "toothbrush_bathroom",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "cup_bathroom",
       "name": "cup",
       "name_cn": "杯子",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "consumable",
       "semantic_type": "cup",
       "mobility": "movable",
@@ -1287,19 +1200,21 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "sink_bathroom",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "brush"
+      ],
+      "editor_id": "cup_bathroom",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "toothpaste_bathroom",
       "name": "toothpaste",
       "name_cn": "牙膏",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_class": "personal_item",
       "semantic_type": "toothpaste",
       "mobility": "movable",
@@ -1312,18 +1227,20 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "sink_bathroom",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "toothpaste_bathroom",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "trash_bin_living_room",
       "name": "trash bin",
       "name_cn": "垃圾桶",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "container",
       "semantic_type": "trash_bin",
       "mobility": "fixed",
@@ -1338,19 +1255,18 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "living_room",
-      "child": [],
       "interactive_actions": [
         "brush",
         "place",
         "move"
-      ]
+      ],
+      "editor_id": "trash_bin_living_room"
     },
     {
       "id": "door_entrance",
       "name": "door",
       "name_cn": "门",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -1366,8 +1282,6 @@
         "operation": "manual_door"
       },
       "affordance_count": 3,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "open",
         "close",
@@ -1379,13 +1293,14 @@
         "entrance"
       ],
       "blocks_visibility": true,
-      "blocks_navigation": true
+      "blocks_navigation": true,
+      "editor_id": "door_entrance"
     },
     {
       "id": "light_entrance",
       "name": "light",
       "name_cn": "灯",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -1400,18 +1315,17 @@
         "operation": "button_only"
       },
       "affordance_count": 2,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "light_entrance"
     },
     {
       "id": "button_entrance",
       "name": "button",
       "name_cn": "按钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1427,18 +1341,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "entrance",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "button_entrance"
     },
     {
       "id": "door_living_room",
       "name": "door",
       "name_cn": "门",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -1454,8 +1367,6 @@
         "operation": "manual_door"
       },
       "affordance_count": 3,
-      "parent": "living_room",
-      "child": [],
       "interactive_actions": [
         "open",
         "close",
@@ -1467,13 +1378,14 @@
         "living_room"
       ],
       "blocks_visibility": true,
-      "blocks_navigation": true
+      "blocks_navigation": true,
+      "editor_id": "door_living_room"
     },
     {
       "id": "light_living_room",
       "name": "light",
       "name_cn": "灯",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -1488,18 +1400,17 @@
         "operation": "button_only"
       },
       "affordance_count": 2,
-      "parent": "living_room",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "light_living_room"
     },
     {
       "id": "button_living_room",
       "name": "button",
       "name_cn": "按钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1515,18 +1426,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "living_room",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "button_living_room"
     },
     {
       "id": "door_kitchen",
       "name": "door",
       "name_cn": "门",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -1542,8 +1452,6 @@
         "operation": "manual_door"
       },
       "affordance_count": 3,
-      "parent": "kitchen",
-      "child": [],
       "interactive_actions": [
         "open",
         "close",
@@ -1555,13 +1463,14 @@
         "kitchen"
       ],
       "blocks_visibility": true,
-      "blocks_navigation": true
+      "blocks_navigation": true,
+      "editor_id": "door_kitchen"
     },
     {
       "id": "light_kitchen",
       "name": "light",
       "name_cn": "灯",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -1576,18 +1485,17 @@
         "operation": "button_only"
       },
       "affordance_count": 2,
-      "parent": "kitchen",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "light_kitchen"
     },
     {
       "id": "button_kitchen",
       "name": "button",
       "name_cn": "按钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1603,18 +1511,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "kitchen",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "button_kitchen"
     },
     {
       "id": "door_bedroom",
       "name": "door",
       "name_cn": "门",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -1630,8 +1537,6 @@
         "operation": "manual_door"
       },
       "affordance_count": 3,
-      "parent": "bedroom",
-      "child": [],
       "interactive_actions": [
         "open",
         "close",
@@ -1643,13 +1548,14 @@
         "bedroom"
       ],
       "blocks_visibility": true,
-      "blocks_navigation": true
+      "blocks_navigation": true,
+      "editor_id": "door_bedroom"
     },
     {
       "id": "light_bedroom",
       "name": "light",
       "name_cn": "灯",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -1664,18 +1570,17 @@
         "operation": "button_only"
       },
       "affordance_count": 2,
-      "parent": "bedroom",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "light_bedroom"
     },
     {
       "id": "button_bedroom",
       "name": "button",
       "name_cn": "按钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1691,18 +1596,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "bedroom",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "button_bedroom"
     },
     {
       "id": "door_bathroom",
       "name": "door",
       "name_cn": "门",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -1718,8 +1622,6 @@
         "operation": "manual_door"
       },
       "affordance_count": 3,
-      "parent": "bathroom",
-      "child": [],
       "interactive_actions": [
         "open",
         "close",
@@ -1731,13 +1633,14 @@
         "bathroom"
       ],
       "blocks_visibility": true,
-      "blocks_navigation": true
+      "blocks_navigation": true,
+      "editor_id": "door_bathroom"
     },
     {
       "id": "light_bathroom",
       "name": "light",
       "name_cn": "灯",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -1752,18 +1655,17 @@
         "operation": "button_only"
       },
       "affordance_count": 2,
-      "parent": "bathroom",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "light_bathroom"
     },
     {
       "id": "button_bathroom",
       "name": "button",
       "name_cn": "按钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1779,18 +1681,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "bathroom",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "button_bathroom"
     },
     {
       "id": "door_balcony",
       "name": "door",
       "name_cn": "门",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -1806,8 +1707,6 @@
         "operation": "manual_door"
       },
       "affordance_count": 3,
-      "parent": "balcony",
-      "child": [],
       "interactive_actions": [
         "open",
         "close",
@@ -1819,13 +1718,14 @@
         "balcony"
       ],
       "blocks_visibility": true,
-      "blocks_navigation": true
+      "blocks_navigation": true,
+      "editor_id": "door_balcony"
     },
     {
       "id": "light_balcony",
       "name": "light",
       "name_cn": "灯",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "appliance",
       "semantic_type": "room_light",
       "mobility": "fixed",
@@ -1840,18 +1740,17 @@
         "operation": "button_only"
       },
       "affordance_count": 2,
-      "parent": "balcony",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "light_balcony"
     },
     {
       "id": "button_balcony",
       "name": "button",
       "name_cn": "按钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1867,18 +1766,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "balcony",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "button_balcony"
     },
     {
       "id": "dishwasher_kitchen_door",
       "name": "door",
       "name_cn": "门",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -1894,8 +1792,6 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "dishwasher_kitchen",
-      "child": [],
       "interactive_actions": [
         "open",
         "close",
@@ -1904,13 +1800,14 @@
       "door_kind": "structural",
       "requires_closed_to_start": true,
       "blocks_visibility": true,
-      "blocks_navigation": true
+      "blocks_navigation": true,
+      "editor_id": "dishwasher_kitchen_door"
     },
     {
       "id": "dishwasher_kitchen_button",
       "name": "button",
       "name_cn": "按钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1926,18 +1823,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "dishwasher_kitchen",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "dishwasher_kitchen_button"
     },
     {
       "id": "microwave_kitchen_door",
       "name": "door",
       "name_cn": "门",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -1953,8 +1849,6 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "microwave_kitchen",
-      "child": [],
       "interactive_actions": [
         "open",
         "close",
@@ -1963,13 +1857,14 @@
       "door_kind": "structural",
       "requires_closed_to_start": true,
       "blocks_visibility": true,
-      "blocks_navigation": true
+      "blocks_navigation": true,
+      "editor_id": "microwave_kitchen_door"
     },
     {
       "id": "microwave_kitchen_button",
       "name": "button",
       "name_cn": "按钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -1985,18 +1880,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "microwave_kitchen",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "microwave_kitchen_button"
     },
     {
       "id": "stove_kitchen_knob",
       "name": "knob",
       "name_cn": "旋钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "knob",
       "mobility": "fixed",
@@ -2011,18 +1905,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "stove_kitchen",
-      "child": [],
       "interactive_actions": [
         "move",
         "press"
-      ]
+      ],
+      "editor_id": "stove_kitchen_knob"
     },
     {
       "id": "washer_bathroom_door",
       "name": "door",
       "name_cn": "门",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -2038,8 +1931,6 @@
         "operation": ""
       },
       "affordance_count": 3,
-      "parent": "washer_bathroom",
-      "child": [],
       "interactive_actions": [
         "open",
         "close",
@@ -2048,13 +1939,14 @@
       "door_kind": "structural",
       "requires_closed_to_start": true,
       "blocks_visibility": true,
-      "blocks_navigation": true
+      "blocks_navigation": true,
+      "editor_id": "washer_bathroom_door"
     },
     {
       "id": "washer_bathroom_button",
       "name": "button",
       "name_cn": "按钮",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "button",
       "mobility": "fixed",
@@ -2070,18 +1962,17 @@
         "operation": ""
       },
       "affordance_count": 2,
-      "parent": "washer_bathroom",
-      "child": [],
       "interactive_actions": [
         "press",
         "move"
-      ]
+      ],
+      "editor_id": "washer_bathroom_button"
     },
     {
       "id": "door_fridge_kitchen",
       "name": "door",
       "name_cn": "门",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_class": "control",
       "semantic_type": "door",
       "mobility": "fixed",
@@ -2095,8 +1986,6 @@
         "operation": "manual_door"
       },
       "affordance_count": 3,
-      "parent": "fridge_kitchen",
-      "child": [],
       "interactive_actions": [
         "open",
         "close",
@@ -2105,7 +1994,8 @@
       "door_kind": "structural",
       "requires_closed_to_start": true,
       "blocks_visibility": true,
-      "blocks_navigation": true
+      "blocks_navigation": true,
+      "editor_id": "door_fridge_kitchen"
     },
     {
       "id": "outside_home",
@@ -2118,82 +2008,84 @@
       "states": {},
       "property": {},
       "affordance_count": 2,
-      "parent": "F1",
-      "child": [
-        "garbage_station_outside_home"
-      ],
       "interactive_actions": [
         "move",
         "place"
-      ]
+      ],
+      "editor_id": "outside_home"
     },
     {
       "id": "garbage_station_outside_home",
       "name": "garbage station",
       "name_cn": "垃圾处理站",
-      "node_type": "fixed_object",
+      "node_type": "object",
       "semantic_type": "garbage_station",
       "states": {
         "is_dirty": false
       },
-      "parent": "outside_home",
-      "child": [],
       "interactive_actions": [
         "move",
         "dump"
-      ]
+      ],
+      "editor_id": "garbage_station_outside_home"
     },
     {
       "id": "food_living_room",
       "name": "food",
       "name_cn": "food",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_type": "food",
       "states": {
         "is_cooked": true,
         "is_rotten": false,
         "is_dirty": false
       },
-      "parent": "fridge_kitchen",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place"
+      ],
+      "editor_id": "food_living_room",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "plate_living_room",
       "name": "plate",
       "name_cn": "plate",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_type": "plate",
       "states": {
         "is_dirty": false
       },
-      "parent": "dishwasher_kitchen",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "brush"
+      ],
+      "editor_id": "plate_living_room",
+      "capabilities": [
+        "pickable"
       ]
     },
     {
       "id": "cup_living_room",
       "name": "cup",
       "name_cn": "cup",
-      "node_type": "movable_object",
+      "node_type": "object",
       "semantic_type": "cup",
       "states": {
         "is_dirty": false,
         "is_wet": false
       },
-      "parent": "dishwasher_kitchen",
-      "child": [],
       "interactive_actions": [
         "pick",
         "place",
         "brush"
+      ],
+      "editor_id": "cup_living_room",
+      "capabilities": [
+        "pickable"
       ]
     }
   ],
@@ -2990,10 +2882,5 @@
       "category": "containment",
       "properties": {}
     }
-  ],
-  "variant_profile": "compact_cleaning",
-  "variant_axes": {
-    "topology": "compact",
-    "object_task": "cleaning"
-  }
+  ]
 }

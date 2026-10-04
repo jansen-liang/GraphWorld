@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from backend.core.assets.npc_library import planned_activity
+from backend.generation.assets.npc_library import planned_activity
 
 def planned_event_for_actor(scene: dict[str, Any], actor: dict[str, Any], step: int) -> str:
     world = scene.get("world_state") or {}
@@ -30,7 +30,7 @@ def planned_event_for_actor(scene: dict[str, Any], actor: dict[str, Any], step: 
 
 
 def planned_event_for_step(scene: dict[str, Any], step: int) -> str:
-    actors = [node for node in scene.get("nodes") or [] if str(node.get("node_type") or "") == "human"]
+    actors = [node for node in scene.get("nodes") or [] if str(node.get("node_type") or "") == "agent" and str(node.get("semantic_type") or "") in {"human", "npc"}]
     if not actors:
         return ""
     return planned_event_for_actor(scene, actors[0], step)
@@ -39,7 +39,7 @@ def planned_event_for_step(scene: dict[str, Any], step: int) -> str:
 def planned_events_for_step(scene: dict[str, Any], step: int) -> list[dict[str, Any]]:
     events: list[dict[str, Any]] = []
     for actor in scene.get("nodes") or []:
-        if str(actor.get("node_type") or "") != "human":
+        if str(actor.get("node_type") or "") != "agent" or str(actor.get("semantic_type") or "") not in {"human", "npc"}:
             continue
         actor_id = str(actor.get("id") or "")
         if not actor_id:
@@ -59,7 +59,7 @@ def planned_events_for_step(scene: dict[str, Any], step: int) -> list[dict[str, 
 
 
 def expected_events(scene: dict[str, Any], steps: int) -> tuple[str, ...]:
-    if not any(str(node.get("node_type") or "") == "human" for node in scene.get("nodes") or []):
+    if not any(str(node.get("node_type") or "") == "agent" and str(node.get("semantic_type") or "") in {"human", "npc"} for node in scene.get("nodes") or []):
         return ()
     events = []
     for step in range(steps):

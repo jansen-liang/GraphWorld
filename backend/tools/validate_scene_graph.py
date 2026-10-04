@@ -12,7 +12,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from backend.core.assets.object_library import OBJECT_LIBRARY
+from backend.generation.assets.object_library import OBJECT_LIBRARY
 
 TASK_REQUIREMENTS: dict[str, set[str]] = {
     "clean": {"cleanable", "cleaning_tool"},

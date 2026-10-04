@@ -8,9 +8,9 @@ from __future__ import annotations
 import random
 from typing import Any
 
-from backend.core.assets.object_library import build_object_node
-from backend.core.node import NodeType, make_node
-from backend.core.assets.room_library import room_types_for_scene
+from backend.generation.assets.object_library import build_object_node
+from backend.core.node import NodeType
+from backend.generation.assets.room_library import room_types_for_scene
 
 
 DOMAIN_PROFILES: dict[str, dict[str, Any]] = {
@@ -58,6 +58,16 @@ def _edge(source: str, target: str, relation: str, *, edge_type: str = "object_e
     return {"source_id": source, "target_id": target, "edge_type": edge_type, "relation": relation, "category": category, "properties": {}}
 
 
+def create_node(node_id: str, node_type: NodeType, *, semantic_type: str = "", name: str = "", name_cn: str = "") -> dict[str, Any]:
+    """Create generator-owned structural nodes; object instances come from templates."""
+    return {
+        "id": str(node_id), "node_type": node_type.value,
+        "semantic_type": semantic_type or node_type.value,
+        "editor_id": str(node_id),
+        "name": name or node_id, "name_cn": name_cn, "states": {},
+    }
+
+
 def generate_scene(domain: str, *, seed: int = 0, optional_rooms: int = 0, npc_count: int = 0) -> dict[str, Any]:
     domain = str(domain).lower()
     if domain not in DOMAIN_PROFILES:
@@ -69,20 +79,20 @@ def generate_scene(domain: str, *, seed: int = 0, optional_rooms: int = 0, npc_c
     for room_type in profile.get("optional", ()):
         if room_type in allowed and len(room_types) < len(profile["required"]) + optional_rooms and rng.random() < 0.8:
             room_types.append(room_type)
-    floor = make_node("floor_1", NodeType.FLOOR, semantic_type="floor", name="floor")
+    floor = create_node("floor_1", NodeType.FLOOR, semantic_type="floor", name="floor")
     nodes: list[dict[str, Any]] = [floor]
     room_ids: list[str] = []
     for index, room_type in enumerate(room_types, 1):
         room_id = f"{room_type}_{index}"
         room_ids.append(room_id)
-        nodes.append(make_node(room_id, NodeType.ROOM, semantic_type=room_type, name=room_type, name_cn=room_type))
+        nodes.append(create_node(room_id, NodeType.ROOM, semantic_type=room_type, name=room_type, name_cn=room_type))
     edges: list[dict[str, Any]] = []
     for room_id in room_ids:
         edges.append(_edge("floor_1", room_id, "belongs_to", edge_type="room_floor_edge"))
     for left, right in zip(room_ids, room_ids[1:]):
         edges.append(_edge(left, right, "connected", edge_type="room_edge", category="physical"))
         door_id = f"door_{left}_{right}"
-        door = build_object_node(door_id, "door", parent=left)
+        door = build_object_node(door_id, "door")
         door["connected_rooms"] = [left, right]
         door["door_kind"] = "structural"
         door["blocks_navigation"] = True
@@ -97,18 +107,18 @@ def generate_scene(domain: str, *, seed: int = 0, optional_rooms: int = 0, npc_c
                 continue
             counters[object_type] = counters.get(object_type, 0) + 1
             object_id = f"{object_type}_{room_type}_{counters[object_type]}"
-            item = build_object_node(object_id, object_type, parent=room_id)
+            item = build_object_node(object_id, object_type)
             nodes.append(item)
             edges.append(_edge(room_id, object_id, "contains"))
         for object_type in profile.get("movables", {}).get(room_type, []):
             counters[object_type] = counters.get(object_type, 0) + 1
             object_id = f"{object_type}_{room_type}_{counters[object_type]}"
-            item = build_object_node(object_id, object_type, parent=room_id)
+            item = build_object_node(object_id, object_type)
             nodes.append(item)
             edges.append(_edge(room_id, object_id, "in"))
     for index in range(npc_count):
         room_id = room_ids[index % len(room_ids)]
-        human = make_node(f"human_{index + 1}", NodeType.HUMAN, semantic_type="human", name="human")
+        human = create_node(f"human_{index + 1}", NodeType.AGENT, semantic_type="human", name="human")
         human["is_npc"] = True
         nodes.append(human)
         edges.append(_edge(room_id, human["id"], "at"))
@@ -121,6 +131,8 @@ def generate_scene(domain: str, *, seed: int = 0, optional_rooms: int = 0, npc_c
         "nodes": nodes,
         "edges": edges,
         "generation": {"domain": domain, "room_types": room_types, "npc_count": npc_count},
+        "schema_version": 2,
+        "id_namespace": "editor",
     }
 
 

@@ -51,7 +51,12 @@ def test_health_and_scene_import_smoke(monkeypatch, tmp_path):
     assert graph.status_code == 200
     assert len(graph.json()["nodes"]) == 75
     assert len(graph.json()["edges"]) == 92
-    assert len(graph.json()["source_json"]["layout"]["rooms"]) == 7
+    # The canonical home scene now materializes the demo elevator shaft and
+    # its two upper-floor landings at read time; the persisted base scene still
+    # has the original seven rooms.
+    rooms = graph.json()["source_json"]["layout"]["rooms"]
+    assert len(rooms) >= 7
+    assert "elevator_shaft_outside_home" in rooms
 
     generated = client.post(
         f"/api/scene-versions/{scene_version_id}/layout/generate",

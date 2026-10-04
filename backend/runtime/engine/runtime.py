@@ -4,11 +4,11 @@ import copy
 from typing import Any
 
 from backend.core.action import ActionType
-from backend.core.assets.npc_library import EventPrecondition, get_event_spec
-from backend.core.rules import advance_time
-from backend.core.assets.object_library import materialize
-from backend.core.world import World
-from backend.core.action import ActionExecutor
+from backend.generation.assets.npc_library import EventPrecondition, get_event_spec
+from backend.generation.assets.object_library import materialize
+from backend.runtime.world import World
+from backend.runtime.action_executor import ActionExecutor
+from backend.runtime.time import advance_time
 from .validator import validate_action
 
 

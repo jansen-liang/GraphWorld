@@ -1,171 +1,33 @@
-"""Static core definitions for scene graph, actions, states, and rules."""
+"""GraphWorld's small, static domain kernel."""
 
-from .action import ACTION_SCHEMAS, ACTION_SPECS, Action, ActionContext, ActionSchema, ActionSpec, ActionType, action_spec, apply_action_schema, validate_action_schema
-from .rules import APPLIANCE_CYCLE_STEPS, DRYING_RACK_STEPS, DUMP_RULES, TRASHABLE_SEMANTICS, advance_time, apply_timed_transitions
-from .edge import EdgeCategory, EdgeType, SpatialRelation
-from .edge import Edge
-from .animation import visual_cues
-from .placement import attach_surface_metadata, floor_collision_failure, footprint_for, normalized_surface_anchor, surface_collision_failure, surface_fit_failure, surface_load_failure, surface_spec_for, volume_load_failure
-from .node import (
-    CONTROL_OBJECT_TYPES,
-    Node,
-    NodeType,
-    make_node,
-    node_type_from_legacy,
-)
-from .assets.npc_library import (
-    DEFAULT_ROLE,
-    HOME_NPC_LIBRARY,
-    HOSPITAL_NPC_LIBRARY,
-    NPC_EVENT_LIBRARY,
-    ROLE_SCHEDULES,
-    EventEffect,
-    EventPrecondition,
-    EventSpec,
-    ScheduleEntry,
-    get_default_npcs,
-    get_event_spec,
-    planned_activity,
-    schedule_for_role,
-)
-from .assets.object_library import (
-    Capability,
-    OBJECT_LIBRARY,
-    ObjectTemplate,
-    build_object_node,
-    get_object_spec,
-    get_object_template,
-    get_objects_for_room,
-    list_available_objects,
-    list_object_types,
-)
-from .assets.object_model import (
-    ObjectFamily,
-    ObjectFamilySpec,
-    PlacementSpec,
-    SystemDependency,
-    SystemSpec,
-    SystemLayer,
-    SystemStatus,
-    SYSTEM_REGISTRY,
-    system_spec,
-)
-from .assets.object_priors import ObjectPrior, get_object_prior, load_object_priors
-from .assets.object_catalog import CatalogDisposition, CatalogResolution, resolve_catalog_label
-from .world import World
-WorldGraph = World
-from .capability import CAPABILITY_REGISTRY, CapabilityDefinition, capability, capabilities
-from .state import (
-    DISCRETE_STATE_SPACE,
-    DiscreteState,
-    StateCategory,
-    StateDefinition,
-    StateValueType,
-    STATE_DEFINITIONS,
-    state_definition,
-    state_table_for_object,
-)
-from .systems.resource import available_count, can_dispense, dispense_resource, resource_pool, scene_resource_pool_specs
-from .interaction import InteractionRequest, ResolvedInteraction, resolve_interaction
-from .agent import AgentProfile, DEFAULT_AGENT_PROFILE, profile_for_agent
-from .temporal import StateEffect, apply_effects, temporal_effects
-from .transitions import envelope_for_event, transition_id, transition_log
+from .action import ACTION_SPECS, Action, ActionDefinition, ActionSpec, ActionType, action_spec
+from .articulation import JOINT_TYPES, Joint, Link, PartTree, part_tree_from_edges
+from .capability import CAPABILITY_REGISTRY, Capability, CapabilityDefinition, CapabilitySet, capability, capabilities
+from .changes import JointState, WorldChange, WorldDelta, WorldSnapshot
+from .edge import Edge, EdgeCategory, EdgeType, SpatialRelation
+from .effect import CallbackEffect, EdgeEffect, Effect, EventEffect, NodeEffect, StateEffect
+from .node import AGENT, FLOOR, OBJECT, ROOM, Agent, Floor, Node, NodeType, Object, Room, ShapeSpec, SizeSpec
+from .process import Process
+from .rule import Rule
+from .requirement import AllOf, AnyOf, CallbackRequirement, CapabilityRequirement, EdgeRequirement, Not, Requirement, StateRequirement
+from .state import (DISCRETE_STATE_SPACE, BooleanState, ContinuousState, DiscreteState,
+                    DiscreteStateValue, ResourceState, State, StateCategory,
+                    StateChange, StateDefinition, StateSet, StateValueType,
+                    STATE_DEFINITIONS, state_definition, state_table_for_object)
+from .input_event import InputEvent, InteractEvent
+from .transform import Transform
 
 __all__ = [
-    "ACTION_SPECS", "Action",
-    "advance_time",
-    "InteractionRequest",
-    "ResolvedInteraction",
-    "resolve_interaction",
-    "AgentProfile",
-    "DEFAULT_AGENT_PROFILE",
-    "profile_for_agent",
-    "StateEffect",
-    "apply_effects",
-    "temporal_effects",
-    "ACTION_SCHEMAS",
-    "APPLIANCE_CYCLE_STEPS",
-    "ActionContext",
-    "ActionSchema",
-    "ActionSpec",
-    "ActionType",
-    "CONTROL_OBJECT_TYPES",
-    "Capability", "CapabilityDefinition", "CAPABILITY_REGISTRY", "capability", "capabilities", "Edge",
-    "visual_cues",
-    "attach_surface_metadata",
-    "floor_collision_failure",
-    "footprint_for",
-    "surface_collision_failure",
-    "surface_fit_failure",
-    "surface_load_failure",
-    "volume_load_failure",
-    "normalized_surface_anchor",
-    "surface_spec_for",
-    "DEFAULT_ROLE",
-    "DISCRETE_STATE_SPACE",
-    "DRYING_RACK_STEPS",
-    "DiscreteState",
-    "StateCategory",
-    "StateDefinition",
-    "StateValueType",
-    "STATE_DEFINITIONS",
-    "state_definition",
-    "state_table_for_object",
-    "DUMP_RULES",
-    "EdgeCategory",
-    "EdgeType",
-    "EventEffect",
-    "EventPrecondition",
-    "EventSpec",
-    "HOME_NPC_LIBRARY",
-    "HOSPITAL_NPC_LIBRARY",
-    "NPC_EVENT_LIBRARY",
-    "Node",
-    "NodeType",
-    "make_node",
-    "OBJECT_LIBRARY",
-    "ObjectTemplate",
-    "ObjectFamily",
-    "ObjectFamilySpec",
-    "ObjectPrior",
-    "CatalogDisposition",
-    "CatalogResolution",
-    "PlacementSpec",
-    "ROLE_SCHEDULES",
-    "World", "WorldGraph",
-    "ScheduleEntry",
-    "SpatialRelation",
-    "SystemDependency",
-    "SystemSpec",
-    "SystemLayer",
-    "SystemStatus",
-    "SYSTEM_REGISTRY",
-    "system_spec",
-    "TRASHABLE_SEMANTICS",
-    "action_spec",
-    "apply_action_schema",
-    "apply_timed_transitions",
-    "envelope_for_event",
-    "transition_id",
-    "transition_log",
-    "build_object_node",
-    "get_default_npcs",
-    "get_event_spec",
-    "get_object_spec",
-    "get_object_prior",
-    "get_object_template",
-    "get_objects_for_room",
-    "list_available_objects",
-    "list_object_types",
-    "load_object_priors",
-    "resolve_catalog_label",
-    "node_type_from_legacy",
-    "planned_activity",
-    "schedule_for_role",
-    "validate_action_schema",
-    "available_count",
-    "can_dispense",
-    "dispense_resource",
-    "resource_pool",
-    "scene_resource_pool_specs",
+    "Node", "NodeType", "ShapeSpec", "SizeSpec", "Floor", "Room", "Object", "Agent", "FLOOR", "ROOM", "OBJECT", "AGENT",
+    "Transform", "Link", "Joint", "PartTree", "part_tree_from_edges", "JOINT_TYPES",
+    "WorldChange", "WorldDelta", "WorldSnapshot", "JointState", "Process", "Rule", "InputEvent",
+    "Edge", "EdgeCategory", "EdgeType", "SpatialRelation", "InteractEvent",
+    "DiscreteState", "StateCategory", "StateDefinition", "StateValueType",
+    "State", "BooleanState", "ContinuousState", "DiscreteStateValue", "ResourceState", "StateSet", "StateChange",
+    "DISCRETE_STATE_SPACE", "STATE_DEFINITIONS", "state_definition", "state_table_for_object",
+    "CAPABILITY_REGISTRY", "CapabilityDefinition", "capability", "capabilities",
+    "Capability", "CapabilitySet",
+    "Action", "ActionDefinition", "ActionSpec", "ActionType", "ACTION_SPECS", "action_spec",
+    "Requirement", "CallbackRequirement", "CapabilityRequirement", "StateRequirement", "EdgeRequirement", "AllOf", "AnyOf", "Not",
+    "Effect", "CallbackEffect", "StateEffect", "EdgeEffect", "NodeEffect", "EventEffect",
 ]

@@ -1,14 +1,10 @@
-"""Procedural scene generation helpers.
-
-The generation package depends on canonical contracts from ``backend.core``;
-the runtime does not depend on this package.
-"""
+"""Procedural scene generation helpers and static asset declarations."""
 
 __all__ = ["Ontology", "load_ontology", "DOMAIN_PROFILES", "generate_scene"]
 
 
 def __getattr__(name: str):
-    # Lazy exports avoid the ontology <-> core.assets import cycle during
+    # Lazy exports avoid the ontology/template import cycle during
     # object-template initialization.
     if name in {"Ontology", "load_ontology"}:
         from .ontology import Ontology, load_ontology

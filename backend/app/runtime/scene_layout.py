@@ -5,8 +5,8 @@ import math
 from collections import defaultdict, deque
 from typing import Any
 
-from backend.core.assets.object_templates import validate_templates
-from backend.core.assets.object_templates import structure_for
+from backend.generation.assets.object_templates import validate_templates
+from backend.generation.assets.object_templates import structure_for
 
 
 GRID_SIZE_METERS = 0.1
@@ -81,7 +81,7 @@ def _node_type(node: dict[str, Any]) -> str:
 
 
 def _semantic_type(node: dict[str, Any]) -> str:
-    return str(node.get("semantic_type") or node.get("object_type") or "")
+    return str(node.get("semantic_type") or "")
 
 
 def _is_room(node: dict[str, Any]) -> bool:
@@ -108,7 +108,7 @@ def _is_corridor(node: dict[str, Any]) -> bool:
 
 
 def _is_placeable(node: dict[str, Any]) -> bool:
-    return not _is_room(node) and not _is_floor(node) and not _is_door(node) and _node_type(node) not in {"human", "robot", "agent"}
+    return not _is_room(node) and not _is_floor(node) and not _is_door(node) and _node_type(node) != "agent"
 
 
 def _room_dimensions(node: dict[str, Any]) -> tuple[int, int]:
@@ -170,7 +170,7 @@ def _default_object_size_cells(node: dict[str, Any]) -> tuple[int, int]:
     }
     width, depth = sizes_meters.get(
         semantic,
-        (0.32, 0.32) if _node_type(node) == "movable_object" else (0.8, 0.55),
+        (0.32, 0.32) if "pickable" in (node.get("capabilities") or ()) else (0.8, 0.55),
     )
     return max(1, math.ceil(width / GRID_SIZE_METERS)), max(1, math.ceil(depth / GRID_SIZE_METERS))
 
@@ -529,13 +529,15 @@ def _assign_doors(
     rooms: dict[str, dict[str, int]],
     nodes_by_id: dict[str, dict[str, Any]],
     source: dict[str, Any],
+    parent_of: dict[str, str],
 ) -> dict[str, dict[str, Any]]:
     room_nodes = {node_id: node for node_id, node in nodes_by_id.items() if _is_room(node)}
     candidates: dict[str, list[str]] = defaultdict(list)
     all_doors: list[str] = []
     for node_id, node in nodes_by_id.items():
-        if _is_door(node) and str(node.get("parent") or "") in room_nodes:
-            candidates[str(node.get("parent"))].append(node_id)
+        parent_id = parent_of.get(node_id, "")
+        if _is_door(node) and parent_id in room_nodes:
+            candidates[parent_id].append(node_id)
             all_doors.append(node_id)
     used: set[str] = set()
     result: dict[str, dict[str, Any]] = {}
@@ -555,14 +557,12 @@ def _assign_doors(
                 "id": door_id,
                 "name": "Door",
                 "name_cn": "门",
-                "node_type": "fixed_object",
+                "node_type": "object",
                 "semantic_class": "control",
                 "semantic_type": "door",
                 "mobility": "fixed",
                 "states": {"is_open": False},
                 "property": {"physical": {"movable": False}},
-                "parent": room_b,
-                "child": [],
                 "interactive_actions": ["open", "close"],
                 "door_kind": "structural",
                 "blocks_visibility": True,
@@ -570,9 +570,15 @@ def _assign_doors(
             }
             source.setdefault("nodes", []).append(door_node)
             nodes_by_id[door_id] = door_node
-            children = room_nodes[room_b].setdefault("child", [])
-            if door_id not in children:
-                children.append(door_id)
+            parent_edge = {
+                "source_id": room_b,
+                "target_id": door_id,
+                "relation": "inside_room",
+                "category": "physical",
+                "properties": {"generated": True},
+            }
+            source.setdefault("edges", []).append(parent_edge)
+            parent_of[door_id] = room_b
             candidates[room_b].append(door_id)
             all_doors.append(door_id)
         shared = _shared_wall(rooms[room_a], rooms[room_b])
@@ -670,12 +676,49 @@ def _reposition_door_blockers(layout: dict[str, Any], nodes_by_id: dict[str, dic
             occupied.append(candidate)
 
 
+def _remove_component_layout_entries(
+    layout: dict[str, Any],
+    nodes: list[dict[str, Any]],
+    edges: list[dict[str, Any]],
+) -> None:
+    """Keep structure children out of the independent room layout.
+
+    A component link (for example an appliance button or door) is positioned
+    from its parent's part tree and local transform.  Older scene versions
+    also serialized these links in ``layout.objects``; retaining those entries
+    makes the validator treat them as independent world objects and can leave
+    stale coordinates behind after template materialization.
+    """
+    objects = layout.get("objects")
+    if not isinstance(objects, dict):
+        return
+    node_ids = {
+        str(node.get("id"))
+        for node in nodes
+        if isinstance(node, dict) and node.get("id")
+        and (
+            str(node.get("role") or "") == "component"
+            or node.get("owner_id")
+            or node.get("link_id")
+        )
+    }
+    for edge in edges:
+        if not isinstance(edge, dict) or str(edge.get("relation") or "") != "structure":
+            continue
+        child_id = str(edge.get("target_id") or edge.get("target") or "")
+        if child_id:
+            node_ids.add(child_id)
+    for object_id in list(objects):
+        if str(object_id) in node_ids:
+            objects.pop(object_id, None)
+
+
 def ensure_scene_layout(source_json: dict[str, Any], catalog_dimensions: dict[str, tuple[float, float, float]] | None = None) -> dict[str, Any]:
     """Return a scene copy with a deterministic, topology-aware grid layout."""
     source = copy.deepcopy(source_json)
     nodes = [node for node in source.get("nodes") or [] if isinstance(node, dict) and node.get("id")]
     for node in nodes:
-        semantic_type = str(node.get("semantic_type") or node.get("object_type") or "").lower()
+        semantic_type = str(node.get("semantic_type") or "").lower()
         if "structure" not in node and "composition" not in node:
             structure = structure_for(semantic_type).to_dict()
             if structure["components"] or structure.get("storage"):
@@ -713,6 +756,7 @@ def ensure_scene_layout(source_json: dict[str, Any], catalog_dimensions: dict[st
                 ))
             layout["objects"] = migrated_objects
             layout["object_layout_strategy"] = "semantic_v1"
+        _remove_component_layout_entries(layout, nodes, source.get("edges") or [])
         _reposition_door_blockers(layout, nodes_by_id)
         source["layout"] = layout
         _add_physical_geometry(source, catalog_dimensions)
@@ -720,7 +764,7 @@ def ensure_scene_layout(source_json: dict[str, Any], catalog_dimensions: dict[st
         return source
 
     room_layouts = _place_rooms(rooms_nodes, pairs)
-    door_layouts = _assign_doors(pairs, room_layouts, nodes_by_id, source)
+    door_layouts = _assign_doors(pairs, room_layouts, nodes_by_id, source, parent_of)
     object_layouts: dict[str, dict[str, Any]] = {}
     objects_by_room: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for node in nodes:
@@ -742,6 +786,7 @@ def ensure_scene_layout(source_json: dict[str, Any], catalog_dimensions: dict[st
         "objects": object_layouts,
     }
     _reposition_door_blockers(source["layout"], nodes_by_id)
+    _remove_component_layout_entries(source["layout"], nodes, source.get("edges") or [])
     _add_physical_geometry(source, catalog_dimensions)
     _normalize_door_edges(source, door_layouts)
     return source
@@ -794,7 +839,7 @@ def validate_scene_layout(source_json: dict[str, Any]) -> list[str]:
         issues.append("layout.objects must be an object.")
         objects = {}
 
-    room_boxes: list[tuple[str, int, int, int, int]] = []
+    room_boxes: list[tuple[str, int, int, int, int, int]] = []
     for room_id, geometry in rooms.items():
         if room_id not in room_nodes:
             issues.append(f"Unknown room layout target: {room_id}.")
@@ -811,11 +856,14 @@ def validate_scene_layout(source_json: dict[str, Any]) -> list[str]:
             issues.append(f"Room {room_id} must use non-negative grid coordinates.")
         if width <= 0 or depth <= 0:
             issues.append(f"Room {room_id} must have positive cell dimensions.")
-        room_boxes.append((room_id, x, y, width, depth))
+        floor_number = _integer(geometry.get("floor_number"))
+        room_boxes.append((room_id, x, y, width, depth, 1 if floor_number is None else floor_number))
 
     for index, first in enumerate(room_boxes):
-        first_id, ax, ay, aw, ad = first
-        for second_id, bx, by, bw, bd in room_boxes[index + 1:]:
+        first_id, ax, ay, aw, ad, first_floor = first
+        for second_id, bx, by, bw, bd, second_floor in room_boxes[index + 1:]:
+            if first_floor != second_floor:
+                continue
             if _boxes_overlap((ax, ay, aw, ad), (bx, by, bw, bd)):
                 issues.append(f"Rooms {first_id} and {second_id} overlap.")
 
@@ -826,7 +874,7 @@ def validate_scene_layout(source_json: dict[str, Any]) -> list[str]:
             issues.append(f"Connected rooms {first_id} and {second_id} must share a wall.")
 
     doors_by_pair: dict[frozenset[str], list[str]] = defaultdict(list)
-    occupied_sides: set[tuple[str, str]] = set()
+    occupied_sides: set[tuple[str, str, int]] = set()
     opposite = {"west": "east", "east": "west", "north": "south", "south": "north"}
     for door_id, placement in doors.items():
         if door_id not in nodes_by_id or not _is_door(nodes_by_id[door_id]):
@@ -857,8 +905,9 @@ def validate_scene_layout(source_json: dict[str, Any]) -> list[str]:
         axis_origin = int(rooms[room_a]["grid_y"] if expected_wall in {"east", "west"} else rooms[room_a]["grid_x"])
         if offset is None or width is None or width <= 0 or axis_origin + offset < start or axis_origin + offset + width > end:
             issues.append(f"Door {door_id} must fit inside the shared wall segment.")
-        side_a = (room_a, expected_wall)
-        side_b = (room_b, opposite[expected_wall])
+        floor_number = _integer(rooms[room_a].get("floor_number")) or 1
+        side_a = (room_a, expected_wall, floor_number)
+        side_b = (room_b, opposite[expected_wall], floor_number)
         if side_a in occupied_sides or side_b in occupied_sides:
             issues.append(f"A room wall can contain at most one door ({door_id}).")
         occupied_sides.update((side_a, side_b))
@@ -935,6 +984,7 @@ def _validate_scene_graph_edges(nodes_by_id: dict[str, dict[str, Any]], edges: A
     """
     issues: list[str] = []
     parent_edges: dict[str, str] = {}
+    component_hosts: dict[str, str] = {}
     if not isinstance(edges, list):
         return ["Scene edges must be a list."]
     for edge in edges:
@@ -950,22 +1000,30 @@ def _validate_scene_graph_edges(nodes_by_id: dict[str, dict[str, Any]], edges: A
             issues.append(f"Edge {relation or '<unknown>'} references missing target {target or '<empty>'}.")
         if source not in nodes_by_id or target not in nodes_by_id:
             continue
-        if relation == "component_of":
+        if relation in {"component_of", "structure"}:
+            properties = edge.get("properties") if isinstance(edge.get("properties"), dict) else {}
+            parent = str(properties.get("parent") or source)
+            child = str(properties.get("child") or target)
+            if parent not in nodes_by_id or child not in nodes_by_id:
+                issues.append(f"Structure edge references missing parent or child: {parent} -> {child}.")
+                continue
+            source, target = parent, child
+            component_hosts[target] = source
             previous = parent_edges.get(target)
             if previous and previous != source:
                 issues.append(f"Component {target} has multiple component hosts: {previous}, {source}.")
             parent_edges[target] = source
         if relation == "controls":
             source_type = str(nodes_by_id[source].get("node_type") or "")
-            if source_type not in {"control_object", "fixed_object", "movable_object"}:
+            if source_type != "object":
                 issues.append(f"Control source {source} has unsupported node type {source_type or '<empty>'}.")
         if relation in {"hinge_of", "slides_in"}:
             source_node = nodes_by_id[source]
             target_node = nodes_by_id[target]
             source_role = str(source_node.get("component_role") or "")
             target_role = str(target_node.get("component_role") or "")
-            source_host = str(source_node.get("component_of") or "")
-            target_host = str(target_node.get("component_of") or "")
+            source_host = component_hosts.get(source, "")
+            target_host = component_hosts.get(target, "")
             if relation == "hinge_of":
                 if source_role != "hinge" or target_role != "door" or not source_host or source_host != target_host:
                     issues.append(f"Mechanical edge hinge_of must connect a hinge and door on the same host: {source} -> {target}.")

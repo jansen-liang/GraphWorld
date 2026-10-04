@@ -7,10 +7,10 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from backend.core.action import ActionType
-from backend.core.assets.npc_library import NPC_EVENT_LIBRARY
-from backend.core.assets.object_library import OBJECT_LIBRARY
-from backend.core.assets.room_library import ROOM_LIBRARY
-from backend.core.assets.task_library import SKILLS_BY_NAME
+from backend.generation.assets.npc_library import NPC_EVENT_LIBRARY
+from backend.generation.assets.object_library import OBJECT_LIBRARY
+from backend.generation.assets.room_library import ROOM_LIBRARY
+from backend.generation.assets.task_library import SKILLS_BY_NAME
 from backend.core.edge import SpatialRelation
 from backend.core.state import DISCRETE_STATE_SPACE
 

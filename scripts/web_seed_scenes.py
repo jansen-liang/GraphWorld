@@ -16,7 +16,7 @@ from backend.app.repositories.scene_repo import SceneRepository
 from backend.app.runtime.scene_importer import infer_scene_id
 from backend.app.schemas.scene import SceneImportRequest
 from backend.app.services.scene_service import SceneService
-from backend.core.assets.npc_library import get_default_npcs
+from backend.generation.assets.npc_library import get_default_npcs
 
 BASE_SCENES = (
     "simple_factory_1f.json",

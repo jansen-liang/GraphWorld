@@ -12,8 +12,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from backend.core.assets.object_library import OBJECT_LIBRARY, resolve_object_key
-from backend.core.assets.object_priors import load_object_priors
+from backend.generation.assets.object_library import OBJECT_LIBRARY, resolve_object_key
+from backend.generation.assets.object_priors import load_object_priors
 from backend.generation.ontology import load_ontology
 
 

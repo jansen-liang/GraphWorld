@@ -4,8 +4,34 @@ Asset templates select names from this registry; they do not define a second
 runtime capability system.
 """
 
-from dataclasses import dataclass
-from typing import Iterable
+from dataclasses import dataclass, field
+from typing import Any, Iterable, Mapping
+
+
+@dataclass(frozen=True)
+class Capability:
+    """Composable capability card attached to a Node or Link."""
+
+    name: str
+    parameters: Mapping[str, Any] = field(default_factory=dict)
+
+    def accepts(self, value: Any) -> bool:
+        accepted = self.parameters.get("accepted_values") if isinstance(self.parameters, Mapping) else None
+        return not accepted or value in accepted
+
+
+class CapabilitySet:
+    def __init__(self, values: Iterable[Capability] = ()):
+        self.values = {item.name: item for item in values}
+
+    def has(self, name: str) -> bool:
+        return str(name) in self.values
+
+    def get(self, name: str) -> Capability | None:
+        return self.values.get(str(name))
+
+    def to_dict(self) -> dict[str, dict[str, Any]]:
+        return {name: dict(card.parameters) for name, card in self.values.items()}
 
 
 @dataclass(frozen=True)
@@ -44,24 +70,4 @@ def capability(name: str) -> CapabilityDefinition:
 def capabilities(names: Iterable[str]) -> tuple[CapabilityDefinition, ...]:
     return tuple(capability(name) for name in names)
 
-from .assets.object_library import (
-    ACTION_CAPABILITIES,
-    Capability,
-    CARRYING,
-    CLEANABLE,
-    DUMPABLE,
-    FINITE_RESOURCE,
-    FOLDABLE,
-    OPENABLE,
-    PICKABLE,
-    PLACE_TARGET,
-    REACHABLE,
-    SWITCHABLE,
-    TIMED_DEVICE,
-)
-
-__all__ = [
-    "ACTION_CAPABILITIES", "Capability", "CapabilityDefinition", "CAPABILITY_REGISTRY", "capability", "capabilities", "CARRYING", "CLEANABLE", "DUMPABLE",
-    "FINITE_RESOURCE", "FOLDABLE", "OPENABLE", "PICKABLE", "PLACE_TARGET", "REACHABLE",
-    "SWITCHABLE", "TIMED_DEVICE",
-]
+__all__ = ["Capability", "CapabilitySet", "CapabilityDefinition", "CAPABILITY_REGISTRY", "capability", "capabilities"]

@@ -39,14 +39,14 @@ def visible_restore_goal(observation: dict[str, Any], baseline: dict[str, Any], 
     current_nodes = {str(item.get("id") or ""): item for item in observation.get("nodes") or [] if item.get("id")}
     for node_id, current in sorted(current_nodes.items()):
         initial = baseline_nodes.get(node_id) or {}
-        if str(initial.get("node_type") or "") != "movable_object":
+        if "pickable" not in set(initial.get("capabilities") or ()):
             continue
         current_parent = parent_of(observation, node_id)
         initial_parent = parent_of(baseline, node_id)
         if not current_parent or not initial_parent or current_parent == initial_parent:
             continue
         current_parent_node = current_nodes.get(current_parent) or {}
-        if str(current_parent_node.get("node_type") or "") == "human":
+        if str(current_parent_node.get("node_type") or "") == "agent" and str(current_parent_node.get("semantic_type") or "") in {"human", "npc"}:
             parent_states = current_parent_node.get("states") or {}
             if parent_states.get("checked_out") is not True:
                 continue
@@ -311,7 +311,7 @@ def _dishwasher_return_target(
     parent_node = node(scene, initial_parent) or {}
     if initial_parent and str(parent_node.get("node_type") or "") != "room":
         actions = {str(action) for action in parent_node.get("interactive_actions") or []}
-        if "place" in actions or parent_node.get("surface_size_cm") or parent_node.get("support_surface_cm"):
+        if "place" in actions or parent_node.get("can_support") or parent_node.get("surface_spec"):
             return initial_parent
     object_room = room_of(scene, object_id)
     for item in scene.get("nodes") or []:
@@ -320,7 +320,7 @@ def _dishwasher_return_target(
         if str(item.get("semantic_type") or "") not in {"table", "counter", "coffee_table", "desk", "shelf", "rack"}:
             continue
         actions = {str(action) for action in item.get("interactive_actions") or []}
-        if "place" in actions or item.get("surface_size_cm") or item.get("support_surface_cm"):
+        if "place" in actions or item.get("can_support") or item.get("surface_spec"):
             return str(item.get("id") or "")
     return ""
 
@@ -399,7 +399,7 @@ def _heat_milk_return_target(
     parent_node = node(scene, initial_parent) or {}
     if initial_parent and str(parent_node.get("node_type") or "") != "room":
         actions = {str(action) for action in parent_node.get("interactive_actions") or []}
-        if "place" in actions or parent_node.get("surface_size_cm") or parent_node.get("support_surface_cm"):
+        if "place" in actions or parent_node.get("can_support") or parent_node.get("surface_spec"):
             return initial_parent
     object_room = room_of(scene, object_id)
     for item in scene.get("nodes") or []:
@@ -408,7 +408,7 @@ def _heat_milk_return_target(
         if str(item.get("semantic_type") or "") not in {"table", "counter", "coffee_table", "desk", "shelf", "rack"}:
             continue
         actions = {str(action) for action in item.get("interactive_actions") or []}
-        if "place" in actions or item.get("surface_size_cm") or item.get("support_surface_cm"):
+        if "place" in actions or item.get("can_support") or item.get("surface_spec"):
             return str(item.get("id") or "")
     return ""
 
@@ -483,7 +483,7 @@ def _cook_return_target(scene: dict[str, Any], egg_id: str, baseline: dict[str, 
     parent_node = node(scene, initial_parent) or {}
     if initial_parent and str(parent_node.get("node_type") or "") != "room":
         actions = {str(action) for action in parent_node.get("interactive_actions") or []}
-        if "place" in actions or parent_node.get("surface_size_cm") or parent_node.get("support_surface_cm"):
+        if "place" in actions or parent_node.get("can_support") or parent_node.get("surface_spec"):
             return initial_parent
     object_room = room_of(scene, egg_id)
     for item in scene.get("nodes") or []:
@@ -492,7 +492,7 @@ def _cook_return_target(scene: dict[str, Any], egg_id: str, baseline: dict[str, 
         if str(item.get("semantic_type") or "") not in {"table", "counter", "coffee_table", "desk", "shelf", "rack"}:
             continue
         actions = {str(action) for action in item.get("interactive_actions") or []}
-        if "place" in actions or item.get("surface_size_cm") or item.get("support_surface_cm"):
+        if "place" in actions or item.get("can_support") or item.get("surface_spec"):
             return str(item.get("id") or "")
     return ""
 
@@ -561,7 +561,7 @@ def _craft_return_target(scene: dict[str, Any], workbench_id: str) -> str:
         if str(item.get("semantic_type") or "") not in {"table", "counter", "coffee_table", "desk", "shelf", "rack"}:
             continue
         actions = {str(action) for action in item.get("interactive_actions") or []}
-        if "place" in actions or item.get("surface_size_cm") or item.get("support_surface_cm"):
+        if "place" in actions or item.get("can_support") or item.get("surface_spec"):
             return str(item.get("id") or "")
     return ""
 
@@ -636,7 +636,7 @@ def _assembly_return_target(scene: dict[str, Any], line_id: str) -> str:
         if str(item.get("semantic_type") or "") not in {"table", "counter", "desk", "shelf", "rack", "inspection_surface"}:
             continue
         actions = {str(action) for action in item.get("interactive_actions") or []}
-        if "place" in actions or item.get("surface_size_cm") or item.get("support_surface_cm"):
+        if "place" in actions or item.get("can_support") or item.get("surface_spec"):
             return str(item.get("id") or "")
     return ""
 
@@ -694,7 +694,7 @@ def _coffee_return_target(scene: dict[str, Any], cup_id: str) -> str:
     parent_node = node(scene, initial_parent) or {}
     if initial_parent and str(parent_node.get("node_type") or "") != "room":
         actions = {str(action) for action in parent_node.get("interactive_actions") or []}
-        if "place" in actions or parent_node.get("surface_size_cm") or parent_node.get("support_surface_cm"):
+        if "place" in actions or parent_node.get("can_support") or parent_node.get("surface_spec"):
             return initial_parent
     room_id = room_of(scene, cup_id)
     for item in scene.get("nodes") or []:
@@ -703,7 +703,7 @@ def _coffee_return_target(scene: dict[str, Any], cup_id: str) -> str:
         if str(item.get("semantic_type") or "") not in {"table", "counter", "coffee_table", "desk", "shelf", "rack"}:
             continue
         actions = {str(action) for action in item.get("interactive_actions") or []}
-        if "place" in actions or item.get("surface_size_cm") or item.get("support_surface_cm"):
+        if "place" in actions or item.get("can_support") or item.get("surface_spec"):
             return str(item.get("id") or "")
     return ""
 
@@ -781,7 +781,7 @@ def _print_return_target(
         if str(item.get("semantic_type") or "") not in {"table", "counter", "desk", "shelf", "rack", "tray"}:
             continue
         actions = {str(action) for action in item.get("interactive_actions") or []}
-        if "place" in actions or item.get("surface_size_cm") or item.get("support_surface_cm"):
+        if "place" in actions or item.get("can_support") or item.get("surface_spec"):
             return candidate_id
     return ""
 
@@ -936,7 +936,7 @@ def hospital_issue_goal(scene: dict[str, Any], baseline: dict[str, Any], robot_i
         if not current_parent or not target_id or current_parent == target_id:
             continue
         current_parent_node = node(scene, current_parent) or {}
-        if str(current_parent_node.get("node_type") or "") == "human":
+        if str(current_parent_node.get("node_type") or "") == "agent" and str(current_parent_node.get("semantic_type") or "") in {"human", "npc"}:
             parent_states = current_parent_node.get("states") or {}
             if parent_states.get("checked_out") is not True:
                 continue
@@ -976,7 +976,7 @@ def global_restore_goal(scene: dict[str, Any], baseline: dict[str, Any], robot_i
             continue
         current_parent = parent_of(scene, node_id)
         current_parent_node = node(scene, current_parent) or {}
-        if str(current_parent_node.get("node_type") or "") == "human":
+        if str(current_parent_node.get("node_type") or "") == "agent" and str(current_parent_node.get("semantic_type") or "") in {"human", "npc"}:
             continue
         current_room = room_of(scene, current_parent)
         priority = 10 if current_room == robot_room else 30
@@ -1015,7 +1015,7 @@ def global_restore_goal(scene: dict[str, Any], baseline: dict[str, Any], robot_i
             continue
         current_parent = parent_of(scene, node_id)
         current_parent_node = node(scene, current_parent) or {}
-        if str(current_parent_node.get("node_type") or "") == "human":
+        if str(current_parent_node.get("node_type") or "") == "agent" and str(current_parent_node.get("semantic_type") or "") in {"human", "npc"}:
             continue
         current_room = room_of(scene, current_parent)
         priority = 10 if current_room == robot_room else 30
@@ -1030,14 +1030,14 @@ def global_restore_goal(scene: dict[str, Any], baseline: dict[str, Any], robot_i
     candidates: list[tuple[int, str, str]] = []
     for node_id, current in sorted(current_nodes.items()):
         initial = baseline_nodes.get(node_id) or {}
-        if str(initial.get("node_type") or "") != "movable_object":
+        if "pickable" not in set(initial.get("capabilities") or ()):
             continue
         current_parent = parent_of(scene, node_id)
         initial_parent = parent_of(baseline, node_id)
         if not current_parent or not initial_parent or current_parent == initial_parent:
             continue
         current_parent_node = node(scene, current_parent) or {}
-        if str(current_parent_node.get("node_type") or "") == "human":
+        if str(current_parent_node.get("node_type") or "") == "agent" and str(current_parent_node.get("semantic_type") or "") in {"human", "npc"}:
             continue
         current_room = room_of(scene, current_parent)
         initial_room = room_of(baseline, initial_parent)

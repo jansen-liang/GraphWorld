@@ -7,6 +7,91 @@ from pathlib import Path
 import re
 from typing import Any
 
+from backend.runtime.scene_schema import validate_canonical_scene
+
+
+def normalize_legacy_scene(source_json: dict[str, Any]) -> dict[str, Any]:
+    """Upgrade stored pre-canonical snapshots at the adapter boundary.
+
+    Scene versions are immutable historical data, so migration happens on
+    read.  The runtime only receives the small canonical envelope it owns:
+    stable editor IDs, one of the four Node types, and graph-owned relations.
+    """
+    source = copy.deepcopy(source_json)
+    source["schema_version"] = 2
+    source["id_namespace"] = "editor"
+    nodes = source.get("nodes") or []
+    layout_doors = (source.get("layout") or {}).get("doors") or {}
+    canonical_types = {"floor", "room", "object", "agent"}
+    for node in nodes:
+        if not isinstance(node, dict):
+            continue
+        node_id = str(node.get("id") or node.get("editor_id") or "")
+        node["id"] = node_id
+        node["editor_id"] = node_id
+        raw_type = str(node.get("node_type") or "").lower()
+        # Perform the one-time wire migration here. Runtime code must only
+        # consume semantic_type and canonical capability declarations.
+        semantic = str(node.get("semantic_type") or node.get("object_type") or "").lower()
+        node["semantic_type"] = semantic
+        node.pop("object_type", None)
+        if raw_type not in canonical_types:
+            if semantic == "floor" or raw_type in {"floor", "level"}:
+                node["node_type"] = "floor"
+            elif semantic == "room" or raw_type in {"room", "space", "area"}:
+                node["node_type"] = "room"
+            elif semantic in {"agent", "robot", "human", "npc"} or raw_type in {"robot", "human", "npc", "agent"}:
+                node["node_type"] = "agent"
+            else:
+                node["node_type"] = "object"
+        node.pop("type", None)
+        # Legacy support/container declarations are normalized once at the
+        # import boundary. A root support surface and a component receptacle
+        # are deliberately distinct capabilities.
+        capabilities = list(dict.fromkeys(str(item) for item in (node.get("capabilities") or ())))
+        old_surface = node.pop("surface_size_cm", None) or node.pop("support_surface_cm", None)
+        old_grid = node.pop("surface_grid_cm", None) or node.pop("support_grid_cm", None)
+        can_support = bool(node.pop("can_support", False))
+        if old_surface is not None:
+            can_support = True
+            node["surface_spec"] = {
+                "width_cm": float(old_surface[0]),
+                "depth_cm": float(old_surface[1]),
+                "grid_size_cm": float(old_grid or 1.0),
+            }
+        if can_support:
+            node["can_support"] = True
+            if "support_surface" not in capabilities:
+                capabilities.append("support_surface")
+        old_capacity = node.pop("max_capacity", None)
+        old_capacity = old_capacity if old_capacity is not None else node.pop("capacity_per_slot", None)
+        old_accepted = node.pop("requires_contained_capabilities", None)
+        old_accepted = old_accepted if old_accepted is not None else node.pop("accepted_capabilities", None)
+        can_contain = bool(node.pop("can_contain", False)) or old_capacity is not None or old_accepted is not None
+        if can_contain:
+            node["can_contain"] = True
+            if old_capacity is not None:
+                node["max_items"] = int(old_capacity)
+            if old_accepted is not None:
+                node["accepted_capabilities"] = [str(item) for item in old_accepted]
+            if "receptacle" not in capabilities:
+                capabilities.append("receptacle")
+        if capabilities:
+            node["capabilities"] = capabilities
+        node.pop("parent", None)
+        node.pop("child", None)
+        node.setdefault("role", "root")
+        # Room-to-room doors are graph Nodes.  Older generated records kept
+        # the room pair only in layout.doors; migrate that declaration into
+        # the door Node once at import time.
+        if str(node.get("semantic_type") or "").lower() == "door" and node_id in layout_doors:
+            layout_door = layout_doors.get(node_id) or {}
+            if isinstance(layout_door, dict):
+                room_pair = [str(layout_door.get("room_a_id") or ""), str(layout_door.get("room_b_id") or "")]
+                if all(room_pair):
+                    node["connected_rooms"] = room_pair
+    return source
+
 
 @dataclass(frozen=True)
 class ImportedSceneNode:
@@ -67,7 +152,7 @@ def graph_summary(source_json: dict[str, Any]) -> dict[str, Any]:
         return str(node.get("node_type") or node.get("type") or "")
 
     def semantic_type(node: dict[str, Any]) -> str:
-        return str(node.get("semantic_type") or node.get("object_type") or "")
+        return str(node.get("semantic_type") or "")
 
     return {
         "node_count": len(nodes),
@@ -75,12 +160,12 @@ def graph_summary(source_json: dict[str, Any]) -> dict[str, Any]:
         "floor_count": sum(1 for node in nodes if node_type(node) == "floor" or semantic_type(node) == "floor"),
         "room_count": sum(1 for node in nodes if node_type(node) == "room" or semantic_type(node) == "room"),
         "agent_count": sum(1 for node in nodes if node_type(node) == "agent" or semantic_type(node) in {"agent", "robot", "human"}),
-        "npc_count": sum(1 for node in nodes if node_type(node) == "human" or semantic_type(node) == "human"),
-        "robot_count": sum(1 for node in nodes if node_type(node) == "robot" or semantic_type(node) == "robot"),
+        "npc_count": sum(1 for node in nodes if node_type(node) == "agent" and semantic_type(node) in {"human", "npc"}),
+        "robot_count": sum(1 for node in nodes if node_type(node) == "agent" and semantic_type(node) == "robot"),
         "object_count": sum(
             1
             for node in nodes
-            if node_type(node).endswith("_object") or node_type(node) == "object"
+            if node_type(node) == "object"
         ),
         "scene_name_cn": source_json.get("scene_name_cn") or "",
         "world_state": copy.deepcopy(source_json.get("world_state") or {}),
@@ -97,7 +182,9 @@ def import_scene(
     version: int = 1,
     description: str = "",
 ) -> ImportedScene:
-    source = copy.deepcopy(source_json)
+    # Import is the sole migration boundary: legacy payloads are upgraded
+    # once, then validated and persisted as canonical scene JSON.
+    source = validate_canonical_scene(normalize_legacy_scene(source_json))
     resolved_scene_id = _slug(scene_id) if scene_id else infer_scene_id(source)
     resolved_version = int(version)
     nodes: list[ImportedSceneNode] = []
@@ -109,9 +196,9 @@ def import_scene(
             continue
         nodes.append(
             ImportedSceneNode(
-                node_key=node_key,
+                node_key=str(raw_node.get("editor_id") or node_key),
                 node_type=str(raw_node.get("node_type") or raw_node.get("type") or ""),
-                semantic_type=str(raw_node.get("semantic_type") or raw_node.get("object_type") or ""),
+                semantic_type=str(raw_node.get("semantic_type") or ""),
                 properties=copy.deepcopy(raw_node),
             )
         )

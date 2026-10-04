@@ -12,8 +12,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-from backend.core.assets.object_library import OBJECT_LIBRARY
-from backend.core.assets.room_library import ROOM_LIBRARY
+from backend.generation.assets.object_library import OBJECT_LIBRARY
+from backend.generation.assets.room_library import ROOM_LIBRARY
 from backend.generation.ontology import load_ontology
 
 
@@ -117,7 +117,7 @@ def main() -> None:
         "",
         "## 合并原则",
         "",
-        "只有完成 ontology 映射、动作/状态审计和任务可解性验证的候选，才能合并到 `backend/core/assets`。",
+        "只有完成 ontology 映射、动作/状态审计和任务可解性验证的候选，才能合并到 `backend/generation/assets`。",
         "",
     ]), encoding="utf-8")
     print(f"rooms={len(result['rooms'])} objects={len(result['objects'])} output={args.output}")

@@ -13,7 +13,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
-from backend.core.assets.object_library import OBJECT_LIBRARY, resolve_object_key
+from backend.generation.assets.object_library import OBJECT_LIBRARY, resolve_object_key
 
 
 NON_OBJECTS = {"floor", "room", "human", "robot"}

@@ -6,10 +6,11 @@ from sqlalchemy import select
 
 from backend.app.core.errors import NotFoundError
 from backend.app.repositories.scene_repo import SceneRepository
-from backend.app.runtime.scene_importer import infer_scene_id, import_scene
+from backend.app.runtime.scene_importer import infer_scene_id, import_scene, normalize_legacy_scene
 from backend.app.runtime.scene_layout import ensure_scene_layout, validate_scene_layout
 from backend.app.db.models import ObjectCatalog
-from backend.core.assets.object_templates import structure_for, materialize_templates
+from backend.generation.assets.object_templates import structure_for, materialize_templates
+from backend.runtime.scene_preparation import ensure_demo_elevator
 from backend.app.schemas.graph import GraphEdge, GraphNode, SceneGraphResponse
 from backend.app.schemas.scene import SceneImportRequest, SceneLayoutGenerated, SceneLayoutGenerateRequest, SceneLayoutValidation, ScenePublishRequest, SceneRead, SceneVersionRead
 
@@ -85,16 +86,21 @@ class SceneService:
         # Persisted versions keep template declarations compact. Expand them
         # for every read so the editor and render adapters receive the same
         # canonical component nodes (doors, drawers, slots, controls).
-        source_json = copy.deepcopy(version.source_json)
+        source_json = normalize_legacy_scene(version.source_json)
         for item in source_json.get("nodes") or []:
             if not isinstance(item, dict) or item.get("structure") or item.get("composition"):
                 continue
-            semantic_type = str(item.get("semantic_type") or item.get("object_type") or "").lower()
+            semantic_type = str(item.get("semantic_type") or "").lower()
             declared = structure_for(semantic_type).to_dict()
             if declared.get("components") or declared.get("storage"):
                 item["structure"] = declared
         source_json = materialize_templates(source_json)
         source_json = ensure_scene_layout(source_json, catalog_dimensions)
+        if str(source_json.get("scene_name") or "").startswith("simple_home"):
+            ensure_demo_elevator(source_json)
+        # Materialized historical templates can still emit legacy node types;
+        # normalize generated children as well as persisted roots.
+        source_json = normalize_legacy_scene(source_json)
         return SceneGraphResponse(
             scene_version_id=scene_version_id,
             source_json=source_json,
@@ -133,7 +139,7 @@ class SceneService:
             for item in source.get("nodes") or []:
                 if not isinstance(item, dict) or item.get("structure") or item.get("composition"):
                     continue
-                semantic_type = str(item.get("semantic_type") or item.get("object_type") or "").lower()
+                semantic_type = str(item.get("semantic_type") or "").lower()
                 declared = structure_for(semantic_type).to_dict()
                 if declared.get("components") or declared.get("storage"):
                     item["structure"] = declared

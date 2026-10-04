@@ -5,6 +5,113 @@ from enum import Enum
 from typing import Any, Iterable
 
 
+@dataclass(frozen=True, slots=True)
+class StateChange:
+    """Validated local state mutation; cross-node effects belong to runtime."""
+
+    name: str
+    before: Any
+    after: Any
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"state": self.name, "before": self.before, "after": self.after}
+
+
+class State:
+    """Composable state card with local validation only."""
+
+    value_type = "value"
+
+    def __init__(self, name: str, value: Any, *, definition: "StateDefinition | None" = None):
+        self.name = str(name)
+        self.value = value
+        self.definition = definition
+        self.validate(value)
+
+    def validate(self, value: Any) -> None:
+        return None
+
+    def set_value(self, value: Any) -> StateChange:
+        self.validate(value)
+        change = StateChange(self.name, self.value, value)
+        self.value = value
+        return change
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"name": self.name, "value": self.value, "value_type": self.value_type}
+
+
+class BooleanState(State):
+    value_type = "boolean"
+
+    def validate(self, value: Any) -> None:
+        if not isinstance(value, bool):
+            raise ValueError(f"{self.name} requires a boolean value")
+
+
+class ContinuousState(State):
+    value_type = "continuous"
+
+    def validate(self, value: Any) -> None:
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ValueError(f"{self.name} requires a numeric value")
+
+
+class DiscreteStateValue(State):
+    value_type = "discrete"
+
+    def __init__(self, name: str, value: Any, domain: Iterable[Any], *, definition: "StateDefinition | None" = None):
+        self.domain = tuple(domain)
+        super().__init__(name, value, definition=definition)
+
+    def validate(self, value: Any) -> None:
+        if self.domain and value not in self.domain:
+            raise ValueError(f"{self.name} value is outside its domain: {value!r}")
+
+    def to_dict(self) -> dict[str, Any]:
+        result = super().to_dict()
+        result["domain"] = list(self.domain)
+        return result
+
+
+class ResourceState(ContinuousState):
+    value_type = "resource"
+
+    def __init__(self, name: str, value: float, *, capacity: float | None = None, unit: str = "", definition: "StateDefinition | None" = None):
+        self.capacity = capacity
+        self.unit = unit
+        super().__init__(name, value, definition=definition)
+
+    def validate(self, value: Any) -> None:
+        super().validate(value)
+        if float(value) < 0 or self.capacity is not None and float(value) > self.capacity:
+            raise ValueError(f"{self.name} resource value is outside [0, capacity]")
+
+    def to_dict(self) -> dict[str, Any]:
+        result = super().to_dict()
+        result.update({"capacity": self.capacity, "unit": self.unit})
+        return result
+
+
+class StateSet:
+    """Named state-card collection used by assets and runtime adapters."""
+
+    def __init__(self, values: Iterable[State] = ()):
+        self.values = {item.name: item for item in values}
+
+    def get(self, name: str) -> State | None:
+        return self.values.get(str(name))
+
+    def set(self, name: str, value: Any) -> StateChange:
+        state = self.get(name)
+        if state is None:
+            raise KeyError(name)
+        return state.set_value(value)
+
+    def to_dict(self) -> dict[str, dict[str, Any]]:
+        return {name: state.to_dict() for name, state in self.values.items()}
+
+
 class DiscreteState(str, Enum):
     CYCLE_REMAINING = "cycle_remaining"
     FILL_LEVEL = "fill_level"
@@ -35,6 +142,11 @@ class DiscreteState(str, Enum):
     IS_WILTED = "is_wilted"
     TEMPERATURE = "temperature"
     VITALITY = "vitality"
+    # Transport-device runtime states. Their values are discrete labels and
+    # remain part of the canonical state-card namespace.
+    CURRENT_FLOOR = "current_floor"
+    DIRECTION = "direction"
+    DOOR_PHASE = "door_phase"
 
 
 class StateCategory(str, Enum):
@@ -54,10 +166,39 @@ class StateValueType(str, Enum):
 
 
 DISCRETE_STATE_SPACE: tuple[str, ...] = tuple(state.value for state in DiscreteState)
-TEMPERATURE_VALUES = frozenset({"cold", "room", "warm", "hot"})
-THERMAL_PHASES = frozenset({"frozen", "cold", "room", "warm", "hot", "boiling", "burning"})
+TEMPERATURE_VALUES = frozenset(
+    {
+        "cold",
+        "room",
+        "warm",
+        "hot"
+    }
+)
+THERMAL_PHASES = frozenset(
+    {
+        "frozen",
+        "cold",
+        "room",
+        "warm",
+        "hot",
+        "boiling",
+        "burning"
+    }
+)
 TEMPERATURE_NUMERIC_RANGE = (-50.0, 300.0)
-NUMERIC_STATES = frozenset({"cycle_remaining", "fill_level", "vitality", "freshness", "uses_left", "count", "amount", "capacity", "water_level"})
+NUMERIC_STATES = frozenset(
+    {
+        "cycle_remaining",
+        "fill_level",
+        "vitality",
+        "freshness",
+        "uses_left",
+        "count",
+        "amount",
+        "capacity",
+        "water_level"
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -143,34 +284,154 @@ def _spec(name: str, category: StateCategory, value_kind: StateValueType, applie
 
 
 STATE_SPECS: dict[str, StateSpec] = {
-    "is_open": _spec("is_open", StateCategory.CONTROL, StateValueType.BOOLEAN, ("door", "cabinet", "fridge", "drawer", "washer", "microwave"), False, ("left_open",), ("close",), ("controls access",), ("openable",)),
-    "is_on": _spec("is_on", StateCategory.CONTROL, StateValueType.BOOLEAN, ("stove", "faucet", "washer", "dishwasher", "light", "tv", "microwave"), False, ("left_running",), ("press",), ("starts cycles",), ("switchable",)),
-    "is_pressed": _spec("is_pressed", StateCategory.CONTROL, StateValueType.BOOLEAN, ("button", "switch", "knob"), False, ("press",), ("cycle_completion",), ("propagates control",), ("switchable",)),
-    "cycle_remaining": _spec("cycle_remaining", StateCategory.QUANTITY, StateValueType.NUMBER, ("washer", "dishwasher", "microwave"), 0, ("press_start",), ("timed_transition",), ("tracks cycle completion",)),
-    "is_dirty": _spec("is_dirty", StateCategory.CONDITION, StateValueType.BOOLEAN, ("plate", "cup", "table", "clothes", "floor", "toilet", "sink"), False, ("use", "spill"), ("brush",), ("surface needs cleaning",), ("cleanable",)),
-    "is_rotten": _spec("is_rotten", StateCategory.MATERIAL, StateValueType.BOOLEAN, ("food", "milk", "juice", "vegetable", "fruit", "organic_item"), False, ("time_decay",), (), ("dispose or remove",), ("perishable",)),
-    "is_spoiled": _spec("is_spoiled", StateCategory.MATERIAL, StateValueType.BOOLEAN, ("food", "milk", "juice", "vegetable", "fruit", "organic_item"), False, ("time_decay",), ("cooling",), ("intermediate food quality",), ("perishable",)),
-    "freshness": _spec("freshness", StateCategory.LIFE, StateValueType.NUMBER, ("food", "milk", "juice", "vegetable", "fruit", "organic_item"), 100.0, ("time_decay",), ("cooling",), ("continuous food quality",), ("perishable",)),
-    "is_full": _spec("is_full", StateCategory.QUANTITY, StateValueType.BOOLEAN, ("trash_bin", "basket", "cup", "container"), False, ("place",), (), ("blocks filling",), ("fillable",)),
-    "fill_level": _spec("fill_level", StateCategory.QUANTITY, StateValueType.NUMBER, ("trash_bin", "cup", "container"), 0, ("place",), (), ("drives is_full",), ("fillable",)),
-    "has_water": _spec("has_water", StateCategory.QUANTITY, StateValueType.BOOLEAN, ("sink", "vase", "cup", "mug", "bowl", "wateringcan", "spraybottle"), False, ("empty", "consume", "evaporate"), ("open_faucet", "fill", "refill"), ("controls watering and wetting effects",), ("water_container",)),
-    "water_level": _spec("water_level", StateCategory.QUANTITY, StateValueType.NUMBER, ("sink", "vase", "cup", "mug", "bowl", "wateringcan", "spraybottle"), 0, ("empty", "consume", "evaporate"), ("open_faucet", "fill", "refill"), ("continuous water quantity; has_water is its compatibility projection",), ("water_container",)),
-    "water_flowing": _spec("water_flowing", StateCategory.CONTROL, StateValueType.BOOLEAN, ("sink",), False, ("close_faucet",), ("open_faucet",), ("drives sink filling during system ticks",), ("water_reservoir",)),
-    "is_running": _spec("is_running", StateCategory.CONTROL, StateValueType.BOOLEAN, ("washer", "washing_machine", "dryer", "clothesdryer", "microwave", "printer", "coffeemachine", "coffee_machine"), False, ("start",), ("finish",), ("tracks active process",), ("timed_device",)),
-    "uses_left": _spec("uses_left", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("consume",), ("refill",), ("finite resource availability",), ("finite_resource",)),
-    "count": _spec("count", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("consume",), ("refill",), ("resource inventory",), ("finite_resource",)),
-    "amount": _spec("amount", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("consume",), ("refill",), ("material quantity",), ("finite_resource",)),
-    "capacity": _spec("capacity", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0, ("place",), (), ("limits contained item count",), ("capacity_holder",)),
-    "is_wet": _spec("is_wet", StateCategory.CONDITION, StateValueType.BOOLEAN, ("clothes", "towel", "floor", "cup", "sink_area"), False, ("water",), ("drying",), ("blocks folding",)),
-    "temperature": _spec("temperature", StateCategory.THERMAL, StateValueType.NUMBER_OR_ENUM, ("food", "drink", "milk", "juice", "vegetable", "fruit", "egg", "bread", "water"), "room", ("cooling",), ("heating",), ("drives thermal phases and cooking",), ("temperature_sensitive", "cookable")),
-    "is_cooked": _spec("is_cooked", StateCategory.MATERIAL, StateValueType.BOOLEAN, ("food", "egg", "bread"), False, ("raw_food",), ("cooking",), ("enables eating",), ("cookable",)),
-    "is_burnt": _spec("is_burnt", StateCategory.MATERIAL, StateValueType.BOOLEAN, ("food", "egg", "bread"), False, ("overcook",), (), ("food disposal",), ("cookable",)),
-    "is_frozen": _spec("is_frozen", StateCategory.MATERIAL, StateValueType.BOOLEAN, ("food", "drink", "milk", "juice", "vegetable", "fruit"), False, ("freeze",), ("thaw",), ("blocks immediate use",), ("temperature_sensitive",)),
-    "is_broken": _spec("is_broken", StateCategory.CONDITION, StateValueType.BOOLEAN, ("cup", "plate", "computer", "device"), False, ("break",), (), ("blocks normal use",)),
-    "is_blocked": _spec("is_blocked", StateCategory.CONDITION, StateValueType.BOOLEAN, ("door", "path", "container"), False, ("obstruct",), (), ("blocks navigation or access",)),
-    "folded": _spec("folded", StateCategory.CONDITION, StateValueType.BOOLEAN, ("clothes", "towel", "blanket"), True, ("unfold",), ("fold",), ("improves storage",), ("foldable",)),
-    "is_wilted": _spec("is_wilted", StateCategory.LIFE, StateValueType.BOOLEAN, ("plant",), False, ("time_without_water",), (), ("lowers vitality",), ("plant_life",)),
-    "vitality": _spec("vitality", StateCategory.LIFE, StateValueType.NUMBER, ("plant",), 1, ("time_without_water",), ("water",), ("drives wilted",), ("plant_life",)),
+    "is_open": _spec(
+        "is_open",
+        StateCategory.CONTROL,
+        StateValueType.BOOLEAN,
+        ("door", "cabinet", "fridge", "drawer", "washer", "microwave"),
+        False,
+        ("left_open",),
+        ("close",),
+        ("controls access",),
+        ("openable",),
+    ),
+    "is_on": _spec(
+        "is_on", StateCategory.CONTROL, StateValueType.BOOLEAN,
+        ("stove", "faucet", "washer", "dishwasher", "light", "tv", "microwave"),
+        False, ("left_running",), ("press",), ("starts cycles",), ("switchable",),
+    ),
+    "is_pressed": _spec(
+        "is_pressed", StateCategory.CONTROL, StateValueType.BOOLEAN,
+        ("button", "switch", "knob"), False, ("press",), ("cycle_completion",),
+        ("propagates control",), ("switchable",),
+    ),
+    "cycle_remaining": _spec(
+        "cycle_remaining", StateCategory.QUANTITY, StateValueType.NUMBER,
+        ("washer", "dishwasher", "microwave"), 0, ("press_start",),
+        ("timed_transition",), ("tracks cycle completion",),
+    ),
+    "is_dirty": _spec(
+        "is_dirty", StateCategory.CONDITION, StateValueType.BOOLEAN,
+        ("plate", "cup", "table", "clothes", "floor", "toilet", "sink"),
+        False, ("use", "spill"), ("brush",), ("surface needs cleaning",), ("cleanable",),
+    ),
+    "is_rotten": _spec(
+        "is_rotten", StateCategory.MATERIAL, StateValueType.BOOLEAN,
+        ("food", "milk", "juice", "vegetable", "fruit", "organic_item"),
+        False, ("time_decay",), (), ("dispose or remove",), ("perishable",),
+    ),
+    "is_spoiled": _spec(
+        "is_spoiled", StateCategory.MATERIAL, StateValueType.BOOLEAN,
+        ("food", "milk", "juice", "vegetable", "fruit", "organic_item"),
+        False, ("time_decay",), ("cooling",), ("intermediate food quality",),
+        ("perishable",),
+    ),
+    "freshness": _spec(
+        "freshness", StateCategory.LIFE, StateValueType.NUMBER,
+        ("food", "milk", "juice", "vegetable", "fruit", "organic_item"),
+        100.0, ("time_decay",), ("cooling",), ("continuous food quality",),
+        ("perishable",),
+    ),
+    "is_full": _spec(
+        "is_full", StateCategory.QUANTITY, StateValueType.BOOLEAN,
+        ("trash_bin", "basket", "cup", "container"), False, ("place",), (),
+        ("blocks filling",), ("fillable",),
+    ),
+    "fill_level": _spec(
+        "fill_level", StateCategory.QUANTITY, StateValueType.NUMBER,
+        ("trash_bin", "cup", "container"), 0, ("place",), (),
+        ("drives is_full",), ("fillable",),
+    ),
+    "has_water": _spec(
+        "has_water", StateCategory.QUANTITY, StateValueType.BOOLEAN,
+        ("sink", "vase", "cup", "mug", "bowl", "wateringcan", "spraybottle"),
+        False, ("empty", "consume", "evaporate"), ("open_faucet", "fill", "refill"),
+        ("controls watering and wetting effects",), ("water_container",),
+    ),
+    "water_level": _spec(
+        "water_level", StateCategory.QUANTITY, StateValueType.NUMBER,
+        ("sink", "vase", "cup", "mug", "bowl", "wateringcan", "spraybottle"),
+        0, ("empty", "consume", "evaporate"), ("open_faucet", "fill", "refill"),
+        ("continuous water quantity; has_water is its compatibility projection",),
+        ("water_container",),
+    ),
+    "water_flowing": _spec(
+        "water_flowing", StateCategory.CONTROL, StateValueType.BOOLEAN,
+        ("sink",), False, ("close_faucet",), ("open_faucet",),
+        ("drives sink filling during system ticks",), ("water_reservoir",),
+    ),
+    "is_running": _spec(
+        "is_running", StateCategory.CONTROL, StateValueType.BOOLEAN,
+        ("washer", "washing_machine", "dryer", "clothesdryer", "microwave", "printer", "coffeemachine", "coffee_machine"),
+        False, ("start",), ("finish",), ("tracks active process",), ("timed_device",),
+    ),
+    "uses_left": _spec(
+        "uses_left", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0,
+        ("consume",), ("refill",), ("finite resource availability",), ("finite_resource",),
+    ),
+    "count": _spec(
+        "count", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0,
+        ("consume",), ("refill",), ("resource inventory",), ("finite_resource",),
+    ),
+    "amount": _spec(
+        "amount", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0,
+        ("consume",), ("refill",), ("material quantity",), ("finite_resource",),
+    ),
+    "capacity": _spec(
+        "capacity", StateCategory.QUANTITY, StateValueType.NUMBER, (), 0,
+        ("place",), (), ("limits contained item count",), ("capacity_holder",),
+    ),
+    "is_wet": _spec(
+        "is_wet", StateCategory.CONDITION, StateValueType.BOOLEAN,
+        ("clothes", "towel", "floor", "cup", "sink_area"), False,
+        ("water",), ("drying",), ("blocks folding",),
+    ),
+    "temperature": _spec(
+        "temperature", StateCategory.THERMAL, StateValueType.NUMBER_OR_ENUM,
+        ("food", "drink", "milk", "juice", "vegetable", "fruit", "egg", "bread", "water"),
+        "room", ("cooling",), ("heating",), ("drives thermal phases and cooking",),
+        ("temperature_sensitive", "cookable"),
+    ),
+    "is_cooked": _spec(
+        "is_cooked", StateCategory.MATERIAL, StateValueType.BOOLEAN,
+        ("food", "egg", "bread"), False, ("raw_food",), ("cooking",),
+        ("enables eating",), ("cookable",),
+    ),
+    "is_burnt": _spec(
+        "is_burnt", StateCategory.MATERIAL, StateValueType.BOOLEAN,
+        ("food", "egg", "bread"), False, ("overcook",), (),
+        ("food disposal",), ("cookable",),
+    ),
+    "is_frozen": _spec(
+        "is_frozen", StateCategory.MATERIAL, StateValueType.BOOLEAN,
+        ("food", "drink", "milk", "juice", "vegetable", "fruit"), False,
+        ("freeze",), ("thaw",), ("blocks immediate use",), ("temperature_sensitive",),
+    ),
+    "is_broken": _spec(
+        "is_broken", StateCategory.CONDITION, StateValueType.BOOLEAN,
+        ("cup", "plate", "computer", "device"), False, ("break",), (),
+        ("blocks normal use",),
+    ),
+    "is_blocked": _spec(
+        "is_blocked", StateCategory.CONDITION, StateValueType.BOOLEAN,
+        ("door", "path", "container"), False, ("obstruct",), (),
+        ("blocks navigation or access",),
+    ),
+    "folded": _spec(
+        "folded", StateCategory.CONDITION, StateValueType.BOOLEAN,
+        ("clothes", "towel", "blanket"), True, ("unfold",), ("fold",),
+        ("improves storage",), ("foldable",),
+    ),
+    "is_wilted": _spec(
+        "is_wilted", StateCategory.LIFE, StateValueType.BOOLEAN,
+        ("plant",), False, ("time_without_water",), (),
+        ("lowers vitality",), ("plant_life",),
+    ),
+    "vitality": _spec(
+        "vitality", StateCategory.LIFE, StateValueType.NUMBER,
+        ("plant",), 1, ("time_without_water",), ("water",),
+        ("drives wilted",), ("plant_life",),
+    ),
 }
 
 
@@ -190,4 +451,21 @@ def state_table_for_object(semantic_type: str, capabilities: Iterable[str] = ())
     return {name: definition for name, definition in STATE_DEFINITIONS.items() if definition.accepts(semantic_type=semantic_type, capabilities=capability_set)}
 
 
-__all__ = ["DISCRETE_STATE_SPACE", "DiscreteState", "NUMERIC_STATES", "STATE_SPECS", "STATE_DEFINITIONS", "StateCategory", "StateDefinition", "StateSpec", "StateValueType", "TEMPERATURE_VALUES", "THERMAL_PHASES", "TEMPERATURE_NUMERIC_RANGE", "is_discrete_state", "normalize_discrete_value", "state_definition", "state_table_for_object"]
+__all__ = [
+    "DISCRETE_STATE_SPACE",
+    "DiscreteState",
+    "NUMERIC_STATES",
+    "STATE_SPECS",
+    "STATE_DEFINITIONS",
+    "StateCategory",
+    "StateDefinition",
+    "StateSpec",
+    "StateValueType",
+    "TEMPERATURE_VALUES",
+    "THERMAL_PHASES",
+    "TEMPERATURE_NUMERIC_RANGE",
+    "is_discrete_state",
+    "normalize_discrete_value",
+    "state_definition",
+    "state_table_for_object"
+]

@@ -1,4 +1,972 @@
 {
+  "web_seed": {
+    "npc_ids": [
+      "worker_1",
+      "quality_inspector_1",
+      "maintenance_1"
+    ],
+    "profile": "base_scene_with_default_npcs",
+    "npc_count": 3
+  },
+  "scene_name": "simple_factory_1f",
+  "world_state": {
+    "day": 1,
+    "step": 0,
+    "time_min": 360,
+    "minutes_per_step": 10
+  },
+  "scene_name_cn": "简单工厂单层",
+  "schema_version": 2,
+  "id_namespace": "editor",
+  "nodes": [
+    {
+      "id": "F1",
+      "name": "Floor 1",
+      "states": {},
+      "name_cn": "第 1 层",
+      "mobility": "structural",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "floor",
+      "floor_number": 1,
+      "semantic_type": "floor",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ],
+      "editor_id": "F1"
+    },
+    {
+      "id": "entrance",
+      "name": "Entrance",
+      "states": {},
+      "name_cn": "入口",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ],
+      "editor_id": "entrance"
+    },
+    {
+      "id": "workshop",
+      "name": "Workshop",
+      "states": {},
+      "name_cn": "加工区",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ],
+      "editor_id": "workshop"
+    },
+    {
+      "id": "assembly_line",
+      "name": "Assembly Line",
+      "states": {},
+      "name_cn": "装配线",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ],
+      "editor_id": "assembly_line"
+    },
+    {
+      "id": "warehouse",
+      "name": "Warehouse",
+      "states": {},
+      "name_cn": "仓库",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ],
+      "editor_id": "warehouse"
+    },
+    {
+      "id": "control_room",
+      "name": "Control Room",
+      "states": {},
+      "name_cn": "控制室",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ],
+      "editor_id": "control_room"
+    },
+    {
+      "id": "break_room",
+      "name": "Break Room",
+      "states": {},
+      "name_cn": "休息室",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ],
+      "editor_id": "break_room"
+    },
+    {
+      "id": "restroom",
+      "name": "Restroom",
+      "states": {},
+      "name_cn": "卫生间",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ],
+      "editor_id": "restroom"
+    },
+    {
+      "id": "cabinet_entrance",
+      "name": "cabinet",
+      "states": {
+        "is_full": false,
+        "is_open": false,
+        "fill_level": 0.2
+      },
+      "name_cn": "储物柜",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "cabinet",
+      "semantic_class": "container",
+      "affordance_count": 8,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan",
+        "open",
+        "close",
+        "pull",
+        "push"
+      ],
+      "editor_id": "cabinet_entrance"
+    },
+    {
+      "id": "signboard_entrance",
+      "name": "signboard",
+      "states": {},
+      "name_cn": "安全看板",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "signboard",
+      "semantic_class": "appliance",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ],
+      "editor_id": "signboard_entrance"
+    },
+    {
+      "id": "table_workshop",
+      "name": "table",
+      "states": {
+        "is_full": false,
+        "is_dirty": false,
+        "fill_level": 0.2
+      },
+      "name_cn": "工作台",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "table",
+      "semantic_class": "furniture",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan",
+        "brush"
+      ],
+      "editor_id": "table_workshop"
+    },
+    {
+      "id": "machine_workshop",
+      "name": "machine",
+      "states": {},
+      "name_cn": "加工机器",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "machine",
+      "semantic_class": "tool",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ],
+      "editor_id": "machine_workshop"
+    },
+    {
+      "id": "cart_workshop",
+      "name": "cart",
+      "states": {},
+      "name_cn": "工具车",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "cart",
+      "semantic_class": "tool",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "pick",
+        "scan"
+      ],
+      "editor_id": "cart_workshop",
+      "capabilities": [
+        "pickable"
+      ]
+    },
+    {
+      "id": "box_workshop_parts",
+      "name": "box",
+      "states": {
+        "is_full": false,
+        "fill_level": 0.6
+      },
+      "name_cn": "零件箱",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "box",
+      "semantic_class": "container",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "pick",
+        "place",
+        "scan"
+      ],
+      "editor_id": "box_workshop_parts",
+      "capabilities": [
+        "pickable"
+      ]
+    },
+    {
+      "id": "machine_assembly_line",
+      "name": "machine",
+      "states": {},
+      "name_cn": "装配机器",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "machine",
+      "semantic_class": "tool",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ],
+      "editor_id": "machine_assembly_line"
+    },
+    {
+      "id": "machine_assembly_line_aux",
+      "name": "machine",
+      "states": {},
+      "name_cn": "输送设备",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "machine",
+      "semantic_class": "tool",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ],
+      "editor_id": "machine_assembly_line_aux"
+    },
+    {
+      "id": "box_assembly_line_parts",
+      "name": "box",
+      "states": {
+        "is_full": false,
+        "fill_level": 0.5
+      },
+      "name_cn": "待装配箱",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "box",
+      "semantic_class": "container",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "pick",
+        "place",
+        "scan"
+      ],
+      "editor_id": "box_assembly_line_parts",
+      "capabilities": [
+        "pickable"
+      ]
+    },
+    {
+      "id": "button_assembly_line",
+      "name": "button",
+      "states": {
+        "is_on": false,
+        "is_pressed": false
+      },
+      "name_cn": "启停按钮",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "button",
+      "semantic_class": "control",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "press",
+        "scan"
+      ],
+      "editor_id": "button_assembly_line"
+    },
+    {
+      "id": "shelf_warehouse",
+      "name": "shelf",
+      "states": {
+        "is_full": false,
+        "fill_level": 0.7
+      },
+      "name_cn": "货架",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "shelf",
+      "semantic_class": "furniture",
+      "affordance_count": 6,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ],
+      "editor_id": "shelf_warehouse"
+    },
+    {
+      "id": "box_warehouse_1",
+      "name": "box",
+      "states": {
+        "is_full": false,
+        "fill_level": 0.9
+      },
+      "name_cn": "货箱",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "box",
+      "semantic_class": "container",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "pick",
+        "place",
+        "scan"
+      ],
+      "editor_id": "box_warehouse_1",
+      "capabilities": [
+        "pickable"
+      ]
+    },
+    {
+      "id": "box_warehouse_2",
+      "name": "box",
+      "states": {
+        "is_full": false,
+        "fill_level": 0.5
+      },
+      "name_cn": "货箱",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "box",
+      "semantic_class": "container",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "pick",
+        "place",
+        "scan"
+      ],
+      "editor_id": "box_warehouse_2",
+      "capabilities": [
+        "pickable"
+      ]
+    },
+    {
+      "id": "cart_warehouse",
+      "name": "cart",
+      "states": {},
+      "name_cn": "搬运车",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "cart",
+      "semantic_class": "tool",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "pick",
+        "scan"
+      ],
+      "editor_id": "cart_warehouse",
+      "capabilities": [
+        "pickable"
+      ]
+    },
+    {
+      "id": "computer_control_room",
+      "name": "computer",
+      "states": {
+        "is_on": true
+      },
+      "name_cn": "工控电脑",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "computer",
+      "semantic_class": "appliance",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ],
+      "editor_id": "computer_control_room"
+    },
+    {
+      "id": "display_control_room",
+      "name": "display",
+      "states": {
+        "is_on": true
+      },
+      "name_cn": "监控屏",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "display",
+      "semantic_class": "appliance",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ],
+      "editor_id": "display_control_room"
+    },
+    {
+      "id": "cabinet_control_room",
+      "name": "cabinet",
+      "states": {
+        "is_full": false,
+        "is_open": false,
+        "fill_level": 0.3
+      },
+      "name_cn": "资料柜",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "cabinet",
+      "semantic_class": "container",
+      "affordance_count": 8,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan",
+        "open",
+        "close",
+        "pull",
+        "push"
+      ],
+      "editor_id": "cabinet_control_room"
+    },
+    {
+      "id": "button_control_room",
+      "name": "button",
+      "states": {
+        "is_on": false,
+        "is_pressed": false
+      },
+      "name_cn": "控制按钮",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "button",
+      "semantic_class": "control",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "press",
+        "scan"
+      ],
+      "editor_id": "button_control_room"
+    },
+    {
+      "id": "table_break_room",
+      "name": "table",
+      "states": {
+        "is_full": false,
+        "is_dirty": false,
+        "fill_level": 0.0
+      },
+      "name_cn": "桌子",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "table",
+      "semantic_class": "furniture",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan",
+        "brush"
+      ],
+      "editor_id": "table_break_room"
+    },
+    {
+      "id": "seat_break_room",
+      "name": "seat",
+      "states": {
+        "is_dirty": false
+      },
+      "name_cn": "座椅",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "seat",
+      "semantic_class": "furniture",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan",
+        "brush"
+      ],
+      "editor_id": "seat_break_room"
+    },
+    {
+      "id": "water_dispenser_break_room",
+      "name": "water dispenser",
+      "states": {
+        "is_on": true
+      },
+      "name_cn": "饮水机",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "water_dispenser",
+      "semantic_class": "appliance",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan"
+      ],
+      "editor_id": "water_dispenser_break_room"
+    },
+    {
+      "id": "fridge_break_room",
+      "name": "refrigerator",
+      "states": {
+        "is_on": true,
+        "is_full": false,
+        "is_open": false,
+        "fill_level": 0.2,
+        "cycle_remaining": 0
+      },
+      "name_cn": "冰箱",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "fridge",
+      "semantic_class": "appliance",
+      "affordance_count": 5,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan",
+        "open",
+        "close"
+      ],
+      "editor_id": "fridge_break_room"
+    },
+    {
+      "id": "sink_restroom",
+      "name": "sink",
+      "states": {
+        "is_on": false,
+        "is_full": false,
+        "fill_level": 0.0
+      },
+      "name_cn": "洗手池",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "sink",
+      "semantic_class": "appliance",
+      "affordance_count": 4,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan",
+        "brush"
+      ],
+      "editor_id": "sink_restroom"
+    },
+    {
+      "id": "toilet_restroom",
+      "name": "toilet",
+      "states": {
+        "is_on": false,
+        "is_full": false,
+        "fill_level": 0.0
+      },
+      "name_cn": "马桶",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "toilet",
+      "semantic_class": "appliance",
+      "affordance_count": 0,
+      "interactive_actions": [
+        "move",
+        "scan",
+        "brush"
+      ],
+      "editor_id": "toilet_restroom"
+    },
+    {
+      "id": "outside_home",
+      "name": "Outside",
+      "states": {},
+      "name_cn": "Outside",
+      "mobility": "fixed",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "room",
+      "semantic_type": "room",
+      "semantic_class": "space",
+      "affordance_count": 3,
+      "interactive_actions": [
+        "move",
+        "place",
+        "scan"
+      ],
+      "editor_id": "outside_home"
+    },
+    {
+      "id": "safety_gear_entrance",
+      "name": "safety gear",
+      "states": {},
+      "name_cn": "safety gear",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "safety_gear",
+      "semantic_class": "equipment",
+      "affordance_count": 3,
+      "interactive_actions": [
+        "pick",
+        "place",
+        "scan"
+      ],
+      "editor_id": "safety_gear_entrance",
+      "capabilities": [
+        "pickable"
+      ]
+    },
+    {
+      "id": "finished_product_assembly",
+      "name": "finished product",
+      "states": {},
+      "name_cn": "finished product",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "finished_product",
+      "semantic_class": "product",
+      "affordance_count": 3,
+      "interactive_actions": [
+        "pick",
+        "place",
+        "scan"
+      ],
+      "editor_id": "finished_product_assembly",
+      "capabilities": [
+        "pickable"
+      ]
+    },
+    {
+      "id": "quality_record_control",
+      "name": "quality record",
+      "states": {},
+      "name_cn": "quality record",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "quality_record",
+      "semantic_class": "document",
+      "affordance_count": 3,
+      "interactive_actions": [
+        "pick",
+        "place",
+        "scan"
+      ],
+      "editor_id": "quality_record_control",
+      "capabilities": [
+        "pickable"
+      ]
+    },
+    {
+      "id": "toolkit_workshop",
+      "name": "toolkit",
+      "states": {},
+      "name_cn": "toolkit",
+      "mobility": "movable",
+      "property": {
+        "physical": "",
+        "operation": "",
+        "appearance": ""
+      },
+      "node_type": "object",
+      "semantic_type": "toolkit",
+      "semantic_class": "tool",
+      "affordance_count": 3,
+      "interactive_actions": [
+        "pick",
+        "place",
+        "scan"
+      ],
+      "editor_id": "toolkit_workshop",
+      "capabilities": [
+        "pickable"
+      ]
+    },
+    {
+      "id": "worker_1",
+      "name": "factory_worker",
+      "role": "factory_worker",
+      "states": {},
+      "name_cn": "工人",
+      "persona": "factory_worker",
+      "node_type": "agent",
+      "semantic_type": "human",
+      "current_activity": "factory_off_shift",
+      "interactive_actions": [],
+      "editor_id": "worker_1"
+    },
+    {
+      "id": "quality_inspector_1",
+      "name": "quality_inspector",
+      "role": "quality_inspector",
+      "states": {},
+      "name_cn": "质检员",
+      "persona": "quality_inspector",
+      "node_type": "agent",
+      "semantic_type": "human",
+      "current_activity": "factory_off_shift",
+      "interactive_actions": [],
+      "editor_id": "quality_inspector_1"
+    },
+    {
+      "id": "maintenance_1",
+      "name": "maintenance_worker",
+      "role": "maintenance_worker",
+      "states": {},
+      "name_cn": "维修员",
+      "persona": "maintenance_worker",
+      "node_type": "agent",
+      "semantic_type": "human",
+      "current_activity": "factory_off_shift",
+      "interactive_actions": [],
+      "editor_id": "maintenance_1"
+    }
+  ],
   "edges": [
     {
       "category": "structural",
@@ -368,1025 +1336,5 @@
       "target_id": "maintenance_1",
       "properties": {}
     }
-  ],
-  "nodes": [
-    {
-      "id": "F1",
-      "name": "Floor 1",
-      "child": [
-        "outside_home"
-      ],
-      "parent": null,
-      "states": {},
-      "name_cn": "第 1 层",
-      "mobility": "structural",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "floor_number": 1,
-      "semantic_type": "floor",
-      "semantic_class": "space",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "scan"
-      ]
-    },
-    {
-      "id": "entrance",
-      "name": "Entrance",
-      "child": [
-        "cabinet_entrance",
-        "signboard_entrance"
-      ],
-      "parent": null,
-      "states": {},
-      "name_cn": "入口",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "room",
-      "semantic_type": "room",
-      "semantic_class": "space",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "workshop",
-      "name": "Workshop",
-      "child": [
-        "table_workshop",
-        "machine_workshop",
-        "cart_workshop",
-        "box_workshop_parts"
-      ],
-      "parent": null,
-      "states": {},
-      "name_cn": "加工区",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "room",
-      "semantic_type": "room",
-      "semantic_class": "space",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "assembly_line",
-      "name": "Assembly Line",
-      "child": [
-        "machine_assembly_line",
-        "machine_assembly_line_aux",
-        "box_assembly_line_parts",
-        "button_assembly_line"
-      ],
-      "parent": null,
-      "states": {},
-      "name_cn": "装配线",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "room",
-      "semantic_type": "room",
-      "semantic_class": "space",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "warehouse",
-      "name": "Warehouse",
-      "child": [
-        "shelf_warehouse",
-        "cart_warehouse",
-        "finished_product_assembly"
-      ],
-      "parent": null,
-      "states": {},
-      "name_cn": "仓库",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "room",
-      "semantic_type": "room",
-      "semantic_class": "space",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "control_room",
-      "name": "Control Room",
-      "child": [
-        "computer_control_room",
-        "display_control_room",
-        "cabinet_control_room",
-        "button_control_room"
-      ],
-      "parent": null,
-      "states": {},
-      "name_cn": "控制室",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "room",
-      "semantic_type": "room",
-      "semantic_class": "space",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "break_room",
-      "name": "Break Room",
-      "child": [
-        "table_break_room",
-        "seat_break_room",
-        "water_dispenser_break_room",
-        "fridge_break_room"
-      ],
-      "parent": null,
-      "states": {},
-      "name_cn": "休息室",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "room",
-      "semantic_type": "room",
-      "semantic_class": "space",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "restroom",
-      "name": "Restroom",
-      "child": [
-        "sink_restroom",
-        "toilet_restroom"
-      ],
-      "parent": null,
-      "states": {},
-      "name_cn": "卫生间",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "room",
-      "semantic_type": "room",
-      "semantic_class": "space",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "cabinet_entrance",
-      "name": "cabinet",
-      "child": [
-        "safety_gear_entrance"
-      ],
-      "parent": "entrance",
-      "states": {
-        "is_full": false,
-        "is_open": false,
-        "fill_level": 0.2
-      },
-      "name_cn": "储物柜",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "cabinet",
-      "semantic_class": "container",
-      "affordance_count": 8,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan",
-        "open",
-        "close",
-        "pull",
-        "push"
-      ]
-    },
-    {
-      "id": "signboard_entrance",
-      "name": "signboard",
-      "child": [],
-      "parent": "entrance",
-      "states": {},
-      "name_cn": "安全看板",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "signboard",
-      "semantic_class": "appliance",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "scan"
-      ]
-    },
-    {
-      "id": "table_workshop",
-      "name": "table",
-      "child": [],
-      "parent": "workshop",
-      "states": {
-        "is_full": false,
-        "is_dirty": false,
-        "fill_level": 0.2
-      },
-      "name_cn": "工作台",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "table",
-      "semantic_class": "furniture",
-      "affordance_count": 4,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan",
-        "brush"
-      ]
-    },
-    {
-      "id": "machine_workshop",
-      "name": "machine",
-      "child": [],
-      "parent": "workshop",
-      "states": {},
-      "name_cn": "加工机器",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "machine",
-      "semantic_class": "tool",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "scan"
-      ]
-    },
-    {
-      "id": "cart_workshop",
-      "name": "cart",
-      "child": [],
-      "parent": "workshop",
-      "states": {},
-      "name_cn": "工具车",
-      "mobility": "movable",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "movable_object",
-      "semantic_type": "cart",
-      "semantic_class": "tool",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "pick",
-        "scan"
-      ]
-    },
-    {
-      "id": "box_workshop_parts",
-      "name": "box",
-      "child": [],
-      "parent": "workshop",
-      "states": {
-        "is_full": false,
-        "fill_level": 0.6
-      },
-      "name_cn": "零件箱",
-      "mobility": "movable",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "movable_object",
-      "semantic_type": "box",
-      "semantic_class": "container",
-      "affordance_count": 4,
-      "interactive_actions": [
-        "pick",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "machine_assembly_line",
-      "name": "machine",
-      "child": [],
-      "parent": "assembly_line",
-      "states": {},
-      "name_cn": "装配机器",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "machine",
-      "semantic_class": "tool",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "scan"
-      ]
-    },
-    {
-      "id": "machine_assembly_line_aux",
-      "name": "machine",
-      "child": [],
-      "parent": "assembly_line",
-      "states": {},
-      "name_cn": "输送设备",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "machine",
-      "semantic_class": "tool",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "scan"
-      ]
-    },
-    {
-      "id": "box_assembly_line_parts",
-      "name": "box",
-      "child": [],
-      "parent": "assembly_line",
-      "states": {
-        "is_full": false,
-        "fill_level": 0.5
-      },
-      "name_cn": "待装配箱",
-      "mobility": "movable",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "movable_object",
-      "semantic_type": "box",
-      "semantic_class": "container",
-      "affordance_count": 4,
-      "interactive_actions": [
-        "pick",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "button_assembly_line",
-      "name": "button",
-      "child": [],
-      "parent": "assembly_line",
-      "states": {
-        "is_on": false,
-        "is_pressed": false
-      },
-      "name_cn": "启停按钮",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "button",
-      "semantic_class": "control",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "press",
-        "scan"
-      ]
-    },
-    {
-      "id": "shelf_warehouse",
-      "name": "shelf",
-      "child": [
-        "box_warehouse_1",
-        "box_warehouse_2"
-      ],
-      "parent": "warehouse",
-      "states": {
-        "is_full": false,
-        "fill_level": 0.7
-      },
-      "name_cn": "货架",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "shelf",
-      "semantic_class": "furniture",
-      "affordance_count": 6,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "box_warehouse_1",
-      "name": "box",
-      "child": [],
-      "parent": "shelf_warehouse",
-      "states": {
-        "is_full": false,
-        "fill_level": 0.9
-      },
-      "name_cn": "货箱",
-      "mobility": "movable",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "movable_object",
-      "semantic_type": "box",
-      "semantic_class": "container",
-      "affordance_count": 4,
-      "interactive_actions": [
-        "pick",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "box_warehouse_2",
-      "name": "box",
-      "child": [],
-      "parent": "shelf_warehouse",
-      "states": {
-        "is_full": false,
-        "fill_level": 0.5
-      },
-      "name_cn": "货箱",
-      "mobility": "movable",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "movable_object",
-      "semantic_type": "box",
-      "semantic_class": "container",
-      "affordance_count": 4,
-      "interactive_actions": [
-        "pick",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "cart_warehouse",
-      "name": "cart",
-      "child": [],
-      "parent": "warehouse",
-      "states": {},
-      "name_cn": "搬运车",
-      "mobility": "movable",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "movable_object",
-      "semantic_type": "cart",
-      "semantic_class": "tool",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "pick",
-        "scan"
-      ]
-    },
-    {
-      "id": "computer_control_room",
-      "name": "computer",
-      "child": [],
-      "parent": "control_room",
-      "states": {
-        "is_on": true
-      },
-      "name_cn": "工控电脑",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "computer",
-      "semantic_class": "appliance",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "scan"
-      ]
-    },
-    {
-      "id": "display_control_room",
-      "name": "display",
-      "child": [],
-      "parent": "control_room",
-      "states": {
-        "is_on": true
-      },
-      "name_cn": "监控屏",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "display",
-      "semantic_class": "appliance",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "scan"
-      ]
-    },
-    {
-      "id": "cabinet_control_room",
-      "name": "cabinet",
-      "child": [
-        "quality_record_control",
-        "toolkit_workshop"
-      ],
-      "parent": "control_room",
-      "states": {
-        "is_full": false,
-        "is_open": false,
-        "fill_level": 0.3
-      },
-      "name_cn": "资料柜",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "cabinet",
-      "semantic_class": "container",
-      "affordance_count": 8,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan",
-        "open",
-        "close",
-        "pull",
-        "push"
-      ]
-    },
-    {
-      "id": "button_control_room",
-      "name": "button",
-      "child": [],
-      "parent": "control_room",
-      "states": {
-        "is_on": false,
-        "is_pressed": false
-      },
-      "name_cn": "控制按钮",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "button",
-      "semantic_class": "control",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "press",
-        "scan"
-      ]
-    },
-    {
-      "id": "table_break_room",
-      "name": "table",
-      "child": [],
-      "parent": "break_room",
-      "states": {
-        "is_full": false,
-        "is_dirty": false,
-        "fill_level": 0.0
-      },
-      "name_cn": "桌子",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "table",
-      "semantic_class": "furniture",
-      "affordance_count": 4,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan",
-        "brush"
-      ]
-    },
-    {
-      "id": "seat_break_room",
-      "name": "seat",
-      "child": [],
-      "parent": "break_room",
-      "states": {
-        "is_dirty": false
-      },
-      "name_cn": "座椅",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "seat",
-      "semantic_class": "furniture",
-      "affordance_count": 4,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan",
-        "brush"
-      ]
-    },
-    {
-      "id": "water_dispenser_break_room",
-      "name": "water dispenser",
-      "child": [],
-      "parent": "break_room",
-      "states": {
-        "is_on": true
-      },
-      "name_cn": "饮水机",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "water_dispenser",
-      "semantic_class": "appliance",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "scan"
-      ]
-    },
-    {
-      "id": "fridge_break_room",
-      "name": "refrigerator",
-      "child": [],
-      "parent": "break_room",
-      "states": {
-        "is_on": true,
-        "is_full": false,
-        "is_open": false,
-        "fill_level": 0.2,
-        "cycle_remaining": 0
-      },
-      "name_cn": "冰箱",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "fridge",
-      "semantic_class": "appliance",
-      "affordance_count": 5,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan",
-        "open",
-        "close"
-      ]
-    },
-    {
-      "id": "sink_restroom",
-      "name": "sink",
-      "child": [],
-      "parent": "restroom",
-      "states": {
-        "is_on": false,
-        "is_full": false,
-        "fill_level": 0.0
-      },
-      "name_cn": "洗手池",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "sink",
-      "semantic_class": "appliance",
-      "affordance_count": 4,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan",
-        "brush"
-      ]
-    },
-    {
-      "id": "toilet_restroom",
-      "name": "toilet",
-      "child": [],
-      "parent": "restroom",
-      "states": {
-        "is_on": false,
-        "is_full": false,
-        "fill_level": 0.0
-      },
-      "name_cn": "马桶",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "fixed_object",
-      "semantic_type": "toilet",
-      "semantic_class": "appliance",
-      "affordance_count": 0,
-      "interactive_actions": [
-        "move",
-        "scan",
-        "brush"
-      ]
-    },
-    {
-      "id": "outside_home",
-      "name": "Outside",
-      "child": [
-        "worker_1",
-        "quality_inspector_1",
-        "maintenance_1"
-      ],
-      "parent": "F1",
-      "states": {},
-      "name_cn": "Outside",
-      "mobility": "fixed",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "room",
-      "semantic_type": "room",
-      "semantic_class": "space",
-      "affordance_count": 3,
-      "interactive_actions": [
-        "move",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "safety_gear_entrance",
-      "name": "safety gear",
-      "child": [],
-      "parent": "cabinet_entrance",
-      "states": {},
-      "name_cn": "safety gear",
-      "mobility": "movable",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "movable_object",
-      "semantic_type": "safety_gear",
-      "semantic_class": "equipment",
-      "affordance_count": 3,
-      "interactive_actions": [
-        "pick",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "finished_product_assembly",
-      "name": "finished product",
-      "child": [],
-      "parent": "warehouse",
-      "states": {},
-      "name_cn": "finished product",
-      "mobility": "movable",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "movable_object",
-      "semantic_type": "finished_product",
-      "semantic_class": "product",
-      "affordance_count": 3,
-      "interactive_actions": [
-        "pick",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "quality_record_control",
-      "name": "quality record",
-      "child": [],
-      "parent": "cabinet_control_room",
-      "states": {},
-      "name_cn": "quality record",
-      "mobility": "movable",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "movable_object",
-      "semantic_type": "quality_record",
-      "semantic_class": "document",
-      "affordance_count": 3,
-      "interactive_actions": [
-        "pick",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "toolkit_workshop",
-      "name": "toolkit",
-      "child": [],
-      "parent": "cabinet_control_room",
-      "states": {},
-      "name_cn": "toolkit",
-      "mobility": "movable",
-      "property": {
-        "physical": "",
-        "operation": "",
-        "appearance": ""
-      },
-      "node_type": "movable_object",
-      "semantic_type": "toolkit",
-      "semantic_class": "tool",
-      "affordance_count": 3,
-      "interactive_actions": [
-        "pick",
-        "place",
-        "scan"
-      ]
-    },
-    {
-      "id": "worker_1",
-      "name": "factory_worker",
-      "role": "factory_worker",
-      "child": [],
-      "parent": "outside_home",
-      "states": {},
-      "name_cn": "工人",
-      "persona": "factory_worker",
-      "node_type": "human",
-      "semantic_type": "human",
-      "current_activity": "factory_off_shift",
-      "interactive_actions": []
-    },
-    {
-      "id": "quality_inspector_1",
-      "name": "quality_inspector",
-      "role": "quality_inspector",
-      "child": [],
-      "parent": "outside_home",
-      "states": {},
-      "name_cn": "质检员",
-      "persona": "quality_inspector",
-      "node_type": "human",
-      "semantic_type": "human",
-      "current_activity": "factory_off_shift",
-      "interactive_actions": []
-    },
-    {
-      "id": "maintenance_1",
-      "name": "maintenance_worker",
-      "role": "maintenance_worker",
-      "child": [],
-      "parent": "outside_home",
-      "states": {},
-      "name_cn": "维修员",
-      "persona": "maintenance_worker",
-      "node_type": "human",
-      "semantic_type": "human",
-      "current_activity": "factory_off_shift",
-      "interactive_actions": []
-    }
-  ],
-  "web_seed": {
-    "npc_ids": [
-      "worker_1",
-      "quality_inspector_1",
-      "maintenance_1"
-    ],
-    "profile": "base_scene_with_default_npcs",
-    "npc_count": 3
-  },
-  "scene_name": "simple_factory_1f",
-  "world_state": {
-    "day": 1,
-    "step": 0,
-    "time_min": 360,
-    "minutes_per_step": 10
-  },
-  "scene_name_cn": "简单工厂单层"
+  ]
 }

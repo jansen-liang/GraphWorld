@@ -11,9 +11,9 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from backend.core.action import ActionType
-from backend.core.assets.npc_library import NPC_EVENT_LIBRARY, ROLE_SCHEDULES
-from backend.core.assets.object_library import OBJECT_LIBRARY, resolve_object_key
-from backend.core.assets.room_library import ROOM_LIBRARY
+from backend.generation.assets.npc_library import NPC_EVENT_LIBRARY, ROLE_SCHEDULES
+from backend.generation.assets.object_library import OBJECT_LIBRARY, resolve_object_key
+from backend.generation.assets.room_library import ROOM_LIBRARY
 from backend.core.edge import RELATION_SPECS, SpatialRelation
 from backend.core.state import DISCRETE_STATE_SPACE
 

@@ -14,7 +14,7 @@ SCENE_DIR = ROOT / "backend" / "data" / "sg_output" / "simple_graph"
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from backend.core.assets.npc_library import ROLE_SCHEDULES, get_default_npcs
+from backend.generation.assets.npc_library import ROLE_SCHEDULES, get_default_npcs
 from backend.core.state import DISCRETE_STATE_SPACE
 
 BASE_SCENES = (
@@ -57,20 +57,30 @@ def set_states(scene: dict[str, Any], node_id: str, **states: Any) -> None:
 
 
 def set_parent(scene: dict[str, Any], node_id: str, parent_id: str) -> None:
-    item = node(scene, node_id)
-    if item is None:
+    ids = nodes_by_id(scene)
+    child = ids.get(str(node_id))
+    parent = ids.get(str(parent_id))
+    if child is None or parent is None:
         return
-    item["parent"] = parent_id
+    relation = relation_for_parent(scene, child, parent)
+    scene.setdefault("edges", [])[:] = [
+        edge for edge in scene.get("edges") or []
+        if not (str(edge.get("target_id") or "") == str(node_id) and str(edge.get("relation") or "") in PARENT_RELATIONS)
+    ]
+    scene["edges"].append(edge_shape(scene, str(parent_id), str(node_id), relation))
 
 
 def ensure_node(scene: dict[str, Any], item: dict[str, Any]) -> None:
+    item = copy.deepcopy(item)
+    host_id = str(item.pop("host_id", "") or "")
+    item["editor_id"] = str(item.get("id") or "")
     existing = node(scene, str(item["id"]))
     if existing:
-        existing.update({key: value for key, value in item.items() if key != "child"})
-        if "child" in item:
-            existing["child"] = item["child"]
-        return
-    scene.setdefault("nodes", []).append(copy.deepcopy(item))
+        existing.update(item)
+    else:
+        scene.setdefault("nodes", []).append(item)
+    if host_id:
+        set_parent(scene, str(item["id"]), host_id)
 
 
 def ensure_home_support_nodes(scene: dict[str, Any]) -> None:
@@ -79,44 +89,40 @@ def ensure_home_support_nodes(scene: dict[str, Any]) -> None:
             "id": "garbage_station_outside_home",
             "name": "garbage station",
             "name_cn": "垃圾处理站",
-            "node_type": "fixed_object",
+            "node_type": "object",
             "semantic_type": "garbage_station",
             "states": {},
-            "parent": "outside_home",
-            "child": [],
+            "host_id": "outside_home",
             "interactive_actions": ["move", "dump"],
         },
         {
             "id": "food_living_room",
             "name": "food",
             "name_cn": "food",
-            "node_type": "movable_object",
+            "node_type": "object",
             "semantic_type": "food",
             "states": {"is_cooked": True, "is_rotten": False},
-            "parent": "fridge_kitchen",
-            "child": [],
+            "host_id": "fridge_kitchen",
             "interactive_actions": ["pick", "place"],
         },
         {
             "id": "plate_living_room",
             "name": "plate",
             "name_cn": "plate",
-            "node_type": "movable_object",
+            "node_type": "object",
             "semantic_type": "plate",
             "states": {"is_dirty": False},
-            "parent": "dishwasher_kitchen",
-            "child": [],
+            "host_id": "dishwasher_kitchen",
             "interactive_actions": ["pick", "place", "brush"],
         },
         {
             "id": "cup_living_room",
             "name": "cup",
             "name_cn": "cup",
-            "node_type": "movable_object",
+            "node_type": "object",
             "semantic_type": "cup",
             "states": {"is_dirty": False, "is_wet": False},
-            "parent": "dishwasher_kitchen",
-            "child": [],
+            "host_id": "dishwasher_kitchen",
             "interactive_actions": ["pick", "place", "brush"],
         },
     )
@@ -129,8 +135,12 @@ def normalize_room_parents(scene: dict[str, Any]) -> None:
     if "F1" not in ids:
         return
     for item in scene.get("nodes") or []:
-        if str(item.get("node_type") or "") == "room" and not item.get("parent"):
-            item["parent"] = "F1"
+        if str(item.get("node_type") or "") == "room" and not any(
+            str(edge.get("target_id") or "") == str(item.get("id") or "")
+            and str(edge.get("relation") or "") in PARENT_RELATIONS
+            for edge in scene.get("edges") or []
+        ):
+            set_parent(scene, str(item["id"]), "F1")
 
 
 def relation_for_parent(scene: dict[str, Any], child: dict[str, Any], parent: dict[str, Any]) -> str:
@@ -140,10 +150,10 @@ def relation_for_parent(scene: dict[str, Any], child: dict[str, Any], parent: di
     parent_sem = str(parent.get("semantic_type") or "")
     if child_type == "room":
         return "contains"
-    if child_type in {"human", "robot"}:
+    if child_type == "agent":
         return "at"
     if parent_type == "room":
-        return "inside_room" if child_type == "fixed_object" else "in"
+        return "inside_room" if child_type == "object" else "in"
     if parent_sem in {"table", "counter", "shelf", "rack", "drying_rack", "desk", "bed"}:
         return "on"
     if child_sem in {"seat", "chair"}:
@@ -164,16 +174,16 @@ def edge_shape(scene: dict[str, Any], source: str, target: str, relation: str) -
             "category": "structural",
             "properties": {},
         }
-    if source_type == "fixed_object" and target_type == "room":
+    if source_type == "object" and target_type == "room":
         edge_type = "room_floor_edge"
         category = "structural"
     elif target_type == "room":
         edge_type = "room_floor_edge"
         category = "structural"
-    elif source_type == "room" and target_type == "fixed_object":
+    elif source_type == "room" and target_type == "object":
         edge_type = "object_edge"
         category = "structural"
-    elif target_type in {"movable_object", "human", "robot"}:
+    elif target_type in {"object", "agent"}:
         edge_type = "containment_edge"
         category = "containment"
     else:
@@ -190,39 +200,15 @@ def edge_shape(scene: dict[str, Any], source: str, target: str, relation: str) -
 
 
 def rebuild_children_and_parent_edges(scene: dict[str, Any]) -> None:
-    ids = nodes_by_id(scene)
-    for item in ids.values():
-        item["child"] = []
-    for child_id, item in ids.items():
-        parent_id = str(item.get("parent") or "")
-        if parent_id and parent_id in ids:
-            ids[parent_id].setdefault("child", []).append(child_id)
-    for item in ids.values():
-        item["child"] = sorted(set(item.get("child") or []))
-
-    keep_edges = []
-    for edge in scene.get("edges") or []:
-        relation = str(edge.get("relation") or "").lower()
-        if relation in ROOM_CONNECTIVITY_RELATIONS or relation == "controls":
-            keep_edges.append(edge)
-        elif relation not in PARENT_RELATIONS and relation != "inside_room":
-            keep_edges.append(edge)
-    rebuilt = list(keep_edges)
-    seen = {
-        (str(edge.get("source_id") or ""), str(edge.get("target_id") or ""), str(edge.get("relation") or ""))
-        for edge in rebuilt
-    }
-    for child_id, item in ids.items():
-        parent_id = str(item.get("parent") or "")
-        if not parent_id or parent_id not in ids:
-            continue
-        relation = relation_for_parent(scene, item, ids[parent_id])
-        key = (parent_id, child_id, relation)
-        if key in seen:
-            continue
-        rebuilt.append(edge_shape(scene, parent_id, child_id, relation))
-        seen.add(key)
-    scene["edges"] = rebuilt
+    scene["nodes"] = [
+        {key: value for key, value in item.items() if key not in {"parent", "child", "host_id", "floor_id", "runtime_relation"}}
+        for item in scene.get("nodes") or []
+    ]
+    scene["edges"] = [
+        edge for edge in scene.get("edges") or []
+        if str(edge.get("source_id") or "") in nodes_by_id(scene)
+        and str(edge.get("target_id") or "") in nodes_by_id(scene)
+    ]
 
 
 def set_room_connections(scene: dict[str, Any], pairs: list[tuple[str, str]] | None) -> None:
@@ -403,7 +389,7 @@ def add_stable_clean_denominator(scene: dict[str, Any]) -> None:
     for item in scene.get("nodes") or []:
         node_type = str(item.get("node_type") or "")
         semantic = str(item.get("semantic_type") or "")
-        if node_type not in {"fixed_object", "movable_object"} or semantic in excluded:
+        if node_type not in {"object", "agent"} or semantic in excluded:
             continue
         item.setdefault("states", {}).setdefault("is_dirty", False)
 
@@ -554,15 +540,8 @@ def validate_scene(scene: dict[str, Any]) -> list[str]:
     if len(node_ids) != len(set(node_ids)):
         errors.append("duplicate node ids")
     for item in scene.get("nodes") or []:
-        parent_id = str(item.get("parent") or "")
-        if parent_id and parent_id not in ids:
-            errors.append(f"{item.get('id')} has missing parent {parent_id}")
-    for parent_id, parent in ids.items():
-        for child_id in parent.get("child") or []:
-            if child_id not in ids:
-                errors.append(f"{parent_id} lists missing child {child_id}")
-            elif str(ids[child_id].get("parent") or "") != parent_id:
-                errors.append(f"{parent_id} lists child {child_id}, but parent is {ids[child_id].get('parent')}")
+        if {"parent", "child", "host_id", "floor_id", "runtime_relation"} & item.keys():
+            errors.append(f"{item.get('id')} stores a relationship outside edges")
     for edge in scene.get("edges") or []:
         source = str(edge.get("source_id") or "")
         target = str(edge.get("target_id") or "")
@@ -607,7 +586,7 @@ def validate_event_refs(scene: dict[str, Any], ids: dict[str, dict[str, Any]]) -
     valid_virtual.update(spec["id"] for spec in get_default_npcs(typ))
     errors = []
     event_ids = collect_expected_event_refs(typ)
-    from backend.core.assets.npc_library import get_event_spec
+    from backend.generation.assets.npc_library import get_event_spec
 
     for event_id in sorted(event_ids):
         spec = get_event_spec(event_id)

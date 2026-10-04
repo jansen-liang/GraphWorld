@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from backend.runtime.agent.decision import ranked_rule_candidates
-from backend.runtime.scene_utils import node, room_of
+from backend.runtime.scene_utils import node, parent_of, room_of
 
 
 RULE_AGENT_MODES = ("nearest_repair", "human_blocking_first")
@@ -78,9 +78,9 @@ def direct_repair_priority(
         return 85
     if action == "dump":
         return 80
-    if action == "place" and str(baseline_obj.get("parent") or "") == target_id:
+    if action == "place" and parent_of(baseline, object_id) == target_id:
         return 75
-    if action == "pick" and str(obj.get("parent") or "") != str(baseline_obj.get("parent") or ""):
+    if action == "pick" and parent_of(scene, object_id) != parent_of(baseline, object_id):
         return 70
     if action == "move":
         return 50

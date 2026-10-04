@@ -6,7 +6,8 @@ This document records implementation gates for the embodied-scene expansion.
 
 Status: complete
 
-Implemented in `backend/core/composition.py` and `backend/core/assets/object_library.py`:
+Implemented in `backend/templates/assets/object_templates.py` and the canonical
+`backend/core/articulation.py` view:
 
 - `ComponentSpec`: semantic role, host-facing mount face, normalized local anchor, capabilities.
 - `StorageTopology`: open/shelved/drawer/mixed topology, levels, columns, depth, drawer count.
@@ -23,7 +24,7 @@ Gate evidence:
 
 Status: complete
 
-Implemented in `backend/runtime/engine/runtime.py` and `frontend/src/features/scene-builder/Scene3DCanvas.tsx`:
+Implemented in `backend/runtime/world/graph.py` and `frontend/web/src/features/scene-builder/Scene3DCanvas.tsx`:
 
 - Runtime composition expansion is idempotent.
 - Component nodes receive `component_of`, `component_role`, `mount_face`, and `mount_anchor`.

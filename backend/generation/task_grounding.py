@@ -9,6 +9,8 @@ from __future__ import annotations
 from itertools import product
 from typing import Any, Iterable
 
+from backend.core.edge import POSITION_RELATIONS
+
 
 def _nodes(scene: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return {str(node["id"]): node for node in scene.get("nodes", []) if node.get("id")}
@@ -23,6 +25,22 @@ def _rooms_graph(scene: dict[str, Any]) -> dict[str, set[str]]:
         graph.setdefault(a, set()).add(b)
         graph.setdefault(b, set()).add(a)
     return graph
+
+
+def _parent_of(scene: dict[str, Any], node_id: str) -> str:
+    """Read the immediate positional parent from canonical edges.
+
+    Generation must remain usable without importing the mutable runtime.  The
+    scene payload already contains the only relationship facts needed for task
+    grounding, so this small query belongs at the generation boundary.
+    """
+    for edge in scene.get("edges", []):
+        if (
+            str(edge.get("target_id") or "") == str(node_id)
+            and str(edge.get("relation") or "").lower() in POSITION_RELATIONS
+        ):
+            return str(edge.get("source_id") or "")
+    return ""
 
 
 def _reachable(graph: dict[str, set[str]], start: str, goal: str) -> bool:
@@ -41,18 +59,13 @@ def _reachable(graph: dict[str, set[str]], start: str, goal: str) -> bool:
     return False
 
 
-def _parent(node: dict[str, Any]) -> str | None:
-    value = node.get("parent")
-    return str(value) if value else None
-
-
 def _matches(node: dict[str, Any], query: dict[str, Any]) -> bool:
     if "semantic_type" in query and node.get("semantic_type") != query["semantic_type"]:
         return False
     if "family" in query and node.get("family") != query["family"]:
         return False
     if "portable" in query:
-        portable = node.get("portable", node.get("is_movable", node.get("node_type") == "movable_object"))
+        portable = node.get("portable", node.get("is_movable", "pickable" in set(node.get("capabilities") or ())))
         if bool(portable) != bool(query["portable"]):
             return False
     states = node.get("states") or {}
@@ -84,7 +97,7 @@ def ground_template(scene: dict[str, Any], template: dict[str, Any]) -> list[dic
     result = []
     for values in product(*choices):
         binding = dict(zip(names, values))
-        locations = [_parent(nodes[node_id]) for node_id in values if _parent(nodes[node_id])]
+        locations = [_parent_of(scene, node_id) for node_id in values if _parent_of(scene, node_id)]
         if locations and any(not _reachable(graph, locations[0], location) for location in locations[1:]):
             continue
         result.append({

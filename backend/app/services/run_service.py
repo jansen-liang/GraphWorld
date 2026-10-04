@@ -16,7 +16,7 @@ from backend.app.repositories.run_repo import RunRepository
 from backend.app.repositories.scene_repo import SceneRepository
 from backend.app.runtime.graphworld_adapter import GraphWorldAdapter, action_id
 from backend.runtime.camera import validate_interaction_hit
-from backend.core.interaction import InteractionRequest as CoreInteractionRequest, resolve_interaction
+from backend.runtime.input_adapter import ActionResolver, InteractionRequest as CoreInteractionRequest
 from backend.app.runtime.schedule import expected_events, planned_events_for_step
 from backend.app.schemas.action import ActionRequest, ActionResult
 from backend.app.schemas.metrics import MetricPoint, RunMetricsResponse
@@ -115,6 +115,7 @@ def _metrics_for_step(
 class RunService:
     def __init__(self, db: Session, current_user: User | None = None) -> None:
         self.current_user = current_user
+        self.action_resolver = ActionResolver()
         self.runs = RunRepository(db)
         self.scenes = SceneRepository(db)
 
@@ -208,7 +209,7 @@ class RunService:
             raise InvalidStateError(f"Run {run_id} cannot accept interactions while status={run.status}")
         _, orchestrator = self._adapter_and_orchestrator(run)
         payload = request.model_dump(mode="json") if hasattr(request, "model_dump") else dict(request)
-        resolved = resolve_interaction(orchestrator.graph.state_for_rules(), CoreInteractionRequest.from_dict(payload))
+        resolved = self.action_resolver.resolve(orchestrator.graph.state_for_rules(), CoreInteractionRequest.from_dict(payload))
         if resolved.action is None:
             raise InvalidStateError("; ".join(resolved.failures))
         if payload.get("hit"):
