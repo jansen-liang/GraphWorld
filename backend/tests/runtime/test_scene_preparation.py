@@ -32,6 +32,7 @@ def test_home_preparation_materializes_demo_elevator_once():
     car = by_id["elevator_car_outside_home"]
     assert "transport_device" in car["capabilities"]
     assert car["elevator_system_id"] == "elevator_system_demo"
+    assert car["speed_m_per_step"] == 2.0
     assert any(edge.get("target_id") == "elevator_car_outside_home" for edge in prepared["edges"])
     prepared_again = prepare_scene(prepared, robot_count=0, human_count=0)
     assert sum(node.get("id") == "elevator_car_outside_home" for node in prepared_again["nodes"]) == 1

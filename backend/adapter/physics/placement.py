@@ -314,12 +314,28 @@ def normalized_volume_anchor(payload: dict[str, Any] | None, *, grid_cm: float =
     return [max(0.0, min(1.0, round(value, 6))) for value in values]
 
 
+def _is_storage_slot(target: dict[str, Any]) -> bool:
+    # Older materialized scenes may omit component_role while retaining the
+    # canonical semantic type or containment contract.
+    return (
+        str(target.get("component_role") or "").lower() == "storage_slot"
+        or str(target.get("semantic_type") or "").lower() == "storage_slot"
+        or bool(target.get("can_contain"))
+    )
+
+
 def attach_volume_metadata(item: dict[str, Any], target: dict[str, Any], payload: dict[str, Any] | None = None) -> None:
     volume = _interior_size(target)
     if volume is None:
         return
     merged = {**(payload or {}), "interior_size_cm": (payload or {}).get("interior_size_cm") or list(volume)}
-    item["placement_volume_anchor"] = normalized_volume_anchor(merged, grid_cm=_number(target.get("volume_grid_cm") or 1.0, 1.0))
+    # A storage slot is represented by a placement surface whose contents
+    # mount at its origin. The ray hit may be on an edge of the visible plane,
+    # but that edge is not a semantic interior anchor and must not reject an
+    # otherwise fitting item.
+    # This metadata is the normalized validation anchor. The actual mounted
+    # transform remains the slot origin and is computed separately.
+    item["placement_volume_anchor"] = [0.5, 0.5, 0.5] if _is_storage_slot(target) else normalized_volume_anchor(merged, grid_cm=_number(target.get("volume_grid_cm") or 1.0, 1.0))
     item["placement_volume_target"] = str(target.get("id") or "")
     item["placement_volume_cm"] = list(volume)
     if isinstance(payload, dict) and isinstance(payload.get("interaction_hit"), dict):
@@ -334,7 +350,7 @@ def volume_fit_failure(item: dict[str, Any], target: dict[str, Any], payload: di
     if any(dimensions[index] > volume[index] for index in range(3)):
         return "item dimensions %.g x %.g x %.gcm exceed interior %.g x %.g x %.gcm" % (*dimensions, *volume)
     merged = {**(payload or {}), "interior_size_cm": (payload or {}).get("interior_size_cm") or list(volume)}
-    anchor = normalized_volume_anchor(merged, grid_cm=_number(target.get("volume_grid_cm") or 1.0, 1.0))
+    anchor = [0.5, 0.5, 0.5] if _is_storage_slot(target) else normalized_volume_anchor(merged, grid_cm=_number(target.get("volume_grid_cm") or 1.0, 1.0))
     if any(anchor[index] < dimensions[index] / (2 * volume[index]) or anchor[index] > 1 - dimensions[index] / (2 * volume[index]) for index in range(3)):
         return f"item dimensions do not fit at interior anchor {anchor}"
     return None
@@ -345,7 +361,7 @@ def volume_collision_failure(state: dict[str, Any], item: dict[str, Any], target
     if volume is None or bool(target.get("allow_stacking", False)):
         return None
     merged = {**(payload or {}), "interior_size_cm": (payload or {}).get("interior_size_cm") or list(volume)}
-    anchor = normalized_volume_anchor(merged, grid_cm=_number(target.get("volume_grid_cm") or 1.0, 1.0))
+    anchor = [0.5, 0.5, 0.5] if _is_storage_slot(target) else normalized_volume_anchor(merged, grid_cm=_number(target.get("volume_grid_cm") or 1.0, 1.0))
     dimensions = _dimensions(item)
     for other_id, other in (state.get("nodes") or {}).items():
         if not isinstance(other, dict) or str(other_id) == str(item.get("id") or ""):

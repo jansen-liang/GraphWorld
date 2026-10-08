@@ -36,6 +36,8 @@ OBJECT_DIMENSIONS_CM = {
     "seat": (60, 60, 85),
     "toothpaste": (5, 5, 18),
     "toothbrush": (2, 2, 18),
+    "laundry_detergent": (12, 12, 12),
+    "detergent": (12, 12, 12),
     "button": (8, 8, 4),
     "knob": (6, 6, 5),
     "room_light": (30, 30, 10),
@@ -177,6 +179,13 @@ def _default_object_size_cells(node: dict[str, Any]) -> tuple[int, int]:
 
 def _object_dimensions_cm(node: dict[str, Any], placement: dict[str, Any], catalog_dimensions: dict[str, tuple[float, float, float]] | None = None) -> tuple[int, int, int]:
     semantic = _semantic_type(node).lower()
+    # An authored layout dimension is the source of truth. This is essential
+    # for generated compound objects such as the elevator car: re-running
+    # layout normalization must not replace its explicit shell dimensions
+    # with a catalog default intended only for newly placed objects.
+    authored = tuple(placement.get(key) for key in ("width_cm", "depth_cm", "height_cm"))
+    if all(value is not None and float(value) > 0 for value in authored):
+        return tuple(max(1, int(round(float(value)))) for value in authored)  # type: ignore[return-value]
     if catalog_dimensions and semantic in catalog_dimensions:
         return tuple(max(1, int(round(value))) for value in catalog_dimensions[semantic])  # type: ignore[return-value]
     if semantic in OBJECT_DIMENSIONS_CM:
@@ -356,6 +365,27 @@ def _place_objects_in_room(room_id: str, room: dict[str, int], room_node: dict[s
         depth = min(depth, max(1, room["depth_cells"] - 2))
         parent_id = parent_of.get(str(node.get("id") or ""), "")
         parent_placement = result.get(parent_id)
+        # Storage slots are derived PartTree nodes and may be removed from
+        # layout.objects. Stored pickables still inherit the first available
+        # world anchor from their host chain instead of being laid out as
+        # ordinary room furniture.
+        ancestor_id = parent_id
+        while not parent_placement and ancestor_id:
+            ancestor_id = parent_of.get(ancestor_id, "")
+            parent_placement = result.get(ancestor_id)
+        if parent_placement and str(node.get("storage_mode") or "").lower() in {"hidden", "stored", "contained"}:
+            result[str(node["id"])] = {
+                "room_id": room_id,
+                "grid_x": parent_placement["grid_x"],
+                "grid_y": parent_placement["grid_y"],
+                "width_cells": width,
+                "depth_cells": depth,
+                "rotation": 0,
+                "layout_anchor": "contained",
+                "placement_mode": "contained",
+                "parent_object_id": ancestor_id or parent_id,
+            }
+            continue
         if parent_placement and parent_id != room_id:
             # Contents, controls, and parts share the parent's footprint. They
             # are represented in the graph, but do not consume another floor cell.
@@ -701,12 +731,36 @@ def _remove_component_layout_entries(
             or node.get("owner_id")
             or node.get("link_id")
         )
+        and not (
+            str(node.get("storage_mode") or "").lower() in {"hidden", "stored", "contained"}
+            and "pickable" in {str(value) for value in (node.get("capabilities") or [])}
+        )
     }
     for edge in edges:
-        if not isinstance(edge, dict) or str(edge.get("relation") or "") != "structure":
+        if not isinstance(edge, dict):
             continue
+        relation = str(edge.get("relation") or "")
+        # Older scene exports represented part-tree membership as
+        # ``contains`` (the current canonical spelling is ``structure``).
+        # A contained component still gets its transform from the host and
+        # must never become an independent room-layout target.  Keep room /
+        # floor containment intact; only object-hosted children are filtered.
+        if relation not in {"structure", "component_of", "contains"}:
+            continue
+        parent_id = str(edge.get("source_id") or edge.get("source") or "")
         child_id = str(edge.get("target_id") or edge.get("target") or "")
-        if child_id:
+        parent_node = next((node for node in nodes if str(node.get("id") or "") == parent_id), None)
+        child_node = next((node for node in nodes if str(node.get("id") or "") == child_id), None)
+        parent_is_container = bool(parent_node) and not _is_room(parent_node) and not _is_floor(parent_node)
+        child = child_node or {}
+        # Stored pickables need a mesh even while hidden: retrieval reveals
+        # and attaches that same node to the player's hand. Other composite
+        # parts remain derived from their host and are omitted as before.
+        keep_stored_item = (
+            str(child.get("storage_mode") or "").lower() in {"hidden", "stored", "contained"}
+            and "pickable" in {str(value) for value in (child.get("capabilities") or [])}
+        )
+        if child_id and not keep_stored_item and (relation in {"structure", "component_of"} or parent_is_container):
             node_ids.add(child_id)
     for object_id in list(objects):
         if str(object_id) in node_ids:
@@ -727,8 +781,16 @@ def ensure_scene_layout(source_json: dict[str, Any], catalog_dimensions: dict[st
     parent_of = {
         str(edge.get("target_id") or ""): str(edge.get("source_id") or "")
         for edge in source.get("edges") or []
-        if isinstance(edge, dict) and str(edge.get("relation") or "") in {"at", "in", "inside", "inside_room", "contains", "on", "near", "held_by", "held_by_left", "held_by_right", "held_by_both"}
+        if isinstance(edge, dict) and str(edge.get("relation") or "") in {"at", "in", "inside", "inside_room", "contains", "component_of", "structure", "on", "near", "held_by", "held_by_left", "held_by_right", "held_by_both"}
     }
+    # Some generated stored items declare their host on the node rather than
+    # through a spatial containment edge. Use that declaration for layout
+    # ancestry so the item still receives a render anchor.
+    for node in nodes:
+        node_id = str(node.get("id") or "")
+        host_id = str(node.get("host_id") or node.get("owner_id") or "")
+        if node_id and host_id and node_id not in parent_of:
+            parent_of[node_id] = host_id
     rooms_nodes = [node for node in nodes if _is_room(node)]
     room_ids = [str(node["id"]) for node in rooms_nodes]
     pairs = _connected_room_pairs(source, set(room_ids))
@@ -756,6 +818,26 @@ def ensure_scene_layout(source_json: dict[str, Any], catalog_dimensions: dict[st
                 ))
             layout["objects"] = migrated_objects
             layout["object_layout_strategy"] = "semantic_v1"
+        else:
+            # A prepared scene may append graph-backed root objects (for
+            # example elevator hall call buttons) after the persisted layout
+            # was authored.  Keep existing editor coordinates, but materialize
+            # only genuinely missing placeable nodes so they are renderable
+            # without requiring a new manual publish.
+            missing_by_room: dict[str, list[dict[str, Any]]] = defaultdict(list)
+            existing_object_ids = {str(object_id) for object_id in layout["objects"]}
+            for node in nodes:
+                node_id = str(node.get("id") or "")
+                if not node_id or node_id in existing_object_ids or not _is_placeable(node):
+                    continue
+                room_id = _room_ancestor(node_id, nodes_by_id, parent_of)
+                if room_id in layout["rooms"]:
+                    missing_by_room[room_id].append(node)
+            for room_id, room_objects in missing_by_room.items():
+                layout["objects"].update(_place_objects_in_room(
+                    room_id, layout["rooms"][room_id], nodes_by_id[room_id],
+                    room_objects, parent_of,
+                ))
         _remove_component_layout_entries(layout, nodes, source.get("edges") or [])
         _reposition_door_blockers(layout, nodes_by_id)
         source["layout"] = layout
@@ -838,6 +920,24 @@ def validate_scene_layout(source_json: dict[str, Any]) -> list[str]:
     if not isinstance(objects, dict):
         issues.append("layout.objects must be an object.")
         objects = {}
+
+    # A few persisted pre-PartTree layouts still contain entries for
+    # appliance controls that are represented only by a host object's
+    # structure edge.  They are not independent world objects and therefore
+    # may legitimately be absent from ``nodes``.  Treat those entries as
+    # derived component placements while the canonical layout migrates them.
+    component_layout_targets: set[str] = set()
+    for edge in edges if isinstance(edges, list) else []:
+        if not isinstance(edge, dict):
+            continue
+        relation = str(edge.get("relation") or edge.get("edge_type") or "")
+        if relation not in {"structure", "component_of", "contains"}:
+            continue
+        parent_id = str(edge.get("source_id") or edge.get("source") or "")
+        child_id = str(edge.get("target_id") or edge.get("target") or "")
+        parent_node = nodes_by_id.get(parent_id)
+        if child_id and parent_node and not _is_room(parent_node) and not _is_floor(parent_node):
+            component_layout_targets.add(child_id)
 
     room_boxes: list[tuple[str, int, int, int, int, int]] = []
     for room_id, geometry in rooms.items():
@@ -934,6 +1034,10 @@ def validate_scene_layout(source_json: dict[str, Any]) -> list[str]:
 
     for object_id, placement in objects.items():
         if object_id not in nodes_by_id or not _is_placeable(nodes_by_id[object_id]):
+            if object_id in component_layout_targets or (
+                isinstance(placement, dict) and placement.get("placement_mode") == "contained"
+            ):
+                continue
             issues.append(f"Unknown object layout target: {object_id}.")
             continue
         if not isinstance(placement, dict):

@@ -10,6 +10,18 @@ from backend.runtime.scene_utils import node, scene_type
 
 def ensure_node(scene: dict[str, Any], item: dict[str, Any]) -> None:
     normalized = copy.deepcopy(item)
+    # Water quantity has one canonical representation. Older scene exports
+    # used normalized `fill_level`; migrate it at the preparation boundary so
+    # runtime rules and renderers only need `water_level` (0..100).
+    if str(normalized.get("semantic_type") or "").lower() == "sink":
+        states = normalized.setdefault("states", {})
+        if "water_level" not in states and "fill_level" in states:
+            try:
+                states["water_level"] = max(0.0, min(100.0, float(states.get("fill_level") or 0.0) * 100.0))
+            except (TypeError, ValueError):
+                states["water_level"] = 0.0
+        states.pop("fill_level", None)
+        states["has_water"] = float(states.get("water_level") or 0.0) > 0.0
     host_id = str(normalized.pop("host_id", "") or "")
     if {"parent", "child", "inventory", "floor_id", "runtime_relation"} & normalized.keys():
         raise ValueError("scene nodes must encode relationships as edges")
@@ -93,6 +105,7 @@ def prepare_scene(raw_scene: dict[str, Any], robot_count: int, human_count: int)
     scene["world_state"].setdefault("room_humidity", {})
     if scene_type(scene) == "home":
         ensure_demo_elevator(scene)
+        ensure_laundry_detergent_station(scene)
     if scene_type(scene) in {"home", "supermarket", "office", "factory"}:
         for spec in actor_specs_for_scene(scene, human_count):
             human_id = str(spec["id"])
@@ -142,6 +155,37 @@ def prepare_scene(raw_scene: dict[str, Any], robot_count: int, human_count: int)
     if scene_type(scene) == "home":
         support_nodes.extend(
             [
+                {
+                    "id": "laundry_detergent_station_outside_home",
+                    "name": "laundry detergent station",
+                    "name_cn": "洗衣液资源站",
+                    "node_type": "object",
+                    "semantic_type": "resource_station",
+                    "states": {},
+                    "structure": {
+                        "components": [
+                            {
+                                "role": "storage_slot",
+                                "semantic_type": "storage_slot",
+                                "node_type": "object",
+                                "mount_face": "interior",
+                                "anchor": [0.5, 0.5, 0.5],
+                                "capabilities": ["place_target", "receptacle"],
+                                "repeatable": False,
+                            }
+                        ],
+                        "storage": {
+                            "kind": "open",
+                            "levels": 1,
+                            "columns": 1,
+                            "depth_cm": 30.0,
+                            "capacity_per_slot": 10,
+                            "accepted_capabilities": ["laundry_detergent"],
+                        },
+                    },
+                    "host_id": "outside_home",
+                    "interactive_actions": ["move"],
+                },
                 {
                     "id": "garbage_station_outside_home",
                     "name": "garbage station",
@@ -199,6 +243,37 @@ def prepare_scene(raw_scene: dict[str, Any], robot_count: int, human_count: int)
                 },
             ]
         )
+        # Seed ten reusable detergent packets in the station's slot. They are
+        # ordinary nodes, so the existing storage-stack LIFO retrieval and
+        # placement flow can be reused without a dispenser-specific action.
+        station_id = "laundry_detergent_station_outside_home"
+        slot_id = f"{station_id}_slot_l1_c1"
+        support_nodes.append({
+            "id": slot_id,
+            "name": "laundry detergent slot",
+            "name_cn": "洗衣液槽",
+            "node_type": "object",
+            "semantic_type": "storage_slot",
+            "component_role": "storage_slot",
+            "capabilities": ["place_target", "receptacle"],
+            "accepted_capabilities": ["laundry_detergent"],
+            "max_items": 10,
+            "storage_stack": [f"{station_id}_packet_{index}" for index in range(1, 11)],
+            "host_id": station_id,
+            "interactive_actions": ["place", "pick"],
+        })
+        for index in range(1, 11):
+            support_nodes.append({
+                "id": f"{station_id}_packet_{index}",
+                "name": "laundry detergent packet",
+                "name_cn": "洗衣液包",
+                "node_type": "object",
+                "semantic_type": "laundry_detergent",
+                "capabilities": ["pickable", "laundry_detergent"],
+                "states": {"amount": 1.0},
+                "host_id": slot_id,
+                "interactive_actions": ["pick", "place"],
+            })
     support_nodes.extend(scene_resource_pool_specs(scene_type(scene), scene))
     for item in support_nodes:
         ensure_node(scene, item)
@@ -359,6 +434,11 @@ def ensure_demo_elevator(scene: dict[str, Any]) -> None:
                 "interactive_actions": [], "door_kind": "elevator_hall",
             })
             node_ids.add(door_id)
+        else:
+            # Relationships belong to edges in the canonical schema.  Older
+            # generated scenes may still carry this legacy field, so remove it
+            # while normalizing the existing node in place.
+            next(item for item in nodes if str(item.get("id")) == door_id).pop("floor_id", None)
         if not any(str(edge.get("source_id")) == floor_id and str(edge.get("target_id")) == door_id and str(edge.get("relation")) == "contains" for edge in edges):
             edges.append({"source_id": floor_id, "target_id": door_id, "relation": "contains", "edge_type": "structural_edge", "category": "structural", "properties": {}})
         if not any(str(edge.get("source_id")) == door_id and str(edge.get("target_id")) == shaft_room_id and str(edge.get("relation")) == "connects" for edge in edges):
@@ -385,6 +465,8 @@ def ensure_demo_elevator(scene: dict[str, Any]) -> None:
                 "states": {"is_open": False}, "interactive_actions": [], "door_kind": "elevator_hall",
             })
             node_ids.add(door_id)
+        else:
+            next(item for item in nodes if str(item.get("id")) == door_id).pop("floor_id", None)
         for source_id, target_id, relation in ((floor_id, door_id, "contains"), (door_id, shaft_id, "connects"), (door_id, floor_id, "connects")):
             if not any(str(edge.get("source_id")) == source_id and str(edge.get("target_id")) == target_id and str(edge.get("relation")) == relation for edge in edges):
                 edges.append({"source_id": source_id, "target_id": target_id, "relation": relation, "edge_type": "structural_edge", "category": "spatial", "properties": {}})
@@ -427,6 +509,27 @@ def ensure_demo_elevator(scene: dict[str, Any]) -> None:
     car["served_rooms"] = list(car["floor_ids"])
     car["transport_rooms"] = list(car["floor_ids"])
     car["floor_elevations"] = {"outside_home": 0.0, "outside_home_f2": 3.2, "outside_home_f3": 6.4}
+    car_states = car.setdefault("states", {})
+    current_floor = str(car_states.get("current_floor") or "outside_home")
+    elevations = car["floor_elevations"]
+    if current_floor not in elevations:
+        current_floor = "outside_home"
+        car_states["current_floor"] = current_floor
+    # A prepared scene starts at its semantic floor. Never carry a runtime
+    # height from an earlier run: values such as current_floor=f2 with
+    # current_height=0 are numerically valid but physically contradictory and
+    # make the cabin render below the landing. Runtime movement owns this
+    # field only after the simulation has started.
+    current_height = float(elevations[current_floor])
+    car_states["current_height"] = current_height
+    car_states["target_height"] = current_height
+    car_states["motion_state"] = "idle"
+    car_states["direction"] = "idle"
+    car_states["arrival_pending"] = False
+    # Keep the authored transport speed explicit.  Without this field the
+    # runtime fallback (6.4m per tick) reaches the next floor in one tick,
+    # which makes the car appear to jump between floors.
+    car.setdefault("speed_m_per_step", 2.0)
     # Cabin controls are graph-backed child nodes. Their visual meshes are
     # rendered under the car composite, while these identities are the
     # interaction targets for future elevator request rules.
@@ -574,6 +677,58 @@ def ensure_demo_elevator(scene: dict[str, Any]) -> None:
             "width_cm": width, "depth_cm": depth, "height_cm": height,
             "placement_mode": "surface", "rotation": 0,
         }
+
+
+def ensure_laundry_detergent_station(scene: dict[str, Any]) -> None:
+    """Add the shared home detergent station and ten reusable packets."""
+    if scene_type(scene) != "home":
+        return
+    station_id = "laundry_detergent_station_outside_home"
+    slot_id = f"{station_id}_slot_l1_c1"
+    ensure_node(scene, {
+        "id": station_id, "name": "laundry detergent station", "name_cn": "洗衣液资源站",
+        "node_type": "object", "semantic_type": "resource_station", "states": {},
+        "structure": {"components": [], "storage": {"kind": "open", "levels": 1, "columns": 1,
+            "depth_cm": 30.0, "capacity_per_slot": 10,
+            "accepted_capabilities": ["laundry_detergent"]}},
+        "host_id": "outside_home", "interactive_actions": ["move"],
+    })
+    ensure_node(scene, {
+        "id": slot_id, "name": "laundry detergent slot", "name_cn": "洗衣液槽",
+        "node_type": "object", "semantic_type": "storage_slot", "component_role": "storage_slot",
+        "capabilities": ["place_target", "receptacle"],
+        "accepted_capabilities": ["laundry_detergent"], "max_items": 10,
+        "storage_stack": [f"{station_id}_packet_{index}" for index in range(1, 11)],
+        "interactive_actions": ["place", "pick"],
+    })
+    # The slot is a PartTree child of the station, not an independently
+    # placed room object. Keep the generated storage interaction target on the
+    # station while its contents retain normal containment edges.
+    scene["edges"] = [
+        edge for edge in scene.get("edges", [])
+        if not (
+            str(edge.get("target_id") or "") == slot_id
+            and str(edge.get("relation") or "") in {"at", "in", "inside", "contains", "on"}
+        )
+    ]
+    ensure_edge(scene, station_id, slot_id, "component_of")
+    for index in range(1, 11):
+        packet_id = f"{station_id}_packet_{index}"
+        ensure_node(scene, {
+            "id": packet_id, "name": "laundry detergent packet", "name_cn": "洗衣液包",
+            "node_type": "object", "semantic_type": "laundry_detergent",
+            "capabilities": ["pickable", "laundry_detergent"], "states": {"amount": 1.0},
+            "storage_mode": "hidden", "visibility": False, "collision_enabled": False,
+            "host_id": slot_id, "interactive_actions": ["pick", "place"],
+        })
+        # The initial stock is physically inside the station slot. This
+        # positional edge is required so packets inherit the station's room
+        # anchor instead of being laid out as ten independent room objects.
+        ensure_edge(scene, slot_id, packet_id, "contains")
+    # This helper is used by both editor reads and simulation starts, some of
+    # which have already passed the general materialization boundary.
+    from backend.generation.assets.object_templates import materialize_templates
+    materialize_templates(scene)
 
 
 def prepare_home_scene(raw_scene: dict[str, Any], robot_count: int, human_count: int) -> dict[str, Any]:

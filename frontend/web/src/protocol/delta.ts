@@ -79,7 +79,7 @@ export function applySimulationDelta(scene: SceneState, delta: SceneDelta, expec
       // types must all be able to publish the same transform/state fields.
       const nextNode = payload.node;
       if (nextNode && typeof nextNode === "object") Object.assign(target, nextNode);
-      for (const key of ["world_transform", "transform_space", "transform_origin", "runtime_state", "joint_states", "visibility", "collision_enabled", "storage_mode", "visual_cues", "request_queue", "requested_room"]) {
+      for (const key of ["world_transform", "transform_space", "transform_origin", "runtime_state", "joint_states", "visibility", "collision_enabled", "storage_mode", "storage_stack", "placement_transform", "placement_volume_anchor", "placement_volume_target", "visual_cues", "request_queue", "requested_room"]) {
         if (key in payload) target[key] = payload[key];
       }
 

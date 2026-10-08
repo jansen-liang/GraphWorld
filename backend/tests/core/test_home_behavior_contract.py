@@ -96,6 +96,33 @@ def test_faucet_interaction_controls_sink_flow_and_water_level():
     assert graph.nodes["sink"]["states"]["water_flowing"] is False
 
 
+def test_sink_interaction_drains_canonical_water_level():
+    graph = _home_graph(OBJECT_LIBRARY["sink"].instantiate("sink", host_id="room"))
+    graph.nodes["sink"]["states"].update({"water_level": 75.0, "has_water": True})
+    _interact(graph, "sink")
+    assert graph.nodes["sink"]["states"]["water_level"] == 0.0
+    assert graph.nodes["sink"]["states"]["has_water"] is False
+
+
+def test_washer_cannot_start_with_open_drawer():
+    washer = OBJECT_LIBRARY["washer"].instantiate("washer", host_id="room")
+    detergent = OBJECT_LIBRARY["laundry_detergent"].instantiate("detergent", host_id="washer")
+    drawer = {
+        "id": "washer_drawer_1", "node_type": "object", "semantic_type": "drawer",
+        "component_role": "drawer", "parent": "washer",
+        "capabilities": ["openable", "place_target"],
+        "interactive_actions": ["open", "close", "place"],
+        "states": {"is_open": True},
+    }
+    graph = _home_graph(washer, detergent)
+    graph.nodes["washer_drawer_1"] = drawer
+    graph.parent_of["washer_drawer_1"] = "washer"
+    graph.relation_of["washer_drawer_1"] = "component_of"
+    result = ActionExecutor(graph).execute({"agent": "robot", "action": "press", "target": "washer"})
+    assert not result.ok
+    assert any("drawer" in failure for failure in result.failures)
+
+
 def test_left_and_right_pick_are_independent():
     graph = _home_graph(
         OBJECT_LIBRARY["clothes"].instantiate("shirt", host_id="room"),

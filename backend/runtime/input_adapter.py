@@ -128,15 +128,36 @@ def _resolve_interaction(state: dict[str, Any], request: InteractionRequest | di
     # not as a pickable object of its own. This also keeps older materialized
     # scenes safe when a generic storage_slot template still carries the
     # pickable capability.
-    if "can_contain" in capabilities or bool(target.get("can_contain")) or "receptacle" in capabilities:
+    is_storage_target = (
+        "can_contain" in capabilities
+        or bool(target.get("can_contain"))
+        or "receptacle" in capabilities
+        or str(target.get("component_role") or "").lower() == "storage_slot"
+        or isinstance(target.get("storage_stack"), list)
+    )
+    if is_storage_target:
+        stack = target.get("storage_stack")
+        if isinstance(stack, list):
+            for item_id in reversed(stack):
+                item = node(state, str(item_id))
+                if item and parent_of(state, str(item_id)) == request.target_id:
+                    action = {"agent": request.actor_id, "action": "pick", "object": str(item_id), "target": request.target_id}
+                    action.update(_hand_payload(request.hand))
+                    action["target_link_id"] = request.target_link_id or request.target_id
+                    return ResolvedInteraction(action)
         contained: list[tuple[int, str]] = []
         for edge in state.get("edges") or []:
             relation = str(edge.get("relation") or "").lower()
             if relation not in {"in", "inside", "contained_by", "on"}:
                 continue
-            if str(edge.get("target_id") or edge.get("target")) != request.target_id:
+            # Canonical position edges are parent -> child (slot is the
+            # source, contained item is the target). Accept the legacy
+            # reversed form as well for old snapshots.
+            edge_parent = str(edge.get("source_id") or edge.get("source") or "")
+            edge_child = str(edge.get("target_id") or edge.get("target") or "")
+            if edge_parent != request.target_id and edge_child != request.target_id:
                 continue
-            item_id = str(edge.get("source_id") or edge.get("source") or "")
+            item_id = edge_child if edge_parent == request.target_id else edge_parent
             item = node(state, item_id)
             if not item or item_id == request.target_id:
                 continue

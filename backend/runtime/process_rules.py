@@ -246,7 +246,17 @@ def apply_timed_transitions(state: dict[str, Any], step: int = 0) -> list[str]:
                     "y": float(protocol_position[2]),
                     "z": -float(protocol_position[1]),
                 }
-                agent_state["room_id"] = str(parent.get("states", {}).get("current_floor") or agent_state.get("room_id") or "")
+                # room_id is the player's actual spatial room, not the
+                # elevator's served floor label. While the passenger remains
+                # inside the car, resolve through the canonical parent chain
+                # to the shaft room; the floor label belongs only to the
+                # elevator state machine.
+                agent_state["room_id"] = str(
+                    graph.room_of.get(child_id)
+                    or graph.room_for(child_id)
+                    or agent_state.get("room_id")
+                    or ""
+                )
     completed.extend(advance_processes(state))
     for node_id, item in state.get("nodes", {}).items():
         item_semantic = semantic(item)

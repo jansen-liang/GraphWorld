@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import math
+import logging
 from typing import Any, Iterable
 from uuid import uuid4
 
@@ -14,6 +15,57 @@ from ...core.transform import IDENTITY_TRANSFORM, Transform
 from backend.runtime.scene_schema import validate_canonical_scene
 from ...core.state import DISCRETE_STATE_SPACE
 from backend.runtime.transitions import transition_log
+
+logger = logging.getLogger(__name__)
+
+
+# These fields are transport-process state carried alongside the canonical
+# discrete states. They are intentionally scoped to transport devices; they
+# are not a general escape hatch for arbitrary node state.
+TRANSPORT_RUNTIME_STATE_SPACE = frozenset({
+    "arrival_pending", "current_height", "motion_state", "target_height",
+    "dwell_remaining",
+})
+
+
+def _layout_rotation_quaternion(placement: dict[str, Any]) -> list[float]:
+    """Convert authored Three.js-style quarter-turn Euler angles to protocol.
+
+    Layout rotations use the editor's XYZ Euler convention. The protocol is
+    Z-up, while Three.js is Y-up, so conjugate the editor quaternion by the
+    same X-axis basis change used by ``applyProtocolToThree``.
+    """
+    def quarter_angle(*names: str) -> float:
+        for name in names:
+            if placement.get(name) is not None:
+                return float(placement.get(name) or 0.0) * math.pi / 2.0
+        return 0.0
+
+    x, y, z = (quarter_angle("rotation_x"), quarter_angle("rotation_y", "rotation"), quarter_angle("rotation_z"))
+    sx, cx = math.sin(x / 2.0), math.cos(x / 2.0)
+    sy, cy = math.sin(y / 2.0), math.cos(y / 2.0)
+    sz, cz = math.sin(z / 2.0), math.cos(z / 2.0)
+    # THREE.Euler order XYZ.
+    q_three = [
+        sx * cy * cz + cx * sy * sz,
+        cx * sy * cz - sx * cy * sz,
+        cx * cy * sz + sx * sy * cz,
+        cx * cy * cz - sx * sy * sz,
+    ]
+
+    def mul(a: list[float], b: list[float]) -> list[float]:
+        ax, ay, az, aw = a
+        bx, by, bz, bw = b
+        return [
+            aw * bx + ax * bw + ay * bz - az * by,
+            aw * by - ax * bz + ay * bw + az * bx,
+            aw * bz + ax * by - ay * bx + az * bw,
+            aw * bw - ax * bx - ay * by - az * bz,
+        ]
+
+    basis = [math.sin(math.pi / 4.0), 0.0, 0.0, math.cos(math.pi / 4.0)]
+    inverse_basis = [-basis[0], -basis[1], -basis[2], basis[3]]
+    return mul(mul(inverse_basis, q_three), basis)
 
 
 class _RuntimeIndex(dict[str, Any]):
@@ -136,18 +188,37 @@ class World:
                         "grid_size_cm": 1.0,
                     }
             if isinstance(node.get("world_transform"), dict):
+                # The layout is the authored orientation source. A snapshot
+                # can already contain a renderer-generated identity (or a
+                # stale orientation from an older version), so preserving it
+                # here makes Run disagree with the editor for rotated assets.
+                # Keep the runtime position/scale, but always refresh yaw from
+                # the current layout placement.
+                if any(placement.get(name) is not None for name in ("rotation_x", "rotation_y", "rotation_z", "rotation")):
+                    node["world_transform"]["rotation"] = _layout_rotation_quaternion(placement)
                 continue
             room_id = str(placement.get("room_id") or "")
             room = (layout.get("rooms") or {}).get(room_id, {}) if isinstance(layout.get("rooms"), dict) else {}
             grid = float(layout.get("grid_size") or 0.1)
             if isinstance(room, dict) and width > 0 and depth > 0 and height > 0:
+                # Layout object z_cm is local to its room. Runtime snapshots
+                # must lift objects on upper storeys by the room's authored
+                # floor elevation; otherwise editor mode shows F2/F3 hall
+                # buttons correctly while Run projects them back onto F1.
+                floor_number = float(room.get("floor_number") or 1.0)
+                floor_pitch = float(layout.get("floor_height_m") or 3.2)
+                floor_elevation = max(0.0, floor_number - 1.0) * floor_pitch
+                # Layout rotation is expressed as quarter turns around the
+                # vertical axis. Runtime snapshots must carry that authored
+                # orientation so the run renderer does not reset rotated
+                # fixtures (such as sinks) to the identity quaternion.
                 node["world_transform"] = {
                     "position": [
                         (float(placement.get("x_cm") or 0.0) + width / 2.0) / 100.0,
                         -(float(placement.get("y_cm") or 0.0) + depth / 2.0) / 100.0,
-                        float(placement.get("z_cm") or 0.0) / 100.0 + height / 200.0,
+                        floor_elevation + float(placement.get("z_cm") or 0.0) / 100.0 + height / 200.0,
                     ],
-                    "rotation": [0.0, 0.0, 0.0, 1.0],
+                    "rotation": _layout_rotation_quaternion(placement),
                     "scale": [1.0, 1.0, 1.0],
                 }
 
@@ -269,6 +340,7 @@ class World:
     def move_agent(self, agent_id: str, dx: float, dz: float, elapsed_seconds: float) -> dict[str, Any]:
         """Advance an agent transform in the authoritative runtime."""
         state = self.ensure_agent_state(agent_id)
+        previous_room_id = str(state.get("room_id") or self.room_of.get(agent_id, ""))
         position = state["position"]
         duration = max(0.0, min(float(elapsed_seconds), 1.0))
         speed = 2.2
@@ -280,6 +352,21 @@ class World:
             state["moving"] = True
         else:
             state["moving"] = False
+        # The browser sends horizontal movement deltas only. When a passenger
+        # has just arrived in a moving car, its authoritative Y is updated by
+        # the transport projection, but the next move request can still carry
+        # the pre-transport local value. Re-anchor the player to the car's
+        # current floor before classifying overlapping floor footprints; this
+        # prevents an exit from being interpreted as a return to 1F.
+        current_parent = self.parent_of.get(agent_id, "")
+        parent_item = self.nodes.get(current_parent) or {}
+        if "transport_device" in {str(value).lower() for value in (parent_item.get("capabilities") or ())}:
+            transport_height = (parent_item.get("states") or {}).get("current_height")
+            if transport_height is not None:
+                try:
+                    position["y"] = float(transport_height) + 1.6
+                except (TypeError, ValueError):
+                    pass
         layout = self.metadata.get("layout") or {}
         rooms = layout.get("rooms") if isinstance(layout, dict) else {}
         if isinstance(rooms, dict) and rooms:
@@ -289,6 +376,7 @@ class World:
             position["x"] = max(0.15, min(float(position["x"]), max_x - 0.15))
             position["z"] = max(0.15, min(float(position["z"]), max_z - 0.15))
         room_id = ""
+        room_candidates: list[tuple[float, str]] = []
         if isinstance(rooms, dict):
             for candidate, room in rooms.items():
                 if not isinstance(room, dict):
@@ -297,28 +385,67 @@ class World:
                 min_x = float(room.get("grid_x") or 0) * cell
                 min_z = float(room.get("grid_y") or 0) * cell
                 if min_x <= position["x"] <= min_x + float(room.get("width_cells") or 0) * cell and min_z <= position["z"] <= min_z + float(room.get("depth_cells") or 0) * cell:
-                    room_id = str(candidate)
-                    break
-        if room_id:
-            state["room_id"] = room_id
-            self.move_node(agent_id, room_id, "at")
+                    floor_number = float(room.get("floor_number") or 1)
+                    floor_y = 0.0 if str(candidate).startswith("elevator_shaft") else max(0.0, floor_number - 1.0) * 3.2
+                    room_height = 9.6 if str(candidate).startswith("elevator_shaft") else 3.2
+                    # Several floors intentionally share the same 2D
+                    # footprint. Select the room whose storey contains the
+                    # player's vertical position instead of taking the first
+                    # dictionary entry (which always selected 1F).
+                    if floor_y - 0.25 <= float(position.get("y") or 0.0) <= floor_y + room_height + 0.25:
+                        room_candidates.append((abs(float(position.get("y") or 0.0) - floor_y), str(candidate)))
+            if room_candidates:
+                room_id = min(room_candidates, key=lambda item: item[0])[1]
+                # The client sends horizontal movement, so derive the
+                # player's world height from the selected landing room before
+                # testing whether the point is actually inside the car.
+                # This keeps 2D-overlapping floors distinct without treating
+                # every point in a landing as being inside the elevator.
+                selected_room = rooms.get(room_id) or {}
+                selected_floor = float(selected_room.get("floor_number") or 1)
+                if (not str(room_id).startswith("elevator_shaft")
+                        and not ("transport_device" in {str(value).lower() for value in (parent_item.get("capabilities") or ())})):
+                    position["y"] = max(0.0, selected_floor - 1.0) * 3.2 + 1.6
         # A transport car is a positional container, not a room. Once the
         # agent crosses its footprint, make that relationship canonical so
         # the car's runtime transform carries the agent between floors.
-        transport_id = self._transport_container_for_position(state["position"])
-        current_parent = self.parent_of.get(agent_id, "")
+        # Prefer the authoritative room carried by the agent state when the
+        # client has only sent horizontal deltas. Its Y coordinate may still
+        # be from the original spawn floor until the transport projection
+        # returns, while the previous room already identifies the landing.
+        transport_room = previous_room_id or room_id
+        transport_id = self._transport_container_for_position(state["position"], room_id=transport_room)
         if transport_id:
+            # Do not let the overlapping 2D landing room replace the `in`
+            # relation before the cabin footprint test runs. That race was
+            # the source of passengers being left at 1F after travelling.
             self.move_node(agent_id, transport_id, "in")
             state["room_id"] = str((self.nodes.get(transport_id) or {}).get("states", {}).get("current_floor") or room_id)
         elif current_parent and "transport_device" in {
             str(value).lower() for value in (self.nodes.get(current_parent) or {}).get("capabilities", ())
-        } and room_id:
-            # Leaving the car through an open landing door restores the
-            # ordinary room position edge.
+        }:
+            # Leaving the car is a topology transition, not merely a 2D
+            # footprint test. At a shared XY footprint the shaft and landing
+            # can both match the point, so use the car's settled current_floor
+            # as the authoritative landing room and replace the position edge
+            # immediately. This prevents the next interaction from seeing the
+            # player still inside the shaft.
+            transport_states = (self.nodes.get(current_parent) or {}).get("states") or {}
+            landing_id = str(transport_states.get("current_floor") or room_id or "")
+            if landing_id in self.nodes and str((self.nodes.get(landing_id) or {}).get("node_type") or "") == "room":
+                logger.info(
+                    "elevator passenger exit agent=%s car=%s current_floor=%s current_height=%s detected_room=%s position=%s",
+                    agent_id, current_parent, landing_id,
+                    transport_states.get("current_height"), room_id, position,
+                )
+                state["room_id"] = landing_id
+                self.move_node(agent_id, landing_id, "at")
+        elif room_id:
+            state["room_id"] = room_id
             self.move_node(agent_id, room_id, "at")
         return copy.deepcopy(state)
 
-    def _transport_container_for_position(self, position: dict[str, Any]) -> str:
+    def _transport_container_for_position(self, position: dict[str, Any], room_id: str = "") -> str:
         """Return the transport object whose current cabin contains a point.
 
         Geometry comes from the authored layout and node dimensions; no
@@ -348,8 +475,12 @@ class World:
             center_z = (float(room.get("grid_y") or 0.0) + float(room.get("depth_cells") or 0.0) / 2.0) * grid
             states = item.get("states") if isinstance(item.get("states"), dict) else {}
             floor_height = float(states.get("current_height") or 0.0)
-            if (abs(px - center_x) <= width / 2.0 - 0.08
-                    and abs(pz - center_z) <= depth / 2.0 - 0.08
+            # Include the doorway threshold and the player's capsule radius;
+            # using an inset footprint made entry depend on the exact final
+            # movement sample and intermittently left passengers in the
+            # landing room.
+            if (abs(px - center_x) <= width / 2.0 + 0.12
+                    and abs(pz - center_z) <= depth / 2.0 + 0.12
                     and floor_height - 0.15 <= py <= floor_height + height + 0.15):
                 return str(node_id)
         return ""
@@ -380,7 +511,17 @@ class World:
         invalid = [
             f"{node_id}.{state_name}"
             for node_id, node in sorted(self.nodes.items())
-            for state_name in sorted(set(node.get("states") or {}) - allowed)
+            for state_name in sorted(
+                set(node.get("states") or {})
+                - allowed
+                - (
+                    TRANSPORT_RUNTIME_STATE_SPACE
+                    if "transport_device" in {
+                        str(value).lower() for value in (node.get("capabilities") or ())
+                    }
+                    else set()
+                )
+            )
         ]
         if invalid:
             preview = ", ".join(invalid[:20])

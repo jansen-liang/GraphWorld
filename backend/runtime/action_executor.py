@@ -121,12 +121,18 @@ class WorldTransaction:
                 "world_transform", "placement_transform", "storage_mode",
                 "visibility", "collision_enabled", "support_surface",
                 "placement_anchor", "placement_volume_anchor", "placement_volume_target",
+                "storage_stack",
                 "request_queue", "requested_room",
             )
+            # Include explicit nulls for metadata that was cleared (for
+            # example when retrieving an item from a hidden storage slot).
+            # Without the tombstone the frontend keeps the old hidden flag
+            # forever even though the position edge now points to the hand.
             changed_transform = {
-                key: copy.deepcopy(new_node[key])
+                key: copy.deepcopy(new_node.get(key)) if key in new_node else None
                 for key in transform_keys
-                if old_node.get(key) != new_node.get(key) and key in new_node
+                if old_node.get(key) != new_node.get(key)
+                and (key in new_node or key in old_node)
             }
             if "world_transform" in changed_transform:
                 changed_transform["transform_space"] = "graphworld_z_up"

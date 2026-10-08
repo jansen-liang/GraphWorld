@@ -118,6 +118,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
   // stale 100 ms samples when the API is slower than the sampling interval,
   // which makes authoritative responses visibly jump backwards.
   const moveInFlightRef = useRef(false);
+  const movementBarrierRef = useRef<Promise<void>>(Promise.resolve());
   const pendingMoveRef = useRef<{ direction: [number, number]; elapsed: number } | null>(null);
   const inputSequenceRef = useRef(0);
   const selectedIdRef = useRef(selectedId);
@@ -125,6 +126,8 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
   const [simulationActive, setSimulationActive] = useState(false);
   const [pointerLocked, setPointerLocked] = useState(false);
   const [heldObjectLabel, setHeldObjectLabel] = useState("");
+  const [slotHint, setSlotHint] = useState<{ count: number; capacity: number } | null>(null);
+  const slotHintKeyRef = useRef("");
   const [statusCardId, setStatusCardId] = useState("");
   const [viewMode, setViewMode] = useState<"first" | "third">("first");
   const [layersOpen, setLayersOpen] = useState(false);
@@ -183,7 +186,9 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     keyLight.position.set(8, 14, 10);
     scene.add(keyLight);
 
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.05, 500);
+    // A slightly wider first-person field of view keeps the player from
+    // feeling boxed in inside rooms and the elevator cabin.
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.05, 500);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(host.clientWidth, host.clientHeight);
@@ -201,6 +206,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     controls.enablePan = true;
     const interactive: THREE.Object3D[] = [];
     const collisionMeshes: THREE.Mesh[] = [];
+    const elevatorCollisionMeshes = new Set<THREE.Mesh>();
     type RapierRuntime = {
       world: RAPIER.World;
       controller: ReturnType<RAPIER.World["createCharacterController"]>;
@@ -208,6 +214,8 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       playerBody: ReturnType<RAPIER.World["createRigidBody"]>;
       staticBody: ReturnType<RAPIER.World["createRigidBody"]>;
       staticColliders: Map<THREE.Mesh, ReturnType<RAPIER.World["createCollider"]>>;
+      elevatorBody: ReturnType<RAPIER.World["createRigidBody"]> | null;
+      elevatorColliders: Map<THREE.Mesh, ReturnType<RAPIER.World["createCollider"]>>;
       disposed: boolean;
     };
     let rapierRuntime: RapierRuntime | null = null;
@@ -216,7 +224,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     let lastCollisionLogAt = 0;
     const objectMeshes = new Map<string, THREE.Mesh>();
     const objectLabels = new Map<string, THREE.Sprite>();
-    const animatedMeshes = new Map<string, { mesh: THREE.Mesh; base: THREE.Vector3 }>();
+    const animatedMeshes = new Map<string, { mesh: THREE.Mesh; base: THREE.Vector3; baseRotation: THREE.Euler }>();
     const elevatorButtonMeshes = new Map<string, THREE.Mesh>();
     const effectMeshes: VisualEffect[] = [];
     // Placement preview is renderer-only.  The backend remains authoritative
@@ -227,22 +235,58 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     let placementPreviewObject = "";
     let placementPreviewAnchor: [number, number] | null = null;
     let lastDebugHitId = "";
+    let lastDebugColliderId = "";
+    let lastDoorCollisionDebug = "";
     const composites: CompositeObject[] = [];
     const componentVisuals = new Map<string, THREE.Object3D>();
     const componentJointTypes = new Map<string, string>();
     const waterMeshes = new Map<string, THREE.Mesh>();
+    const detergentVisuals = new Map<string, { bottle: THREE.Object3D; liquid: THREE.Mesh }>();
     const lightMeshes = new Map<string, THREE.PointLight>();
     const placedContents = new Map<string, number>();
     const receptacleContents = new Map<string, string[]>();
     const controlTargets = new Map<string, string[]>();
     const faucetsBySink = new Map<string, RawNode[]>();
     const storageSlotsByHost = new Map<string, string[]>();
+    // Diagnostic metadata for tracing unexpected elevator geometry.  Keep
+    // this renderer-only: it does not affect interaction or collision logic.
+    const markElevatorMesh = (mesh: THREE.Object3D, debugSource: string, nodeId: string) => {
+      mesh.userData.debugSource = debugSource;
+      mesh.userData.debugNodeId = nodeId;
+      mesh.userData.debugBounds = () => {
+        const box = new THREE.Box3().setFromObject(mesh);
+        return {
+          min: box.min.toArray().map((value) => Number(value.toFixed(4))),
+          max: box.max.toArray().map((value) => Number(value.toFixed(4))),
+        };
+      };
+    };
+    const logElevatorMesh = (mesh: THREE.Object3D, label = "Elevator mesh") => {
+      const debugBounds = mesh.userData.debugBounds;
+      console.debug(label, {
+        name: mesh.name,
+        id: mesh.userData.id,
+        componentId: mesh.userData.componentId,
+        debugSource: mesh.userData.debugSource,
+        debugNodeId: mesh.userData.debugNodeId,
+        visible: mesh.visible,
+        collisionEnabled: mesh.userData.collisionEnabled,
+        bounds: typeof debugBounds === "function" ? debugBounds() : undefined,
+        parent: mesh.parent?.name,
+      });
+    };
     edges.forEach((edge) => {
       const relation = text(edge.relation || edge.edge_type);
       const source = text(edge.source_id || edge.source);
       const target = text(edge.target_id || edge.target);
       if (["contains", "inside"].includes(relation)) {
         receptacleContents.set(source, [...(receptacleContents.get(source) ?? []), target]);
+      }
+      // Runtime placement stores containment as item -> container (`in`),
+      // while older prepared scenes use container -> item (`contains`). Keep
+      // one renderer-side lookup so visual contents work for both forms.
+      if (["in", "inside"].includes(relation)) {
+        receptacleContents.set(target, [...(receptacleContents.get(target) ?? []), source]);
       }
       if (["component_of", "structure"].includes(relation) && semantic(nodes.find((node) => text(node.id) === target)) === "storage_slot") {
         storageSlotsByHost.set(source, [...(storageSlotsByHost.get(source) ?? []), target]);
@@ -342,7 +386,12 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     // Floors and ceilings are the same editor layer.  The ceiling of one
     // storey is geometrically coincident with the floor level above it, so
     // both surfaces are controlled by the single "地板层" switch.
-    roomEntries.forEach(([, room]) => {
+    roomEntries.forEach(([roomId, room]) => {
+      // The elevator shaft is a continuous vertical room. Its upper levels
+      // are represented by the per-storey slabs with a car-sized opening
+      // below, so a generic full-room ceiling here would seal the 2F/3F
+      // openings again.
+      if (semantic(nodeById.get(roomId)) === "elevator_shaft") return;
       const ceiling = new THREE.Mesh(
         new THREE.BoxGeometry(room.width_cells * cell, slabThickness, room.depth_cells * cell),
         new THREE.MeshStandardMaterial({
@@ -437,6 +486,10 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           horizontal ? boundary : (start + end) / 2,
         );
         wall.userData.layer = "objects";
+        if (semantic(nodeById.get(roomId)) === "elevator_shaft") {
+          wall.userData.debugSource = `elevator_shaft.wall.${roomId}.${side}`;
+          wall.userData.debugNodeId = roomId;
+        }
         scene.add(wall);
         collisionMeshes.push(wall);
       };
@@ -490,15 +543,22 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           [(width - openingWidth) / 2, openingDepth, x0 + (width - openingWidth) / 4, z],
           [(width - openingWidth) / 2, openingDepth, x0 + width - (width - openingWidth) / 4, z],
         ];
-        pieces.forEach(([pieceWidth, pieceDepth, pieceX, pieceZ], pieceIndex) => {
-          if (pieceWidth <= 0 || pieceDepth <= 0) return;
-          const slab = new THREE.Mesh(new THREE.BoxGeometry(pieceWidth, slabThickness, pieceDepth), floorMaterial.clone());
-          slab.position.set(pieceX, elevation - slabThickness / 2, pieceZ);
-          slab.userData = { id: `${roomId}.floor.${pieceIndex}`, simulationSurface: true, layer: "floor" };
-          slab.visible = layerVisibility.floor;
-          scene.add(slab);
-          collisionMeshes.push(slab);
-        });
+        // The shaft is one vertical Room, but every served storey has its
+        // own floor slab around the same car-sized opening.  Reuse the exact
+        // footprint at each elevation so upper-floor slabs cannot block the
+        // car or leave a solid floor across the shaft.
+        for (let storey = 1; storey <= 3; storey += 1) {
+          const storeyElevation = (storey - 1) * roomHeight;
+          pieces.forEach(([pieceWidth, pieceDepth, pieceX, pieceZ], pieceIndex) => {
+            if (pieceWidth <= 0 || pieceDepth <= 0) return;
+            const slab = new THREE.Mesh(new THREE.BoxGeometry(pieceWidth, slabThickness, pieceDepth), floorMaterial.clone());
+            slab.position.set(pieceX, storeyElevation - slabThickness / 2, pieceZ);
+            slab.userData = { id: `${roomId}.floor.f${storey}.${pieceIndex}`, simulationSurface: true, layer: "floor", debugSource: "elevator_shaft.floor", debugNodeId: roomId };
+            slab.visible = layerVisibility.floor;
+            scene.add(slab);
+            collisionMeshes.push(slab);
+          });
+        }
       }
       if (semantic(nodeById.get(roomId)) === "elevator_shaft") {
         // The shaft is one vertical Room. Render its wall segments once per
@@ -562,6 +622,8 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         right.position.set(horizontal ? width * 0.75 : 0, 1.05, horizontal ? 0 : width * 0.75);
         left.userData = { id: doorId, componentId: `${doorId}.left`, componentRole: "door", jointType: "prismatic", layer: "objects" };
         right.userData = { id: doorId, componentId: `${doorId}.right`, componentRole: "door", jointType: "prismatic", layer: "objects" };
+        markElevatorMesh(left, "elevator_hall_door.left", doorId);
+        markElevatorMesh(right, "elevator_hall_door.right", doorId);
         doorRoot.add(left, right);
         const composite = createComposite(doorId, doorRoot);
         // Each half-panel must clear the complete opening. Its centre starts
@@ -647,6 +709,8 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         ? structureValue as { components?: Array<Record<string, unknown>>; storage?: Record<string, unknown> }
         : null;
       const componentNodes = componentNodesByHost.get(objectId) ?? [];
+      const isWasherHost = ["washer", "washing_machine"].includes(semantic(node));
+      const storage = composition?.storage;
       const componentNodeForRole = (role: string, index?: number) => componentNodes.find((componentNode) => {
         const componentRole = text(componentNode.component_role);
         const componentType = semantic(componentNode);
@@ -659,15 +723,20 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       const hasFrontDoor = Boolean(composition?.components?.some((part) => text(part.role || part.semantic_type) === "door"));
       const isDrawer = semantic(node) === "drawer" || componentRole === "drawer";
       const isClothes = semantic(node) === "clothes";
+      const isLaundryDetergent = ["laundry_detergent", "detergent"].includes(semantic(node));
       const isComponentDoor = semantic(node) === "door" || componentRole === "door";
       const folded = Boolean(states?.folded);
       const objectMaterial = new THREE.MeshStandardMaterial({
-        color: isDrawer ? 0x64748b : isClothes ? 0x94a3b8 : CATEGORY_COLORS[objectCategory(node)],
-        transparent: true,
-        opacity: 0.86,
+        color: isLaundryDetergent ? 0xfacc15 : isDrawer ? 0x64748b : isClothes ? 0x94a3b8 : CATEGORY_COLORS[objectCategory(node)],
+        transparent: !isLaundryDetergent,
+        opacity: isLaundryDetergent ? 1 : 0.86,
         roughness: 0.72,
       });
-      const isOpenFrame = ["rack", "shoe_rack", "drying_rack", "shelf"].includes(semantic(node));
+      if (isLaundryDetergent) {
+        objectMaterial.emissive = new THREE.Color(0x8a5a00);
+        objectMaterial.emissiveIntensity = 0.12;
+      }
+      const isOpenFrame = ["rack", "shoe_rack", "drying_rack", "shelf", "resource_station"].includes(semantic(node));
       if (isOpenFrame) {
         objectMaterial.opacity = 0;
         objectMaterial.depthWrite = false;
@@ -685,17 +754,34 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         objectMaterial.emissive = new THREE.Color(0xffd166);
         objectMaterial.emissiveIntensity = 0.85;
       }
+      if (isClothes) {
+        // Clothing keeps one stable physical footprint. State is conveyed by
+        // material cues so placement/collision boxes never jump when it is
+        // folded, wet, or cleaned.
+        if (states?.is_dirty) objectMaterial.color.setHex(0x8b6b52);
+        if (states?.is_wet) {
+          objectMaterial.color.setHex(0x38a3c7);
+          objectMaterial.roughness = 0.3;
+          objectMaterial.metalness = 0.05;
+        }
+        if (states?.folded) objectMaterial.emissive = new THREE.Color(0x334155);
+      }
       const drawerFaceDepth = Math.min(0.035, depth * 0.08);
       const mesh = new THREE.Mesh(
         isComponentDoor
           ? new THREE.BoxGeometry(width * 0.92, height * 0.92, Math.min(0.04, depth * 0.1))
           : isDrawer
           ? new THREE.BoxGeometry(width * 0.94, height * 0.92, drawerFaceDepth)
+          : isLaundryDetergent
+            ? new THREE.SphereGeometry(Math.max(0.025, Math.min(width, depth, height) * 0.45), 16, 10)
           : isClothes
-            ? new THREE.BoxGeometry(width * (folded ? 0.72 : 1), height * (folded ? 0.42 : 1), depth * (folded ? 1.2 : 0.72))
+            ? new THREE.BoxGeometry(width, height, depth)
             : new THREE.BoxGeometry(width, height, depth),
         objectMaterial,
       );
+      if (semantic(node) === "elevator" || objectId.startsWith("elevator_car_")) {
+        markElevatorMesh(mesh, "elevator.catalog_anchor", objectId);
+      }
       mesh.geometry.computeBoundingBox();
       mesh.position.set(
         x,
@@ -721,7 +807,12 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       const protocolTransform = node?.world_transform;
       if (node?.transform_space === "graphworld_z_up"
         && protocolTransform && typeof protocolTransform === "object"
-        && placementMode !== "contained") {
+        && placementMode !== "contained"
+        // The elevator anchor is authored at its fixed shaft position. Its
+        // vertical runtime state is applied exactly once to articulationRoot
+        // below; applying the snapshot transform here would bake that height
+        // into the anchor and then add current_height a second time.
+        && semantic(node) !== "elevator") {
         applyProtocolToThree(mesh, protocolTransform as { position?: number[]; rotation?: number[]; scale?: number[] });
       }
       const parentSemantic = semantic(nodeById.get(text(item.parent_object_id)));
@@ -745,7 +836,15 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       mesh.userData = { id: objectId };
       const declaredCapabilities = Array.isArray(node?.capabilities) ? node?.capabilities.map(String) : [];
       const declaredActions = Array.isArray(node?.interactive_actions) ? node?.interactive_actions.map(String) : [];
-      mesh.userData.pickable = declaredCapabilities.includes("pickable");
+      const componentRoleValue = text(node?.component_role).toLowerCase();
+      const structuralNode = ["room", "floor", "wall", "structure"].includes(text(node?.node_type).toLowerCase());
+      const nonPickableComponent = ["storage_slot", "drawer", "door", "button", "hinge"].includes(componentRoleValue)
+        || Boolean(node?.can_contain)
+        || declaredCapabilities.map((value) => value.toLowerCase()).includes("receptacle");
+      mesh.userData.pickable = declaredCapabilities.includes("pickable")
+        && !structuralNode
+        && !nonPickableComponent
+        && !new Set(["chair", "seat", "rack", "shoe_rack", "open_shelf", "shelf"]).has(semantic(node));
       mesh.userData.canReceive = Boolean(node?.can_support || node?.can_contain)
         || declaredCapabilities.includes("support_surface")
         || declaredCapabilities.includes("receptacle");
@@ -756,9 +855,28 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       mesh.userData.surfaceGridCm = surfaceSpec ? Number(surfaceSpec.grid_size_cm) || 1 : 1;
       mesh.userData.layer = "objects";
       mesh.castShadow = true;
-      scene.add(mesh);
-      interactive.push(mesh);
-      collisionMeshes.push(mesh);
+      const initiallyContained = placementMode === "contained" || text(node?.storage_mode).toLowerCase() === "hidden";
+      if (initiallyContained) {
+        mesh.visible = false;
+        mesh.userData.collisionEnabled = false;
+      }
+      const isElevatorObject = semantic(node) === "elevator"
+        || objectCategory(node) === "elevator"
+        || objectId.startsWith("elevator_car_")
+        || (Array.isArray(node?.capabilities)
+          && node.capabilities.some((value) => String(value).toLowerCase() === "transport_device"));
+      // The elevator's catalog dimensions are only an identity/layout
+      // fallback. Its visible and collidable geometry is the articulated
+      // cabin created below; never register the solid catalog box itself.
+      if (!isElevatorObject && !initiallyContained) {
+        scene.add(mesh);
+        interactive.push(mesh);
+        collisionMeshes.push(mesh);
+      } else if (!isElevatorObject) {
+        // Keep contained roots in the object registry for state-driven
+        // reappearance, but do not expose a hidden load to picking or physics.
+        scene.add(mesh);
+      }
       // Open frames, cavities, sinks and other transparent proxies are only
       // semantic/visual anchors. Their solid catalog box must not become an
       // invisible wall in Rapier; their real shell/parts are registered below.
@@ -768,7 +886,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       objectMeshes.set(objectId, mesh);
       const composite = createComposite(objectId, mesh);
       composites.push(composite);
-      if (semantic(node) === "elevator") {
+      if (isElevatorObject) {
         // The catalog box is only the object anchor.  The visible elevator
         // car is the hollow articulated shell built below; do not render the
         // generic solid proxy on top of it.
@@ -777,13 +895,24 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         // Three.js Object are invisible too, so the cabin gets its own Group.
         const articulationRoot = new THREE.Group();
         articulationRoot.name = `${objectId}.articulation_root`;
+        // The articulation root is the cabin floor top-center, not the
+        // catalog box center. current_height therefore directly equals the
+        // world height of the cabin floor top.
         articulationRoot.position.copy(mesh.position);
+        articulationRoot.position.y -= height / 2 - elevatorFloorThickness;
         articulationRoot.quaternion.copy(mesh.quaternion);
         articulationRoot.scale.copy(mesh.scale);
         articulationRoot.userData = { id: objectId, componentRole: "articulation_root", layer: "objects" };
+        // The articulation root is a transform-only Group. It has no geometry
+        // and must never be reported as the source of a collider. Individual
+        // cabin meshes carry their own debugSource below.
         scene.add(articulationRoot);
         composite.host = articulationRoot;
         mesh.userData.elevatorVisualRoot = articulationRoot;
+        // The catalog mesh is only an authoring/layout anchor. It must not
+        // remain in the scene graph: leaving this solid proxy attached would
+        // render an extra outer shell around the articulated cabin.
+        mesh.removeFromParent();
         mesh.visible = false;
         mesh.userData.collisionEnabled = false;
         const carMaterial = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.55, metalness: 0.3 });
@@ -791,41 +920,64 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         const cabinDepth = depth * 0.9;
         const cabinHeight = height * 0.96;
         const wallThickness = Math.min(0.06, Math.min(cabinWidth, cabinDepth) * 0.08);
-        const carFloor = new THREE.Mesh(new THREE.BoxGeometry(cabinWidth, wallThickness, cabinDepth), carMaterial);
-        carFloor.position.set(0, -height / 2 + wallThickness / 2, 0);
-        carFloor.userData = { id: objectId, componentRole: "elevator_cabin", layer: "objects" };
+      const carFloor = new THREE.Mesh(new THREE.BoxGeometry(cabinWidth, wallThickness, cabinDepth), carMaterial);
+      carFloor.position.set(0, -wallThickness / 2, 0);
+      carFloor.userData = { id: objectId, componentRole: "elevator_cabin", layer: "objects" };
+      markElevatorMesh(carFloor, "elevator.car_floor", objectId);
         const carRoof = new THREE.Mesh(new THREE.BoxGeometry(cabinWidth, wallThickness, cabinDepth), carMaterial);
-        carRoof.position.set(0, -height / 2 + cabinHeight - wallThickness / 2, 0);
-        carRoof.userData = { id: objectId, componentRole: "elevator_cabin", layer: "objects" };
+      carRoof.position.set(0, cabinHeight - wallThickness / 2, 0);
+      carRoof.userData = { id: objectId, componentRole: "elevator_cabin", layer: "objects" };
+      markElevatorMesh(carRoof, "elevator.car_roof", objectId);
         const carLeftWall = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, cabinHeight, cabinDepth), carMaterial);
         const carRightWall = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, cabinHeight, cabinDepth), carMaterial);
         const carBackWall = new THREE.Mesh(new THREE.BoxGeometry(cabinWidth, cabinHeight, wallThickness), carMaterial);
-        carLeftWall.position.set(-cabinWidth / 2 + wallThickness / 2, -height / 2 + cabinHeight / 2, 0);
-        carRightWall.position.set(cabinWidth / 2 - wallThickness / 2, -height / 2 + cabinHeight / 2, 0);
-        carBackWall.position.set(0, -height / 2 + cabinHeight / 2, cabinDepth / 2 - wallThickness / 2);
+      carLeftWall.position.set(-cabinWidth / 2 + wallThickness / 2, cabinHeight / 2, 0);
+      carRightWall.position.set(cabinWidth / 2 - wallThickness / 2, cabinHeight / 2, 0);
+      carBackWall.position.set(0, cabinHeight / 2, cabinDepth / 2 - wallThickness / 2);
         [carLeftWall, carRightWall, carBackWall].forEach((wall) => {
           wall.userData = { id: objectId, componentRole: "elevator_cabin", layer: "objects" };
         });
+        markElevatorMesh(carLeftWall, "elevator.left_wall", objectId);
+        markElevatorMesh(carRightWall, "elevator.right_wall", objectId);
+        markElevatorMesh(carBackWall, "elevator.back_wall", objectId);
         const doorMaterial = new THREE.MeshStandardMaterial({ color: 0x0f766e, roughness: 0.45, metalness: 0.35 });
-        const carDoorWidth = cabinWidth / 2 - 0.01;
-        const carDoorLeft = new THREE.Mesh(new THREE.BoxGeometry(carDoorWidth, cabinHeight * 0.84, wallThickness), doorMaterial);
-        const carDoorRight = new THREE.Mesh(new THREE.BoxGeometry(carDoorWidth, cabinHeight * 0.84, wallThickness), doorMaterial);
-        carDoorLeft.position.set(-cabinWidth / 4, -height / 2 + cabinHeight * 0.5, -cabinDepth / 2 + wallThickness / 2);
-        carDoorRight.position.set(cabinWidth / 4, -height / 2 + cabinHeight * 0.5, -cabinDepth / 2 + wallThickness / 2);
-        carDoorLeft.userData = { id: objectId, componentId: `${objectId}.car_door_left`, componentRole: "door", jointType: "prismatic", layer: "objects" };
-        carDoorRight.userData = { id: objectId, componentId: `${objectId}.car_door_right`, componentRole: "door", jointType: "prismatic", layer: "objects" };
+        // The doors cover the complete clear opening between the cabin side
+        // walls and from the floor top to the roof bottom.  Using a fraction
+        // of cabinHeight here leaves visible gaps and, more importantly,
+        // leaves the matching collider blocking the entrance.
+        const carDoorWidth = Math.max(0.01, cabinWidth / 2 - wallThickness);
+        const carDoorHeight = Math.max(0.01, cabinHeight - wallThickness);
+        const carDoorLeft = new THREE.Mesh(new THREE.BoxGeometry(carDoorWidth, carDoorHeight, wallThickness), doorMaterial);
+        const carDoorRight = new THREE.Mesh(new THREE.BoxGeometry(carDoorWidth, carDoorHeight, wallThickness), doorMaterial);
+      carDoorLeft.position.set(-cabinWidth / 4, carDoorHeight / 2, -cabinDepth / 2 + wallThickness / 2);
+      carDoorRight.position.set(cabinWidth / 4, carDoorHeight / 2, -cabinDepth / 2 + wallThickness / 2);
+      carDoorLeft.userData = { id: objectId, componentId: `${objectId}.car_door_left`, componentRole: "door", jointType: "prismatic", layer: "objects" };
+      carDoorRight.userData = { id: objectId, componentId: `${objectId}.car_door_right`, componentRole: "door", jointType: "prismatic", layer: "objects" };
+      markElevatorMesh(carDoorLeft, "elevator.car_door_left", objectId);
+      markElevatorMesh(carDoorRight, "elevator.car_door_right", objectId);
         const buttonPanel = new THREE.Group();
         // The panel is mounted on the cabin's left interior wall, beside the
         // doorway, rather than on the right or in the centre of the car.
-        buttonPanel.position.set(-cabinWidth / 2 + wallThickness + 0.04, -height / 2 + cabinHeight * 0.52, -cabinDepth / 2 + wallThickness + 0.08);
+        const panelWidth = 0.42;
+        // Rotation puts the panel's long axis along local Z.  Keep its whole
+        // footprint behind the door plane so the panel cannot intersect the
+        // sliding leaves when they are closed.
+        const panelFrontClearance = 0.05;
+        buttonPanel.position.set(
+          -cabinWidth / 2 + wallThickness + 0.04,
+          cabinHeight * 0.52,
+          -cabinDepth / 2 + wallThickness + panelWidth / 2 + panelFrontClearance,
+        );
         buttonPanel.rotation.y = Math.PI / 2;
-        buttonPanel.userData = { id: objectId, componentId: `${objectId}.floor_buttons`, componentRole: "floor_button_panel", layer: "objects" };
+      buttonPanel.userData = { id: objectId, componentId: `${objectId}.floor_buttons`, componentRole: "floor_button_panel", layer: "objects" };
+      markElevatorMesh(buttonPanel, "elevator.control_panel", objectId);
         const panel = new THREE.Mesh(
-          new THREE.BoxGeometry(0.42, Math.min(0.92, cabinHeight * 0.72), 0.045),
+          new THREE.BoxGeometry(panelWidth, Math.min(0.92, cabinHeight * 0.72), 0.045),
           new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.25 }),
         );
         panel.position.z = -0.025;
-        panel.userData = { id: objectId, componentId: `${objectId}.floor_buttons`, componentRole: "floor_button_panel", layer: "objects" };
+      panel.userData = { id: objectId, componentId: `${objectId}.floor_buttons`, componentRole: "floor_button_panel", layer: "objects" };
+      markElevatorMesh(panel, "elevator.control_panel_mesh", objectId);
         buttonPanel.add(panel);
         const buttonMaterial = new THREE.MeshStandardMaterial({ color: 0xf59e0b, emissive: 0x5b3a00, emissiveIntensity: 0.7 });
         const buttonIds = ["f1", "f2", "f3", "open", "close"];
@@ -833,22 +985,56 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           const isBottom = index >= 3;
           const button = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.024, 16), buttonMaterial.clone());
           button.rotation.x = Math.PI / 2;
-          const row = isBottom ? 1 : 0;
           const col = isBottom ? index - 3 : 0;
-          button.position.set(isBottom ? (col - 0.5) * 0.14 : 0, isBottom ? -cabinHeight * 0.25 : cabinHeight * 0.22 - (index * 0.14), 0);
+          // Keep floor order semantic and readable: 1F at the bottom,
+          // 2F in the middle, 3F at the top. The door controls share the
+          // lower part of the panel, but stay within its visible bounds.
+          const floorButtonY = cabinHeight * 0.10 + index * 0.14;
+          const doorButtonY = -cabinHeight * 0.12;
+          button.position.set(isBottom ? (col - 0.5) * 0.14 : 0, isBottom ? doorButtonY : floorButtonY, 0);
           button.userData = { id: objectId, componentId: `${objectId}_${suffix}_button`, componentRole: isBottom ? `${suffix}_button` : "floor_button", layer: "objects" };
+          markElevatorMesh(button, `elevator.button.${suffix}`, objectId);
           elevatorButtonMeshes.set(`${objectId}_${suffix}_button`, button);
           buttonPanel.add(button);
+          // Labels are visual children of the button PartTree node. They do
+          // not enter the collision index and therefore follow the cabin,
+          // door animation, and editor transforms as one unit.
+          const buttonLabel = suffix === "open" ? "开" : suffix === "close" ? "关" : suffix.slice(1);
+          const label = makeLabel(buttonLabel, "#0f172a");
+          label.name = `${objectId}.${suffix}.label`;
+          label.position.set(0, 0, -0.035);
+          label.scale.set(0.09, 0.065, 1);
+          button.add(label);
           interactive.push(button);
         });
         composite.host.add(carFloor, carRoof, carLeftWall, carRightWall, carBackWall, carDoorLeft, carDoorRight, buttonPanel);
+        // Register the visible control panel explicitly. It is part of the
+        // cabin collision set, not a standalone static scene collider.
+        elevatorCollisionMeshes.add(panel);
+        buttonPanel.traverse((part) => {
+          if (part instanceof THREE.Mesh && part.userData.collisionEnabled !== false) {
+            elevatorCollisionMeshes.add(part);
+          }
+        });
+        articulationRoot.traverse((part) => {
+          if (part !== articulationRoot && (part instanceof THREE.Mesh || part instanceof THREE.Group)) {
+            logElevatorMesh(part, "Elevator mesh created");
+          }
+        });
         // The cabin doors are on the face toward the hall (negative local Z)
         // and split sideways along the local X axis.
-        attachPrismatic(composite, `${objectId}.car_door_left`, carDoorLeft, cabinWidth / 4, new THREE.Vector3(-1, 0, 0));
-        attachPrismatic(composite, `${objectId}.car_door_right`, carDoorRight, cabinWidth / 4, new THREE.Vector3(1, 0, 0));
+        // Each leaf starts with its inner edge at the cabin centre. To clear
+        // the entire opening, its centre must travel one full half-width of
+        // the cabin, matching the hall-door travel. A quarter-width travel
+        // leaves half of each leaf across the doorway.
+        const carDoorTravel = cabinWidth / 2;
+        attachPrismatic(composite, `${objectId}.car_door_left`, carDoorLeft, carDoorTravel, new THREE.Vector3(-1, 0, 0));
+        attachPrismatic(composite, `${objectId}.car_door_right`, carDoorRight, carDoorTravel, new THREE.Vector3(1, 0, 0));
         // Cabin doors are controlled by the elevator process as well. The
         // floor buttons remain interactive, while the door panels do not.
         collisionMeshes.push(carFloor, carRoof, carLeftWall, carRightWall, carBackWall, carDoorLeft, carDoorRight);
+        [carFloor, carRoof, carLeftWall, carRightWall, carBackWall, carDoorLeft, carDoorRight]
+          .forEach((part) => elevatorCollisionMeshes.add(part));
       }
       if (isOpenFrame) {
         const frameMaterial = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.72 });
@@ -961,7 +1147,11 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         lightMeshes.set(objectId, lamp);
       }
       if (semantic(node) === "sink") {
-        const initialFill = Number(states?.fill_level ?? states?.water_level ?? (states?.has_water ? 100 : 0));
+        // `water_level` is the canonical 0..100 quantity. `fill_level` was
+        // used by older scene exports as a normalized 0..1 value; convert it
+        // only at this compatibility boundary.
+        const legacyFill = states?.fill_level == null ? null : Number(states.fill_level);
+        const initialFill = Number(states?.water_level ?? (legacyFill == null ? (states?.has_water ? 100 : 0) : legacyFill * 100));
         const drain = new THREE.Mesh(
           new THREE.CylinderGeometry(0.045, 0.045, 0.018, 16),
           new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.65, roughness: 0.32 }),
@@ -980,7 +1170,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         water.visible = initialFill > 0;
         mesh.add(water);
         waterMeshes.set(objectId, water);
-        animatedMeshes.set(objectId, { mesh: water, base: water.position.clone() });
+        animatedMeshes.set(objectId, { mesh: water, base: water.position.clone(), baseRotation: water.rotation.clone() });
         const faucetNode = faucetsBySink.get(objectId)?.[0];
         if (faucetNode) {
           const faucetGroup = new THREE.Group();
@@ -1001,11 +1191,12 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       }
       const nodeCues = visualCuesOf(node);
       if (nodeCues.has("running_pulse") || nodeCues.has("airflow") || Boolean(states?.is_running)
+        || ["washer", "washing_machine"].includes(semantic(node))
         || (Boolean(states?.is_on) && ["fan", "ceiling_fan", "ventilator"].includes(semantic(node)))) {
-        animatedMeshes.set(objectId, { mesh, base: mesh.position.clone() });
+        animatedMeshes.set(objectId, { mesh, base: mesh.position.clone(), baseRotation: mesh.rotation.clone() });
       }
       if (node?.physics_state === "falling") {
-        animatedMeshes.set(objectId, { mesh, base: mesh.position.clone() });
+        animatedMeshes.set(objectId, { mesh, base: mesh.position.clone(), baseRotation: mesh.rotation.clone() });
       }
       if (Boolean(states?.is_wet) || semantic(node) === "clothes") {
         const dropletMaterial = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0369a1, emissiveIntensity: 0.25, transparent: true, opacity: 0.82, roughness: 0.25 });
@@ -1057,8 +1248,18 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         effectMeshes.push({ mesh: brokenOverlay, host: mesh, nodeId: objectId, kind: "broken", offset: new THREE.Vector3(), phase: 0 });
       }
       {
+        // The selection frame must describe the rendered root geometry, not
+        // the catalog envelope. Composite assets and stateful items (notably
+        // folded clothes) intentionally render at a different size.
+        mesh.geometry.computeBoundingBox();
+        const renderedSize = mesh.geometry.boundingBox?.getSize(new THREE.Vector3())
+          ?? new THREE.Vector3(width, height, depth);
         const highlight = new THREE.Mesh(
-          new THREE.BoxGeometry(width, height, depth),
+          new THREE.BoxGeometry(
+            Math.max(0.001, renderedSize.x),
+            Math.max(0.001, renderedSize.y),
+            Math.max(0.001, renderedSize.z),
+          ),
           new THREE.MeshBasicMaterial({ color: 0x2563eb, wireframe: true, transparent: true, opacity: 0.95, depthWrite: false }),
         );
         // Keep the editor bounds in the object's transform hierarchy.  A
@@ -1138,7 +1339,18 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         } else if (role === "door") {
           const faceInset = Math.min(0.025, Math.min(width, height) * 0.035);
           const doorWidth = Math.max(0.08, width - faceInset * 2);
-          const doorHeight = Math.max(0.12, height - faceInset * 2);
+          // A host with a front drawer reserves the lower front band for that
+          // drawer. The door remains a normal reusable component, simply
+          // sized to the free opening rather than covering the drawer.
+          const drawerCount = isWasherHost
+            ? Math.max(0, Number(storage?.drawer_count) || 1)
+            : 0;
+          const doorHeight = Math.max(0.12, height * (drawerCount > 0 ? 0.76 : 0.92) - faceInset * 2);
+          const doorCenterY = drawerCount > 0
+            // Keep the lower edge at the original door sill; only the upper
+            // edge moves down to make room for the washer drawer.
+            ? mesh.position.y - height * 0.08
+            : mesh.position.y;
           const doorGeometry = face === "top"
             ? new THREE.BoxGeometry(doorWidth, 0.025, Math.max(0.08, depth - faceInset * 2))
             : new THREE.BoxGeometry(doorWidth, doorHeight, 0.035);
@@ -1157,7 +1369,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           const hingeAnchorX = Array.isArray(hingeSpec?.anchor) ? Number(hingeSpec.anchor[0]) : 0.08;
           const rightHinged = hingeAnchorX >= 0.5;
             const pivot = new THREE.Group();
-            pivot.position.copy(worldPointForHost(x + (rightHinged ? width / 2 : -width / 2), mesh.position.y, z - depth / 2 - 0.02));
+            pivot.position.copy(worldPointForHost(x + (rightHinged ? width / 2 : -width / 2), doorCenterY, z - depth / 2 - 0.02));
             pivot.rotation.y = hostRotation;
             const doorNode = componentNodeForRole("door");
             const componentId = text(doorNode?.id) || `${objectId}_${role}`;
@@ -1191,22 +1403,26 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           });
         }
       });
-      const storage = composition?.storage;
+      // Older scene versions may not yet carry the newly materialized washer
+      // drawer. Keep the renderer backward-compatible by deriving the same
+      // declarative storage contract from the appliance semantic type.
       if (storage) {
         const mountStoragePart = (part: THREE.Mesh) => {
           attachPart(composite, part);
         };
         const levels = Math.max(1, Number(storage.levels) || 1);
         const columns = Math.max(1, Number(storage.columns) || 1);
-        for (let level = 0; level < levels; level += 1) {
+        // Washer storage is a single open cavity plus an independent front
+        // drawer. Do not generate cabinet shelves/dividers inside the washer.
+        if (!isWasherHost) for (let level = 0; level < levels; level += 1) {
           for (let column = 0; column < columns; column += 1) {
             const slot = new THREE.Mesh(
-              new THREE.BoxGeometry(width * 0.82 / columns, Math.max(0.08, height * 0.72 / levels), depth * 0.68),
+              new THREE.BoxGeometry(width * 0.82 / columns, 0.012, depth * 0.68),
               new THREE.MeshBasicMaterial({ color: 0x93c5fd, transparent: true, opacity: 0.08, depthWrite: false }),
             );
             slot.position.copy(worldPointForHost(
               x + (column + 0.5 - columns / 2) * (width * 0.82 / columns),
-              mesh.position.y - height / 2 + (level + 0.5) * (height * 0.72 / levels) + height * 0.14,
+              mesh.position.y - height / 2 + (level + 1) * (height * 0.72 / levels) + height * 0.14 + 0.006,
               z - depth * 0.04,
             ));
             slot.rotation.y = hostRotation;
@@ -1226,7 +1442,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
             mountStoragePart(slot);
           }
         }
-        for (let level = 1; level < levels; level += 1) {
+        if (!isWasherHost) for (let level = 1; level < levels; level += 1) {
           const shelf = new THREE.Mesh(new THREE.BoxGeometry(width * 0.82, 0.018, depth * 0.72), new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.8 }));
           shelf.position.copy(worldPointForHost(x, mesh.position.y - height / 2 + (height * level) / levels, z - depth * 0.04));
           shelf.rotation.y = hostRotation;
@@ -1234,7 +1450,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           scene.add(shelf);
           mountStoragePart(shelf);
         }
-        for (let column = 1; column < columns; column += 1) {
+        if (!isWasherHost) for (let column = 1; column < columns; column += 1) {
           const divider = new THREE.Mesh(new THREE.BoxGeometry(0.018, height * 0.76, depth * 0.72), new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.8 }));
           divider.position.copy(worldPointForHost(x - width / 2 + (width * column) / columns, mesh.position.y, z - depth * 0.04));
           divider.rotation.y = hostRotation;
@@ -1247,13 +1463,20 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           const drawerColumn = drawerIndex % columns;
           const drawerLevel = Math.floor(drawerIndex / columns) % levels;
           const drawerWidth = width * 0.82 / columns;
-          const drawerHeight = Math.max(0.08, height * 0.72 / levels - 0.025);
+          const drawerHeight = isWasherHost
+            ? Math.max(0.08, height * 0.18)
+            : Math.max(0.08, height * 0.72 / levels - 0.025);
           const wallDepth = Math.max(0.08, depth * 0.62);
           const wallThickness = 0.025;
           const drawer = new THREE.Group();
           drawer.position.copy(worldPointForHost(
             x + (drawerColumn + 0.5 - columns / 2) * drawerWidth,
-            mesh.position.y - height / 2 + height * 0.14 + (drawerLevel + 0.5) * (height * 0.72 / levels),
+            isWasherHost
+              // The washer door was shortened at its upper edge. The drawer
+              // occupies that reserved upper band and remains independent of
+              // the door articulation.
+              ? mesh.position.y + height / 2 - height * 0.08 - drawerHeight / 2
+              : mesh.position.y - height / 2 + height * 0.14 + (drawerLevel + 0.5) * (height * 0.72 / levels),
             // Closed drawers stay inside the cabinet.  The prismatic joint
             // moves them toward -Z only after an explicit open interaction.
             z - depth / 2 + wallDepth / 2 + 0.01,
@@ -1273,12 +1496,63 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           left.position.x = -drawerWidth / 2;
           const right = new THREE.Mesh(new THREE.BoxGeometry(wallThickness, drawerHeight, wallDepth), componentMaterial("drawer"));
           right.position.x = drawerWidth / 2;
-          bottom.userData = { id: componentId, hostId: objectId, componentId, componentRole: "storage_slot", capabilities: ["place_target"] };
+          bottom.userData = { id: componentId, hostId: objectId, componentId, componentRole: "drawer", capabilities: ["place_target"] };
           drawer.add(bottom, front, back, left, right);
+          // The drawer itself is a mechanism; its bottom is the reusable
+          // containment surface for detergent. Keep this as a distinct
+          // graph-targeted child so opening the drawer and loading it are
+          // independent interactions.
+          const drawerSlotId = `${componentId}_slot_l1_c1`;
+          const drawerSlot = new THREE.Mesh(
+            new THREE.BoxGeometry(Math.max(0.02, drawerWidth - wallThickness * 2), 0.008, Math.max(0.02, wallDepth - wallThickness * 2)),
+            new THREE.MeshBasicMaterial({ color: 0x93c5fd, transparent: true, opacity: 0.06, depthWrite: false, side: THREE.DoubleSide }),
+          );
+          drawerSlot.position.set(0, -drawerHeight / 2 + wallThickness / 2 + 0.006, 0);
+          drawerSlot.userData = {
+            id: drawerSlotId,
+            hostId: componentId,
+            componentId: drawerSlotId,
+            componentRole: "storage_slot",
+            capabilities: ["place_target", "receptacle"],
+            maxCapacity: 1,
+            requiresContainedCapabilities: ["laundry_detergent"],
+          };
+          drawer.add(drawerSlot);
+          interactive.push(drawerSlot);
+          const drawerContents = [
+            ...(receptacleContents.get(componentId) ?? []),
+            // A washer resource may be placed on the host storage slot in
+            // older snapshots rather than on the generated drawer link.
+            ...(receptacleContents.get(objectId) ?? []),
+          ];
+          const detergentId = drawerContents.find((contentId) => {
+            const content = nodeById.get(contentId);
+            return ["detergent", "laundry_detergent", "dishwasher_detergent"].includes(semantic(content));
+          });
+          if (detergentId) {
+            const detergent = nodeById.get(detergentId);
+            const detergentStates = detergent?.states as Record<string, unknown> | undefined;
+            const amount = THREE.MathUtils.clamp(Number(detergentStates?.amount ?? 1), 0, 1);
+            const bottleWidth = Math.min(drawerWidth * 0.28, 0.11);
+            const bottleHeight = Math.min(drawerHeight * 0.72, 0.18);
+            const bottle = new THREE.Mesh(
+              new THREE.BoxGeometry(bottleWidth, bottleHeight, bottleWidth * 0.72),
+              new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.35, transparent: true, opacity: 0.9 }),
+            );
+            bottle.position.set(-drawerWidth * 0.2, -drawerHeight / 2 + bottleHeight / 2 + wallThickness, 0);
+            bottle.userData = { id: detergentId, hostId: objectId, componentRole: "drawer_content" };
+            const liquid = new THREE.Mesh(
+              new THREE.BoxGeometry(bottleWidth * 0.82, Math.max(0.008, bottleHeight * 0.72 * amount), bottleWidth * 0.58),
+              new THREE.MeshStandardMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.78, roughness: 0.2 }),
+            );
+            liquid.position.set(0, -bottleHeight * 0.14 + (bottleHeight * 0.36 * amount), 0);
+            bottle.add(liquid);
+            drawer.add(bottle);
+            detergentVisuals.set(detergentId, { bottle, liquid });
+          }
           scene.add(drawer);
           interactive.push(front);
-          interactive.push(bottom);
-          const drawerAxisLength = mesh.geometry.boundingBox?.getSize(new THREE.Vector3()).z ?? depth;
+          const drawerAxisLength = depth;
           const guideOverlap = Math.min(wallDepth * 0.62, drawerAxisLength * 0.38);
           attachPrismatic(composite, componentId, drawer, Math.max(0, drawerAxisLength - guideOverlap));
         }
@@ -1286,20 +1560,21 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       // Appliances with a front door expose an interior support surface so
       // movable items can be placed inside during the simulation. This is
       // deliberately a semantic slot, not a visible extra part.
-      if (["washer", "washing_machine", "dishwasher", "dryer", "clothesdryer"].includes(semantic(node)) && hasFrontDoor) {
+      if (["washer", "washing_machine", "dishwasher", "dryer", "clothesdryer", "microwave", "refrigerator"].includes(semantic(node)) && hasFrontDoor) {
         const interior = new THREE.Mesh(
           // Clothes are represented at their unfolded catalog size. The
           // washer cavity must span nearly the full drum width/depth so the
           // placement fit check does not reject a normal garment.
-          new THREE.BoxGeometry(width * 1.05, height * 0.72, depth * 0.95),
+          new THREE.BoxGeometry(width * 0.88, 0.012, depth * 0.82),
           new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide }),
         );
-        interior.position.copy(worldPointForHost(x, mesh.position.y, z - depth * 0.08));
+        interior.position.copy(worldPointForHost(x, mesh.position.y - height / 2 + height * 0.18, z - depth * 0.08));
         interior.rotation.y = hostRotation;
+        const interiorSlotId = storageSlotsByHost.get(objectId)?.[0] || `${objectId}_slot_l1_c1`;
         interior.userData = {
-          id: objectId,
+          id: interiorSlotId,
           hostId: objectId,
-          componentId: storageSlotsByHost.get(objectId)?.[0] || `${objectId}_slot_l1_c1`,
+          componentId: interiorSlotId,
           componentRole: "storage_slot",
           capabilities: ["place_target", "receptacle"],
           maxCapacity: 8,
@@ -1316,13 +1591,29 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     // The composite root is the single editor transform authority. Register
     // every mesh in its PartTree as a collision shape so translation and
     // rotation keep visual and collision geometry aligned.
-    composites.forEach((composite) => {
+      composites.forEach((composite) => {
       composite.host.traverse((child) => {
         if (!(child instanceof THREE.Mesh) || child === composite.host) return;
-        if (child.userData.collisionEnabled === false || collisionMeshes.includes(child)) return;
-        collisionMeshes.push(child);
+        if (composite.id.startsWith("elevator_car_") && !child.userData.debugSource) {
+          // A cabin may only render its declared PartTree meshes. Any mesh
+          // attached through an obsolete/generated path is an accidental
+          // proxy (the source of the extra dark outer shell); keep it out of
+          // both rendering and physics instead of treating it as a cabin
+          // component.
+          child.visible = false;
+          child.userData.collisionEnabled = false;
+          markElevatorMesh(child, "elevator.removed_unclassified_part", composite.id);
+        }
+        if (child.userData.collisionEnabled === false || collisionMeshes.includes(child) || elevatorCollisionMeshes.has(child)) return;
+        if (composite.id.startsWith("elevator_car_")) {
+          // Every collidable cabin part belongs to the same kinematic body;
+          // do not let panels/buttons fall back into the static collider set.
+          elevatorCollisionMeshes.add(child);
+        } else {
+          collisionMeshes.push(child);
+        }
       });
-    });
+      });
 
     const pendingTransform: { id: string; changed: boolean; startPosition: THREE.Vector3 | null } = { id: "", changed: false, startPosition: null };
     let lastRotationObject: THREE.Object3D | null = null;
@@ -1568,22 +1859,6 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       roomId: savedSimulation?.roomId ?? actorRoomId,
       moving: savedSimulation?.moving ?? false,
     };
-    // A transport passenger is authoritative in the runtime snapshot. When
-    // the live scene is rebuilt after a tick, seed the local Rapier character
-    // from that final transform instead of the pre-ride prediction.
-    if (simulation.active && savedSimulation) {
-      const actorNode = nodes.find((item) => text(item.id) === (actorId || "__simulation_player__"));
-      const parentEdge = edges.find((edge) => text(edge.target_id || edge.target) === (actorId || "__simulation_player__")
-        && ["in", "inside"].includes(text(edge.relation || edge.edge_type).toLowerCase()));
-      const parentNode = parentEdge ? nodes.find((item) => text(item.id) === text(parentEdge.source_id || parentEdge.source)) : undefined;
-      const parentCapabilities = Array.isArray(parentNode?.capabilities) ? parentNode.capabilities.map(String).map((value) => value.toLowerCase()) : [];
-      const transform = actorNode?.world_transform as Record<string, unknown> | undefined;
-      const position = Array.isArray(transform?.position) ? transform.position : undefined;
-      if (parentCapabilities.includes("transport_device") && position?.length === 3) {
-        simulation.player.set(Number(position[0]), Number(position[2]), -Number(position[1]));
-        simulation.roomId = text((actorNode?.runtime_state as Record<string, unknown> | undefined)?.room_id) || simulation.roomId;
-      }
-    }
     if (simulation.active) {
       camera.position.copy(simulation.player);
       camera.rotation.set(simulation.pitch, simulation.yaw, 0, "YXZ");
@@ -1623,7 +1898,12 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       const world = new RAPIER.World({ x: 0, y: -9.81, z: 0 });
       const staticBody = world.createRigidBody(RAPIER.RigidBodyDesc.fixed());
       const staticColliders = new Map<THREE.Mesh, ReturnType<RAPIER.World["createCollider"]>>();
+      const elevatorBody = RAPIER.RigidBodyDesc.kinematicPositionBased()
+        .setTranslation(0, 0, 0);
+      const elevatorRigidBody = world.createRigidBody(elevatorBody);
+      const elevatorColliders = new Map<THREE.Mesh, ReturnType<RAPIER.World["createCollider"]>>();
       collisionMeshes.forEach((mesh) => {
+        if (elevatorCollisionMeshes.has(mesh)) return;
         mesh.updateWorldMatrix(true, false);
         const localBounds = mesh.geometry.boundingBox ?? new THREE.Box3().setFromBufferAttribute(mesh.geometry.getAttribute("position") as THREE.BufferAttribute);
         if (localBounds.isEmpty()) return;
@@ -1642,8 +1922,40 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         collider.setEnabled(mesh.userData.collisionEnabled !== false);
         staticColliders.set(mesh, collider);
       });
+      const elevatorRoot = [...objectMeshes.values()]
+        .find((mesh) => semantic(nodeById.get(String(mesh.userData.id))) === "elevator")
+        ?.userData.elevatorVisualRoot as THREE.Group | undefined;
+      if (elevatorRoot) {
+        elevatorRoot.updateWorldMatrix(true, true);
+        const rootPosition = elevatorRoot.getWorldPosition(new THREE.Vector3());
+        const rootRotation = elevatorRoot.getWorldQuaternion(new THREE.Quaternion());
+        elevatorRigidBody.setTranslation({ x: rootPosition.x, y: rootPosition.y, z: rootPosition.z }, true);
+        elevatorCollisionMeshes.forEach((mesh) => {
+          mesh.updateWorldMatrix(true, false);
+          const localBounds = mesh.geometry.boundingBox ?? new THREE.Box3().setFromBufferAttribute(mesh.geometry.getAttribute("position") as THREE.BufferAttribute);
+          if (localBounds.isEmpty()) return;
+          const localSize = localBounds.getSize(new THREE.Vector3());
+          const scale = mesh.getWorldScale(new THREE.Vector3());
+          const half = localSize.multiply(scale).multiplyScalar(0.5);
+          if (half.x <= 1e-4 || half.y <= 1e-4 || half.z <= 1e-4) return;
+          const worldPosition = mesh.getWorldPosition(new THREE.Vector3());
+          const relativePosition = worldPosition.clone().sub(rootPosition).applyQuaternion(rootRotation.clone().invert());
+          const worldQuaternion = mesh.getWorldQuaternion(new THREE.Quaternion());
+          const relativeQuaternion = rootRotation.clone().invert().multiply(worldQuaternion);
+          const collider = world.createCollider(RAPIER.ColliderDesc.cuboid(half.x, half.y, half.z)
+            .setTranslation(relativePosition.x, relativePosition.y, relativePosition.z)
+            .setRotation({ x: relativeQuaternion.x, y: relativeQuaternion.y, z: relativeQuaternion.z, w: relativeQuaternion.w }), elevatorRigidBody);
+          collider.setEnabled(mesh.userData.collisionEnabled !== false);
+          elevatorColliders.set(mesh, collider);
+        });
+      }
+      // Keep the character capsule a small epsilon above authored floor tops.
+      // Without this clearance, crossing onto the moving cabin floor starts
+      // with a penetrating capsule and Rapier can return zero movement while
+      // repeatedly resolving the same floor contact.
+      const playerPhysicsY = 0.84;
       const playerBody = world.createRigidBody(
-        RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(simulation.player.x, 0.8, simulation.player.z),
+        RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(simulation.player.x, playerPhysicsY, simulation.player.z),
       );
       const collider = world.createCollider(RAPIER.ColliderDesc.capsule(0.52, 0.28), playerBody);
       const controller = world.createCharacterController(0.02);
@@ -1655,11 +1967,15 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       // controller query. Static colliders created after a world step are not
       // visible to computeColliderMovement until the pipeline is synchronized.
       world.step();
-      rapierRuntime = { world, controller, collider, playerBody, staticBody, staticColliders, disposed: false };
+      rapierRuntime = { world, controller, collider, playerBody, staticBody, staticColliders, elevatorBody: elevatorRigidBody, elevatorColliders, disposed: false };
       if (import.meta.env.DEV) {
         console.debug("Rapier initialized", {
           staticColliders: staticColliders.size,
           enabledColliders: [...staticColliders.values()].filter((item) => item.isEnabled()).length,
+          elevatorColliders: elevatorColliders.size,
+          elevatorParts: [...elevatorColliders.keys()].map((mesh) => mesh.userData.debugSource),
+          elevatorEnabled: [...elevatorColliders.values()].filter((item) => item.isEnabled()).length,
+          elevatorBodyType: elevatorRigidBody.bodyType(),
           player: [simulation.player.x, simulation.player.y, simulation.player.z],
         });
       }
@@ -1693,13 +2009,46 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       });
       nextHeld.forEach((hand, objectId) => {
         const mesh = objectMeshes.get(objectId);
-        if (!mesh) return;
+        if (!mesh) {
+          if (import.meta.env.DEV) {
+            console.warn("Held visual missing mesh", {
+              object_id: objectId,
+              hand,
+              known_meshes: [...objectMeshes.keys()].filter((id) => id.includes("detergent")),
+              known_nodes: [...nodeById.keys()].filter((id) => id.includes("detergent")),
+            });
+          }
+          return;
+        }
         if (!heldVisualIds.has(objectId)) {
+          if (import.meta.env.DEV) {
+            console.debug("Held visual attach", {
+              object_id: objectId,
+              hand,
+              before_visible: mesh.visible,
+              before_parent: mesh.parent?.userData?.id ?? mesh.parent?.name ?? "scene",
+              node: nodeById.get(objectId),
+            });
+          }
           handAnchors[hand].add(mesh);
           mesh.position.set(0, 0, -0.16);
           mesh.quaternion.identity();
           mesh.userData.held = true;
+          // Retrieval clears the runtime hidden metadata. Apply the visual
+          // hand state immediately as well, so the object does not remain
+          // invisible until a later animation frame.
+          mesh.visible = true;
+          mesh.userData.collisionEnabled = false;
           heldVisualIds.add(objectId);
+          if (import.meta.env.DEV) {
+            console.debug("Held visual attached", {
+              object_id: objectId,
+              hand,
+              visible: mesh.visible,
+              parent: mesh.parent?.name,
+              position: mesh.position.toArray(),
+            });
+          }
         }
       });
       heldByHand.left = [...nextHeld.entries()].find(([, hand]) => hand === "left")?.[0] ?? null;
@@ -1977,12 +2326,18 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     const dispatchInteraction = (request: Parameters<Scene3DCanvasProps["onSimulationInteraction"]>[0]) => {
       const next = interactionChain
         .catch(() => undefined)
+        .then(() => movementBarrierRef.current)
         .then(() => simulationInteractionRef.current(request));
       interactionChain = next.then(() => undefined, () => undefined);
       return next;
     };
     const simulationClick = (hit: THREE.Intersection<THREE.Object3D>, surfacePlacement = false) => {
       if (!simulation.active) return;
+      let hitSource: THREE.Object3D | null = hit.object;
+      while (hitSource && !hitSource.userData.debugSource) hitSource = hitSource.parent;
+      if (hitSource?.userData.debugSource) {
+        logElevatorMesh(hitSource, "Elevator interaction hit");
+      }
       const componentRole = text(hit.object.userData.componentRole);
       const componentId = text(hit.object.userData.componentId);
       // Generated component meshes (buttons, slots, faucets) may carry only a
@@ -2067,6 +2422,15 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           });
         }
         syncHeldVisuals();
+        if (import.meta.env.DEV) {
+          console.debug("Interaction action visual sync", {
+            action: actionName,
+            object_id: objectId,
+            hand,
+            target_id: targetId,
+            mesh_exists: objectId ? objectMeshes.has(objectId) : false,
+          });
+        }
       });
       if (surfacePlacement && placementPreview) {
         placementPreview.visible = false;
@@ -2080,6 +2444,10 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     };
     const clearInteractionHighlight = () => {
       if (interactionHighlight) interactionHighlight.visible = false;
+      if (slotHintKeyRef.current) {
+        slotHintKeyRef.current = "";
+        setSlotHint(null);
+      }
     };
     const updateInteractionHighlight = (hit?: THREE.Intersection<THREE.Object3D>) => {
       if (!simulation.active || !hit || hit.object.userData.simulationSurface) {
@@ -2092,6 +2460,22 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         return;
       }
       const target = hit.object.userData.componentId ? hit.object : objectMeshes.get(id) ?? hit.object;
+      const isSlot = text(target.userData.componentRole) === "storage_slot"
+        || text(hit.object.userData.componentRole) === "storage_slot";
+      if (isSlot) {
+        const slotNode = nodeById.get(id);
+        const stack = Array.isArray(slotNode?.storage_stack) ? slotNode.storage_stack : [];
+        const count = stack.length || (receptacleContents.get(id)?.length ?? 0);
+        const capacity = Number(slotNode?.max_items ?? slotNode?.max_capacity ?? target.userData.maxCapacity ?? 0) || 0;
+        const hintKey = `${id}:${count}:${capacity}`;
+        if (slotHintKeyRef.current !== hintKey) {
+          slotHintKeyRef.current = hintKey;
+          setSlotHint({ count, capacity });
+        }
+      } else if (slotHintKeyRef.current) {
+        slotHintKeyRef.current = "";
+        setSlotHint(null);
+      }
       if (!interactionHighlight) {
         interactionHighlight = new THREE.BoxHelper(target, 0xfacc15);
         interactionHighlight.userData.layer = "objects";
@@ -2105,10 +2489,18 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         clearPlacementPreview();
         return;
       }
-      const componentId = text(hit.object.userData.componentId);
+      // A slot can be hit on its transparent plane or on a nested mesh. Walk
+      // the part tree so placement never falls back to the appliance/room
+      // root when the actionable slot metadata lives on a parent.
+      let targetSource: THREE.Object3D | null = hit.object;
+      while (targetSource && !text(targetSource.userData.componentId)
+        && text(targetSource.userData.componentRole) !== "storage_slot") {
+        targetSource = targetSource.parent;
+      }
+      const componentId = text(targetSource?.userData.componentId) || text(hit.object.userData.componentId);
       const objectId = objectIdForHit(hit.object, objectMeshes);
       const targetId = componentId || objectId || text(hit.object.userData.id);
-      const targetObject = componentId ? hit.object : objectMeshes.get(objectId) ?? hit.object;
+      const targetObject = componentId ? (targetSource ?? hit.object) : objectMeshes.get(objectId) ?? hit.object;
       const canReceive = Boolean(targetObject.userData.canReceive)
         || Boolean(hit.object.userData.simulationSurface)
         || text(targetObject.userData.componentRole) === "storage_slot"
@@ -2284,7 +2676,18 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           dragState.hit = false;
           return;
         }
-        const cardId = controlTargets.get(id)?.[0] || text(hit.object.userData.hostId) || id;
+        // A PartTree child is a graph node in its own right (for example an
+        // elevator floor button).  Prefer that node for the status card rather
+        // than promoting every hit to the composite/root object.  Generated
+        // visual affordances may still use a synthetic component id (such as
+        // ``elevator_car.floor_buttons``), so only select it when it resolves
+        // to an actual node; otherwise fall back to its explicit host/root.
+        const componentId = text(hit.object.userData.componentId);
+        const hostId = text(hit.object.userData.hostId) || componentHostById.get(componentId) || "";
+        const cardId = (componentId && nodeById.has(componentId) ? componentId : "")
+          || controlTargets.get(id)?.[0]
+          || hostId
+          || id;
         if (nodeById.has(cardId)) {
           setStatusCardId(cardId);
           selectRef.current(cardId);
@@ -2417,6 +2820,8 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         return;
       }
       moveInFlightRef.current = true;
+      let releaseMovement: () => void = () => undefined;
+      movementBarrierRef.current = new Promise<void>((resolve) => { releaseMovement = resolve; });
       void simulationMoveRef.current(
         direction,
         elapsedSeconds,
@@ -2448,18 +2853,21 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
             return position?.length === 3 && position.every((value) => Number.isFinite(Number(value)))
               ? new THREE.Vector3(Number(position[0]), Number(position[2]), -Number(position[1])) : null;
           })();
-        if (authoritative) {
-          // The local pose is already predicted at render rate. A successful
-          // response can be an older network sample, so avoid easing small
-          // corrections backwards during rapid direction changes.
-          const error = authoritative.clone().sub(simulation.player);
-          if (result.applied === false || error.length() > 0.75) simulation.player.copy(authoritative);
+        if (authoritative && result.applied === false) {
+          // Rapier owns the immediate local pose. A successful backend sample
+          // is asynchronous and may describe an older input frame; applying
+          // it here creates visible snaps and can move the player through a
+          // doorway after the local controller stopped at its collider. Only
+          // an explicit rejection is authoritative enough to correct the
+          // local pose.
+          simulation.player.copy(authoritative);
         }
         if (actor?.room_id != null) simulation.roomId = text(actor.room_id);
         if (actor?.moving != null) simulation.moving = Boolean(actor.moving);
         if (result.applied === false) console.warn("Simulation movement rejected", result.failures);
       }).catch((error) => console.warn("Simulation movement request failed", error)).finally(() => {
         moveInFlightRef.current = false;
+        releaseMovement();
         const pending = pendingMoveRef.current;
         pendingMoveRef.current = null;
         if (pending && simulation.active) sendMovement(pending.direction, pending.elapsed);
@@ -2471,6 +2879,95 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       const delta = Math.min((now - simulation.lastFrame) / 1000, 0.05);
       if (simulation.active) {
         syncHeldVisuals();
+        // Advance the cabin visual pose before querying player movement. The
+        // resulting delta is the single transport motion used by Three.js,
+        // Rapier, and a passenger already standing inside the cabin.
+        let elevatorFrameDeltaY = 0;
+        if (rapierRuntime && !rapierRuntime.disposed) {
+          const elevatorMesh = [...objectMeshes.values()].find((mesh) => semantic(nodeById.get(String(mesh.userData.id))) === "elevator");
+          const elevatorRoot = elevatorMesh?.userData.elevatorVisualRoot as THREE.Group | undefined;
+          const elevatorNode = elevatorMesh ? nodeById.get(String(elevatorMesh.userData.id)) : undefined;
+          const elevatorStates = elevatorNode?.states as Record<string, unknown> | undefined;
+          if (elevatorRoot && elevatorStates) {
+            elevatorRoot.updateWorldMatrix(true, true);
+            const previousPosition = elevatorRoot.getWorldPosition(new THREE.Vector3());
+            const targetHeight = Number(elevatorStates.current_height ?? 0);
+            if (Number.isFinite(targetHeight)) {
+              const baseY = Number(elevatorRoot.userData.elevatorBaseY ?? elevatorRoot.position.y);
+              const currentHeight = Number(elevatorRoot.userData.elevatorRenderHeight ?? targetHeight);
+              // Runtime snapshots may advance the semantic height by a whole
+              // tick.  Move the visual cabin at a fixed physical speed so a
+              // snapshot cannot make it jump instantly to another floor.
+              const elevatorRenderSpeedMps = 2;
+              const heightDelta = targetHeight - currentHeight;
+              const maxHeightStep = elevatorRenderSpeedMps * delta;
+              const nextHeight = Math.abs(heightDelta) <= maxHeightStep
+                ? targetHeight
+                : currentHeight + Math.sign(heightDelta) * maxHeightStep;
+              elevatorRoot.userData.elevatorBaseY = baseY;
+              elevatorRoot.userData.elevatorRenderHeight = nextHeight;
+              elevatorRoot.position.y = baseY + nextHeight;
+              elevatorRoot.updateWorldMatrix(true, true);
+              const nextPosition = elevatorRoot.getWorldPosition(new THREE.Vector3());
+              elevatorFrameDeltaY = nextPosition.y - previousPosition.y;
+
+              // Check the old pose before applying its movement. Cabin width
+              // and depth come from the authored elevator anchor; the player
+              // must be horizontally inside the shell to be transported.
+              const localPlayer = simulation.player.clone().sub(previousPosition)
+                .applyQuaternion(elevatorRoot.getWorldQuaternion(new THREE.Quaternion()).invert());
+              const anchorSize = elevatorMesh?.geometry.boundingBox?.getSize(new THREE.Vector3()) ?? new THREE.Vector3(1.9, 2.4, 1.9);
+              const cabinWidth = anchorSize.x * 0.9;
+              const cabinDepth = anchorSize.z * 0.9;
+              const cabinHeight = anchorSize.y * 0.96;
+              const insideCabin = Math.abs(localPlayer.x) < cabinWidth * 0.5 - 0.08
+                && Math.abs(localPlayer.z) < cabinDepth * 0.5 - 0.08
+                && localPlayer.y > -0.2 && localPlayer.y < cabinHeight + 0.35;
+              if (insideCabin && Math.abs(elevatorFrameDeltaY) > 1e-7) {
+                simulation.player.y += elevatorFrameDeltaY;
+              }
+            }
+          }
+        }
+        // Synchronize the kinematic cabin before querying player movement.
+        // The previous order updated it after computeColliderMovement(), so
+        // the controller could query a stale cabin pose and appear to pass
+        // through its walls or jump when the pose caught up one frame later.
+        if (rapierRuntime && !rapierRuntime.disposed && rapierRuntime.elevatorBody) {
+          const elevatorMesh = [...objectMeshes.values()].find((mesh) => semantic(nodeById.get(String(mesh.userData.id))) === "elevator");
+          const elevatorRoot = elevatorMesh?.userData.elevatorVisualRoot as THREE.Group | undefined;
+          if (elevatorRoot) {
+            elevatorRoot.updateWorldMatrix(true, true);
+            const position = elevatorRoot.getWorldPosition(new THREE.Vector3());
+            const rotation = elevatorRoot.getWorldQuaternion(new THREE.Quaternion());
+            rapierRuntime.elevatorBody.setNextKinematicTranslation({ x: position.x, y: position.y, z: position.z });
+            rapierRuntime.elevatorBody.setNextKinematicRotation({ x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w });
+            const inverse = rotation.clone().invert();
+            rapierRuntime.elevatorColliders.forEach((collider, mesh) => {
+              // Resolve cabin-door passability from the canonical elevator
+              // state before the character query. The joint animation runs
+              // later in this frame, so relying only on the mesh flag here
+              // leaves one stale closed-door collider at the threshold and
+              // can trap the character inside an overlap.
+              const elevatorNode = [...nodeById.values()].find((candidate) => semantic(candidate) === "elevator");
+              const elevatorStates = elevatorNode?.states as Record<string, unknown> | undefined;
+              const cabinDoor = String(mesh.userData.debugSource || "").includes("car_door_");
+              const cabinPassable = elevatorStates?.is_open === true
+                || elevatorStates?.door_phase === "opening"
+                || elevatorStates?.door_phase === "dwelling";
+              const enabled = cabinDoor ? !cabinPassable : mesh.userData.collisionEnabled !== false;
+              mesh.userData.collisionEnabled = enabled;
+              collider.setEnabled(enabled);
+              mesh.updateWorldMatrix(true, false);
+              const meshPosition = mesh.getWorldPosition(new THREE.Vector3());
+              const localPosition = meshPosition.sub(position).applyQuaternion(inverse);
+              const meshRotation = inverse.clone().multiply(mesh.getWorldQuaternion(new THREE.Quaternion()));
+              collider.setTranslationWrtParent({ x: localPosition.x, y: localPosition.y, z: localPosition.z });
+              collider.setRotationWrtParent({ x: meshRotation.x, y: meshRotation.y, z: meshRotation.z, w: meshRotation.w });
+            });
+            rapierRuntime.world.step();
+          }
+        }
         const [rightAmount, forwardAmount] = movementAxes(simulation.keys);
         const length = Math.hypot(forwardAmount, rightAmount) || 1;
         const speed = 2.2 * delta;
@@ -2501,7 +2998,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
             // this render-driven controller.  Set the pose immediately before
             // querying, otherwise Rapier keeps testing the spawn position and
             // appears to have no collision at all.
-            rapierRuntime.playerBody.setTranslation({ x: simulation.player.x, y: 0.8, z: simulation.player.z }, true);
+            rapierRuntime.playerBody.setTranslation({ x: simulation.player.x, y: simulation.player.y - 0.76, z: simulation.player.z }, true);
             rapierRuntime.world.propagateModifiedBodyPositionsToColliders();
             rapierRuntime.controller.computeColliderMovement(
               rapierRuntime.collider,
@@ -2509,8 +3006,38 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
             );
             const corrected = rapierRuntime.controller.computedMovement();
             acceptedDelta.set(corrected.x, corrected.y, corrected.z);
+            if (import.meta.env.DEV && rapierRuntime.elevatorColliders.size > 0
+              && performance.now() - lastCollisionLogAt > 1000) {
+              const elevatorState = [...rapierRuntime.elevatorColliders.entries()].map(([mesh, item]) => ({
+                source: mesh.userData.debugSource,
+                enabled: item.isEnabled(),
+                parent: item.parent()?.handle,
+              }));
+              console.debug("Rapier elevator collision state", {
+                bodyType: rapierRuntime.elevatorBody?.bodyType(),
+                colliders: elevatorState,
+                player: [simulation.player.x, simulation.player.y, simulation.player.z],
+              });
+            }
             if (import.meta.env.DEV && rapierRuntime.controller.numComputedCollisions() > 0 && performance.now() - lastCollisionLogAt > 500) {
               lastCollisionLogAt = performance.now();
+              const runtime = rapierRuntime;
+              const collisionDetails = Array.from({ length: runtime.controller.numComputedCollisions() }, (_, index) => {
+                const collision = runtime.controller.computedCollision(index);
+                const source = collision?.collider
+                  ? [...runtime.elevatorColliders.entries()].find(([, collider]) => collider.handle === collision.collider?.handle)?.[0]?.userData.debugSource
+                    || [...runtime.staticColliders.entries()].find(([, collider]) => collider.handle === collision.collider?.handle)?.[0]?.userData.debugSource
+                    || "unknown"
+                  : "unknown";
+                return {
+                  source,
+                  toi: collision?.toi,
+                  normal1: collision?.normal1 ? [collision.normal1.x, collision.normal1.y, collision.normal1.z] : undefined,
+                  normal2: collision?.normal2 ? [collision.normal2.x, collision.normal2.y, collision.normal2.z] : undefined,
+                  applied: collision?.translationDeltaApplied ? [collision.translationDeltaApplied.x, collision.translationDeltaApplied.y, collision.translationDeltaApplied.z] : undefined,
+                  remaining: collision?.translationDeltaRemaining ? [collision.translationDeltaRemaining.x, collision.translationDeltaRemaining.y, collision.translationDeltaRemaining.z] : undefined,
+                };
+              });
               // Keep a small diagnostic breadcrumb while validating the
               // physics world in the browser. It is intentionally gated to
               // development builds and never affects movement.
@@ -2518,7 +3045,22 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
                 collisions: rapierRuntime.controller.numComputedCollisions(),
                 desired: [predictedDelta.x, predictedDelta.y, predictedDelta.z],
                 corrected: [corrected.x, corrected.y, corrected.z],
+                collisionDetails,
+                collisionSources: collisionDetails.map((detail) => detail.source),
+                enabledElevatorColliders: [...rapierRuntime.elevatorColliders.entries()]
+                  .filter(([, item]) => item.isEnabled())
+                  .map(([mesh]) => mesh.userData.debugSource),
+                player: [simulation.player.x, simulation.player.y, simulation.player.z],
               });
+              // Keep a non-collapsed diagnostic for browser consoles that
+              // show the object above as an opaque Array(20). This is the
+              // authoritative blocking source, unlike the Three.js ray hit.
+              console.debug("Rapier collision details", JSON.stringify({
+                player: [simulation.player.x, simulation.player.y, simulation.player.z],
+                desired: [predictedDelta.x, predictedDelta.y, predictedDelta.z],
+                corrected: [corrected.x, corrected.y, corrected.z],
+                details: collisionDetails,
+              }));
             }
           }
           if (acceptedDelta.lengthSq() > 0) {
@@ -2539,12 +3081,11 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
             simulation.moving = false;
           }
         }
-        simulation.player.y = 1.6;
         if (rapierRuntime) {
-          rapierRuntime.playerBody.setNextKinematicTranslation({ x: simulation.player.x, y: 0.8, z: simulation.player.z });
+          rapierRuntime.playerBody.setNextKinematicTranslation({ x: simulation.player.x, y: simulation.player.y - 0.76, z: simulation.player.z });
           rapierRuntime.world.propagateModifiedBodyPositionsToColliders();
         }
-        playerBody.position.set(simulation.player.x, 0.8, simulation.player.z);
+        playerBody.position.set(simulation.player.x, simulation.player.y - 0.8, simulation.player.z);
         playerBody.rotation.y = simulation.yaw;
         playerBody.visible = viewModeRef.current === "third";
         const third = viewModeRef.current === "third";
@@ -2579,6 +3120,27 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
               camera: [camera.position.x, camera.position.y, camera.position.z],
               targetCount: interactive.length + objectMeshes.size,
             });
+          }
+          // Room/shaft walls intentionally live only in the collision index:
+          // they are not interaction targets. Report the collider separately
+          // so a ray hitting an outer elevator wall is diagnosable without
+          // turning that wall into a backend Action target.
+          const colliderHit = raycaster.intersectObjects(collisionMeshes, true)
+            .find((candidate) => candidate.object.userData.collisionEnabled !== false);
+          let colliderSource = "";
+          if (colliderHit) {
+            let source: THREE.Object3D | null = colliderHit.object;
+            while (source && !source.userData.debugSource) source = source.parent;
+            colliderSource = text(source?.userData.debugSource)
+              || text(colliderHit.object.userData.id)
+              || "collider";
+          }
+          if (colliderSource !== lastDebugColliderId) {
+            lastDebugColliderId = colliderSource;
+            console.debug("Scene ray collider", colliderSource || "none", colliderHit ? {
+              distance: colliderHit.distance,
+              object: colliderHit.object.name,
+            } : undefined);
           }
         }
         updateInteractionHighlight(currentHit);
@@ -2630,13 +3192,15 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       }
       simulation.lastFrame = now;
       const time = performance.now() / 1000;
-      animatedMeshes.forEach(({ mesh, base }, id) => {
+      animatedMeshes.forEach(({ mesh, base, baseRotation }, id) => {
         const node = nodeById.get(id);
         const nodeStates = node?.states as Record<string, unknown> | undefined;
         const nodeSemantic = semantic(node);
         const cues = visualCuesOf(node);
         if (nodeSemantic === "sink") {
-          const level = THREE.MathUtils.clamp(Number(nodeStates?.fill_level ?? nodeStates?.water_level ?? (nodeStates?.has_water ? 100 : 0)) / 100, 0, 1);
+          const legacyFill = nodeStates?.fill_level == null ? null : Number(nodeStates.fill_level);
+          const waterLevel = Number(nodeStates?.water_level ?? (legacyFill == null ? (nodeStates?.has_water ? 100 : 0) : legacyFill * 100));
+          const level = THREE.MathUtils.clamp(waterLevel / 100, 0, 1);
           const filled = level > 0;
           mesh.visible = filled;
           const wave = filled ? 1 + Math.sin(time * 2.8) * 0.012 : 1;
@@ -2649,6 +3213,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         const falling = cues.has("falling") || node?.physics_state === "falling";
         if (!running && !falling) {
           mesh.position.copy(base);
+          mesh.rotation.copy(baseRotation);
           return;
         }
         if (falling) {
@@ -2656,33 +3221,47 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           mesh.position.set(base.x, Math.max(mesh.geometry.boundingBox?.max.y ?? 0.02, base.y - drop), base.z);
           return;
         }
-        const pulse = Math.sin(time * 24 + id.length) * 0.008;
+        const pulse = Math.sin(time * 24 + id.length) * 0.018;
         mesh.position.set(base.x + pulse, base.y, base.z - pulse * 0.7);
+        mesh.rotation.copy(baseRotation);
+        mesh.rotation.z += Math.sin(time * 18 + id.length) * (nodeSemantic === "washer" || nodeSemantic === "washing_machine" ? 0.028 : 0.012);
+        if (running && (nodeSemantic === "washer" || nodeSemantic === "washing_machine")) {
+          // The root mesh is the existing PartTree host. Rotating it moves all
+          // authored doors, drawer, panel, and cavity parts together.
+          const composite = composites.find((entry) => entry.id === id);
+          if (composite?.host && composite.host !== mesh) {
+            composite.host.rotation.copy(baseRotation);
+            composite.host.rotation.z += Math.sin(time * 18 + id.length) * 0.028;
+          }
+        }
+        mesh.scale.set(1, 1, 1);
       });
-      // The backend publishes the elevator's semantic current_height. The
-      // car root is the only transform we move; its cabin, doors, buttons,
-      // and any contained runtime visuals follow through the composite tree.
+      // Runtime state deltas can change clothing after the initial scene
+      // build. Keep the material as a pure projection of the canonical state
+      // instead of relying on the construction-time color.
       objectMeshes.forEach((mesh, id) => {
-        if (semantic(nodeById.get(id)) !== "elevator") return;
-        const states = nodeById.get(id)?.states as Record<string, unknown> | undefined;
-        const targetHeight = Number(states?.current_height ?? 0);
-        if (!Number.isFinite(targetHeight)) return;
-        const visualRoot = mesh.userData.elevatorVisualRoot as THREE.Group | undefined;
-        const target = visualRoot ?? mesh;
-        const baseY = Number(target.userData.elevatorBaseY ?? target.position.y);
-        const currentHeight = Number(target.userData.elevatorRenderHeight ?? targetHeight);
-        const nextHeight = currentHeight + (targetHeight - currentHeight) * Math.min(1, delta * 8);
-        target.userData.elevatorBaseY = baseY;
-        target.userData.elevatorRenderHeight = Math.abs(targetHeight - nextHeight) < 1e-4 ? targetHeight : nextHeight;
-        target.position.y = baseY + target.userData.elevatorRenderHeight;
-        if (import.meta.env.DEV && Math.abs(targetHeight - currentHeight) > 1e-4) {
-          console.debug("Elevator visual sync", {
-            id,
-            motion_state: states?.motion_state,
-            current_floor: states?.current_floor,
-            current_height: targetHeight,
-            rendered_height: target.userData.elevatorRenderHeight,
-          });
+        const node = nodeById.get(id);
+        if (semantic(node) !== "clothes") return;
+        const states = node?.states as Record<string, unknown> | undefined;
+        const material = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material;
+        if (!(material instanceof THREE.MeshStandardMaterial)) return;
+        if (states?.is_wet === true) material.color.setHex(0x38a3c7);
+        else if (states?.is_dirty === true) material.color.setHex(0x8b6b52);
+        else material.color.setHex(0x94a3b8);
+        material.roughness = states?.is_wet === true ? 0.3 : 0.72;
+        material.emissive.setHex(states?.folded === true ? 0x334155 : 0x000000);
+        material.emissiveIntensity = states?.folded === true ? 0.22 : 0;
+        material.needsUpdate = true;
+      });
+      detergentVisuals.forEach(({ bottle, liquid }, id) => {
+        const detergent = nodeById.get(id);
+        const states = detergent?.states as Record<string, unknown> | undefined;
+        const amount = THREE.MathUtils.clamp(Number(states?.amount ?? 1), 0, 1);
+        bottle.visible = Boolean(detergent);
+        if (detergent) {
+          const size = liquid.geometry.boundingBox?.getSize(new THREE.Vector3()) ?? new THREE.Vector3(0.04, 0.08, 0.03);
+          liquid.scale.y = Math.max(0.02, amount);
+          liquid.position.y = -size.y * 0.42 + size.y * 0.36 * amount;
         }
       });
       lightMeshes.forEach((light, id) => {
@@ -2738,6 +3317,12 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         const states = node?.states as Record<string, unknown> | undefined;
         syncButtonMaterial(mesh, states?.is_pressed === true || states?.is_on === true);
       });
+      componentVisuals.forEach((mesh, id) => {
+        const componentNode = nodeById.get(id);
+        if (semantic(componentNode) !== "button") return;
+        const states = componentNode?.states as Record<string, unknown> | undefined;
+        if (mesh instanceof THREE.Mesh) syncButtonMaterial(mesh, states?.is_pressed === true);
+      });
       composites.forEach((composite) => {
         const hostNode = nodeById.get(composite.id);
         const hostStates = hostNode?.states as Record<string, unknown> | undefined;
@@ -2758,14 +3343,29 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
             // decoded from generic JSON sources. Do not let the string
             // "false" become truthy and leave a closed door passable.
             const rawOpen = states?.is_open ?? hostStates?.is_open;
-            joint.open = rawOpen === true || rawOpen === 1 || rawOpen === "true";
+            const requestedOpen = rawOpen === true || rawOpen === 1 || rawOpen === "true";
+            // Landing doors are driven by the same elevator process. Hold
+            // them closed until the rendered cabin has reached its semantic
+            // stop; otherwise a snapshot can start the door animation while
+            // the cabin is still visually travelling between floors.
+            if (hostNode?.door_kind === "elevator_hall") {
+              const elevatorMesh = [...objectMeshes.values()].find((mesh) => semantic(nodeById.get(String(mesh.userData.id))) === "elevator");
+              const elevatorRoot = elevatorMesh?.userData.elevatorVisualRoot as THREE.Group | undefined;
+              const elevatorNode = elevatorMesh ? nodeById.get(String(elevatorMesh.userData.id)) : undefined;
+              const elevatorStates = elevatorNode?.states as Record<string, unknown> | undefined;
+              const semanticHeight = Number(elevatorStates?.current_height ?? 0);
+              const renderedHeight = Number(elevatorRoot?.userData.elevatorRenderHeight ?? semanticHeight);
+              joint.open = Math.abs(renderedHeight - semanticHeight) <= 0.02 && requestedOpen;
+            } else {
+              joint.open = requestedOpen;
+            }
           }
-          const runtimeTransform = componentNode?.world_transform;
-          joint.runtimeTransform = componentNode?.transform_space === "graphworld_z_up"
-            && componentNode?.transform_origin === "structure"
-            && runtimeTransform && typeof runtimeTransform === "object"
-            ? runtimeTransform as { position?: number[]; rotation?: number[]; scale?: number[] }
-            : undefined;
+          // Structure children are already mounted below the host PartTree.
+          // Their runtime snapshot also contains a derived world_transform,
+          // but applying that to a joint would compose the host transform and
+          // the local hinge/prismatic anchor twice. Keep child placement local
+          // and let the semantic joint state above drive the animation.
+          joint.runtimeTransform = undefined;
           // Every mesh in a door's articulation (panel, hinge pin, frame,
           // etc.) participates in the same collision state. Toggling only the
           // visible panel leaves an otherwise invisible child at the doorway
@@ -2785,7 +3385,12 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       composites.forEach((composite) => {
         if (!composite.id.startsWith("elevator_car_")) return;
         const states = nodeById.get(composite.id)?.states as Record<string, unknown> | undefined;
-        const open = states?.is_open === true || states?.door_phase === "opening" || states?.door_phase === "dwelling";
+        const elevatorMesh = objectMeshes.get(composite.id);
+        const elevatorRoot = elevatorMesh?.userData.elevatorVisualRoot as THREE.Group | undefined;
+        const semanticHeight = Number(states?.current_height ?? 0);
+        const renderedHeight = Number(elevatorRoot?.userData.elevatorRenderHeight ?? semanticHeight);
+        const carSettled = Math.abs(renderedHeight - semanticHeight) <= 0.02;
+        const open = carSettled && (states?.is_open === true || states?.door_phase === "opening" || states?.door_phase === "dwelling");
         composite.joints.forEach((joint) => {
           if (joint.id.includes("car_door_")) joint.mesh.userData.collisionEnabled = !open;
         });
@@ -2803,13 +3408,25 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           // collider then blocks the doorway naturally.
           const targetProgress = joint.open ? 1 : 0;
           const transitioning = Math.abs(joint.progress - targetProgress) > 0.01;
-          const enabled = !transitioning;
+          const isCabinDoor = composite.id.startsWith("elevator_car_") && joint.id.includes("car_door_");
+          // Cabin doors are never obstacles while open, even after their
+          // sliding animation reaches its final pose. They become collidable
+          // only after a complete closed pose, preventing the open door leaf
+          // from trapping the player at the threshold.
+          const enabled = isCabinDoor ? !joint.open && !transitioning : !transitioning;
           const root = joint.pivot ?? joint.mesh;
           root.traverse((child) => {
             if (child instanceof THREE.Mesh) child.userData.collisionEnabled = enabled;
           });
           if (import.meta.env.DEV && composite.id === "door_entrance") {
-            console.debug("Door collision sync", { id: composite.id, open: joint.open, enabled });
+            // Report only semantic collision state transitions. Joint progress
+            // changes every render frame while a door animates and must not
+            // turn this diagnostic into a console flood.
+            const debugState = `${joint.open}:${enabled}`;
+            if (debugState !== lastDoorCollisionDebug) {
+              lastDoorCollisionDebug = debugState;
+              console.debug("Door collision sync", { id: composite.id, open: joint.open, enabled });
+            }
           }
         });
       });
@@ -2830,18 +3447,39 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
           collider.setTranslation({ x: center.x, y: center.y, z: center.z });
           collider.setRotation({ x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w });
         });
+        const elevatorMesh = [...objectMeshes.values()].find((mesh) => semantic(nodeById.get(String(mesh.userData.id))) === "elevator");
+        const elevatorRoot = elevatorMesh?.userData.elevatorVisualRoot as THREE.Group | undefined;
+        if (elevatorRoot && rapierRuntime.elevatorBody) {
+          elevatorRoot.updateWorldMatrix(true, true);
+          const position = elevatorRoot.getWorldPosition(new THREE.Vector3());
+          const rotation = elevatorRoot.getWorldQuaternion(new THREE.Quaternion());
+          rapierRuntime.elevatorBody.setNextKinematicTranslation({ x: position.x, y: position.y, z: position.z });
+          rapierRuntime.elevatorBody.setNextKinematicRotation({ x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w });
+          rapierRuntime.elevatorColliders.forEach((collider, mesh) => {
+            collider.setEnabled(mesh.userData.collisionEnabled !== false);
+            mesh.updateWorldMatrix(true, false);
+            const meshPosition = mesh.getWorldPosition(new THREE.Vector3());
+            const relativePosition = meshPosition.clone().sub(position).applyQuaternion(rotation.clone().invert());
+            const meshRotation = mesh.getWorldQuaternion(new THREE.Quaternion());
+            const relativeRotation = rotation.clone().invert().multiply(meshRotation);
+            // Door joints move their Three.js meshes after the kinematic body
+            // is created. Keep the attached Rapier shape at that same local
+            // pose, otherwise the collider remains at the closed-door pose.
+            collider.setTranslationWrtParent({ x: relativePosition.x, y: relativePosition.y, z: relativePosition.z });
+            collider.setRotationWrtParent({ x: relativeRotation.x, y: relativeRotation.y, z: relativeRotation.z, w: relativeRotation.w });
+          });
+        }
         rapierRuntime.world.step();
       }
-      // Fixed structure links can be positioned directly from the backend
-      // world transform. Moving links remain owned by the joint animation
-      // above, which interpolates the runtime joint state locally.
-      componentVisuals.forEach((visual, componentId) => {
-        if (componentJointTypes.get(componentId) !== "fixed") return;
-        const componentNode = nodeById.get(componentId);
-        const transform = componentNode?.world_transform;
-        if (componentNode?.transform_space !== "graphworld_z_up" || !transform || typeof transform !== "object") return;
-        applyProtocolWorldToThree(visual, transform as { position?: number[]; rotation?: number[]; scale?: number[] });
-      });
+      // PartTree visuals are authored from the host dimensions and their
+      // local anchors above. Runtime snapshots also expose protocol
+      // world_transform for every structure child, but applying that world
+      // transform here would place an already-attached component a second
+      // time. In Run this made appliance doors recede into the body and put
+      // microwave hinges/buttons at the wrong location, while editor mode
+      // (which has no runtime world_transform) looked correct. The host root
+      // transform and joint state are the single visual source for all
+      // generated PartTree components.
       // Runtime placement owns the final transform.  Apply it to the root
       // object mesh as well as articulated components so a confirmed surface
       // or floor placement cannot remain at its old editor position.
@@ -2850,6 +3488,11 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         // follow the agent, not their last semantic world transform.
         if (heldVisualIds.has(id) || mesh.userData.held) return;
         const node = nodeById.get(id);
+        // The existing animated-mesh loop owns the transform while a washer
+        // is running. Do not immediately overwrite its oscillation with the
+        // unchanged runtime world transform.
+        if (["washer", "washing_machine"].includes(semantic(node))
+          && Boolean((node?.states as Record<string, unknown> | undefined)?.is_running)) return;
         // Elevator height is interpolated from runtime current_height above;
         // applying its snapshot transform here would overwrite that motion.
         if (semantic(node) === "elevator") return;
@@ -2860,6 +3503,22 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         const hidden = storageMode === "hidden" || node.visibility === false;
         mesh.visible = !hidden;
         mesh.userData.collisionEnabled = !hidden && node.collision_enabled !== false;
+        if (import.meta.env.DEV && id.includes("detergent") && heldVisualIds.has(id)) {
+          console.debug("Held visual runtime visibility", {
+            object_id: id,
+            hidden,
+            storage_mode: node.storage_mode,
+            visibility: node.visibility,
+            parent: mesh.parent?.name,
+            visible: mesh.visible,
+          });
+        }
+        // A contained load is mounted at the appliance origin and must stay
+        // out of interaction/physics until the runtime exposes it again.
+        if (hidden) {
+          mesh.userData.pickable = false;
+          mesh.userData.collisionEnabled = false;
+        }
       });
       updateVisualEffects(effectMeshes, nodeById, time);
       objectLabels.forEach((label, id) => {
@@ -2884,7 +3543,12 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     // Rapier cleanup follows the renderer lifecycle.
     // @ts-ignore Rapier runtime is narrowed by the guard in this compact cleanup.
     return () => { effectDisposed = true; rapierInitCancelled = true; if (rapierRuntime) { rapierRuntime.disposed = true; rapierRuntime.controller.free(); rapierRuntime.world.removeCollider(rapierRuntime.collider, true); rapierRuntime.staticColliders.forEach((collider) => rapierRuntime.world.removeCollider(collider, true)); rapierRuntime.world.free(); rapierRuntime = null; } handsRef.current.left = false; handsRef.current.right = false; if (simulation.active) { simulationStateRef.current = { player: simulation.player.clone(), yaw: simulation.yaw, pitch: simulation.pitch, roomId: simulation.roomId, moving: simulation.moving }; simulationActiveRef.current = false; if (document.pointerLockElement === renderer.domElement) document.exitPointerLock(); cameraStateRef.current = { position: camera.position.clone(), target: controls.target.clone() }; } else { simulationStateRef.current = null; cameraStateRef.current = { position: camera.position.clone(), target: controls.target.clone() }; } simulationControllerRef.current = null; window.removeEventListener("keydown", onKeyDown); window.removeEventListener("keyup", onKeyUp); document.removeEventListener("mousemove", onMouseLook); document.removeEventListener("pointerlockchange", onPointerLockChange); if (pendingTransform.changed) commitTransform(); transformControls.detach(); transformControls.dispose(); transformControlsRef.current = null; rotationControls.detach(); rotationControls.dispose(); rotationControlsRef.current = null; cancelAnimationFrame(frame); observer.disconnect(); renderer.domElement.removeEventListener("pointerdown", onPointerDown); renderer.domElement.removeEventListener("pointermove", onPointerMove); renderer.domElement.removeEventListener("pointerup", onPointerUp); controls.dispose(); renderer.dispose(); sceneRef.current = null; scene.traverse((item) => { if (item instanceof THREE.Mesh) { item.geometry.dispose(); if (Array.isArray(item.material)) item.material.forEach((material) => material.dispose()); else item.material.dispose(); } }); host.replaceChildren(); };
-  }, [layout, nodes, labelsVisible, catalog, onInteractionHit]);
+  // `nodes` changes on every runtime interaction (pick/place/press). Rebuilding
+  // this effect for those state deltas disposes Rapier, exits pointer lock,
+  // and stops the active simulation. The live Three scene owns per-frame
+  // runtime state; layout/catalog changes remain the structural rebuild points.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [layout, labelsVisible, catalog, onInteractionHit]);
 
   return <div className="scene3d-stage" aria-label="3D scene editor">
     <div className="scene3d-renderer" ref={hostRef} />
@@ -2905,6 +3569,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
     {simulationActive && <button className="scene3d-view-toggle" type="button" onClick={() => setViewMode((mode) => mode === "first" ? "third" : "first")}>{viewMode === "first" ? "第三人称" : "第一人称"}</button>}
     {simulationActive && <>
       <div className="scene3d-crosshair" aria-hidden="true" />
+      {slotHint && <div className="scene3d-slot-hint" role="status" aria-live="polite">容纳槽 {slotHint.count} / {slotHint.capacity || "-"}</div>}
       <div className="scene3d-simulation-hint">
         <strong>{viewMode === "first" ? "第一人称仿真" : "第三人称仿真"}</strong>
         <span>WASD 移动 · 鼠标观察 · 左键查看状态 · Q/E 交互 · Esc 释放鼠标</span>
@@ -2922,7 +3587,7 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
         return <section className="scene3d-status-card" aria-label="物体状态">
           <header><strong>{nodeName(node)}</strong><button type="button" aria-label="关闭状态卡片" title="关闭" onClick={() => setStatusCardId("")}><X size={15} /></button></header>
           {Boolean(states.is_running) && <div className="scene3d-device-progress" aria-label="设备运行进度">
-            {(() => { const remaining = Number(states.cycle_remaining ?? 0); const configured = Number(node.cycle_duration ?? node.duration_steps ?? 3); const progress = Math.max(0, Math.min(1, 1 - remaining / Math.max(1, configured))); return <><div className="scene3d-device-progress-head"><span>运行中</span><strong>{Math.round(progress * 100)}%</strong></div><div className="scene3d-device-progress-track"><span style={{ width: `${progress * 100}%` }} /></div></>; })()}
+            {(() => { const remaining = Number(states.cycle_remaining ?? 0); const configured = Number(node.cycle_duration ?? node.duration_steps ?? (["washer", "washing_machine"].includes(semantic(node)) ? 10 : 3)); const progress = Math.max(0, Math.min(1, 1 - remaining / Math.max(1, configured))); return <><div className="scene3d-device-progress-head"><span>运行中</span><strong>{Math.round(progress * 100)}%</strong></div><div className="scene3d-device-progress-track"><span style={{ width: `${progress * 100}%` }} /></div></>; })()}
           </div>}
           <dl>
             <dt>属性</dt>

@@ -2,6 +2,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Callable
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+def _ancestor_ids(state: dict[str, Any], node_id: str):
+    current = str(node_id or "")
+    seen: set[str] = set()
+    while current and current not in seen:
+        seen.add(current)
+        current = str((state.get("parent_of") or {}).get(current) or "")
+        if current:
+            yield current
 
 from backend.core.action import ACTION_SPECS, Action, ActionSpec, ActionType, action_spec
 
@@ -32,6 +45,7 @@ from backend.runtime.action_requirements import (
     adjacent_room_failure, capacity_place_failures, carrying_type_failures,
     contained_capability_failures, container_access_failure, device_door_failures,
     dump_failures, elevator_room_failure, place_target_failure, process_input_failures,
+    process_input_failures_for_control,
     requires_closed_to_start, structural_door_failure, trash_place_failures,
 )
 from backend.core.state import DiscreteState
@@ -113,6 +127,44 @@ def press_target(state: dict[str, Any], target_id: str, payload: dict[str, Any] 
     target = node(state, target_id)
     target_states = mutable_states(target)
     target_states[DiscreteState.IS_PRESSED.value] = True
+    # Cabin door controls are commands to the owning transport device, not
+    # ordinary toggle switches. Opening immediately makes the landing
+    # passable and resets the dwell timer; closing starts the normal closing
+    # phase and lets the elevator process finish the cycle on its next tick.
+    component_role = str(target.get("component_role") or "").lower()
+    owner_id = str(target.get("owner_id") or "")
+    if component_role in {"open_button", "close_button"} and owner_id:
+        owner = node(state, owner_id)
+        owner_states = mutable_states(owner)
+        if "transport_device" in object_capabilities(owner):
+            if component_role == "open_button":
+                # Cabin controls cannot open doors while the car is travelling.
+                # The transport state machine owns the transition back to
+                # opening once the requested floor has been reached.
+                if str(owner_states.get("motion_state") or "") == "moving":
+                    target_states[DiscreteState.IS_ON.value] = False
+                    return
+                owner_states["is_open"] = True
+                # A command from the cabin button starts the same semantic
+                # cycle as an arrival: expose the door immediately, let the
+                # renderer play its opening transition, then begin the full
+                # dwell interval on the next runtime tick.  When the door is
+                # already open, pressing again is an explicit dwell reset.
+                current_phase = str(owner_states.get("door_phase") or "closed")
+                owner_states["door_phase"] = "dwelling" if current_phase in {"opening", "dwelling"} else "opening"
+                owner_states["dwell_remaining"] = 2
+                # Preserve the current motion state only when the car is
+                # already stopped/idle; pressing open must never cancel travel.
+                if str(owner_states.get("motion_state") or "") not in {"moving"}:
+                    owner_states["motion_state"] = "stopped"
+            elif str(owner_states.get("door_phase") or "") in {"opening", "dwelling"} or bool(owner_states.get("is_open")):
+                owner_states["is_open"] = False
+                owner_states["door_phase"] = "closing"
+            # Cabin open/close controls are momentary commands. Unlike a
+            # floor or hall request, their indicator must not latch across
+            # subsequent simulation ticks.
+            target_states[DiscreteState.IS_ON.value] = False
+            return
     if semantic(target) == "button" and (target.get("request_floor") or target.get("request_kind")):
         # Call/floor buttons remain lit until the elevator reaches the
         # requested floor. The elevator process clears this latch on arrival.
@@ -141,6 +193,14 @@ def press_target(state: dict[str, Any], target_id: str, payload: dict[str, Any] 
     if "water_source_control" in capabilities:
         target_states[DiscreteState.IS_ON.value] = not bool(target_states.get(DiscreteState.IS_ON.value, False))
         _set_controlled_sink_water(state, target_id, bool(target_states[DiscreteState.IS_ON.value]))
+        return
+    if "water_reservoir" in capabilities:
+        # A direct interaction with a sink/drain empties the reservoir. Water
+        # quantity is canonical; `has_water` remains a derived compatibility
+        # flag for older scene data.
+        target_states["water_level"] = 0.0
+        target_states["has_water"] = False
+        target_states["water_flowing"] = False
         return
     target_duration = _process_duration(target)
     if target_duration:
@@ -171,6 +231,37 @@ def press_target(state: dict[str, Any], target_id: str, payload: dict[str, Any] 
                     request_kind,
                     step=int(state.get("world_state", {}).get("step") or 0),
                 )
+                controlled_states = mutable_states(controlled)
+                current_floor = str(controlled_states.get("current_floor") or "")
+                phase = str(controlled_states.get("door_phase") or "closed")
+                # A hall request made on the floor currently served by the
+                # car is an immediate door-cycle request. Do not leave this
+                # edge case to direction selection: the car may be closing
+                # or already closed while the request arrives.
+                if request_floor == current_floor and str(controlled_states.get("motion_state") or "") != "moving":
+                    controlled["request_queue"] = [
+                        item for item in (controlled.get("request_queue") or [])
+                        if str(item.get("floor_id") or "") != current_floor
+                    ]
+                    if phase in {"opening", "dwelling"} or bool(controlled_states.get("is_open")):
+                        controlled_states["door_phase"] = "dwelling"
+                        controlled_states["is_open"] = True
+                        controlled_states["dwell_remaining"] = 2
+                    elif phase == "closing":
+                        controlled_states["door_phase"] = "dwelling"
+                        controlled_states["is_open"] = True
+                        controlled_states["dwell_remaining"] = 2
+                    else:
+                        # The car is already at this floor. Opening is a
+                        # direct response to the hall call; waiting for a
+                        # second tick here left the button lit while the door
+                        # remained closed when the client did not immediately
+                        # issue another tick.
+                        controlled_states["arrival_pending"] = False
+                        controlled_states["door_phase"] = "opening"
+                        controlled_states["is_open"] = True
+                        controlled_states["motion_state"] = "stopped"
+                        controlled_states["dwell_remaining"] = 2
                 state.setdefault("world_state", {}).setdefault("event_log", []).append({
                     "type": "elevator_request_added",
                     "elevator_id": str(controlled_id),
@@ -193,6 +284,13 @@ def press_target(state: dict[str, Any], target_id: str, payload: dict[str, Any] 
                 start_process(state, controlled_id)
         if "flushable" in object_capabilities(controlled):
             controlled_states[DiscreteState.IS_DIRTY.value] = False
+        elif "water_reservoir" in object_capabilities(controlled):
+            # Drain controls are ordinary control edges. Keep the reservoir's
+            # canonical quantity in `water_level`; `has_water` is only the
+            # derived compatibility flag used by older scene exports.
+            controlled_states["water_level"] = 0.0
+            controlled_states["has_water"] = False
+            controlled_states["water_flowing"] = False
         elif str(controlled.get("door_kind") or "") == "structural":
             controlled_states[DiscreteState.IS_OPEN.value] = True
         elif DiscreteState.IS_ON.value in controlled_states:
@@ -221,6 +319,10 @@ def _consume_appliance_detergent(state: dict[str, Any], appliance_id: str) -> No
             child_id
             for child_id in descendants_of(state, appliance_id)
             if object_capabilities(node(state, child_id)) & required
+            and any(
+                str(node(state, ancestor_id).get("component_role") or "").lower() == "drawer"
+                for ancestor_id in _ancestor_ids(state, child_id)
+            )
         ),
         None,
     )
@@ -236,6 +338,14 @@ def _consume_appliance_detergent(state: dict[str, Any], appliance_id: str) -> No
     state.get("nodes", {}).pop(detergent_id, None)
     state.get("parent_of", {}).pop(detergent_id, None)
     state.get("relation_of", {}).pop(detergent_id, None)
+    # Keep the owning slot's LIFO metadata consistent with the consumed
+    # instance; otherwise the UI continues to report a phantom 1/N load and
+    # later retrieval attempts target a node that no longer exists.
+    for candidate in state.get("nodes", {}).values():
+        stack = candidate.get("storage_stack") if isinstance(candidate, dict) else None
+        if isinstance(stack, list) and detergent_id in stack:
+            candidate["storage_stack"] = [value for value in stack if str(value) != detergent_id]
+    mutable_states(appliance)["detergent_loaded"] = False
 
 
 def _apply_process_start_effects(state: dict[str, Any], device_id: str) -> None:
@@ -641,7 +751,19 @@ def require_place_target(ctx: ActionContext) -> str | None:
 
 
 def require_target_same_room(ctx: ActionContext) -> str | None:
-    return None if same_room(ctx.state, ctx.actor_id, ctx.target_id) else "target is not in the same room"
+    if same_room(ctx.state, ctx.actor_id, ctx.target_id):
+        return None
+    if str(ctx.target_id).startswith("elevator_car_"):
+        logger.warning(
+            "elevator component room rejection target=%s actor_room=%s target_room=%s actor_parent=%s target_parent=%s agent_state=%s",
+            ctx.target_id,
+            room_of(ctx.state, ctx.actor_id),
+            room_of(ctx.state, ctx.target_id),
+            str((ctx.state.get("parent_of") or {}).get(ctx.actor_id) or ""),
+            str((ctx.state.get("parent_of") or {}).get(ctx.target_id) or ""),
+            ((ctx.state.get("world_state") or {}).get("agents") or {}).get(ctx.actor_id),
+        )
+    return "target is not in the same room"
 
 
 def require_place_target_accessible(ctx: ActionContext) -> str | None:
@@ -687,16 +809,22 @@ def require_surface_load(ctx: ActionContext) -> str | None:
 
 
 def require_volume_fit(ctx: ActionContext) -> str | None:
+    if str(ctx.target.get("component_role") or "").lower() == "storage_slot":
+        return None
     placed_id = ctx.object_id or holding(ctx.state, ctx.actor_id)
     return volume_fit_failure(ctx.state.get("nodes", {}).get(placed_id) or {}, ctx.target, ctx.payload)
 
 
 def require_volume_collision_free(ctx: ActionContext) -> str | None:
+    if str(ctx.target.get("component_role") or "").lower() == "storage_slot":
+        return None
     placed_id = ctx.object_id or holding(ctx.state, ctx.actor_id)
     return volume_collision_failure(ctx.state, ctx.state.get("nodes", {}).get(placed_id) or {}, ctx.target, ctx.payload)
 
 
 def require_volume_load(ctx: ActionContext) -> str | None:
+    if str(ctx.target.get("component_role") or "").lower() == "storage_slot":
+        return None
     placed_id = ctx.object_id or holding(ctx.state, ctx.actor_id)
     return volume_load_failure(ctx.state, ctx.state.get("nodes", {}).get(placed_id) or {}, ctx.target)
 
@@ -795,7 +923,24 @@ def require_press_ready(ctx: ActionContext) -> str | None:
             return f"resource exhausted: {ctx.target_id}"
     if requires_closed_to_start(ctx.target) and is_open(ctx.target):
         return f"device door must be closed before start: {ctx.target_id}"
-    input_failures = process_input_failures(ctx.state, ctx.target_id)
+    # A control button must still be able to stop its running device after a
+    # consumable was consumed at start. Do not re-run start prerequisites for
+    # that stop command.
+    controlled_devices = [
+        node(ctx.state, str(edge.get("target_id") or ""))
+        for edge in (ctx.state.get("control_edges") or ctx.state.get("edges") or [])
+        if isinstance(edge, dict)
+        and str(edge.get("source_id") or "") == str(ctx.target_id)
+        and str(edge.get("relation") or "") == "controls"
+    ]
+    stopping_controlled = any(
+        bool(states(device).get(DiscreteState.IS_RUNNING.value, False))
+        and "timed_device" in object_capabilities(device)
+        for device in controlled_devices
+    )
+    input_failures = [] if stopping_controlled else process_input_failures(ctx.state, ctx.target_id)
+    if not stopping_controlled:
+        input_failures.extend(process_input_failures_for_control(ctx.state, ctx.target_id))
     if input_failures:
         return "; ".join(input_failures)
     if process_definition(ctx.target) and not process_ready(ctx.state, ctx.target_id):
@@ -843,7 +988,41 @@ def effect_move(ctx: ActionContext) -> None:
 def effect_pick(ctx: ActionContext) -> None:
     hand = str((ctx.payload or {}).get("hand") or "right").lower()
     relation = "held_by" if hand in {"right", "primary"} else f"held_by_{hand}"
+    item = node(ctx.state, ctx.object_id)
+    previous_parent = parent_of(ctx.state, ctx.object_id)
+    previous_parent_node = node(ctx.state, previous_parent) if previous_parent else {}
+    logger.info(
+        "storage retrieval: actor=%s item=%s previous_parent=%s slot=%s stack_before=%s",
+        ctx.actor_id, ctx.object_id, previous_parent,
+        previous_parent_node.get("component_role") if previous_parent_node else None,
+        previous_parent_node.get("storage_stack") if previous_parent_node else None,
+    )
     move_node(ctx.state, ctx.object_id, ctx.actor_id, relation)
+    if previous_parent_node and (
+        str(previous_parent_node.get("component_role") or "") == "storage_slot"
+        or bool(previous_parent_node.get("can_contain"))
+    ):
+        stack = previous_parent_node.get("storage_stack")
+        if isinstance(stack, list):
+            previous_parent_node["storage_stack"] = [item_id for item_id in stack if str(item_id) != str(ctx.object_id)]
+    # A retrieval from a containment slot is the inverse of hidden storage.
+    # Clear all renderer/physics metadata after the position edge changes so
+    # the next snapshot makes the object visible and interactable again.
+    if previous_parent_node and (
+        str(previous_parent_node.get("component_role") or "") == "storage_slot"
+        or bool(previous_parent_node.get("can_contain"))
+    ):
+        item.pop("placement_transform", None)
+        item.pop("world_transform", None)
+        item.pop("storage_mode", None)
+        item["visibility"] = True
+        item["collision_enabled"] = True
+        item.pop("inserted_at", None)
+        logger.info(
+            "storage retrieval exposed: item=%s visibility=%s collision=%s parent=%s",
+            ctx.object_id, item.get("visibility"), item.get("collision_enabled"),
+            ctx.state.get("parent_of", {}).get(ctx.object_id),
+        )
 
 
 def effect_place(ctx: ActionContext) -> None:
@@ -853,6 +1032,27 @@ def effect_place(ctx: ActionContext) -> None:
     relation = place_relation_for_target(ctx.target)
     move_node(ctx.state, placed_id, ctx.target_id, relation)
     item = node(ctx.state, placed_id)
+    # Loading a consumable into a component storage slot updates the owning
+    # device's explicit readiness state. The slot remains the item's actual
+    # parent, so rendering and later removal both follow the same containment
+    # edge; the host flag is only a derived convenience for controls/UI.
+    if str(ctx.target.get("component_role") or "") == "storage_slot":
+        loaded_caps = object_capabilities(item)
+        cursor = str(ctx.target_id)
+        visited: set[str] = set()
+        while cursor and cursor not in visited:
+            visited.add(cursor)
+            parent_id = parent_of(ctx.state, cursor)
+            parent = node(ctx.state, parent_id)
+            if parent and "timed_device" in object_capabilities(parent):
+                required = {
+                    str(value).lower()
+                    for value in (parent.get("required_process_capabilities") or ())
+                }
+                if loaded_caps & required:
+                    mutable_states(parent)["detergent_loaded"] = True
+                break
+            cursor = parent_id
     if bool(ctx.target.get("allow_stacking", False)):
         item["_placement_state_nodes"] = list(ctx.state.get("nodes", {}).values())
     attach_surface_metadata(item, ctx.target, ctx.payload)
@@ -864,6 +1064,28 @@ def effect_place(ctx: ActionContext) -> None:
     item["placement_transform"] = placement["local_transform"]
     item["world_transform"] = placement["world_transform"]
     item["storage_mode"] = placement["storage_mode"]
+    # Containment slots are semantic storage, not visible support surfaces.
+    # Keep the object attached at the slot origin while removing it from
+    # rendering and physics until a later slot retrieval exposes it.
+    is_storage_slot = (
+        str(ctx.target.get("component_role") or "") == "storage_slot"
+        or bool(ctx.target.get("can_contain"))
+    )
+    if is_storage_slot:
+        item["storage_mode"] = "hidden"
+        item["visibility"] = False
+        item["collision_enabled"] = False
+        next_insert = max(
+            [int(node_value.get("inserted_at") or 0) for node_value in ctx.state.get("nodes", {}).values() if isinstance(node_value, dict)]
+            or [0]
+        ) + 1
+        item["inserted_at"] = next_insert
+        stack = ctx.target.setdefault("storage_stack", [])
+        if not isinstance(stack, list):
+            stack = []
+            ctx.target["storage_stack"] = stack
+        stack[:] = [item_id for item_id in stack if str(item_id) != str(placed_id)]
+        stack.append(str(placed_id))
     if placement.get("support_surface") is not None:
         item["support_surface"] = placement["support_surface"]
     _apply_sink_entry_effect(ctx.state, placed_id, ctx.target_id)

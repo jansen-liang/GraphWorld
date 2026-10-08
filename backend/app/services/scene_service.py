@@ -10,7 +10,7 @@ from backend.app.runtime.scene_importer import infer_scene_id, import_scene, nor
 from backend.app.runtime.scene_layout import ensure_scene_layout, validate_scene_layout
 from backend.app.db.models import ObjectCatalog
 from backend.generation.assets.object_templates import structure_for, materialize_templates
-from backend.runtime.scene_preparation import ensure_demo_elevator
+from backend.runtime.scene_preparation import ensure_demo_elevator, ensure_laundry_detergent_station
 from backend.app.schemas.graph import GraphEdge, GraphNode, SceneGraphResponse
 from backend.app.schemas.scene import SceneImportRequest, SceneLayoutGenerated, SceneLayoutGenerateRequest, SceneLayoutValidation, ScenePublishRequest, SceneRead, SceneVersionRead
 
@@ -98,6 +98,13 @@ class SceneService:
         source_json = ensure_scene_layout(source_json, catalog_dimensions)
         if str(source_json.get("scene_name") or "").startswith("simple_home"):
             ensure_demo_elevator(source_json)
+            ensure_laundry_detergent_station(source_json)
+            # The demo elevator adds upper-floor rooms, hall doors, and call
+            # buttons after the base layout has been generated. Re-run the
+            # canonical layout pass so every newly materialized node is
+            # normalized with the same room/floor coordinate semantics as
+            # persisted scene objects.
+            source_json = ensure_scene_layout(source_json, catalog_dimensions)
         # Materialized historical templates can still emit legacy node types;
         # normalize generated children as well as persisted roots.
         source_json = normalize_legacy_scene(source_json)
@@ -145,6 +152,10 @@ class SceneService:
                     item["structure"] = declared
             source = materialize_templates(source)
         generated = ensure_scene_layout(source, self._catalog_dimensions())
+        if str(generated.get("scene_name") or "").startswith("simple_home"):
+            ensure_demo_elevator(generated)
+            ensure_laundry_detergent_station(generated)
+            generated = ensure_scene_layout(generated, self._catalog_dimensions())
         issues = validate_scene_layout(generated)
         generated_ids = {
             str(item.get("id") or "") for item in generated.get("nodes") or []
@@ -169,20 +180,26 @@ class SceneService:
     def validate_layout(self, scene_version_id: str, source_json: dict) -> SceneLayoutValidation:
         if self.repo.get_version(scene_version_id) is None:
             raise NotFoundError(f"Scene version not found: {scene_version_id}")
-        issues = validate_scene_layout(source_json)
+        # The editor can submit a persisted historical layout. Normalize it
+        # at the service boundary before validation so structure children
+        # (buttons, doors, drawers, etc.) cannot be mistaken for independent
+        # room-layout objects.
+        normalized = ensure_scene_layout(source_json, self._catalog_dimensions())
+        issues = validate_scene_layout(normalized)
         return SceneLayoutValidation(valid=not issues, issues=issues)
 
     def publish_layout(self, scene_version_id: str, request: ScenePublishRequest) -> SceneVersionRead:
         base_version = self.repo.get_version(scene_version_id)
         if base_version is None:
             raise NotFoundError(f"Scene version not found: {scene_version_id}")
-        issues = validate_scene_layout(request.source_json)
+        normalized = ensure_scene_layout(request.source_json, self._catalog_dimensions())
+        issues = validate_scene_layout(normalized)
         if issues:
             raise ValueError("; ".join(issues))
         return self.import_scene(
             SceneImportRequest(
                 scene_id=base_version.scene_id,
-                source_json=request.source_json,
+                source_json=normalized,
                 description=request.description,
             )
         )

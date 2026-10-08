@@ -4,7 +4,7 @@ from typing import Any
 
 from backend.runtime.domain.queries import (
     children_of, descendants_of, is_containment_container, is_open, mutable_states, node, node_type,
-    object_capabilities, parent_of, semantic, states, supports_action, holding,
+    object_capabilities, object_property, parent_of, semantic, states, supports_action, holding,
 )
 from backend.runtime.process_definitions import DUMP_RULES, PLACE_TARGET_TYPES, TRASHABLE_SEMANTICS
 
@@ -16,6 +16,14 @@ def container_access_failure(state: dict[str, Any], container_id: str) -> str | 
     while current_id and current_id not in visited:
         visited.add(current_id)
         container = node(state, current_id)
+        if container and str(container.get("component_role") or "").lower() == "storage_slot":
+            current_id = parent_of(state, current_id)
+            continue
+        # A drawer is an independently accessible receptacle. Once it is
+        # open, its interior slot is reachable even when the appliance body
+        # (for example a washer door) remains closed.
+        if container and str(container.get("component_role") or "").lower() == "drawer":
+            return None if is_open(container) else f"container is closed: {current_id}"
         if container and is_containment_container(container) and not is_open(container):
             return f"container is closed: {current_id}"
         current_id = parent_of(state, current_id)
@@ -38,6 +46,20 @@ def contained_capability_failures(state: dict[str, Any], item_id: str, target_id
     """Require declared item abilities demanded by a composite's storage slot."""
     target = node(state, target_id)
     required = {str(value).lower() for value in (target.get("accepted_capabilities") or ())}
+    # Canonical washer drawer slots accept detergent even when an older
+    # snapshot left the host drum's washable contract on the slot node.
+    cursor = str(target_id)
+    seen: set[str] = set()
+    drawer_host = False
+    while cursor and cursor not in seen:
+        seen.add(cursor)
+        current = node(state, cursor)
+        if str(current.get("component_role") or "").lower() == "drawer":
+            drawer_host = True
+        if drawer_host and semantic(current) in {"washer", "washing_machine"}:
+            required = {"laundry_detergent"}
+            break
+        cursor = parent_of(state, cursor)
     if not required:
         return []
     item = node(state, item_id)
@@ -49,13 +71,38 @@ def contained_capability_failures(state: dict[str, Any], item_id: str, target_id
 
 def process_input_failures(state: dict[str, Any], device_id: str) -> list[str]:
     device = node(state, device_id)
-    required = {str(value).lower() for value in device.get("required_process_capabilities") or ()}
+    # Requirements may be materialized on the node or supplied by the
+    # semantic template for historical scenes. Always resolve both forms.
+    required = {
+        str(value).lower()
+        for value in (device.get("required_process_capabilities") or object_property(device, "required_process_capabilities", ()) or ())
+    }
+    # Washer semantics have one mandatory consumable by contract, including
+    # legacy nodes that predate capability materialization.
+    if not required and semantic(device) in {"washer", "washing_machine"}:
+        required = {"laundry_detergent"}
     if not required:
         return []
     child_ids = descendants_of(state, device_id)
     available: set[str] = set()
     for child_id in child_ids:
         child = node(state, child_id)
+        if "laundry_detergent" in required:
+            # Washer detergent must be loaded in the dedicated drawer slot.
+            # A packet merely attached somewhere under the washer (or left in
+            # the drum) does not satisfy the start contract.
+            cursor = child_id
+            in_drawer = False
+            visited: set[str] = set()
+            while cursor and cursor not in visited:
+                visited.add(cursor)
+                current = node(state, cursor)
+                if str(current.get("component_role") or "").lower() == "drawer":
+                    in_drawer = True
+                    break
+                cursor = parent_of(state, cursor)
+            if not in_drawer:
+                continue
         explicit = child.get("capabilities")
         if isinstance(explicit, (list, tuple, set)):
             available.update(str(value).lower() for value in explicit)
@@ -69,6 +116,24 @@ def process_input_failures(state: dict[str, Any], device_id: str) -> list[str]:
                 pass
     missing = sorted(required - available)
     return [f"process input capability missing: {value}" for value in missing]
+
+def process_input_failures_for_control(state: dict[str, Any], control_id: str) -> list[str]:
+    """Validate process inputs on a timed device controlled by a button."""
+    failures: list[str] = []
+    controlled_ids = [
+        str(edge.get("target_id") or "")
+        for edge in (state.get("control_edges") or state.get("edges") or [])
+        if isinstance(edge, dict)
+        and str(edge.get("source_id") or "") == str(control_id)
+        and str(edge.get("relation") or "") == "controls"
+    ]
+    for device_id in controlled_ids:
+        device = node(state, device_id)
+        if "timed_device" not in object_capabilities(device):
+            continue
+        failures.extend(process_input_failures(state, device_id))
+        failures.extend(device_door_failures(state, [device_id]))
+    return failures
 
 def carrying_type_failures(state: dict[str, Any], held_id: str, target_id: str) -> list[str]:
     target = node(state, target_id)
@@ -100,7 +165,9 @@ def device_door_failures(state: dict[str, Any], device_ids: list[str]) -> list[s
         if current_parent not in device_set:
             continue
         item = node(state, node_id)
-        if str(item.get("door_kind") or "").lower() != "device":
+        is_device_door = str(item.get("door_kind") or "").lower() == "device"
+        is_device_drawer = str(item.get("component_role") or "").lower() == "drawer"
+        if not (is_device_door or is_device_drawer):
             continue
         if bool(item.get("requires_closed_to_start", True)) and is_open(item):
             failures.append(f"device door must be closed before start: {node_id}")

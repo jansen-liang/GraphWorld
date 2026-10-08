@@ -27,7 +27,11 @@ SCENE_RESOURCE_POOL_SPECS: dict[str, tuple[dict[str, Any], ...]] = {
             "semantic_type": "detergent_dispenser",
             "instance_prefix": "detergent",
             "count": 3,
-            "instance": {"semantic_type": "detergent", "states": {"amount": 1.0}},
+            "instance": {
+                "semantic_type": "laundry_detergent",
+                "capabilities": ["pickable", "laundry_detergent"],
+                "states": {"amount": 1.0},
+            },
         },
         {
             "id": "soap_pool_sink_bathroom",

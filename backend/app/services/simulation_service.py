@@ -16,6 +16,8 @@ from backend.runtime.input_adapter import ActionResolver, InteractionRequest
 from backend.runtime.action_executor import ActionExecutor
 from backend.runtime.world import World
 from backend.runtime.time import advance_time
+from backend.runtime.scene_preparation import ensure_demo_elevator, ensure_laundry_detergent_station
+from backend.app.runtime.scene_layout import ensure_scene_layout
 
 logger = logging.getLogger(__name__)
 
@@ -115,7 +117,19 @@ class SimulationWorldService:
         self.resolver = ActionResolver()
 
     def start(self, request: SimulationStartRequest) -> SimulationSessionResponse:
-        world = World(materialize(normalize_legacy_scene(copy.deepcopy(request.source_json))))
+        source = materialize(normalize_legacy_scene(copy.deepcopy(request.source_json)))
+        # The run must receive the same generated elevator graph as the
+        # editor: landing buttons, cabin controls, hall-door links, and their
+        # layout anchors are runtime truth, not renderer-only additions.
+        if str(source.get("scene_name") or "").startswith("simple_home"):
+            ensure_demo_elevator(source)
+            ensure_laundry_detergent_station(source)
+            # Keep the runtime source identical to the editor graph after
+            # demo elevator nodes are added. In particular, hall call
+            # buttons must exist in both nodes and layout.objects before the
+            # World snapshot is created.
+            source = ensure_scene_layout(source)
+        world = World(source)
         actor_id = _ensure_simulation_actor(world, request.actor_id, "")
         world.ensure_agent_state(actor_id)
         simulation_id = f"sim_{uuid4().hex}"

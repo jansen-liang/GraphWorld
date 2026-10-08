@@ -63,6 +63,16 @@ function storedSimulationMatchesSource(stored: Record<string, unknown>, source: 
   const snapshotNodes = (snapshot as Record<string, unknown>).nodes;
   if (!Array.isArray(snapshotNodes)) return false;
   const sourceById = new Map((source.nodes ?? []).map((node) => [text(node.id), node]));
+  const snapshotById = new Map(
+    snapshotNodes
+      .filter((item): item is RawNode => Boolean(item && typeof item === "object"))
+      .map((item) => [text(item.id), item]),
+  );
+  // A stored run is reusable only when it was started from the same graph
+  // topology. Comparing only shared nodes allowed a snapshot containing
+  // generated elevator hall buttons to pass validation when the editor
+  // source was an older graph without those nodes.
+  if (snapshotById.size !== sourceById.size || [...snapshotById.keys()].some((id) => !sourceById.has(id))) return false;
   for (const item of snapshotNodes) {
     if (!item || typeof item !== "object") continue;
     const node = item as RawNode;
@@ -250,6 +260,12 @@ export function SceneBuilderPage() {
         if (current && applySimulationDelta(current, result.delta ?? {}, simulationRevisionRef.current)) {
           simulationRevisionRef.current = Number(result.delta?.revision ?? simulationRevisionRef.current);
           draftRef.current = current;
+          // Delta application mutates the canonical draft in place. Trigger a
+          // render as well so Three.js observes state-only changes such as a
+          // hall button's is_on/is_pressed illumination; without this, the
+          // live canvas keeps the pre-press node object snapshot until the
+          // next tick.
+          setDraft((previous) => previous ? { ...previous, nodes: [...(previous.nodes ?? [])] } : previous);
           // Three owns the live simulation scene. Do not replace the draft
           // object here: doing so remounts the canvas, resets the camera, and
           // restarts editor-only joint animation.
@@ -615,6 +631,36 @@ export function SceneBuilderPage() {
             const result = await startPromise;
             simulationStartRef.current = null;
             sessionStorage.removeItem("graphworld.simulation");
+            // Runtime preparation may materialize graph-backed objects and
+            // their layout anchors (notably upper-floor hall buttons). The
+            // renderer was already built from the editor draft, so merge the
+            // authoritative startup layout before Run begins; merging nodes
+            // alone leaves snapshot objects without Three.js meshes.
+            const startupSnapshot = result.snapshot as Record<string, unknown>;
+            const startupLayout = startupSnapshot.layout as FloorplanLayout | undefined;
+            if (startupLayout && typeof startupLayout === "object") {
+              const current = draftRef.current;
+              if (current) {
+                const next = deepCopy(current);
+                next.layout = deepCopy(startupLayout);
+                const startupNodes = startupSnapshot.nodes;
+                if (Array.isArray(startupNodes)) {
+                  const byId = new Map((next.nodes ?? []).map((node) => [text(node.id), node]));
+                  for (const item of startupNodes) {
+                    if (!item || typeof item !== "object") continue;
+                    const node = item as RawNode;
+                    const existing = byId.get(text(node.id));
+                    if (existing) Object.assign(existing, deepCopy(node));
+                    else {
+                      next.nodes = [...(next.nodes ?? []), deepCopy(node)];
+                      byId.set(text(node.id), next.nodes[next.nodes.length - 1]);
+                    }
+                  }
+                }
+                draftRef.current = next;
+                setDraft(next);
+              }
+            }
             simulationSessionRef.current = result;
             simulationIdRef.current = result.simulation_id;
             simulationRevisionRef.current = Number(result.snapshot.revision ?? 0);

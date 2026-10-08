@@ -10,7 +10,14 @@ export default defineConfig(({ mode }) => {
     root: "web",
     plugins: [react()],
     build: { outDir: "../dist" },
-    server: { allowedHosts, proxy },
+    // This workspace is commonly opened together with VS Code/Pylance and
+    // several backend watchers. Polling keeps Vite from exhausting the
+    // user's shared inotify watcher quota and crashing with ENOSPC.
+    server: {
+      allowedHosts,
+      proxy,
+      watch: { usePolling: true, interval: 1000 },
+    },
     preview: { allowedHosts, proxy },
   };
 });

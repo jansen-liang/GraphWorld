@@ -91,3 +91,22 @@ def test_snapshot_always_exposes_visual_cues_for_delta_reconciliation():
     })
     lamp = next(node for node in world.to_scene()["nodes"] if node["id"] == "lamp")
     assert lamp["visual_cues"] == []
+
+
+def test_layout_object_world_transform_includes_room_floor_elevation():
+    world = World({
+        "schema_version": 2,
+        "id_namespace": "editor",
+        "layout": {
+            "grid_size": 0.1,
+            "rooms": {"f2_room": {"grid_x": 0, "grid_y": 0, "width_cells": 10, "depth_cells": 10, "floor_number": 2}},
+            "objects": {"hall_button": {"room_id": "f2_room", "x_cm": 10, "y_cm": 10, "z_cm": 120, "width_cm": 20, "depth_cm": 8, "height_cm": 8}},
+        },
+        "nodes": [
+            {"id": "f2_room", "node_type": "room", "states": {}},
+            {"id": "hall_button", "node_type": "object", "semantic_type": "button", "states": {}},
+        ],
+        "edges": [{"source_id": "f2_room", "target_id": "hall_button", "relation": "contains"}],
+    })
+    button = next(node for node in world.to_scene()["nodes"] if node["id"] == "hall_button")
+    assert button["world_transform"]["position"][2] == 4.44

@@ -86,6 +86,10 @@ def advance_elevator(node: dict[str, Any], elapsed_steps: int = 1, *, step: int 
     state.setdefault("door_phase", "closed")
     state.setdefault("is_open", False)
     state.setdefault("dwell_remaining", 0)
+    # Arrival is deliberately a two-phase transition.  The tick that reaches
+    # the target height only stops the car; the following tick starts opening
+    # the doors.  This keeps every snapshot produced during movement closed.
+    state.setdefault("arrival_pending", False)
     # The floor id is semantic state; the height is the continuous transport
     # state consumed by renderers. Keep both so a car never teleports or loses
     # its authored XY anchor while travelling between stops.
@@ -97,6 +101,17 @@ def advance_elevator(node: dict[str, Any], elapsed_steps: int = 1, *, step: int 
         phase = str(state.get("door_phase") or "closed")
         queue = node.setdefault("request_queue", [])
         current = str(state.get("current_floor") or floors[0])
+        if bool(state.get("arrival_pending")):
+            # The car has already reached its requested floor and is stopped.
+            # Opening is only allowed from this settled state, never from the
+            # movement branch that is still updating current_height.
+            state["arrival_pending"] = False
+            state["door_phase"] = "opening"
+            state["is_open"] = True
+            state["motion_state"] = "stopped"
+            state["dwell_remaining"] = 2
+            events.append({"type": "elevator_doors_opening", "elevator_id": node.get("id"), "floor_id": current})
+            continue
         if phase == "closing":
             if any(str(item.get("floor_id") or "") == current for item in queue):
                 state["door_phase"] = "dwelling"
@@ -110,7 +125,13 @@ def advance_elevator(node: dict[str, Any], elapsed_steps: int = 1, *, step: int 
             continue
         if phase == "dwelling":
             state["dwell_remaining"] = max(0, int(state.get("dwell_remaining") or 0) - 1)
-            if any(str(item.get("floor_id") or "") == current for item in queue):
+            same_floor_requests = [item for item in queue if str(item.get("floor_id") or "") == current]
+            if same_floor_requests:
+                # A request for the floor where the car is already dwelling
+                # is served at the open-door instant. Remove it now so the
+                # same stale request cannot reset dwell_remaining to 2 on
+                # every subsequent tick.
+                node["request_queue"] = [item for item in queue if str(item.get("floor_id") or "") != current]
                 state["dwell_remaining"] = 2
             if int(state["dwell_remaining"]) <= 0:
                 state["door_phase"] = "closing"
@@ -125,8 +146,18 @@ def advance_elevator(node: dict[str, Any], elapsed_steps: int = 1, *, step: int 
         if phase != "closed":
             continue
         if str(state.get("motion_state") or "") == "moving":
-            target_height = float(state.get("target_height") or state.get("current_height") or 0.0)
-            current_height = float(state.get("current_height") or 0.0)
+            # A car cannot expose either cabin or landing access while it is
+            # travelling.  Keep this invariant here (rather than relying on
+            # the renderer) so every snapshot and hall-door projection agrees
+            # that the doors remain closed until the arrival tick.
+            state["door_phase"] = "closed"
+            state["is_open"] = False
+            # Ground-floor elevation 0.0 is valid; truthiness fallback would
+            # incorrectly replace it with the current upper-floor height.
+            raw_target_height = state.get("target_height")
+            raw_current_height = state.get("current_height")
+            target_height = float(raw_target_height if raw_target_height is not None else (raw_current_height or 0.0))
+            current_height = float(raw_current_height if raw_current_height is not None else 0.0)
             # One floor per runtime tick is deliberately deterministic. A
             # renderer may interpolate snapshots, while runtime remains the
             # authority for whether the car has reached a stop.
@@ -141,8 +172,13 @@ def advance_elevator(node: dict[str, Any], elapsed_steps: int = 1, *, step: int 
                 target = next((item for item in queue if str(item.get("floor_id") or "") == current), None)
                 if target:
                     node["request_queue"] = [item for item in queue if str(item.get("floor_id")) != current]
+                # Reaching the target height is the arrival instant. The car
+                # is already stopped here, so begin the door cycle in the
+                # same tick instead of relying on a follow-up client tick.
+                state["arrival_pending"] = False
                 state["door_phase"] = "opening"
                 state["is_open"] = True
+                state["dwell_remaining"] = 2
                 events.append({"type": "elevator_arrived", "elevator_id": node.get("id"), "floor_id": current, "served_kinds": (target or {}).get("kinds", [])})
             else:
                 state["current_height"] = current_height + (speed if delta > 0 else -speed)
@@ -164,9 +200,11 @@ def advance_elevator(node: dict[str, Any], elapsed_steps: int = 1, *, step: int 
         target_floor = str(target.get("floor_id"))
         if target_floor == current:
             node["request_queue"] = [item for item in queue if str(item.get("floor_id")) != current]
+            state["motion_state"] = "stopped"
+            state["arrival_pending"] = False
             state["door_phase"] = "opening"
             state["is_open"] = True
-            state["motion_state"] = "stopped"
+            state["dwell_remaining"] = 2
             events.append({"type": "elevator_arrived", "elevator_id": node.get("id"), "floor_id": current, "served_kinds": target.get("kinds", [])})
             continue
         # Travel directly toward the nearest queued stop in the current
@@ -177,6 +215,8 @@ def advance_elevator(node: dict[str, Any], elapsed_steps: int = 1, *, step: int 
         state["target_floor"] = target_floor
         state["target_height"] = _elevation(node, str(state["target_floor"]))
         state["motion_state"] = "moving"
+        state["door_phase"] = "closed"
+        state["is_open"] = False
         node["car_transform_progress"] = float(node.get("car_transform_progress") or 0.0) + 1.0
     return events
 
@@ -203,24 +243,7 @@ def advance_elevators(state: dict[str, Any], elapsed_steps: int = 1) -> list[dic
         for hall_door in nodes.values():
             if str(hall_door.get("door_kind") or "") != "elevator_hall":
                 continue
-            connected = {str(value) for value in (hall_door.get("connected_rooms") or ())}
-            floor_id = str(hall_door.get("floor_id") or "")
-            if not floor_id:
-                door_id = str(hall_door.get("id") or "")
-                for edge in state.get("edges") or []:
-                    if str(edge.get("source_id") or "") != door_id or str(edge.get("relation") or "") != "connects":
-                        continue
-                    candidate = str(edge.get("target_id") or "")
-                    if candidate in {str(value) for value in (node.get("served_rooms") or ())}:
-                        floor_id = candidate
-                        connected.add(candidate)
-                        break
-            if not floor_id:
-                for room_id in connected:
-                    if room_id == current_floor or room_id in {str(value) for value in (node.get("served_rooms") or ())}:
-                        if room_id == current_floor:
-                            floor_id = room_id
-                            break
+            floor_id = _hall_door_floor_id(state, hall_door, node)
             # Only the landing currently served by the car follows the cabin
             # door phase. All other hall doors are closed and collidable as
             # soon as the car leaves their floor.
@@ -237,8 +260,20 @@ def advance_elevators(state: dict[str, Any], elapsed_steps: int = 1) -> list[dic
         for button in nodes.values():
             if str(button.get("semantic_type") or "").lower() != "button":
                 continue
+            if str(button.get("component_role") or "") in {"open_button", "close_button"} and str(button.get("owner_id") or "") == str(node.get("id") or ""):
+                # Cabin door controls are momentary. The press is visible for
+                # the command/tick boundary, then the owning door state is the
+                # only source of truth. This also clears a close indication
+                # after confirming the door is already closed.
+                button.setdefault("states", {})["is_pressed"] = False
+                button.setdefault("states", {})["is_on"] = False
+                continue
             request_floor = str(button.get("request_floor") or "")
-            if served_now and request_floor == current_floor:
+            same_floor_pending = any(
+                str(item.get("floor_id") or "") == current_floor
+                for item in (node.get("request_queue") or [])
+            )
+            if request_floor == current_floor and (served_now or (passable and not same_floor_pending)):
                 button.setdefault("states", {})["is_on"] = False
         node["joint_states"] = {
             f"{node.get('id')}.car_door_left": passable,
@@ -246,6 +281,26 @@ def advance_elevators(state: dict[str, Any], elapsed_steps: int = 1) -> list[dic
         }
     state.setdefault("world_state", {}).setdefault("event_log", []).extend(events)
     return events
+
+
+def _hall_door_floor_id(state: dict[str, Any], hall_door: dict[str, Any], elevator: dict[str, Any]) -> str:
+    """Resolve a hall door's served floor exclusively from canonical edges.
+
+    A hall door connects to both the shaft and its landing room.  The landing
+    is the endpoint that belongs to the elevator's served-room set; no
+    relationship metadata is stored on the door node itself.
+    """
+    door_id = str(hall_door.get("id") or "")
+    served = {str(value) for value in (elevator.get("served_rooms") or ())}
+    for edge in state.get("edges") or ():
+        if str(edge.get("source_id") or "") != door_id:
+            continue
+        if str(edge.get("relation") or "") != "connects":
+            continue
+        candidate = str(edge.get("target_id") or "")
+        if candidate in served:
+            return candidate
+    return ""
 
 
 __all__ = ["advance_elevator", "advance_elevators", "enqueue_request"]

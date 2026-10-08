@@ -25,7 +25,7 @@ PROCESS_DEFINITIONS: dict[str, dict[str, Any]] = {
 
 PROCESS_DURATIONS: dict[str, int] = {
     **{name: int(spec["duration"]) for name, spec in PROCESS_DEFINITIONS.items()},
-    "washer": 3, "washing_machine": 3, "dishwasher": 3, "microwave": 2,
+    "washer": 10, "washing_machine": 10, "dishwasher": 3, "microwave": 2,
     "clothesdryer": 4, "dryer": 4, "elevator": 2,
 }
 
@@ -721,7 +721,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED, REQUIRES_LAUNDRY_DETERGENT,
                       PROCESS_PROFILE({"on_start": [{"capability": "washable", "state": "is_wet", "value": True},
                                                     {"capability": "foldable", "state": "folded", "value": False}],
-                                       "on_complete": [{"capability": "washable", "state": "is_dirty", "value": False}]}, 3)),
+                                       "on_complete": [{"capability": "washable", "state": "is_dirty", "value": False}]}, 10)),
     ),
     "washer": ObjectTemplate(
         "washer",
@@ -734,7 +734,7 @@ OBJECT_LIBRARY: Dict[str, ObjectTemplate] = {
         capabilities=(SWITCHABLE, TIMED_DEVICE, OPENABLE, CLEANABLE, CONTAINMENT_BLOCKER, START_REQUIRES_CLOSED, REQUIRES_LAUNDRY_DETERGENT,
                       PROCESS_PROFILE({"on_start": [{"capability": "washable", "state": "is_wet", "value": True},
                                                     {"capability": "foldable", "state": "folded", "value": False}],
-                                       "on_complete": [{"capability": "washable", "state": "is_dirty", "value": False}]}, 3)),
+                                       "on_complete": [{"capability": "washable", "state": "is_dirty", "value": False}]}, 10)),
     ),
     "drying_rack": ObjectTemplate(
         "drying_rack",

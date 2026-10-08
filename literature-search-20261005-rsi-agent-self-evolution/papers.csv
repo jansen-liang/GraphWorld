@@ -1,0 +1,14 @@
+title,year,venue_or_source,link,paper_type,insight_score,completeness_score,numeric_evidence_score,overall_label,relevance_note,quality_note
+Reflexion: Language Agents with Verbal Reinforcement Learning,2023,arXiv,https://arxiv.org/abs/2303.11366,pure method,4,4,4,A,feedback plus episodic text memory,solid multi-task evidence
+ExpeL: LLM Agents Are Experiential Learners,2023,arXiv,https://arxiv.org/abs/2308.10144,pure method,4,4,4,A,trajectory knowledge extraction,good fit for experience ablation
+Voyager: An Open-Ended Embodied Agent with Large Language Models,2023,ACM/arXiv,https://arxiv.org/abs/2305.16291,pure method,5,4,4,A,executable lifelong skill library,strong embodied precedent
+Lifelong Robot Library Learning,2024,ICRA,https://arxiv.org/abs/2406.18746,method + benchmark,4,4,4,A,compositional robot skills,close robotics fit
+Embodied Lifelong Learning for Task and Motion Planning,2023,arXiv,https://arxiv.org/abs/2307.06870,pure method,4,4,4,A,lifelong TAMP formalization,planner-oriented
+RISE: Recursive IntroSpEction,2024,arXiv,https://arxiv.org/abs/2407.18219,pure method,4,3,3,B,recursive revision,less embodied
+From Language Models to Practical Self-Improving Computer Agents,2024,arXiv,https://arxiv.org/abs/2404.11964,system/tool,4,3,3,B,self-generated augmentations,case-study scope
+Large Language Models Can Self-Improve At Web Agent Tasks,2024,arXiv,https://arxiv.org/abs/2405.20309,pure method,3,4,4,B,self-training web agents,leakage protocol caution
+Agentic Context Engineering,2025,arXiv,https://arxiv.org/abs/2510.04618,pure method,4,3,3,B,evolving playbooks and contexts,recent preprint
+SE-Agent,2025,arXiv,https://arxiv.org/abs/2508.02085,pure method,4,3,3,B,trajectory self-optimization,limited embodied evidence
+Darwin Gödel Machine,2025,arXiv,https://arxiv.org/abs/2505.22954,pure method,5,3,4,A/Risk,code-level recursive self-modification,closest RSI reference but coding-only evaluator
+AlphaEvolve,2025,arXiv white paper,https://arxiv.org/abs/2506.13131,system/tool,4,3,4,B,evolutionary code search,engineering reference
+ADAM,2024,arXiv,https://arxiv.org/abs/2410.22194,method + benchmark,4,3,3,B,causal graph learning in embodied world,world-model relevance

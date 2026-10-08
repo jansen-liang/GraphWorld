@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from typing import Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 from backend.runtime.process_definitions import DUMP_RULES, PLACE_TARGET_TYPES, TRASHABLE_SEMANTICS
 
@@ -26,12 +29,51 @@ def node_type(item: dict[str, Any]) -> str:
 
 
 def is_robot_movable(item: dict[str, Any]) -> bool:
+    # Structural nodes and composite affordances are interaction targets, not
+    # physical items. This guard also protects older scenes that accidentally
+    # persisted a stale ``pickable`` capability on them.
+    if node_type(item) in {"room", "floor", "wall", "structure"} or semantic(item) in {"room", "floor", "wall", "structure"}:
+        return False
+    if str(item.get("component_role") or "").lower() in {
+        "storage_slot", "drawer", "door", "button", "hinge",
+    }:
+        return False
+    if bool(item.get("can_contain")) or "receptacle" in {str(value).lower() for value in (item.get("capabilities") or ())}:
+        return False
+    # Furniture fixtures are support geometry, even when an old scene export
+    # accidentally carried a stale pickable capability. Keep this semantic
+    # rule at the runtime boundary so editor and simulation agree.
+    if semantic(item) in {"chair", "seat", "rack", "shoe_rack", "open_shelf", "shelf"}:
+        return False
     capabilities = {str(value).lower() for value in (item.get("capabilities") or ())}
     return "pickable" in capabilities or "graspable" in capabilities
 
 
 def room_of(state: dict[str, Any], node_id: str) -> str:
-    return str(state.get("room_of", {}).get(str(node_id)) or "")
+    node_key = str(node_id)
+    indexed = str(state.get("room_of", {}).get(node_key) or "")
+    parent_map = state.get("parent_of") or {}
+    relation_map = state.get("relation_of") or {}
+    parent = str(parent_map.get(node_key) or "")
+    relation = str(relation_map.get(node_key) or "").lower()
+    # While an agent/object is physically inside a transport device, the
+    # transport containment chain is authoritative for interaction locality.
+    # The agent runtime room_id records the served landing floor for transport
+    # scheduling, but must not make cabin buttons appear to be in that landing
+    # room while the agent is still inside the car.
+    if parent and relation in {"in", "inside"}:
+        parent_room = str(state.get("room_of", {}).get(parent) or "")
+        if parent_room:
+            return parent_room
+    # Agent movement owns a runtime room_id that is updated together with its
+    # position edge. Prefer it when present so an interaction immediately
+    # after leaving an elevator does not read a stale relationship index.
+    agents = (state.get("world_state") or {}).get("agents") or {}
+    runtime = agents.get(node_key) if isinstance(agents, dict) else None
+    runtime_room = str(runtime.get("room_id") or "") if isinstance(runtime, dict) else ""
+    if runtime_room:
+        return runtime_room
+    return indexed
 
 
 def parent_of(state: dict[str, Any], node_id: str) -> str:
@@ -101,7 +143,17 @@ def same_room(state: dict[str, Any], a: str, b: str) -> bool:
         return True
     target = node(state, b)
     connected_rooms = {str(room_id) for room_id in target.get("connected_rooms") or []}
-    return bool(room_a and room_a in connected_rooms)
+    result = bool(room_a and room_a in connected_rooms)
+    if not result and str(a).startswith("__simulation"):
+        agents = (state.get("world_state") or {}).get("agents") or {}
+        runtime = agents.get(str(a)) if isinstance(agents, dict) else None
+        logger.warning(
+            "same_room rejected agent=%s target=%s agent_room=%s target_room=%s indexed_agent_room=%s runtime_agent_room=%s parent=%s connected=%s",
+            a, b, room_a, room_b, str(state.get("room_of", {}).get(str(a)) or ""),
+            str((runtime or {}).get("room_id") or "") if isinstance(runtime, dict) else "",
+            str((state.get("parent_of") or {}).get(str(a)) or ""), sorted(connected_rooms),
+        )
+    return result
 
 
 def supports_action(item: dict[str, Any], action_name: str) -> bool:
@@ -121,6 +173,7 @@ def supports_action(item: dict[str, Any], action_name: str) -> bool:
         "foldable": {"fold", "unfold"},
         "flushable": {"press", "flush"},
         "water_source_control": {"press", "open", "close"},
+        "water_reservoir": {"press", "dump", "drain"},
         "dumpable": {"dump"},
     }
     return any(wanted in capability_actions.get(str(capability).lower(), set()) for capability in (item.get("capabilities") or ()))
@@ -195,7 +248,15 @@ def object_property(item: dict[str, Any], property_name: str, default: Any = Non
 
 def controlled_targets(state: dict[str, Any], control_id: str) -> list[str]:
     targets: list[str] = []
-    for edge in state.get("control_edges", []):
+    # World normally indexes control edges, but action execution also accepts
+    # canonical snapshots directly. Resolve from the authoritative edge list
+    # when the derived index has not been built yet; otherwise a button can
+    # acknowledge a press without reaching its controlled device.
+    edges = state.get("control_edges") or [
+        edge for edge in (state.get("edges") or [])
+        if str(edge.get("relation") or "").lower() == "controls"
+    ]
+    for edge in edges:
         if str(edge.get("relation") or "").lower() != "controls":
             continue
         if str(edge.get("source_id") or "") == str(control_id):

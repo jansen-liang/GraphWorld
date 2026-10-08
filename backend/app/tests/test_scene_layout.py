@@ -60,6 +60,49 @@ def test_wall_mounted_object_uses_anchor_not_full_footprint_for_room_bounds():
     assert any("button_kitchen" in issue and "inside room" in issue for issue in validate_scene_layout(scene))
 
 
+def test_legacy_component_layout_target_is_not_validated_as_independent_object():
+    scene = ensure_scene_layout(load_home_scene())
+    host_id = "washer_bathroom"
+    component_id = "washer_bathroom_button"
+    scene["nodes"] = [node for node in scene["nodes"] if node.get("id") != component_id]
+    scene["edges"].append({
+        "source_id": host_id,
+        "target_id": component_id,
+        "relation": "contains",
+        "edge_type": "object_edge",
+    })
+    scene["layout"]["objects"][component_id] = {
+        "room_id": "bathroom",
+        "grid_x": 1,
+        "grid_y": 1,
+        "width_cells": 1,
+        "depth_cells": 1,
+    }
+
+    assert not any(f"Unknown object layout target: {component_id}" in issue for issue in validate_scene_layout(scene))
+
+
+def test_contained_layout_target_without_component_node_is_derived():
+    scene = ensure_scene_layout(load_home_scene())
+    component_id = "washer_bathroom_button"
+    scene["nodes"] = [node for node in scene["nodes"] if node.get("id") != component_id]
+    scene["edges"] = [
+        edge for edge in scene["edges"]
+        if component_id not in {edge.get("source_id"), edge.get("target_id")}
+    ]
+    scene["layout"]["objects"][component_id] = {
+        "room_id": "bathroom",
+        "grid_x": 1,
+        "grid_y": 1,
+        "width_cells": 1,
+        "depth_cells": 1,
+        "placement_mode": "contained",
+        "parent_object_id": "washer_bathroom",
+    }
+
+    assert not any(f"Unknown object layout target: {component_id}" in issue for issue in validate_scene_layout(scene))
+
+
 def test_corridor_connections_are_open_passages_without_doors():
     scene = ensure_scene_layout(load_hospital_scene())
     doors = scene["layout"]["doors"].values()

@@ -102,12 +102,12 @@ DEFAULT_STRUCTURES: dict[str, ObjectStructure] = {
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="object"),
         _component("door", "door", face="front", anchor=(0.5, 0.48, 0.0), capabilities=("openable",)),
         _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
-    ), storage=StorageSpec(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=6, accepted_capabilities=("washable",))),
+    ), storage=StorageSpec(kind="mixed", levels=1, columns=1, depth_cm=55.0, drawer_count=1, capacity_per_slot=6, accepted_capabilities=("washable",))),
     "washer": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="object"),
         _component("door", "door", face="front", anchor=(0.5, 0.48, 0.0), capabilities=("openable",)),
         _component("start_button", "button", face="top", anchor=(0.82, 0.15, 0.0), capabilities=("switchable",)),
-    ), storage=StorageSpec(kind="open", levels=1, columns=1, depth_cm=55.0, capacity_per_slot=6, accepted_capabilities=("washable",))),
+    ), storage=StorageSpec(kind="mixed", levels=1, columns=1, depth_cm=55.0, drawer_count=1, capacity_per_slot=6, accepted_capabilities=("washable",))),
     "microwave": ObjectStructure(components=(
         _component("hinge", "hinge", face="front", anchor=(0.08, 0.5, 0.0), node_type="object"),
         _component("door", "door", face="front", anchor=(0.5, 0.5, 0.0), capabilities=("openable",)),
@@ -288,6 +288,20 @@ def materialize_templates(scene: dict[str, Any]) -> dict[str, Any]:
 
     def add_child(host_id: str, child_id: str, spec: dict[str, Any], *, role: str, index: int | None = None) -> None:
         if child_id in by_id:
+            existing = by_id[child_id]
+            if role == "storage_slot":
+                existing["role"] = "component"
+                existing["owner_id"] = host_id
+                existing["link_id"] = child_id
+                existing["component_role"] = role
+                existing["capabilities"] = sorted({str(value) for value in (spec.get("capabilities") or ()) if str(value).lower() != "pickable"})
+                existing["can_contain"] = True
+                existing["max_capacity"] = int(existing.get("max_capacity") or 1)
+                existing["max_items"] = int(existing.get("max_items") or existing["max_capacity"])
+                accepted = [str(value) for value in (spec.get("accepted_capabilities") or ())]
+                if accepted:
+                    existing["requires_contained_capabilities"] = accepted
+                    existing["accepted_capabilities"] = accepted
             return
         semantic_type = str(spec.get("semantic_type") or "object")
         node = build_object_node(child_id, semantic_type)
@@ -300,6 +314,10 @@ def materialize_templates(scene: dict[str, Any]) -> dict[str, Any]:
         node["capabilities"] = sorted(declared_capabilities)
         if semantic_type == "storage_slot":
             node["capabilities"] = sorted(capability for capability in declared_capabilities if capability != "pickable")
+            explicit_accepted = [str(value) for value in (spec.get("accepted_capabilities") or ())]
+            if explicit_accepted:
+                node["requires_contained_capabilities"] = explicit_accepted
+                node["accepted_capabilities"] = explicit_accepted
         node["component_role"] = role
         node["role"] = "component"
         node["owner_id"] = host_id
@@ -334,7 +352,10 @@ def materialize_templates(scene: dict[str, Any]) -> dict[str, Any]:
             node["can_contain"] = True
             node["max_items"] = node["max_capacity"]
             node["states"]["capacity"] = node["max_capacity"]
-            accepted = storage.get("accepted_capabilities") or []
+            # An explicitly authored slot contract (for example the washer
+            # drawer's detergent slot) overrides the host's primary storage
+            # contract (the drum accepts washable items).
+            accepted = spec.get("accepted_capabilities") or storage.get("accepted_capabilities") or []
             if accepted:
                 node["requires_contained_capabilities"] = list(accepted)
                 node["accepted_capabilities"] = list(accepted)
@@ -447,6 +468,14 @@ def materialize_templates(scene: dict[str, Any]) -> dict[str, Any]:
         if role == "storage_slot": declared.discard("pickable")
         if declared:
             node["capabilities"] = sorted(declared)
+        if role == "storage_slot":
+            # Existing scene versions may already contain this slot with the
+            # host drum's old ``washable`` contract. The declared component
+            # spec is authoritative for migrated children.
+            explicit_accepted = [str(value) for value in (spec.get("accepted_capabilities") or ())]
+            if explicit_accepted:
+                node["requires_contained_capabilities"] = explicit_accepted
+                node["accepted_capabilities"] = explicit_accepted
         if role == "door":
             node["capabilities"] = ["openable"]
             node["interactive_actions"] = ["open", "close"]
@@ -457,6 +486,10 @@ def materialize_templates(scene: dict[str, Any]) -> dict[str, Any]:
             node.setdefault("states", {}).setdefault("is_open", False)
         if role == "start_button" or str(spec.get("semantic_type") or "") == "button":
             node.setdefault("states", {}).setdefault("is_pressed", False)
+            # Appliance controls are momentary commands. The device owns the
+            # running state; the button only records the press pulse.
+            if str((by_id.get(host_id) or {}).get("semantic_type") or "").lower() in {"microwave", "washer", "washing_machine", "dishwasher"}:
+                node.setdefault("states", {}).pop("is_on", None)
             node["interactive_actions"] = sorted(set(node.get("interactive_actions") or []) | {"press"})
 
         for edge in edges:
@@ -543,8 +576,21 @@ def materialize_templates(scene: dict[str, Any]) -> dict[str, Any]:
             template_structure = template.get("structure") or template.get("composition") or {}
             if not structure and template_structure:
                 structure = deepcopy(template_structure)
-            elif template_structure.get("storage") and not structure.get("storage"):
-                structure = {**structure, "storage": deepcopy(template_structure["storage"])}
+            elif template_structure.get("storage"):
+                authored_storage = dict(structure.get("storage") or {})
+                template_storage = dict(template_structure["storage"])
+                # Storage topology is part of the canonical PartTree. Migrate
+                # missing/old appliance drawer declarations here so every
+                # consumer (editor, layout, simulation) sees the same graph.
+                if semantic_type.lower() in {"washer", "washing_machine"}:
+                    authored_storage["drawer_count"] = max(
+                        int(authored_storage.get("drawer_count") or 0),
+                        int(template_storage.get("drawer_count") or 0),
+                    )
+                    authored_storage["kind"] = template_storage.get("kind", authored_storage.get("kind", "mixed"))
+                for key, value in template_storage.items():
+                    authored_storage.setdefault(key, deepcopy(value))
+                structure = {**structure, "storage": authored_storage}
             if structure:
                 host["structure"] = structure
                 host.pop("composition", None)
@@ -643,9 +689,30 @@ def materialize_templates(scene: dict[str, Any]) -> dict[str, Any]:
                 "semantic_type": "drawer",
                 "node_type": "object",
                 "mount_face": "front",
-                "anchor": [(drawer_index + 0.5) / max(1, drawer_count), 0.15, 0.0],
+                # Washer drawers occupy the upper band reserved above the
+                # shortened door. Other furniture keeps its authored lower
+                # drawer convention.
+                "anchor": [
+                    (drawer_index + 0.5) / max(1, drawer_count),
+                    0.85 if semantic_type.lower() in {"washer", "washing_machine"} else 0.15,
+                    0.0,
+                ],
             }
             add_child(host_id, drawer_id, drawer_spec, role="drawer", index=drawer_index)
+            # A drawer is a movable mechanism, not itself the placement
+            # surface.  Materialize its bottom as the same reusable
+            # containment-slot contract used by appliance cavities/cabinet
+            # shelves, so callers can target the drawer interior directly.
+            drawer_slot_id = f"{drawer_id}_slot_l1_c1"
+            drawer_slot_spec = {
+                "semantic_type": "storage_slot",
+                "node_type": "object",
+                "mount_face": "interior",
+                "anchor": [0.5, 0.5, 0.5],
+                "capabilities": ["place_target", "receptacle"],
+                "accepted_capabilities": ["laundry_detergent"],
+            }
+            add_child(drawer_id, drawer_slot_id, drawer_slot_spec, role="storage_slot", index=0)
         # Preserve the mechanical relationships between generated parts. The
         # containment edge says that both parts belong to the host; these
         # edges say how the parts move relative to one another.
