@@ -15,10 +15,10 @@ export function startSceneSimulation(sourceJson: Record<string, unknown>, actorI
   return requestJson<SimulationSessionResponse>("/scene-simulation/start", { method: "POST", body: JSON.stringify({ source_json: sourceJson, actor_id: actorId }) });
 }
 
-export function dispatchSceneSimulation(simulationId: string, request: { input?: string; targetId?: string; direction?: [number, number]; elapsedSeconds?: number; hand?: "left" | "right"; hit?: InteractionHit; distanceM?: number; elapsedSteps?: number; event?: InputEventPayload }) {
+export function dispatchSceneSimulation(simulationId: string, request: { input?: string; targetId?: string; direction?: [number, number]; position?: { x: number; y: number; z: number }; physics?: Record<string, unknown>; elapsedSeconds?: number; hand?: "left" | "right"; hit?: InteractionHit; distanceM?: number; elapsedSteps?: number; event?: InputEventPayload }) {
   return requestJson<SimulationSessionResponse>("/scene-simulation/dispatch", {
     method: "POST",
-    body: JSON.stringify({ simulation_id: simulationId, input: request.input ?? "interact_primary", target_id: request.targetId ?? "", direction: request.direction?.join(" ") ?? "", elapsed_seconds: request.elapsedSeconds ?? 0.1, hand: request.hand ?? "right", hit: request.hit ?? {}, distance_m: request.distanceM, elapsed_steps: request.elapsedSteps ?? 1, event: request.event }),
+    body: JSON.stringify({ simulation_id: simulationId, input: request.input ?? "interact_primary", target_id: request.targetId ?? "", direction: request.direction?.join(" ") ?? "", position: request.position, physics: request.physics ?? {}, elapsed_seconds: request.elapsedSeconds ?? 0.1, hand: request.hand ?? "right", hit: request.hit ?? {}, distance_m: request.distanceM, elapsed_steps: request.elapsedSteps ?? 1, event: request.event }),
   });
 }
 

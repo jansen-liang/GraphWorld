@@ -23,7 +23,10 @@ logger = logging.getLogger(__name__)
 # discrete states. They are intentionally scoped to transport devices; they
 # are not a general escape hatch for arbitrary node state.
 TRANSPORT_RUNTIME_STATE_SPACE = frozenset({
-    "arrival_pending", "current_height", "motion_state", "target_height",
+    "arrival_pending",
+    "current_height",
+    "motion_state",
+    "target_height",
     "dwell_remaining",
 })
 
@@ -444,6 +447,67 @@ class World:
             state["room_id"] = room_id
             self.move_node(agent_id, room_id, "at")
         return copy.deepcopy(state)
+
+    def sync_agent_position(self, agent_id: str, position: dict[str, Any], *, physics: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Reconcile a client physics pose with semantic room/container state.
+
+        Rapier (or another client physics adapter) owns continuous motion and
+        collision resolution. This method deliberately does not integrate a
+        direction or elapsed time; it only records the sampled pose and
+        updates the authoritative ``at``/``in`` relationship when the pose
+        crosses a room or transport boundary.
+        """
+        state = self.ensure_agent_state(agent_id)
+        previous_room = str(state.get("room_id") or self.room_of.get(agent_id, ""))
+        previous_parent = self.parent_of.get(agent_id, "")
+        try:
+            sampled = {key: float(position[key]) for key in ("x", "y", "z")}
+        except (KeyError, TypeError, ValueError):
+            return {**copy.deepcopy(state), "semantic_move": None}
+        state["position"] = sampled
+        state["moving"] = bool((physics or {}).get("moving", True))
+
+        transport_id = self._transport_container_for_position(sampled, room_id=previous_room)
+        if transport_id:
+            self.move_node(agent_id, transport_id, "in")
+            transport = self.nodes.get(transport_id) or {}
+            next_room = str((transport.get("states") or {}).get("current_floor") or previous_room)
+            state["room_id"] = next_room
+            semantic_move = {
+                "action": "move",
+                "target": transport_id,
+                "relation": "in",
+            } if previous_parent != transport_id else None
+        else:
+            layout = self.metadata.get("layout") or {}
+            rooms = layout.get("rooms") if isinstance(layout, dict) else {}
+            grid = float(layout.get("grid_size") or 0.5) if isinstance(layout, dict) else 0.5
+            candidates: list[tuple[float, str]] = []
+            if isinstance(rooms, dict):
+                for room_id, room in rooms.items():
+                    if not isinstance(room, dict):
+                        continue
+                    floor = float(room.get("floor_number") or 1)
+                    floor_y = max(0.0, floor - 1.0) * 3.2
+                    height = 9.6 if str(room_id).startswith("elevator_shaft") else 3.2
+                    x0 = float(room.get("grid_x") or 0) * grid
+                    z0 = float(room.get("grid_y") or 0) * grid
+                    x1 = x0 + float(room.get("width_cells") or 0) * grid
+                    z1 = z0 + float(room.get("depth_cells") or 0) * grid
+                    if x0 <= sampled["x"] <= x1 and z0 <= sampled["z"] <= z1 and floor_y - 0.25 <= sampled["y"] <= floor_y + height + 0.25:
+                        candidates.append((abs(sampled["y"] - floor_y), str(room_id)))
+            next_room = min(candidates, key=lambda item: item[0])[1] if candidates else previous_room
+            state["room_id"] = next_room
+            if next_room and next_room != previous_room:
+                self.move_node(agent_id, next_room, "at")
+            semantic_move = {
+                "action": "move",
+                "target": next_room,
+                "relation": "at",
+            } if next_room and next_room != previous_room else None
+        result = copy.deepcopy(state)
+        result["semantic_move"] = semantic_move
+        return result
 
     def _transport_container_for_position(self, position: dict[str, Any], room_id: str = "") -> str:
         """Return the transport object whose current cabin contains a point.

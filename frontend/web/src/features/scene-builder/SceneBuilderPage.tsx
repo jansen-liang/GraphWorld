@@ -577,9 +577,9 @@ export function SceneBuilderPage() {
               .then(() => interactionMutation.mutateAsync(request));
             interactionQueueRef.current = next.then(() => undefined, () => undefined);
             return next;
-          }} onSimulationMove={(direction, elapsedSeconds, event) => {
+          }} onSimulationMove={(position, direction, elapsedSeconds, event) => {
             if (!simulationIdRef.current) return Promise.resolve();
-            return dispatchSceneSimulation(simulationIdRef.current, { input: "move_step", direction, elapsedSeconds, event }).then((result) => {
+            return dispatchSceneSimulation(simulationIdRef.current, { input: "movement_sample", position, physics: { direction, elapsed_seconds: elapsedSeconds }, elapsedSeconds, event }).then((result) => {
               const current = draftRef.current;
               const source = result.snapshot as SceneSource;
               if (!current) return result as unknown as Record<string, unknown>;

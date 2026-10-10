@@ -181,7 +181,53 @@ class SimulationWorldService:
             failures: list[str] = []
             action: dict[str, Any] | None = None
             delta: dict[str, Any] = {}
-            if request.input == "move_step":
+            if request.input == "movement_sample" or request.position is not None:
+                # Continuous motion is resolved by the client physics adapter
+                # (Rapier in Web). The backend only records the sampled pose
+                # and reconciles semantic room/elevator relationships.
+                sampled_position = request.position or {}
+                moved_state: dict[str, Any] = {}
+
+                def sync_position(_: dict[str, Any]) -> None:
+                    moved_state.update(session.world.sync_agent_position(
+                        actor_id,
+                        sampled_position,
+                        physics=request.physics,
+                    ))
+
+                ActionExecutor(session.world).run(sync_position)
+                semantic_move = moved_state.pop("semantic_move", None)
+                agent_state = copy.deepcopy(moved_state)
+                applied = True
+                delta = {
+                    "agent": {actor_id: agent_state},
+                    "changes": [{
+                        "change_type": "node_updated",
+                        "change_id": f"movement_{actor_id}_{session.revision + 1}",
+                        "source": "physics:rapier",
+                        "payload": {
+                            "node_id": actor_id,
+                            "runtime_state": copy.deepcopy(agent_state),
+                            "agent_state": copy.deepcopy(agent_state),
+                            "world_transform": {
+                                "position": [
+                                    float(agent_state["position"].get("x") or 0.0),
+                                    -float(agent_state["position"].get("z") or 0.0),
+                                    float(agent_state["position"].get("y") or 0.0),
+                                ],
+                                "rotation": [0.0, 0.0, 0.0, 1.0],
+                                "scale": [1.0, 1.0, 1.0],
+                            },
+                            "transform_space": "graphworld_z_up",
+                            "transform_origin": "runtime",
+                        },
+                    }],
+                }
+                action = semantic_move or {"agent": actor_id, "action": "movement_sample"}
+                session.time_seconds += max(0.0, float(request.elapsed_seconds))
+            elif request.input == "move_step":
+                # Compatibility for older clients/tests. New clients must send
+                # ``movement_sample`` with the Rapier-resolved position.
                 raw = str(request.direction or "").replace(",", " ").split()
                 try:
                     dx, dz = (float(raw[0]), float(raw[1])) if len(raw) >= 2 else (0.0, 0.0)

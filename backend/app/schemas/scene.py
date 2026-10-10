@@ -63,6 +63,11 @@ class SimulationDispatchRequest(BaseModel):
     actor_id: str = ""
     target_id: str = ""
     direction: str = ""
+    # Rapier is the client-side authority for continuous character motion.
+    # Movement samples carry the resulting world position; the backend only
+    # reconciles semantic room/transport relationships.
+    position: dict[str, float] | None = None
+    physics: dict[str, Any] = Field(default_factory=dict)
     elapsed_seconds: float = Field(default=0.1, ge=0.0, le=1.0)
     distance_m: float | None = None
     hit: dict[str, Any] = Field(default_factory=dict)

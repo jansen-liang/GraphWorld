@@ -31,7 +31,7 @@ interface Scene3DCanvasProps {
   catalog: ObjectCatalogEntry[];
   onInteractionHit?: (hit: InteractionHit) => void;
   onSimulationInteraction: (request: { targetId: string; hand: "left" | "right"; hit: InteractionHit; input?: "interact_primary" | "move" | "lower_hand"; roomId?: string; event?: InputEventPayload }) => Promise<unknown> | void;
-  onSimulationMove: (direction: [number, number], elapsedSeconds: number, event?: InputEventPayload) => Promise<Record<string, unknown> | void>;
+  onSimulationMove: (position: { x: number; y: number; z: number }, direction: [number, number], elapsedSeconds: number, event?: InputEventPayload) => Promise<Record<string, unknown> | void>;
   onSimulationEvent?: (event: InputEventPayload) => Promise<Record<string, unknown> | void>;
   onSimulationActiveChange?: (active: boolean) => void;
   onSimulationStart?: () => Promise<Record<string, unknown> | void>;
@@ -2823,9 +2823,10 @@ export function Scene3DCanvas({ nodes, edges, layout, selectedId, onSelect, onCh
       let releaseMovement: () => void = () => undefined;
       movementBarrierRef.current = new Promise<void>((resolve) => { releaseMovement = resolve; });
       void simulationMoveRef.current(
+        { x: simulation.player.x, y: simulation.player.y, z: simulation.player.z },
         direction,
         elapsedSeconds,
-        inputEvent("movement", "sampled", ++inputSequenceRef.current, { direction, elapsed_seconds: elapsedSeconds }, "", simulationActorId),
+        inputEvent("movement", "sampled", ++inputSequenceRef.current, { position: { x: simulation.player.x, y: simulation.player.y, z: simulation.player.z }, direction, elapsed_seconds: elapsedSeconds }, "", simulationActorId),
       ).then((response) => {
         const result = response as Record<string, unknown> | void;
         if (!result) return;
